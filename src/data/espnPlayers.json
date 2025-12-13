@@ -1,0 +1,316 @@
+{
+  "players": [
+    {
+      "id": "mahomes",
+      "espnId": "3139477",
+      "name": "Patrick Mahomes",
+      "searchTerms": ["Patrick Mahomes", "Mahomes"],
+      "team": "KC",
+      "position": "QB",
+      "basePrice": 142.50
+    },
+    {
+      "id": "allen",
+      "espnId": "3918298",
+      "name": "Josh Allen",
+      "searchTerms": ["Josh Allen", "Allen"],
+      "team": "BUF",
+      "position": "QB",
+      "basePrice": 165.00
+    },
+    {
+      "id": "kelce",
+      "espnId": "15847",
+      "name": "Travis Kelce",
+      "searchTerms": ["Travis Kelce", "Kelce"],
+      "team": "KC",
+      "position": "TE",
+      "basePrice": 98.50
+    },
+    {
+      "id": "diggs-s",
+      "espnId": "3116406",
+      "name": "Stefon Diggs",
+      "searchTerms": ["Stefon Diggs", "Diggs"],
+      "team": "HOU",
+      "position": "WR",
+      "basePrice": 85.00
+    },
+    {
+      "id": "rice",
+      "espnId": "4429795",
+      "name": "Rashee Rice",
+      "searchTerms": ["Rashee Rice", "Rice"],
+      "team": "KC",
+      "position": "WR",
+      "basePrice": 72.50
+    },
+    {
+      "id": "cook",
+      "espnId": "4241985",
+      "name": "James Cook",
+      "searchTerms": ["James Cook", "Cook"],
+      "team": "BUF",
+      "position": "RB",
+      "basePrice": 94.25
+    },
+    {
+      "id": "pacheco",
+      "espnId": "4361579",
+      "name": "Isiah Pacheco",
+      "searchTerms": ["Isiah Pacheco", "Pacheco"],
+      "team": "KC",
+      "position": "RB",
+      "basePrice": 88.00
+    },
+    {
+      "id": "kincaid",
+      "espnId": "4430737",
+      "name": "Dalton Kincaid",
+      "searchTerms": ["Dalton Kincaid", "Kincaid"],
+      "team": "BUF",
+      "position": "TE",
+      "basePrice": 68.50
+    },
+    {
+      "id": "worthy",
+      "espnId": "4432577",
+      "name": "Xavier Worthy",
+      "searchTerms": ["Xavier Worthy", "Worthy"],
+      "team": "KC",
+      "position": "WR",
+      "basePrice": 58.75
+    },
+    {
+      "id": "shakir",
+      "espnId": "4360438",
+      "name": "Khalil Shakir",
+      "searchTerms": ["Khalil Shakir", "Shakir"],
+      "team": "BUF",
+      "position": "WR",
+      "basePrice": 52.25
+    },
+    {
+      "id": "jefferson",
+      "espnId": "4262921",
+      "name": "Justin Jefferson",
+      "searchTerms": ["Justin Jefferson", "Jefferson"],
+      "team": "MIN",
+      "position": "WR",
+      "basePrice": 134.00
+    },
+    {
+      "id": "chase",
+      "espnId": "4362628",
+      "name": "Ja'Marr Chase",
+      "searchTerms": ["Ja'Marr Chase", "Jamarr Chase", "Chase"],
+      "team": "CIN",
+      "position": "WR",
+      "basePrice": 145.25
+    },
+    {
+      "id": "hill",
+      "espnId": "3116406",
+      "name": "Tyreek Hill",
+      "searchTerms": ["Tyreek Hill", "Hill"],
+      "team": "MIA",
+      "position": "WR",
+      "basePrice": 118.75
+    },
+    {
+      "id": "mccaffrey",
+      "espnId": "3117251",
+      "name": "Christian McCaffrey",
+      "searchTerms": ["Christian McCaffrey", "McCaffrey", "CMC"],
+      "team": "SF",
+      "position": "RB",
+      "basePrice": 156.25
+    },
+    {
+      "id": "henry",
+      "espnId": "3043078",
+      "name": "Derrick Henry",
+      "searchTerms": ["Derrick Henry", "Henry"],
+      "team": "BAL",
+      "position": "RB",
+      "basePrice": 128.75
+    },
+    {
+      "id": "barkley",
+      "espnId": "3929630",
+      "name": "Saquon Barkley",
+      "searchTerms": ["Saquon Barkley", "Barkley", "Saquon"],
+      "team": "PHI",
+      "position": "RB",
+      "basePrice": 152.00
+    },
+    {
+      "id": "lamar",
+      "espnId": "3916387",
+      "name": "Lamar Jackson",
+      "searchTerms": ["Lamar Jackson", "Lamar"],
+      "team": "BAL",
+      "position": "QB",
+      "basePrice": 158.75
+    },
+    {
+      "id": "hurts",
+      "espnId": "4040715",
+      "name": "Jalen Hurts",
+      "searchTerms": ["Jalen Hurts", "Hurts"],
+      "team": "PHI",
+      "position": "QB",
+      "basePrice": 138.25
+    },
+    {
+      "id": "lamb",
+      "espnId": "4241389",
+      "name": "CeeDee Lamb",
+      "searchTerms": ["CeeDee Lamb", "Lamb", "CD Lamb"],
+      "team": "DAL",
+      "position": "WR",
+      "basePrice": 112.50
+    },
+    {
+      "id": "brown",
+      "espnId": "4047646",
+      "name": "A.J. Brown",
+      "searchTerms": ["A.J. Brown", "AJ Brown", "Brown"],
+      "team": "PHI",
+      "position": "WR",
+      "basePrice": 125.50
+    },
+    {
+      "id": "stroud",
+      "espnId": "4432620",
+      "name": "C.J. Stroud",
+      "searchTerms": ["C.J. Stroud", "CJ Stroud", "Stroud"],
+      "team": "HOU",
+      "position": "QB",
+      "basePrice": 135.00
+    },
+    {
+      "id": "nabers",
+      "espnId": "4711925",
+      "name": "Malik Nabers",
+      "searchTerms": ["Malik Nabers", "Nabers"],
+      "team": "NYG",
+      "position": "WR",
+      "basePrice": 95.00
+    },
+    {
+      "id": "gibbs",
+      "espnId": "4428331",
+      "name": "Jahmyr Gibbs",
+      "searchTerms": ["Jahmyr Gibbs", "Gibbs"],
+      "team": "DET",
+      "position": "RB",
+      "basePrice": 118.00
+    },
+    {
+      "id": "amon-ra",
+      "espnId": "4360310",
+      "name": "Amon-Ra St. Brown",
+      "searchTerms": ["Amon-Ra St. Brown", "St. Brown", "Sun God"],
+      "team": "DET",
+      "position": "WR",
+      "basePrice": 128.50
+    },
+    {
+      "id": "williams-j",
+      "espnId": "4426388",
+      "name": "Jameson Williams",
+      "searchTerms": ["Jameson Williams", "Williams"],
+      "team": "DET",
+      "position": "WR",
+      "basePrice": 78.00
+    },
+    {
+      "id": "montgomery",
+      "espnId": "3116385",
+      "name": "David Montgomery",
+      "searchTerms": ["David Montgomery", "Montgomery"],
+      "team": "DET",
+      "position": "RB",
+      "basePrice": 92.00
+    },
+    {
+      "id": "mixon",
+      "espnId": "3116593",
+      "name": "Joe Mixon",
+      "searchTerms": ["Joe Mixon", "Mixon"],
+      "team": "HOU",
+      "position": "RB",
+      "basePrice": 105.00
+    },
+    {
+      "id": "waddle",
+      "espnId": "4372016",
+      "name": "Jaylen Waddle",
+      "searchTerms": ["Jaylen Waddle", "Waddle"],
+      "team": "MIA",
+      "position": "WR",
+      "basePrice": 98.00
+    },
+    {
+      "id": "purdy",
+      "espnId": "4361741",
+      "name": "Brock Purdy",
+      "searchTerms": ["Brock Purdy", "Purdy"],
+      "team": "SF",
+      "position": "QB",
+      "basePrice": 125.00
+    },
+    {
+      "id": "goff",
+      "espnId": "3046779",
+      "name": "Jared Goff",
+      "searchTerms": ["Jared Goff", "Goff"],
+      "team": "DET",
+      "position": "QB",
+      "basePrice": 118.00
+    },
+    {
+      "id": "samuel",
+      "espnId": "4047650",
+      "name": "Deebo Samuel",
+      "searchTerms": ["Deebo Samuel", "Deebo"],
+      "team": "SF",
+      "position": "WR",
+      "basePrice": 105.00
+    },
+    {
+      "id": "aiyuk",
+      "espnId": "4360797",
+      "name": "Brandon Aiyuk",
+      "searchTerms": ["Brandon Aiyuk", "Aiyuk"],
+      "team": "SF",
+      "position": "WR",
+      "basePrice": 95.00
+    },
+    {
+      "id": "kittle",
+      "espnId": "3040151",
+      "name": "George Kittle",
+      "searchTerms": ["George Kittle", "Kittle"],
+      "team": "SF",
+      "position": "TE",
+      "basePrice": 88.00
+    },
+    {
+      "id": "st-brown",
+      "espnId": "4360310",
+      "name": "Amon-Ra St. Brown",
+      "searchTerms": ["Amon-Ra St. Brown", "St. Brown", "Sun God"],
+      "team": "DET",
+      "position": "WR",
+      "basePrice": 128.50
+    }
+  ],
+  "metadata": {
+    "description": "ESPN player ID mappings for live news integration",
+    "lastUpdated": "2025-12-11",
+    "source": "ESPN NFL Player Pages"
+  }
+}
+

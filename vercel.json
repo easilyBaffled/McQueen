@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "yarn install",
+  "rewrites": [
+    {
+      "source": "/espn-api/:path*",
+      "destination": "https://site.api.espn.com/:path*"
+    }
+  ]
+}

@@ -1,0 +1,307 @@
+.mini-leaderboard {
+  background: linear-gradient(
+    135deg,
+    var(--color-bg-surface) 0%,
+    rgba(26, 26, 26, 0.95) 100%
+  );
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Subtle competitive accent */
+.mini-leaderboard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    #FFD700 0%,
+    #C0C0C0 33%,
+    #CD7F32 66%,
+    var(--color-primary) 100%
+  );
+  opacity: 0.8;
+}
+
+/* Header */
+.mini-leaderboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.standings-icon {
+  font-size: 16px;
+}
+
+.standings-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--color-text-secondary);
+}
+
+.view-all-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.view-all-link:hover {
+  color: var(--color-primary);
+}
+
+.view-all-link svg {
+  transition: transform var(--transition-fast);
+}
+
+.view-all-link:hover svg {
+  transform: translateX(2px);
+}
+
+/* Rankings List */
+.mini-leaderboard-list {
+  padding: 8px 0;
+}
+
+/* Rank Row */
+.mini-rank-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  transition: background var(--transition-fast);
+}
+
+.mini-rank-row:hover {
+  background: var(--color-bg-card-hover);
+}
+
+.mini-rank-row.is-leader {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 215, 0, 0.1) 0%,
+    transparent 100%
+  );
+}
+
+.mini-rank-row.is-leader:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 215, 0, 0.15) 0%,
+    var(--color-bg-card-hover) 100%
+  );
+}
+
+.mini-rank-row.is-user {
+  background: rgba(221, 0, 0, 0.08);
+}
+
+.mini-rank-row.is-user:hover {
+  background: rgba(221, 0, 0, 0.12);
+}
+
+.mini-rank-row.user-section {
+  border-top: 1px solid rgba(221, 0, 0, 0.2);
+}
+
+/* Rank Indicator */
+.rank-indicator {
+  width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.rank-indicator.rank-number {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: rgba(221, 0, 0, 0.15);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+/* Trader Info */
+.trader-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.trader-avatar {
+  font-size: 16px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-elevated);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mini-rank-row.is-user .trader-avatar {
+  background: rgba(221, 0, 0, 0.2);
+}
+
+.trader-name {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-rank-row.is-user .trader-name {
+  color: var(--color-primary);
+}
+
+/* Trader Value */
+.trader-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.mini-rank-row.is-leader .trader-value {
+  color: #FFD700;
+}
+
+/* Divider */
+.rank-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0;
+}
+
+.divider-dots {
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--color-text-muted);
+}
+
+/* Gap Indicator */
+.gap-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 16px 12px;
+  text-align: center;
+}
+
+.gap-amount {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-neutral);
+}
+
+.gap-text {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+/* Top Status */
+.top-status {
+  padding: 8px 16px 12px;
+  text-align: center;
+}
+
+.status-leader {
+  font-size: 13px;
+  font-weight: 600;
+  color: #FFD700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.status-close {
+  font-size: 12px;
+  color: var(--color-neutral);
+  font-weight: 500;
+}
+
+/* Animations */
+@keyframes rankUp {
+  0% {
+    transform: translateY(0);
+    background: transparent;
+  }
+  50% {
+    background: rgba(0, 200, 83, 0.2);
+  }
+  100% {
+    transform: translateY(0);
+    background: transparent;
+  }
+}
+
+@keyframes rankDown {
+  0% {
+    transform: translateY(0);
+    background: transparent;
+  }
+  50% {
+    background: rgba(255, 23, 68, 0.2);
+  }
+  100% {
+    transform: translateY(0);
+    background: transparent;
+  }
+}
+
+.rank-changed-up {
+  animation: rankUp 0.6s ease;
+}
+
+.rank-changed-down {
+  animation: rankDown 0.6s ease;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .mini-leaderboard {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .mini-rank-row {
+    padding: 8px 12px;
+    gap: 10px;
+  }
+  
+  .trader-name {
+    max-width: 80px;
+  }
+}
+

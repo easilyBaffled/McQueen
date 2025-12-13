@@ -1,0 +1,2357 @@
+{
+  "scenario": "midweek",
+  "timestamp": "2025-12-03T14:00:00",
+  "headline": "Trade Rumors & Injury Updates Shake Up the Market",
+  "players": [
+    {
+      "id": "mahomes",
+      "name": "Patrick Mahomes",
+      "team": "KC",
+      "position": "QB",
+      "basePrice": 138.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 132.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Mahomes steady after bye week",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T14:00:00",
+          "price": 134.50,
+          "reason": {
+            "type": "news",
+            "headline": "Mahomes looking sharp in practice, Chiefs offense clicking",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "analysis", "title": "Chiefs Offense Finding Rhythm", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 133.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with slight correction after Chiefs loss",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T11:00:00",
+          "price": 136.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "GridironGuru bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "gridiron",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 135.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 pre-Thanksgiving - market stabilizing",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T16:00:00",
+          "price": 138.50,
+          "reason": {
+            "type": "news",
+            "headline": "Mahomes 4 TD performance lifts Chiefs to victory",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "video", "title": "Mahomes Thanksgiving Preview", "source": "NFL Network", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 140.25,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Mahomes MVP conversation heats up",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-29T10:00:00",
+          "price": 137.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 sold 2 shares to lock in profits",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 138.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Mahomes at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-06T09:00:00",
+          "price": 142.50,
+          "reason": {
+            "type": "news",
+            "headline": "Fantasy experts bullish on Chiefs passing game evolution",
+            "source": "Fantasy Focus"
+          },
+          "content": [
+            { "type": "analysis", "title": "Fantasy Impact: Chiefs Passing Game Evolution", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hill",
+      "name": "Tyreek Hill",
+      "team": "MIA",
+      "position": "WR",
+      "basePrice": 122.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 128.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Hill coming off monster game",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-07T15:00:00",
+          "price": 131.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "EndZoneElite bought 5 shares",
+            "source": "McQueen Market",
+            "memberId": "endzone",
+            "action": "buy",
+            "shares": 5
+          }
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 129.25,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with minor pullback on Tua concerns",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-16T12:00:00",
+          "price": 126.00,
+          "reason": {
+            "type": "news",
+            "headline": "Dolphins offense struggles in cold weather game",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "analysis", "title": "Can Hill Produce in Cold Weather?", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/3116406/tyreek-hill" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 127.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens with Hill bounce-back narrative",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-23T14:00:00",
+          "price": 125.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "BullMarketBob sold 3 shares",
+            "source": "McQueen Market",
+            "memberId": "bullmarket",
+            "action": "sell",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 124.25,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Hill dealing with minor knee issue",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T11:00:00",
+          "price": 123.00,
+          "reason": {
+            "type": "news",
+            "headline": "Hill questionable tag raises concerns",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 122.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Hill at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-04T10:30:00",
+          "price": 120.50,
+          "reason": {
+            "type": "news",
+            "headline": "Hill limited in practice with hamstring tightness",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "news", "title": "Hill Limited in Wednesday Practice", "source": "ESPN NFL", "url": "https://www.espn.com/nfl/player/news/_/id/3116406/tyreek-hill" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-06T11:00:00",
+          "price": 118.75,
+          "reason": {
+            "type": "league_trade",
+            "headline": "RookieTrader bought 2 shares on the dip",
+            "source": "McQueen Market",
+            "memberId": "rookie",
+            "action": "buy",
+            "shares": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "mccaffrey",
+      "name": "Christian McCaffrey",
+      "team": "SF",
+      "position": "RB",
+      "basePrice": 148.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 155.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - CMC elite status intact",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-09T13:00:00",
+          "price": 152.50,
+          "reason": {
+            "type": "news",
+            "headline": "CMC workload concerns emerge after heavy usage",
+            "source": "Fantasy Focus"
+          },
+          "content": [
+            { "type": "analysis", "title": "CMC Workload: Sustainable or Concerning?", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/3117251/christian-mccaffrey" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 150.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with CMC slightly down on injury scare",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-14T10:00:00",
+          "price": 146.00,
+          "reason": {
+            "type": "news",
+            "headline": "CMC listed on injury report with calf tightness",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-16T15:00:00",
+          "price": 149.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "GridironGuru bought 3 shares on dip",
+            "source": "McQueen Market",
+            "memberId": "gridiron",
+            "action": "buy",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 147.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - CMC calf improving",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T11:00:00",
+          "price": 145.00,
+          "reason": {
+            "type": "news",
+            "headline": "CMC may see reduced snaps as precaution",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 146.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - CMC trending toward full workload",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T14:00:00",
+          "price": 150.00,
+          "reason": {
+            "type": "news",
+            "headline": "Shanahan says CMC 'looks great' in practice",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "video", "title": "CMC Practice Highlights", "source": "49ers Media", "url": "https://www.espn.com/nfl/player/news/_/id/3117251/christian-mccaffrey" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 148.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with CMC at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-04T11:00:00",
+          "price": 150.50,
+          "reason": {
+            "type": "news",
+            "headline": "Shanahan confirms CMC full go for Sunday",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "video", "title": "CMC Looking Sharp in 49ers Practice", "source": "NFL Live", "url": "https://www.espn.com/nfl/player/news/_/id/3117251/christian-mccaffrey" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-06T09:00:00",
+          "price": 156.25,
+          "reason": {
+            "type": "news",
+            "headline": "McCaffrey ready for playoff push",
+            "source": "ESPN NFL"
+          }
+        }
+      ]
+    },
+    {
+      "id": "jefferson",
+      "name": "Justin Jefferson",
+      "team": "MIN",
+      "position": "WR",
+      "basePrice": 130.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 125.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Jefferson consistent as ever",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T12:00:00",
+          "price": 127.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "buy",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 126.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with minor consolidation",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T14:00:00",
+          "price": 129.00,
+          "reason": {
+            "type": "news",
+            "headline": "Jefferson 150+ yards puts him back in WR1 conversation",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "video", "title": "Jefferson's Route Running Masterclass", "source": "NFL Films", "url": "https://www.espn.com/nfl/player/news/_/id/4262921/justin-jefferson" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 128.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Vikings playoff push helping Jefferson",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-23T11:00:00",
+          "price": 131.25,
+          "reason": {
+            "type": "news",
+            "headline": "Jefferson 2 TDs in primetime showcase",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 132.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Jefferson momentum building",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-29T15:00:00",
+          "price": 129.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "ChartChaser sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "chartchaser",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 130.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Jefferson at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-05T11:00:00",
+          "price": 132.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "buy",
+            "shares": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "kelce",
+      "name": "Travis Kelce",
+      "team": "KC",
+      "position": "TE",
+      "basePrice": 102.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 108.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Kelce still TE1 despite age concerns",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T10:00:00",
+          "price": 106.50,
+          "reason": {
+            "type": "news",
+            "headline": "Kelce target share declining as Chiefs spread ball",
+            "source": "Fantasy Focus"
+          },
+          "content": [
+            { "type": "analysis", "title": "Kelce's Evolving Role in KC Offense", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/15847/travis-kelce" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 105.25,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Kelce in minor decline",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T16:00:00",
+          "price": 107.00,
+          "reason": {
+            "type": "news",
+            "headline": "Kelce 8-catch, 95-yard game silences doubters",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 106.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens with Kelce stabilizing",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T14:00:00",
+          "price": 104.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "RookieTrader sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "rookie",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 103.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - age concerns resurface",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T13:00:00",
+          "price": 101.50,
+          "reason": {
+            "type": "news",
+            "headline": "Kelce quiet in recent games, managers worried",
+            "source": "Fantasy Focus"
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 102.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Kelce at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-06T11:00:00",
+          "price": 98.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "BullMarketBob sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "bullmarket",
+            "action": "sell",
+            "shares": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "henry",
+      "name": "Derrick Henry",
+      "team": "BAL",
+      "position": "RB",
+      "basePrice": 124.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 118.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Henry proving doubters wrong in Baltimore",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-09T14:00:00",
+          "price": 121.50,
+          "reason": {
+            "type": "news",
+            "headline": "Henry 150+ rushing yards, Ravens run game dominant",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "video", "title": "King Henry Highlights vs Browns", "source": "NFL Network", "url": "https://www.espn.com/nfl/player/news/_/id/3043078/derrick-henry" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 120.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Henry holding gains",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-14T11:00:00",
+          "price": 123.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "EndZoneElite bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "endzone",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 122.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Henry workload sustainable?",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-23T15:00:00",
+          "price": 125.75,
+          "reason": {
+            "type": "news",
+            "headline": "Henry 2 TDs, Ravens clinch playoff spot",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 126.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Henry on pace for 2000 yards",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-29T10:00:00",
+          "price": 124.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 sold 2 shares to diversify",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 124.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Henry at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-05T10:00:00",
+          "price": 126.75,
+          "reason": {
+            "type": "league_trade",
+            "headline": "EndZoneElite bought 5 shares",
+            "source": "McQueen Market",
+            "memberId": "endzone",
+            "action": "buy",
+            "shares": 5
+          }
+        },
+        {
+          "timestamp": "2025-12-06T13:00:00",
+          "price": 129.88,
+          "reason": {
+            "type": "news",
+            "headline": "Henry rushing for 2K pace, historical comparison",
+            "source": "Fantasy Focus"
+          },
+          "content": [
+            { "type": "analysis", "title": "Henry's Historic Pace Analysis", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/3043078/derrick-henry" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chase",
+      "name": "Ja'Marr Chase",
+      "team": "CIN",
+      "position": "WR",
+      "basePrice": 142.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 135.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Chase elite but Bengals struggling",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T16:00:00",
+          "price": 138.50,
+          "reason": {
+            "type": "news",
+            "headline": "Chase 180 yards, 2 TDs carries Bengals to win",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "video", "title": "Chase Goes Off Against Ravens", "source": "NFL Network", "url": "https://www.espn.com/nfl/player/news/_/id/4362628/jamarr-chase" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 139.25,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Chase momentum building",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T11:00:00",
+          "price": 141.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "ChartChaser bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "chartchaser",
+            "action": "buy",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 140.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Chase WR1 discussion heating up",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T14:00:00",
+          "price": 143.75,
+          "reason": {
+            "type": "news",
+            "headline": "Chase on pace for historic receiving season",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 144.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Chase top dog in fantasy",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T12:00:00",
+          "price": 142.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "RookieTrader sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "rookie",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 142.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Chase at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-05T16:00:00",
+          "price": 144.50,
+          "reason": {
+            "type": "news",
+            "headline": "Chase making case for WR1 overall",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "article", "title": "Chase Making Case for WR1 Overall", "source": "ESPN NFL", "url": "https://www.espn.com/nfl/player/news/_/id/4362628/jamarr-chase" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lamb",
+      "name": "CeeDee Lamb",
+      "team": "DAL",
+      "position": "WR",
+      "basePrice": 118.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 130.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Lamb elite production continues",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T15:00:00",
+          "price": 128.50,
+          "reason": {
+            "type": "news",
+            "headline": "Cowboys QB injuries starting to impact Lamb production",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 126.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Lamb declining on QB concerns",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T14:00:00",
+          "price": 124.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "BullMarketBob sold 3 shares",
+            "source": "McQueen Market",
+            "memberId": "bullmarket",
+            "action": "sell",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 123.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Cowboys season spiraling",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T11:00:00",
+          "price": 120.25,
+          "reason": {
+            "type": "news",
+            "headline": "Lamb frustrated with Cowboys QB situation",
+            "source": "ESPN Dallas"
+          },
+          "content": [
+            { "type": "news", "title": "Lamb's Frustration Boiling Over", "source": "ESPN Dallas", "url": "https://www.espn.com/nfl/player/news/_/id/4241389/ceedee-lamb" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 119.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Lamb value cratering",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T10:00:00",
+          "price": 117.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "RookieTrader sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "rookie",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 118.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Lamb at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-03T15:00:00",
+          "price": 116.25,
+          "reason": {
+            "type": "news",
+            "headline": "Cowboys QB situation remains unclear",
+            "source": "ESPN Dallas"
+          },
+          "content": [
+            { "type": "news", "title": "Cowboys QB Situation Remains Unclear", "source": "ESPN Dallas", "url": "https://www.espn.com/nfl/player/news/_/id/4241389/ceedee-lamb" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-06T10:00:00",
+          "price": 112.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "RookieTrader sold 3 shares",
+            "source": "McQueen Market",
+            "memberId": "rookie",
+            "action": "sell",
+            "shares": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "allen",
+      "name": "Josh Allen",
+      "team": "BUF",
+      "position": "QB",
+      "basePrice": 158.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 150.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Allen MVP campaign in full swing",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T17:00:00",
+          "price": 154.50,
+          "reason": {
+            "type": "news",
+            "headline": "Allen 4 total TDs, Bills dominate primetime",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "video", "title": "Josh Allen Primetime Highlights", "source": "NFL Network", "url": "https://www.espn.com/nfl/player/news/_/id/3918298/josh-allen" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 155.25,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Allen maintaining momentum",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T12:00:00",
+          "price": 157.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "GridironGuru bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "gridiron",
+            "action": "buy",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 156.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Allen slight pullback after bye",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-23T16:00:00",
+          "price": 159.75,
+          "reason": {
+            "type": "news",
+            "headline": "Allen dominant return from bye, 5 TDs",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 160.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Allen MVP frontrunner",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-29T11:00:00",
+          "price": 158.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 sold 2 shares to lock in gains",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 158.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Allen at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-04T10:00:00",
+          "price": 160.25,
+          "reason": {
+            "type": "news",
+            "headline": "Bills clinch division, Allen stays in MVP race",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "article", "title": "Allen's MVP Campaign by the Numbers", "source": "ESPN Stats", "url": "https://www.espn.com/nfl/player/news/_/id/3918298/josh-allen" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-06T10:00:00",
+          "price": 165.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "EndZoneElite bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "endzone",
+            "action": "buy",
+            "shares": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "hurts",
+      "name": "Jalen Hurts",
+      "team": "PHI",
+      "position": "QB",
+      "basePrice": 140.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 138.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Hurts steady for Eagles",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T14:00:00",
+          "price": 136.50,
+          "reason": {
+            "type": "news",
+            "headline": "Hurts ankle tweaked in practice, questionable",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 135.25,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Hurts still nursing ankle",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T11:00:00",
+          "price": 137.00,
+          "reason": {
+            "type": "news",
+            "headline": "Hurts clears concussion protocol, starts Sunday",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 138.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Hurts back healthy",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T15:00:00",
+          "price": 141.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "EndZoneElite bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "endzone",
+            "action": "buy",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 142.25,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Eagles Super Bowl favorites",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T14:00:00",
+          "price": 140.75,
+          "reason": {
+            "type": "news",
+            "headline": "Hurts 2 TDs but ankle still bothering him",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 140.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Hurts at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-06T15:00:00",
+          "price": 139.60,
+          "reason": {
+            "type": "news",
+            "headline": "Hurts ankle fully healed, cleared for all activities",
+            "source": "ESPN NFL"
+          }
+        }
+      ]
+    },
+    {
+      "id": "barkley",
+      "name": "Saquon Barkley",
+      "team": "PHI",
+      "position": "RB",
+      "basePrice": 145.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 132.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Barkley thriving in Philly",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T16:00:00",
+          "price": 136.50,
+          "reason": {
+            "type": "news",
+            "headline": "Barkley 150+ yards, best game of season",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "video", "title": "Barkley's Explosive Runs", "source": "NFL Network", "url": "https://www.espn.com/nfl/player/news/_/id/3929630/saquon-barkley" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 138.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Barkley surging",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T10:00:00",
+          "price": 140.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "GridironGuru bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "gridiron",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 141.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Barkley 2000 yard watch begins",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-23T14:00:00",
+          "price": 145.75,
+          "reason": {
+            "type": "news",
+            "headline": "Barkley 175 yards, Eagles offense unstoppable",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 147.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Barkley MVP dark horse",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T12:00:00",
+          "price": 146.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "ChartChaser sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "chartchaser",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 145.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Barkley at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-05T15:00:00",
+          "price": 150.75,
+          "reason": {
+            "type": "news",
+            "headline": "Can Barkley break 2000 yards? 3 games left",
+            "source": "Fantasy Focus"
+          },
+          "content": [
+            { "type": "analysis", "title": "Can Barkley Break 2000 Yards?", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/3929630/saquon-barkley" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "brown",
+      "name": "A.J. Brown",
+      "team": "PHI",
+      "position": "WR",
+      "basePrice": 127.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 132.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - AJB consistent performer",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T15:00:00",
+          "price": 130.50,
+          "reason": {
+            "type": "news",
+            "headline": "Brown targets declining as Eagles run more",
+            "source": "Fantasy Focus"
+          }
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 129.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Brown slight decline",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T14:00:00",
+          "price": 131.25,
+          "reason": {
+            "type": "news",
+            "headline": "Brown TD catch saves fantasy week",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 130.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Brown stabilizing",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-23T11:00:00",
+          "price": 128.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "BullMarketBob sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "bullmarket",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 127.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Brown role uncertain",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T15:00:00",
+          "price": 128.50,
+          "reason": {
+            "type": "news",
+            "headline": "Brown 8 targets shows he's still involved",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 127.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Brown at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-04T14:00:00",
+          "price": 126.50,
+          "reason": {
+            "type": "news",
+            "headline": "Eagles pass-run balance shifting toward run game",
+            "source": "Fantasy Focus"
+          },
+          "content": [
+            { "type": "analysis", "title": "Eagles Pass-Run Balance Shifting", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/4047646/aj-brown" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "williams-j",
+      "name": "Jameson Williams",
+      "team": "DET",
+      "position": "WR",
+      "basePrice": 70.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 55.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Williams emerging in Lions offense",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T14:00:00",
+          "price": 58.50,
+          "reason": {
+            "type": "news",
+            "headline": "Williams 2 big plays, Lions offense clicking",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 60.25,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens - Williams breakout potential",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T11:00:00",
+          "price": 62.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "ChartChaser bought 5 shares",
+            "source": "McQueen Market",
+            "memberId": "chartchaser",
+            "action": "buy",
+            "shares": 5
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 64.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Williams gaining target share",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T16:00:00",
+          "price": 68.00,
+          "reason": {
+            "type": "news",
+            "headline": "Williams TD and 100 yards, breakout confirmed",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "video", "title": "Williams' Breakout Game", "source": "NFL Network", "url": "https://www.espn.com/nfl/team/news/_/name/det" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 69.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Williams now must-start",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T13:00:00",
+          "price": 71.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "RookieTrader bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "rookie",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 70.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Williams at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-04T11:00:00",
+          "price": 72.50,
+          "reason": {
+            "type": "news",
+            "headline": "Jameson Williams breaking out? Explosive practice session",
+            "source": "NFL Live"
+          },
+          "content": [
+            { "type": "video", "title": "Jameson Williams Breaking Out?", "source": "NFL Live", "url": "https://www.espn.com/nfl/team/news/_/name/det" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-06T10:00:00",
+          "price": 78.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "ChartChaser bought 8 shares",
+            "source": "McQueen Market",
+            "memberId": "chartchaser",
+            "action": "buy",
+            "shares": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "lamar",
+      "name": "Lamar Jackson",
+      "team": "BAL",
+      "position": "QB",
+      "basePrice": 152.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 145.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Lamar in MVP form",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-09T15:00:00",
+          "price": 149.50,
+          "reason": {
+            "type": "news",
+            "headline": "Lamar 4 TDs, Ravens offense dominant",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "video", "title": "Lamar's MVP Highlights", "source": "NFL Network", "url": "https://www.espn.com/nfl/player/news/_/id/3916387/lamar-jackson" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 150.25,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Lamar surging",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T12:00:00",
+          "price": 152.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "EndZoneElite bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "endzone",
+            "action": "buy",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 151.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Lamar slight cooldown",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-23T14:00:00",
+          "price": 154.75,
+          "reason": {
+            "type": "news",
+            "headline": "Lamar 350 total yards, Ravens roll",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 155.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Lamar back-to-back MVP favorite",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-29T10:00:00",
+          "price": 153.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "GridironGuru sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "gridiron",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 152.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Lamar at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-05T16:00:00",
+          "price": 157.50,
+          "reason": {
+            "type": "news",
+            "headline": "Back-to-back MVP looks increasingly likely",
+            "source": "NFL Primetime"
+          },
+          "content": [
+            { "type": "video", "title": "Lamar Jackson MVP Highlights", "source": "NFL Primetime", "url": "https://www.espn.com/nfl/player/news/_/id/3916387/lamar-jackson" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gibbs",
+      "name": "Jahmyr Gibbs",
+      "team": "DET",
+      "position": "RB",
+      "basePrice": 92.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 82.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Gibbs in timeshare with Montgomery",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T13:00:00",
+          "price": 84.50,
+          "reason": {
+            "type": "news",
+            "headline": "Gibbs explosive plays making him fantasy darling",
+            "source": "Fantasy Focus"
+          }
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 85.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Gibbs trending up",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T15:00:00",
+          "price": 88.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "ChartChaser bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "chartchaser",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 89.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Gibbs role expanding",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T14:00:00",
+          "price": 91.25,
+          "reason": {
+            "type": "news",
+            "headline": "Gibbs 2 TDs in Lions blowout win",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "video", "title": "Gibbs TD Highlights", "source": "NFL Network", "url": "https://www.espn.com/nfl/player/news/_/id/4428331/jahmyr-gibbs" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 90.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Gibbs in committee concerns",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T11:00:00",
+          "price": 91.75,
+          "reason": {
+            "type": "league_trade",
+            "headline": "RookieTrader bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "rookie",
+            "action": "buy",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 92.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Gibbs at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-04T14:00:00",
+          "price": 93.25,
+          "reason": {
+            "type": "news",
+            "headline": "Montgomery nursing knee, Gibbs set for larger role",
+            "source": "ESPN Detroit"
+          },
+          "content": [
+            { "type": "news", "title": "Montgomery Questionable, Gibbs Ready", "source": "ESPN Detroit", "url": "https://www.espn.com/nfl/player/news/_/id/4428331/jahmyr-gibbs" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-06T15:30:00",
+          "price": 97.03,
+          "reason": {
+            "type": "news",
+            "headline": "Gibbs expected to see 70%+ snaps with Montgomery questionable",
+            "source": "ESPN Detroit"
+          },
+          "content": [
+            { "type": "analysis", "title": "Gibbs Workload Projection", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/4428331/jahmyr-gibbs" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "montgomery",
+      "name": "David Montgomery",
+      "team": "DET",
+      "position": "RB",
+      "basePrice": 88.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 94.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Montgomery TD vulture role",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T14:00:00",
+          "price": 92.50,
+          "reason": {
+            "type": "news",
+            "headline": "Montgomery sharing more with Gibbs",
+            "source": "Fantasy Focus"
+          }
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 91.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Montgomery declining",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T12:00:00",
+          "price": 93.00,
+          "reason": {
+            "type": "news",
+            "headline": "Montgomery 2 TDs salvages fantasy week",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 92.25,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Montgomery role questions",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T16:00:00",
+          "price": 90.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "BullMarketBob sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "bullmarket",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 89.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Montgomery value declining",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T10:00:00",
+          "price": 88.50,
+          "reason": {
+            "type": "news",
+            "headline": "Montgomery knee soreness after game",
+            "source": "ESPN Detroit"
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 88.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Montgomery at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-04T10:00:00",
+          "price": 86.50,
+          "reason": {
+            "type": "news",
+            "headline": "Montgomery misses practice with knee injury",
+            "source": "ESPN Detroit"
+          },
+          "content": [
+            { "type": "news", "title": "Montgomery Dealing With Knee Issue", "source": "ESPN Detroit", "url": "https://www.espn.com/nfl/team/news/_/name/det" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-06T10:00:00",
+          "price": 82.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "BullMarketBob sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "bullmarket",
+            "action": "sell",
+            "shares": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "nabers",
+      "name": "Malik Nabers",
+      "team": "NYG",
+      "position": "WR",
+      "basePrice": 85.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 75.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Nabers rookie sensation",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T15:00:00",
+          "price": 78.50,
+          "reason": {
+            "type": "news",
+            "headline": "Nabers 10 targets shows Giants committed",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 79.25,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Nabers momentum",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T11:00:00",
+          "price": 81.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "ChartChaser bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "chartchaser",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 82.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Nabers elite route runner",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T14:00:00",
+          "price": 84.75,
+          "reason": {
+            "type": "news",
+            "headline": "Nabers 120 yards despite Giants loss",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "video", "title": "Nabers Rookie Highlights", "source": "NFL Network", "url": "https://www.espn.com/nfl/player/news/_/id/4711925/malik-nabers" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 85.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Nabers dynasty asset soaring",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T12:00:00",
+          "price": 84.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 85.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Nabers at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-04T14:00:00",
+          "price": 86.00,
+          "reason": {
+            "type": "news",
+            "headline": "Nabers dynasty value soaring despite team struggles",
+            "source": "Fantasy Focus"
+          },
+          "content": [
+            { "type": "analysis", "title": "Nabers Dynasty Value Soaring", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/4711925/malik-nabers" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-06T16:00:00",
+          "price": 90.21,
+          "reason": {
+            "type": "league_trade",
+            "headline": "ChartChaser bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "chartchaser",
+            "action": "buy",
+            "shares": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "mixon",
+      "name": "Joe Mixon",
+      "team": "HOU",
+      "position": "RB",
+      "basePrice": 112.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 105.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Mixon solid in Houston",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T14:00:00",
+          "price": 108.50,
+          "reason": {
+            "type": "news",
+            "headline": "Mixon 25 carries, workhorse role confirmed",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 109.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Mixon steady",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T12:00:00",
+          "price": 111.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "GridironGuru bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "gridiron",
+            "action": "buy",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 112.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Mixon RB1 numbers",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-23T15:00:00",
+          "price": 114.75,
+          "reason": {
+            "type": "news",
+            "headline": "Mixon 150+ yards, Texans control clock",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 115.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Mixon elite workload",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T14:00:00",
+          "price": 113.25,
+          "reason": {
+            "type": "news",
+            "headline": "Texans may rest starters with playoff spot secure",
+            "source": "ESPN Houston"
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 112.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Mixon at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-04T11:00:00",
+          "price": 110.75,
+          "reason": {
+            "type": "news",
+            "headline": "Texans considering rest for key players with playoff spot secure",
+            "source": "ESPN Houston"
+          },
+          "content": [
+            { "type": "news", "title": "Texans Considering Rest for Key Players", "source": "ESPN Houston", "url": "https://www.espn.com/nfl/team/news/_/name/hou" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "waddle",
+      "name": "Jaylen Waddle",
+      "team": "MIA",
+      "position": "WR",
+      "basePrice": 95.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 100.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Waddle WR2 on own team",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T13:00:00",
+          "price": 98.50,
+          "reason": {
+            "type": "news",
+            "headline": "Waddle 5 targets with Hill healthy",
+            "source": "Fantasy Focus"
+          }
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 97.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Waddle declining",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T15:00:00",
+          "price": 99.00,
+          "reason": {
+            "type": "news",
+            "headline": "Waddle TD salvages week, 7 targets",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 98.25,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Waddle boom/bust",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-22T12:00:00",
+          "price": 96.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "RookieTrader sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "rookie",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 95.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Waddle role shrinking",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T14:00:00",
+          "price": 94.50,
+          "reason": {
+            "type": "news",
+            "headline": "Waddle 4 targets, Hill dominating looks",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 95.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Waddle at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-04T14:00:00",
+          "price": 94.25,
+          "reason": {
+            "type": "news",
+            "headline": "Waddle's role when Hill returns - target share concerns",
+            "source": "Fantasy Focus"
+          },
+          "content": [
+            { "type": "analysis", "title": "Waddle's Role When Hill Returns", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/team/news/_/name/mia" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stroud",
+      "name": "C.J. Stroud",
+      "team": "HOU",
+      "position": "QB",
+      "basePrice": 132.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-11-05T09:00:00",
+          "price": 125.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 10 market opens - Stroud Year 2 excellence",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-08T16:00:00",
+          "price": 128.50,
+          "reason": {
+            "type": "news",
+            "headline": "Stroud 3 TDs, no picks, Texans roll",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "video", "title": "Stroud Year 2 Highlights", "source": "NFL Network", "url": "https://www.espn.com/nfl/player/news/_/id/4432620/cj-stroud" }
+          ]
+        },
+        {
+          "timestamp": "2025-11-12T09:00:00",
+          "price": 129.75,
+          "reason": {
+            "type": "news",
+            "headline": "Week 11 opens with Stroud momentum",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-15T11:00:00",
+          "price": 131.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "BullMarketBob bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "bullmarket",
+            "action": "buy",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-11-19T09:00:00",
+          "price": 130.50,
+          "reason": {
+            "type": "news",
+            "headline": "Week 12 opens - Stroud elite tier",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-23T14:00:00",
+          "price": 133.25,
+          "reason": {
+            "type": "news",
+            "headline": "Stroud 350 yards, Texans clinch division",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-11-26T09:00:00",
+          "price": 134.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week 13 opens - Stroud QB5 rest of season",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-11-30T15:00:00",
+          "price": 132.50,
+          "reason": {
+            "type": "news",
+            "headline": "Stroud rest concerns with playoffs locked",
+            "source": "ESPN Houston"
+          }
+        },
+        {
+          "timestamp": "2025-12-03T09:00:00",
+          "price": 132.00,
+          "reason": {
+            "type": "news",
+            "headline": "Week opens with Stroud at baseline value",
+            "source": "McQueen Market"
+          }
+        },
+        {
+          "timestamp": "2025-12-05T15:00:00",
+          "price": 134.50,
+          "reason": {
+            "type": "news",
+            "headline": "Year 2 evolution - Stroud shows no signs of regression",
+            "source": "NFL Live"
+          },
+          "content": [
+            { "type": "video", "title": "C.J. Stroud: Year 2 Evolution", "source": "NFL Live", "url": "https://www.espn.com/nfl/player/news/_/id/4432620/cj-stroud" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-06T10:00:00",
+          "price": 135.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "BullMarketBob bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "bullmarket",
+            "action": "buy",
+            "shares": 2
+          }
+        }
+      ]
+    }
+  ]
+}

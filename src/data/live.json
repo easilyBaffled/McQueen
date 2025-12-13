@@ -1,0 +1,1330 @@
+{
+  "scenario": "live",
+  "timestamp": "2025-12-09T21:45:00",
+  "headline": "Monday Night Football: Chiefs vs. Bills - Q2",
+  "players": [
+    {
+      "id": "mahomes",
+      "name": "Patrick Mahomes",
+      "team": "KC",
+      "position": "QB",
+      "basePrice": 142.50,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T20:00:00",
+          "price": 142.50,
+          "reason": {
+            "type": "news",
+            "headline": "Game kickoff - Mahomes looking to extend win streak",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:15:00",
+          "price": 143.64,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Mahomes completes 15-yard pass to Rice",
+            "source": "ESPN Gamecast",
+            "url": "https://www.espn.com/nfl/game/_/gameId/401547417"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:22:00",
+          "price": 144.36,
+          "reason": {
+            "type": "league_trade",
+            "headline": "GridironGuru bought 5 shares",
+            "source": "McQueen Market",
+            "memberId": "gridiron",
+            "action": "buy",
+            "shares": 5
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:35:00",
+          "price": 146.53,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Kelce 22-yard catch and run, Mahomes with another dime",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:48:00",
+          "price": 148.73,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Worthy deep bomb - 45 yards! Mahomes showing off his arm",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:05:00",
+          "price": 150.22,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "buy",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:20:00",
+          "price": 153.97,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Mahomes finds Kelce for 22-yard score",
+            "source": "ESPN Gamecast",
+            "url": "https://www.espn.com/nfl/game/_/gameId/401547417"
+          },
+          "content": [
+            { "type": "video", "title": "LIVE: Mahomes TD to Kelce", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" },
+            { "type": "analysis", "title": "Mahomes Carving Up Bills D", "source": "NFL Live", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T21:50:00",
+          "price": 155.24,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Mahomes hits Rice for 18 yards on 3rd down conversion",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:08:00",
+          "price": 156.80,
+          "reason": {
+            "type": "league_trade",
+            "headline": "FantasyMVP bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "fantasymvp",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:32:00",
+          "price": 151.15,
+          "reason": {
+            "type": "game_event",
+            "eventType": "INT",
+            "headline": "INTERCEPTION! Mahomes picked off by Milano - Bills ball!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Milano Picks Off Mahomes!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T22:48:00",
+          "price": 156.69,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Mahomes answers with 35-yard bomb to Worthy!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Mahomes Deep Ball TD!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" },
+            { "type": "analysis", "title": "Mahomes Showing MVP Form", "source": "NFL Live", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T22:58:00",
+          "price": 158.26,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Mahomes orchestrating 2-minute drill, 3 completions",
+            "source": "ESPN Gamecast"
+          }
+        }
+      ]
+    },
+    {
+      "id": "allen",
+      "name": "Josh Allen",
+      "team": "BUF",
+      "position": "QB",
+      "basePrice": 165.00,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T20:00:00",
+          "price": 165.00,
+          "reason": {
+            "type": "news",
+            "headline": "Game kickoff - Allen looking to avenge playoff losses",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:18:00",
+          "price": 159.23,
+          "reason": {
+            "type": "game_event",
+            "eventType": "INT",
+            "headline": "INTERCEPTION! Allen picked off at midfield",
+            "source": "ESPN Gamecast",
+            "url": "https://www.espn.com/nfl/game/_/gameId/401547417"
+          },
+          "content": [
+            { "type": "video", "title": "LIVE: Allen's Early Struggles", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/3918298/josh-allen" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T20:30:00",
+          "price": 157.32,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Allen sacked, Bills forced to punt",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:45:00",
+          "price": 156.06,
+          "reason": {
+            "type": "league_trade",
+            "headline": "StockJock sold 4 shares",
+            "source": "McQueen Market",
+            "memberId": "stockjock",
+            "action": "sell",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:15:00",
+          "price": 158.40,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Allen finds Shakir for first down, Bills moving",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:30:00",
+          "price": 159.19,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Cook breaks free for 18 yards, Allen audibled perfectly",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:42:00",
+          "price": 166.35,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "Allen TD pass to Kincaid! Game on!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "news", "title": "Bills Trail at Half Despite Allen's Efforts", "source": "ESPN NFL", "url": "https://www.espn.com/nfl/player/news/_/id/3918298/josh-allen" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T22:05:00",
+          "price": 168.02,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Allen scrambles for 12 yards, Bills moving",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:20:00",
+          "price": 174.18,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Allen keeps it himself for 8-yard rushing TD!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Allen Rushing TD - Game Tied!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/3918298/josh-allen" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T22:35:00",
+          "price": 176.65,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Allen finds Shakir wide open for 25 yards after INT",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:42:00",
+          "price": 177.42,
+          "reason": {
+            "type": "league_trade",
+            "headline": "GridironGuru bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "gridiron",
+            "action": "buy",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:55:00",
+          "price": 179.20,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Allen threading needle to Cook for crucial first down",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T23:02:00",
+          "price": 173.53,
+          "reason": {
+            "type": "game_event",
+            "eventType": "INT",
+            "headline": "PICKED OFF! Allen forces throw into coverage - Chiefs capitalize",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Allen's Late INT", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/3918298/josh-allen" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kelce",
+      "name": "Travis Kelce",
+      "team": "KC",
+      "position": "TE",
+      "basePrice": 98.50,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T20:00:00",
+          "price": 98.50,
+          "reason": {
+            "type": "news",
+            "headline": "Game kickoff - Kelce looking to silence doubters",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:25:00",
+          "price": 102.25,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Kelce breaks free for 22-yard catch and run",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:40:00",
+          "price": 104.81,
+          "reason": {
+            "type": "league_trade",
+            "headline": "BullMarketBob bought 8 shares",
+            "source": "McQueen Market",
+            "memberId": "bullmarket",
+            "action": "buy",
+            "shares": 8
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:00:00",
+          "price": 108.43,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Kelce with another first down catch, 6 targets already",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:20:00",
+          "price": 114.94,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Kelce hauls in 22-yard TD from Mahomes",
+            "source": "ESPN Gamecast",
+            "url": "https://www.espn.com/nfl/game/_/gameId/401547417"
+          },
+          "content": [
+            { "type": "video", "title": "LIVE: Kelce's Vintage Performance", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/15847/travis-kelce" },
+            { "type": "article", "title": "Kelce Proving Doubters Wrong Tonight", "source": "ESPN NFL", "url": "https://www.espn.com/nfl/player/news/_/id/15847/travis-kelce" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T21:55:00",
+          "price": 116.67,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Kelce finding soft spots in zone, 14-yard gain",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:15:00",
+          "price": 117.84,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "buy",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:52:00",
+          "price": 119.60,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Kelce with clutch 3rd down catch, 8 catches 95 yards",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "analysis", "title": "Kelce Dominating in 4th Quarter", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/15847/travis-kelce" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "diggs-s",
+      "name": "Stefon Diggs",
+      "team": "HOU",
+      "position": "WR",
+      "basePrice": 85.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T20:00:00",
+          "price": 85.00,
+          "reason": {
+            "type": "news",
+            "headline": "Diggs inactive - watching former team struggle",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:45:00",
+          "price": 85.85,
+          "reason": {
+            "type": "news",
+            "headline": "Bills struggling without former star receiver",
+            "source": "Fantasy Focus"
+          },
+          "content": [
+            { "type": "analysis", "title": "Bills Miss Diggs Tonight", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/3116406/stefon-diggs" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T21:30:00",
+          "price": 86.27,
+          "reason": {
+            "type": "league_trade",
+            "headline": "PigSkinPro bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "pigskin",
+            "action": "buy",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:25:00",
+          "price": 86.70,
+          "reason": {
+            "type": "news",
+            "headline": "Bills comeback sparking Diggs trade speculation",
+            "source": "Fantasy Focus"
+          }
+        }
+      ]
+    },
+    {
+      "id": "rice",
+      "name": "Rashee Rice",
+      "team": "KC",
+      "position": "WR",
+      "basePrice": 72.50,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T20:00:00",
+          "price": 72.50,
+          "reason": {
+            "type": "news",
+            "headline": "Game kickoff - Rice as WR1 tonight",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:15:00",
+          "price": 73.59,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Rice hauls in 15-yard pass from Mahomes",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:35:00",
+          "price": 74.69,
+          "reason": {
+            "type": "league_trade",
+            "headline": "FantasyMVP bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "fantasymvp",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:10:00",
+          "price": 76.45,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Rice with 5 catches on 6 targets in first half",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "LIVE: Rice Making Plays", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/4429795/rashee-rice" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T21:48:00",
+          "price": 77.60,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Rice hauls in 18-yard pass from Mahomes",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:12:00",
+          "price": 78.38,
+          "reason": {
+            "type": "league_trade",
+            "headline": "NFLNerd bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "nflnerd",
+            "action": "buy",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:38:00",
+          "price": 79.56,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Rice making plays in traffic, 12-yard gain",
+            "source": "ESPN Gamecast"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cook",
+      "name": "James Cook",
+      "team": "BUF",
+      "position": "RB",
+      "basePrice": 94.25,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T20:00:00",
+          "price": 94.25,
+          "reason": {
+            "type": "news",
+            "headline": "Game kickoff - Cook expected to see heavy workload",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:30:00",
+          "price": 93.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Cook limited early as Bills fall behind",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:55:00",
+          "price": 92.10,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Pacheco TD run - game script forcing Bills to abandon run",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:20:00",
+          "price": 90.52,
+          "reason": {
+            "type": "league_trade",
+            "headline": "NFLNerd sold 3 shares",
+            "source": "McQueen Market",
+            "memberId": "nflnerd",
+            "action": "sell",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:30:00",
+          "price": 93.24,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Cook breaks free for 18 yards!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "analysis", "title": "Cook's Workload Shrinking", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/4241985/james-cook" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T22:18:00",
+          "price": 96.03,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Cook explosive 22-yard run, Bills in Chiefs territory",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:45:00",
+          "price": 97.47,
+          "reason": {
+            "type": "league_trade",
+            "headline": "EndZoneElite bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "endzone",
+            "action": "buy",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:58:00",
+          "price": 102.34,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Cook punches it in from 2 yards - Bills take lead!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Cook TD - Bills Lead!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/4241985/james-cook" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pacheco",
+      "name": "Isiah Pacheco",
+      "team": "KC",
+      "position": "RB",
+      "basePrice": 88.00,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T20:00:00",
+          "price": 88.00,
+          "reason": {
+            "type": "news",
+            "headline": "Game kickoff - Pacheco ready to pound the rock",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:40:00",
+          "price": 90.20,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Pacheco grinding yards, 35 rushing so far",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:55:00",
+          "price": 94.71,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Pacheco punches it in from 3 yards out",
+            "source": "ESPN Gamecast",
+            "url": "https://www.espn.com/nfl/game/_/gameId/401547417"
+          },
+          "content": [
+            { "type": "video", "title": "LIVE: Pacheco Grinding Yards", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/4361579/isiah-pacheco" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T21:15:00",
+          "price": 95.66,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "buy",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:00:00",
+          "price": 97.57,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Pacheco grinding yards, Chiefs controlling clock",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:28:00",
+          "price": 96.60,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Pacheco stuffed at line, Chiefs punt",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:42:00",
+          "price": 98.53,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Pacheco big 15-yard run on crucial drive",
+            "source": "ESPN Gamecast"
+          }
+        }
+      ]
+    },
+    {
+      "id": "kincaid",
+      "name": "Dalton Kincaid",
+      "team": "BUF",
+      "position": "TE",
+      "basePrice": 68.50,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T20:00:00",
+          "price": 68.50,
+          "reason": {
+            "type": "news",
+            "headline": "Game kickoff - Kincaid as Allen's safety valve",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:35:00",
+          "price": 67.13,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Kincaid with only 1 target as offense sputters",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:00:00",
+          "price": 65.78,
+          "reason": {
+            "type": "league_trade",
+            "headline": "EndZoneElite sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "endzone",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:42:00",
+          "price": 70.06,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Kincaid hauls in TD from Allen!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "analysis", "title": "Kincaid Disappearing Tonight", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/4430737/dalton-kincaid" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T22:22:00",
+          "price": 71.46,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Kincaid with 9-yard catch on crossing route",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:50:00",
+          "price": 72.18,
+          "reason": {
+            "type": "league_trade",
+            "headline": "BullMarketBob bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "bullmarket",
+            "action": "buy",
+            "shares": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "worthy",
+      "name": "Xavier Worthy",
+      "team": "KC",
+      "position": "WR",
+      "basePrice": 58.75,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T20:00:00",
+          "price": 58.75,
+          "reason": {
+            "type": "news",
+            "headline": "Game kickoff - Rookie Worthy looking to make impact",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:30:00",
+          "price": 60.10,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Worthy with a quick 12-yard catch",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:48:00",
+          "price": 62.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "DEEP BALL! Worthy burns Bills secondary for 52 yards",
+            "source": "ESPN Gamecast",
+            "url": "https://www.espn.com/nfl/game/_/gameId/401547417"
+          },
+          "content": [
+            { "type": "video", "title": "LIVE: Worthy Burns Bills Deep", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/4432577/xavier-worthy" },
+            { "type": "news", "title": "Rookie Worthy Making Big Plays", "source": "ESPN NFL", "url": "https://www.espn.com/nfl/player/news/_/id/4432577/xavier-worthy" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T21:10:00",
+          "price": 64.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "RookieTrader bought 6 shares",
+            "source": "McQueen Market",
+            "memberId": "rookie",
+            "action": "buy",
+            "shares": 6
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:25:00",
+          "price": 65.28,
+          "reason": {
+            "type": "league_trade",
+            "headline": "ChartChaser bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "chartchaser",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:10:00",
+          "price": 66.58,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Worthy burns cornerback for 28 yards",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:48:00",
+          "price": 71.91,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Worthy 35-yard TD catch - speed kills!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Worthy Blazing Speed TD!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/4432577/xavier-worthy" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T23:00:00",
+          "price": 73.35,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Worthy drawing safety attention, opening up field",
+            "source": "ESPN Gamecast"
+          }
+        }
+      ]
+    },
+    {
+      "id": "shakir",
+      "name": "Khalil Shakir",
+      "team": "BUF",
+      "position": "WR",
+      "basePrice": 52.25,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T20:00:00",
+          "price": 52.25,
+          "reason": {
+            "type": "news",
+            "headline": "Game kickoff - Shakir as WR1 for Bills",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:40:00",
+          "price": 51.47,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Shakir struggling to get open against KC coverage",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:15:00",
+          "price": 52.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Allen finds Shakir for first down",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:35:00",
+          "price": 51.72,
+          "reason": {
+            "type": "league_trade",
+            "headline": "NFLNerd sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "nflnerd",
+            "action": "sell",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:25:00",
+          "price": 53.24,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Shakir wide open for 25 yards after Allen scrambles",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:40:00",
+          "price": 53.77,
+          "reason": {
+            "type": "league_trade",
+            "headline": "RookieTrader bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "rookie",
+            "action": "buy",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2025-12-09T22:56:00",
+          "price": 54.84,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Shakir with 15-yard catch, setting up Cook TD",
+            "source": "ESPN Gamecast"
+          }
+        }
+      ]
+    },
+    {
+      "id": "jefferson",
+      "name": "Justin Jefferson",
+      "team": "MIN",
+      "position": "WR",
+      "basePrice": 134.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T18:00:00",
+          "price": 134.00,
+          "reason": {
+            "type": "news",
+            "headline": "Jefferson resting, eyes next week's favorable matchup",
+            "source": "Fantasy Focus"
+          },
+          "content": [
+            { "type": "analysis", "title": "Jefferson Preview: Week 15", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/4262921/justin-jefferson" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T20:30:00",
+          "price": 134.54,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "buy",
+            "shares": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "chase",
+      "name": "Ja'Marr Chase",
+      "team": "CIN",
+      "position": "WR",
+      "basePrice": 145.25,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T18:00:00",
+          "price": 145.25,
+          "reason": {
+            "type": "news",
+            "headline": "Chase holding steady as WR1 in fantasy",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:00:00",
+          "price": 146.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "GridironGuru bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "gridiron",
+            "action": "buy",
+            "shares": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "hill",
+      "name": "Tyreek Hill",
+      "team": "MIA",
+      "position": "WR",
+      "basePrice": 118.75,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T14:00:00",
+          "price": 118.75,
+          "reason": {
+            "type": "news",
+            "headline": "Hill gametime decision for Thursday with hamstring",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "news", "title": "Hill Gametime Decision for TNF", "source": "ESPN NFL", "url": "https://www.espn.com/nfl/player/news/_/id/3116406/tyreek-hill" }
+          ]
+        },
+        {
+          "timestamp": "2025-12-09T20:00:00",
+          "price": 118.15,
+          "reason": {
+            "type": "league_trade",
+            "headline": "ChartChaser sold 2 shares",
+            "source": "McQueen Market",
+            "memberId": "chartchaser",
+            "action": "sell",
+            "shares": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "mccaffrey",
+      "name": "Christian McCaffrey",
+      "team": "SF",
+      "position": "RB",
+      "basePrice": 156.25,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T18:00:00",
+          "price": 156.25,
+          "reason": {
+            "type": "news",
+            "headline": "CMC resting, Sunday's matchup looks favorable",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:00:00",
+          "price": 157.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "FantasyMVP bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "fantasymvp",
+            "action": "buy",
+            "shares": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "henry",
+      "name": "Derrick Henry",
+      "team": "BAL",
+      "position": "RB",
+      "basePrice": 128.75,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T18:00:00",
+          "price": 128.75,
+          "reason": {
+            "type": "news",
+            "headline": "Henry poised for heavy workload Sunday",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:30:00",
+          "price": 129.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "EndZoneElite bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "endzone",
+            "action": "buy",
+            "shares": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "barkley",
+      "name": "Saquon Barkley",
+      "team": "PHI",
+      "position": "RB",
+      "basePrice": 152.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T18:00:00",
+          "price": 152.00,
+          "reason": {
+            "type": "news",
+            "headline": "Barkley's rushing title race continues",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:45:00",
+          "price": 152.76,
+          "reason": {
+            "type": "league_trade",
+            "headline": "StockJock bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "stockjock",
+            "action": "buy",
+            "shares": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "lamar",
+      "name": "Lamar Jackson",
+      "team": "BAL",
+      "position": "QB",
+      "basePrice": 158.75,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T18:00:00",
+          "price": 158.75,
+          "reason": {
+            "type": "news",
+            "headline": "Lamar MVP favorite heading into Week 15",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:00:00",
+          "price": 159.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "buy",
+            "shares": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "hurts",
+      "name": "Jalen Hurts",
+      "team": "PHI",
+      "position": "QB",
+      "basePrice": 138.25,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T18:00:00",
+          "price": 138.25,
+          "reason": {
+            "type": "news",
+            "headline": "Hurts ankle looking good for Sunday start",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:15:00",
+          "price": 139.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "FantasyMVP bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "fantasymvp",
+            "action": "buy",
+            "shares": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "lamb",
+      "name": "CeeDee Lamb",
+      "team": "DAL",
+      "position": "WR",
+      "basePrice": 112.50,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T18:00:00",
+          "price": 112.50,
+          "reason": {
+            "type": "news",
+            "headline": "Lamb's value falling as Cowboys playoff hopes dim",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T20:30:00",
+          "price": 111.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "RookieTrader sold 3 shares",
+            "source": "McQueen Market",
+            "memberId": "rookie",
+            "action": "sell",
+            "shares": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "brown",
+      "name": "A.J. Brown",
+      "team": "PHI",
+      "position": "WR",
+      "basePrice": 125.50,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2025-12-09T18:00:00",
+          "price": 125.50,
+          "reason": {
+            "type": "news",
+            "headline": "Brown benefits as Eagles offensive balance improves",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2025-12-09T21:15:00",
+          "price": 126.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "PigSkinPro bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "pigskin",
+            "action": "buy",
+            "shares": 2
+          }
+        }
+      ]
+    }
+  ]
+}

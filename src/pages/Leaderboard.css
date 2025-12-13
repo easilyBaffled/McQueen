@@ -1,0 +1,244 @@
+.leaderboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.page-subtitle {
+  color: var(--color-text-secondary);
+  margin: -16px 0 0 0;
+}
+
+/* User Rank Card */
+.user-rank-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  background: linear-gradient(135deg, var(--color-bg-elevated) 0%, var(--color-bg-surface) 100%);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+}
+
+.rank-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--color-primary);
+  color: white;
+  font-family: var(--font-display);
+  font-size: 28px;
+  border-radius: var(--radius-md);
+}
+
+.rank-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.rank-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text-muted);
+}
+
+.rank-value {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.rank-change {
+  padding: 8px 16px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+}
+
+.rank-change.positive {
+  background: var(--color-up-bg);
+  color: var(--color-up);
+}
+
+.rank-change.negative {
+  background: var(--color-down-bg);
+  color: var(--color-down);
+}
+
+/* Leaderboard Table */
+.leaderboard-table {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 80px 1fr 160px 120px;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--color-bg-elevated);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 160px 120px;
+  gap: 16px;
+  padding: 16px 20px;
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+}
+
+.table-row:hover {
+  background: var(--color-bg-card-hover);
+}
+
+.table-row.top-three {
+  background: rgba(255, 214, 0, 0.05);
+}
+
+.table-row.user-row {
+  background: var(--color-primary-dark);
+  background: rgba(221, 0, 0, 0.15);
+}
+
+.col-rank {
+  font-weight: 600;
+}
+
+.medal {
+  font-size: 24px;
+}
+
+.rank-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-bg-elevated);
+  border-radius: 50%;
+  font-size: 14px;
+}
+
+.trader-name {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.col-value {
+  font-weight: 600;
+}
+
+.col-gain {
+  font-weight: 700;
+}
+
+.table-divider {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Leaderboard Tip */
+.leaderboard-tip {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(0, 200, 83, 0.1) 0%, rgba(212, 48, 32, 0.05) 100%);
+  border: 1px solid var(--color-up);
+  border-radius: var(--radius-lg);
+}
+
+.leaderboard-tip .tip-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.leaderboard-tip .tip-content {
+  flex: 1;
+}
+
+.leaderboard-tip .tip-content strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--color-text-primary);
+}
+
+.leaderboard-tip .tip-content p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.leaderboard-tip .tip-cta {
+  padding: 10px 18px;
+  background: var(--color-up);
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.leaderboard-tip .tip-cta:hover {
+  background: #00a847;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .user-rank-card {
+    flex-wrap: wrap;
+  }
+  
+  .rank-badge {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+  
+  .rank-value {
+    font-size: 22px;
+  }
+  
+  .table-header,
+  .table-row {
+    grid-template-columns: 60px 1fr 100px;
+  }
+  
+  .col-value {
+    display: none;
+  }
+  
+  .leaderboard-tip {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .leaderboard-tip .tip-cta {
+    width: 100%;
+  }
+}
+
