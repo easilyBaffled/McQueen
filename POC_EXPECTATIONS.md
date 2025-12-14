@@ -1,223 +1,238 @@
-# McQueen POC - Tester Expectations Guide
+# McQueen POC — Product Evaluation Guide
 
-Welcome to the **McQueen NFL Stock Market** proof-of-concept! This document outlines what to expect, what to explore, and how to get the most out of your testing experience.
-
----
-
-## 🎯 What This POC Is
-
-McQueen is a **front-end prototype** demonstrating a fantasy NFL stock market concept where:
-
-- NFL players are tradeable "stocks"
-- Prices fluctuate based on game performance, news, and trading activity
-- Users can buy/sell shares, make predictions, and compete on leaderboards
-
-**This is a visual and interaction prototype** — not a production-ready product. The goal is to validate the concept, gather feedback on the user experience, and explore how fans might engage with an NFL stock market.
+This document is for product stakeholders evaluating the McQueen NFL Stock Market concept. It clarifies what is fully functional, what is simulated, and what was intentionally scoped down for this proof-of-concept.
 
 ---
 
-## ⚠️ What This POC Is NOT
+## Executive Summary
 
-| Expectation | Reality |
-|-------------|---------|
-| Real money | **Play money only** — you start with $10,000 in virtual cash |
-| Live data | **Simulated data** — prices come from pre-scripted scenarios, not real-time feeds |
-| Backend integration | **Front-end only** — no accounts, no persistence across browser sessions |
-| Mobile optimized | **Desktop-first** — works on mobile but best experienced on desktop |
-| ESPN integration | **Mockup only** — ESPN content tiles are placeholders |
+**McQueen** demonstrates a fantasy NFL stock market where fans trade player "stocks" that rise and fall based on performance, news, and market activity. This POC validates the core user experience and interaction patterns without backend infrastructure.
+
+**Build time:** ~2 weeks  
+**Stack:** React 19, Vite, Framer Motion, Recharts  
+**Deployment:** Static front-end (Vercel-ready)
 
 ---
 
-## 🚀 Getting Started
+## What's Real vs. Simulated
 
-### First-Time Experience
+### ✅ Fully Functional in This POC
 
-1. **Onboarding Flow**: New users see a 6-step tutorial explaining the concept
-2. **Welcome Banner**: A dismissible banner on the Market page reinforces the "play money" nature
-3. **First Trade Guide**: A subtle prompt guides you toward making your first trade
+| Feature | Description |
+|---------|-------------|
+| **Trading mechanics** | Buy/sell shares, portfolio tracking, P/L calculations all work correctly |
+| **Price impact from user trades** | Each share bought/sold moves price by 0.1% (configurable) |
+| **Three distinct scenarios** | Midweek, Live Game, and Playoffs each demonstrate different market conditions |
+| **Live game simulation** | Real-time event playback with prices reacting to TDs, INTs, stats |
+| **Onboarding flow** | 6-step tutorial explains the concept to new users |
+| **Daily prediction game** | Pick 3 risers/3 fallers mechanic is fully interactive |
+| **Watchlist management** | Add/remove players, persists in session |
+| **Leaderboard with AI traders** | 10 AI competitors with pre-populated portfolios |
+| **Responsive layout** | Works on desktop and tablet (mobile is functional but not optimized) |
 
-### Reset the Experience
+### 🔶 Simulated / Hard-coded
 
-To see the onboarding again or start fresh, open your browser console and run:
+| What You See | What's Actually Happening |
+|--------------|---------------------------|
+| **Player prices** | Static JSON data with scripted price histories — not calculated from real stats |
+| **News headlines** | Pre-written content tied to price events — not fetched from ESPN APIs |
+| **ESPN content tiles** | Placeholder links (`#`) — would need real ESPN integration |
+| **AI trader behavior** | Scripted trades baked into scenario data — not dynamic algorithms |
+| **Leaderboard rankings** | Pre-calculated positions — not computed from actual performance |
+| **Player headshots** | ESPN CDN URLs for real player images (these are real) |
+| **Game events (Live mode)** | Scripted timeline replaying at 3-second intervals — not live NFL data |
+
+### ❌ Not Implemented (Out of Scope)
+
+| Feature | Why It Was Cut |
+|---------|----------------|
+| **User accounts / authentication** | No backend — state lives in browser memory |
+| **Data persistence** | Refreshing the page resets everything to defaults |
+| **Real ESPN data integration** | Would require API contracts and content licensing |
+| **Push notifications** | Requires backend infrastructure |
+| **Social features** | Leagues, friends, sharing — all require user accounts |
+| **Real-time multiplayer** | No WebSocket infrastructure |
+| **Mobile-native experience** | Responsive CSS only, no native app |
+
+---
+
+## Corners Cut for Scope
+
+These are intentional simplifications that could be expanded in a production version:
+
+### 1. Static Scenario Data
+**What we did:** All price movements come from hand-crafted JSON files with ~15-25 events per scenario.
+
+**Production approach:** Real-time price calculation engine that ingests:
+- Live game feeds (TDs, yards, turnovers)
+- News/injury APIs
+- Actual user trading volume
+- Sentiment analysis
+
+### 2. Limited Player Roster
+**What we did:** 19-21 players per scenario, manually curated.
+
+**Production approach:** Full NFL roster (~1,700 players) with dynamic filtering, position groups, team views, and search.
+
+### 3. Simplified Price Algorithm
+**What we did:** Prices are hard-coded at each event timestamp. User trades add ±0.1% per share.
+
+**Production approach:** Multi-factor pricing model considering:
+- Fantasy point projections
+- Recent performance trends
+- News sentiment scoring
+- Trading volume/liquidity
+- Supply/demand dynamics
+
+### 4. No Historical Data
+**What we did:** Each scenario is a snapshot — no week-over-week or season trends.
+
+**Production approach:** Full historical price charts, season performance, year-over-year comparisons.
+
+### 5. AI Traders Are Scripted
+**What we did:** AI league members have pre-determined portfolios and make scripted trades.
+
+**Production approach:** AI agents with different strategies (momentum, value, news-reactive) that create genuine market activity.
+
+### 6. Prediction Game Is Display-Only
+**What we did:** Users can make picks, but scoring/results don't persist or affect leaderboard.
+
+**Production approach:** Daily/weekly prediction contests with real scoring, streaks, and prizes.
+
+### 7. Content Links Are Placeholders
+**What we did:** ESPN article/video tiles link to `#` — visual mockups only.
+
+**Production approach:** Deep integration with ESPN content graph, personalized recommendations, embedded video players.
+
+---
+
+## The Three Scenarios Explained
+
+Each scenario demonstrates a different market context:
+
+### Midweek
+**Purpose:** Show how prices move on non-game days  
+**Key mechanics:** News-driven price movement, injury reports, trade rumors  
+**Players highlighted:** Tyreek Hill (injury news), Saquon Barkley (trade speculation)
+
+### Live Game
+**Purpose:** Demonstrate real-time price reactions during a game  
+**Key mechanics:** Play-by-play events, live ticker, "Play/Pause" simulation control  
+**Players highlighted:** Patrick Mahomes, Josh Allen (TD spikes), Travis Kelce
+
+### Playoffs
+**Purpose:** Show special mechanics for postseason  
+**Key mechanics:** **Buyback system** — when a team is eliminated, their players' stocks crash and shares are forcibly repurchased at a discount  
+**Players highlighted:** Stefon Diggs (buyback after Texans elimination)
+
+---
+
+## Architecture Notes
+
+### Current (POC)
+```
+┌─────────────────────────────────────────────┐
+│              Browser (Client)               │
+├─────────────────────────────────────────────┤
+│  React App                                  │
+│  ├── GameContext (state + simulation)       │
+│  ├── Static JSON (scenarios)                │
+│  └── localStorage (session preferences)     │
+└─────────────────────────────────────────────┘
+```
+
+### Production (Proposed)
+```
+┌─────────────────┐     ┌─────────────────┐
+│   Mobile Apps   │     │    Web App      │
+└────────┬────────┘     └────────┬────────┘
+         │                       │
+         └───────────┬───────────┘
+                     │
+         ┌───────────▼───────────┐
+         │      API Gateway      │
+         └───────────┬───────────┘
+                     │
+    ┌────────────────┼────────────────┐
+    │                │                │
+┌───▼───┐      ┌─────▼─────┐    ┌─────▼─────┐
+│ Auth  │      │  Trading  │    │  Pricing  │
+│Service│      │  Engine   │    │  Engine   │
+└───────┘      └─────┬─────┘    └─────┬─────┘
+                     │                │
+              ┌──────▼────────────────▼──────┐
+              │         Database            │
+              │   (Users, Portfolios,       │
+              │    Transactions, Prices)    │
+              └──────────────┬──────────────┘
+                             │
+              ┌──────────────▼──────────────┐
+              │      External Feeds         │
+              │  (ESPN, NFL, News APIs)     │
+              └─────────────────────────────┘
+```
+
+---
+
+## What This POC Validates
+
+1. **The concept is explainable** — Users understand "NFL stocks" within the onboarding flow
+2. **Trading feels intuitive** — Buy/sell mechanics mirror familiar stock trading apps
+3. **Price movements create emotion** — Watching your player score a TD and spike in value is satisfying
+4. **News integration adds context** — Seeing *why* a price moved (with ESPN content) deepens engagement
+5. **Live games are compelling** — Real-time price changes during games create urgency
+6. **Prediction games add stickiness** — Daily picks give users a reason to return
+7. **Social proof matters** — Seeing what AI traders are buying/selling influences decisions
+
+---
+
+## Open Questions for Product
+
+1. **Monetization model** — Premium features? Transaction fees? Ads? Subscription?
+2. **Legal/compliance** — How does this intersect with gambling regulations?
+3. **ESPN content licensing** — What's the path to real article/video integration?
+4. **Real-money vs. play-money** — Does this stay virtual or become a real trading platform?
+5. **League mechanics** — Private leagues with friends? Public competitions?
+6. **Seasonal reset** — Do portfolios carry over year-to-year or reset each season?
+
+---
+
+## Recommended Evaluation Flow
+
+To see the full range of what this POC demonstrates:
+
+1. **Complete the onboarding** — Don't skip; it shows the educational approach
+2. **Make a few trades** — Buy 2-3 players, see the portfolio update
+3. **Explore a player detail page** — Click the chart markers to see event details
+4. **Switch to Live Game mode** — Click "Play Live" and watch prices react
+5. **Try the Playoffs scenario** — See the buyback mechanic on eliminated players
+6. **Make daily predictions** — Experience the prediction game flow
+7. **Check the leaderboard** — See the competitive framing
+
+---
+
+## Resetting the Experience
+
+To clear all local state and see the first-time user experience again:
 
 ```javascript
+// Run in browser console
 localStorage.clear();
 location.reload();
 ```
 
 ---
 
-## 🎮 Three Demo Scenarios
+## Summary
 
-Toggle between scenarios using the tabs in the header. Each demonstrates different market conditions:
+| Aspect | POC Status | Production Path |
+|--------|------------|-----------------|
+| Core trading UX | ✅ Complete | Scale to full roster |
+| Price calculation | 🔶 Simulated | Build pricing engine |
+| Live game integration | 🔶 Scripted replay | Connect to NFL feeds |
+| ESPN content | 🔶 Placeholder links | API integration |
+| User accounts | ❌ Not built | Auth service needed |
+| Data persistence | ❌ Not built | Database needed |
+| Mobile apps | ❌ Web only | Native development |
 
-### 1. Midweek (Default)
-**Wednesday afternoon, no games**
-
-- Prices move based on: trade rumors, injury news, analysis pieces
-- Best for: Understanding baseline trading mechanics
-- Notable: Check Tyreek Hill (hamstring news) and Saquon Barkley (trade rumors)
-
-### 2. Live Game
-**Monday Night Football: Chiefs vs Bills**
-
-- Prices react in **real-time** to simulated game events
-- **Use the "Play Live" button** to start the simulation
-- Watch the **Live Ticker** at the top for breaking plays
-- Events: Touchdowns, interceptions, stats accumulation
-- Notable: Patrick Mahomes and Josh Allen prices spike on TDs
-
-### 3. Playoffs
-**Conference Championship Weekend**
-
-- See **buyback mechanics** for eliminated teams (price crashes)
-- Heightened volatility for contenders
-- Modal announcement appears explaining playoff rules
-- Notable: Stefon Diggs (HOU) shows buyback scenario after Texans elimination
-
----
-
-## 🔍 Key Features to Explore
-
-### Market Home (`/`)
-- Browse 20 player cards with prices, changes, and sparkline charts
-- **Sort by**: Biggest Risers, Biggest Fallers, Most Active, Highest Price
-- **Search**: Filter by player name or team
-- **Mini Leaderboard**: See how you stack up against AI traders
-
-### Player Detail (`/player/:id`)
-- Interactive price chart with clickable event markers
-- **Price Changes Timeline**: See exactly why prices moved
-- **Buy/Sell Panel**: Execute trades
-- **Watchlist**: Star players to track without buying
-- **League Owners**: See which AI traders hold this player
-
-### Portfolio (`/portfolio`)
-- View all your holdings and their performance
-- See total portfolio value and P/L
-
-### Watchlist (`/watchlist`)
-- Track players you're interested in without committing capital
-
-### Daily Mission (`/mission`)
-- **Prediction game**: Pick 3 risers and 3 fallers
-- Tests your NFL knowledge
-- Scores tracked against leaderboard
-
-### Leaderboard (`/leaderboard`)
-- See rankings across the league
-- Compare your performance to AI traders
-
----
-
-## 🛠️ Developer Tools
-
-### Timeline Debugger (Live Mode Only)
-When in **Live Game** scenario with dev mode enabled:
-1. Look for "Timeline Debugger" button (bottom of screen)
-2. Click to expand the simulation timeline
-3. **Scrub through events** to see price changes at each moment
-4. **Rewind** to replay specific game moments
-
-### Scenario Inspector (`/inspector`)
-A hidden debug page showing:
-- All events in the current scenario
-- Event types and their price impacts
-- Timeline visualization
-
----
-
-## 📝 Things to Notice
-
-### Visual Feedback
-- ✅ **Green** = price going up
-- ❌ **Red** = price going down
-- 🔴 **LIVE badge** = player currently in a game
-- ⭐ **Event markers** on charts = clickable for details
-
-### Animations
-- Cards animate when sorting changes
-- Smooth transitions between pages
-- Toast notifications for trade confirmations
-
-### Information Density
-- Sparklines show price trends at a glance
-- Tooltips explain key concepts (hover over info icons)
-- Content tiles link to related ESPN content (placeholder links)
-
----
-
-## 🐛 Known Limitations
-
-1. **No data persistence** — Refreshing the page resets your portfolio to default
-2. **Scenario data is static** — The same events replay each time
-3. **AI traders are scripted** — Their behavior is predetermined, not dynamic
-4. **Content links are placeholders** — ESPN URLs don't lead to real articles
-5. **No real-time sync** — Multiple browser tabs won't stay in sync
-6. **Limited players** — Only 19-21 players per scenario (not full NFL rosters)
-
----
-
-## 💬 Feedback We're Looking For
-
-As you explore, consider:
-
-1. **Intuitiveness**: Could you understand the concept without the tutorial?
-2. **Engagement**: What made you want to explore further? What felt tedious?
-3. **Information Design**: Was the right information visible at the right time?
-4. **Emotional Response**: Did price movements feel meaningful? Exciting?
-5. **Feature Gaps**: What did you expect to be able to do but couldn't?
-6. **Confusion Points**: Where did you get stuck or misunderstand something?
-
----
-
-## 📱 Recommended Test Flow
-
-For a complete experience, try this sequence:
-
-1. **Complete onboarding** (don't skip!)
-2. **Browse the Market** — sort by different criteria
-3. **Make your first trade** — buy shares of a player you like
-4. **Check Player Detail** — click a player to see why their price moved
-5. **Add to Watchlist** — star a few players
-6. **Switch to Live Mode** — hit "Play Live" and watch prices change
-7. **Try the Daily Mission** — make your predictions
-8. **Switch to Playoffs** — see the buyback mechanics
-9. **Check your Portfolio** — see how your trades performed
-10. **View the Leaderboard** — see your ranking
-
----
-
-## 🔗 Quick Links
-
-| Page | URL |
-|------|-----|
-| Market | `/` |
-| Portfolio | `/portfolio` |
-| Watchlist | `/watchlist` |
-| Daily Mission | `/mission` |
-| Leaderboard | `/leaderboard` |
-| Scenario Inspector (debug) | `/inspector` |
-
----
-
-## ❓ FAQ
-
-**Q: Is this real money?**
-A: No! This is 100% play money. The $10,000 balance is virtual.
-
-**Q: Why don't prices change when I just sit there?**
-A: In Midweek/Playoffs scenarios, prices are static snapshots. In Live mode, click "Play Live" to start the simulation.
-
-**Q: I made a trade but the price only moved a tiny bit?**
-A: User trades have small price impact (0.1% per share) to simulate market depth. Big moves come from game events and news.
-
-**Q: Can I lose more than I invest?**
-A: No — this isn't real margin trading. You can only spend the cash you have.
-
-**Q: Why do some players have a "BUYBACK" label?**
-A: In the Playoffs scenario, players on eliminated teams have their shares bought back at a discount — simulating how player value drops when their season ends.
-
----
-
-Thank you for testing McQueen! Your feedback will shape the future of this concept. 🏈📈
+This POC demonstrates that the **core experience is engaging and the concept is viable**. The path to production requires backend infrastructure, data partnerships, and content licensing — but the front-end interaction model is validated and ready to build upon.
