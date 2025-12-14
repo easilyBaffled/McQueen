@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
 import { useGame } from '../context/GameContext';
@@ -36,10 +36,121 @@ const scenarios = [
 export default function ScenarioToggle() {
   const { scenario, setScenario, espnLoading, espnError, refreshEspnNews } = useGame();
   const [showDemoTooltip, setShowDemoTooltip] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const currentScenario = scenarios.find(s => s.id === scenario) || scenarios[0];
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setMobileDropdownOpen(false);
+      }
+    }
+    if (mobileDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [mobileDropdownOpen]);
+
+  const handleMobileSelect = (id) => {
+    setScenario(id);
+    setMobileDropdownOpen(false);
+  };
 
   return (
     <div className="scenario-toggle">
-      <div className="demo-label-container">
+      {/* Mobile Dropdown */}
+      <div className="mobile-scenario-dropdown" ref={dropdownRef}>
+        <button 
+          className={`mobile-dropdown-trigger ${currentScenario.isEspn ? 'espn' : ''}`}
+          onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
+        >
+          <span className="mobile-dropdown-label">
+            <span className="mobile-dropdown-badge">DEMO</span>
+            <span className="mobile-dropdown-current">{currentScenario.label}</span>
+            {scenario === 'live' && (
+              <span className="mobile-live-dot" />
+            )}
+            {scenario === 'espn-live' && (
+              <span className="mobile-live-dot espn" />
+            )}
+          </span>
+          <svg 
+            className={`mobile-dropdown-arrow ${mobileDropdownOpen ? 'open' : ''}`} 
+            viewBox="0 0 24 24" 
+            fill="currentColor"
+          >
+            <path d="M7 10l5 5 5-5z"/>
+          </svg>
+        </button>
+        
+        <AnimatePresence mode="wait">
+          {mobileDropdownOpen && (
+            <motion.div 
+              className="mobile-dropdown-menu"
+              key="mobile-dropdown-menu"
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.1 }}
+            >
+              <div className="mobile-dropdown-header">
+                <span className="mobile-dropdown-title">Select Scenario</span>
+                <span className="mobile-dropdown-subtitle">Choose a demo to explore</span>
+              </div>
+              {scenarios.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className={`mobile-dropdown-item ${scenario === s.id ? 'active' : ''} ${s.isEspn ? 'espn' : ''}`}
+                  onClick={() => handleMobileSelect(s.id)}
+                >
+                  <div className="mobile-dropdown-item-left">
+                    <span className="mobile-dropdown-item-check">
+                      {scenario === s.id && (
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                      )}
+                    </span>
+                    <div className="mobile-dropdown-item-content">
+                      <span className="mobile-dropdown-item-label">
+                        {s.label}
+                        {s.id === 'live' && <span className="mobile-item-live-badge">LIVE</span>}
+                        {s.id === 'espn-live' && <span className="mobile-item-espn-badge">ESPN</span>}
+                      </span>
+                      <span className="mobile-dropdown-item-desc">{s.tooltip}</span>
+                    </div>
+                  </div>
+                  <span className="mobile-dropdown-item-meta">{s.description}</span>
+                </button>
+              ))}
+              
+              {/* ESPN Refresh in dropdown when ESPN is selected */}
+              {scenario === 'espn-live' && (
+                <div className="mobile-dropdown-actions">
+                  <button 
+                    className="mobile-espn-refresh"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      refreshEspnNews();
+                    }}
+                    disabled={espnLoading}
+                  >
+                    <span className={espnLoading ? 'spinning' : ''}>⟳</span>
+                    {espnLoading ? 'Refreshing...' : 'Refresh ESPN News'}
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Desktop: Demo Label */}
+      <div className="demo-label-container desktop-only">
         <button 
           className="demo-label"
           onMouseEnter={() => setShowDemoTooltip(true)}
@@ -77,7 +188,9 @@ export default function ScenarioToggle() {
           )}
         </AnimatePresence>
       </div>
-      <div className="scenario-tabs">
+      
+      {/* Desktop: Scenario Tabs */}
+      <div className="scenario-tabs desktop-only">
         {scenarios.map((s) => (
           <button
             key={s.id}

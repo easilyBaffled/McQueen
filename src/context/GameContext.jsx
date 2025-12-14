@@ -782,7 +782,8 @@ export function GameProvider({ children }) {
 
   // Scenario setter with reset
   const setScenario = useCallback((newScenario) => {
-    setIsPlaying(false);
+    // Auto-start playing when switching to live scenario
+    setIsPlaying(newScenario === 'live');
     setScenarioState(newScenario);
   }, []);
 

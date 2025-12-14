@@ -18,7 +18,7 @@ const sortOptions = [
 ];
 
 export default function Market() {
-  const { getPlayers, currentData, isPlaying, setIsPlaying, scenario, portfolio } = useGame();
+  const { getPlayers, currentData, scenario, portfolio } = useGame();
   const hasNoTrades = Object.keys(portfolio).length === 0;
   const [sortBy, setSortBy] = useState('risers');
   const [searchQuery, setSearchQuery] = useState('');
@@ -106,30 +106,6 @@ export default function Market() {
           <p className="market-subtitle">{currentData?.headline || 'Market activity'}</p>
         </div>
         
-        {scenario === 'live' && (
-          <div className="live-controls">
-            <button 
-              className={`play-button ${isPlaying ? 'playing' : ''}`}
-              onClick={() => setIsPlaying(!isPlaying)}
-            >
-              {isPlaying ? (
-                <>
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-                  </svg>
-                  Pause
-                </>
-              ) : (
-                <>
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                  Play Live
-                </>
-              )}
-            </button>
-          </div>
-        )}
       </div>
 
       <div className="market-controls">

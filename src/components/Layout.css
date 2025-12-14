@@ -176,11 +176,40 @@
 /* Responsive */
 @media (max-width: 768px) {
   .header {
-    padding: 0 16px;
+    padding: 0 12px;
+    gap: 8px;
+  }
+  
+  .header-left {
+    flex: 0 0 auto;
   }
   
   .header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .header-right {
+    flex: 0 0 auto;
+    gap: 8px;
+  }
+  
+  .logo-mcqueen {
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+  
+  .logo-tagline {
     display: none;
+  }
+  
+  .balance-label {
+    display: none;
+  }
+  
+  .balance-value {
+    font-size: 14px;
   }
   
   .nav {
@@ -195,6 +224,16 @@
   
   .main-content {
     padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 0 8px;
+  }
+  
+  .logo-mcqueen {
+    font-size: 18px;
   }
 }
 
