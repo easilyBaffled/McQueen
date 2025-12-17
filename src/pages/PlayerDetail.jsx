@@ -91,7 +91,7 @@ export default function PlayerDetail() {
         <div className="error-state">
           <h2>Player Not Found</h2>
           <p>This player doesn't exist in the current scenario.</p>
-          <button onClick={() => navigate('/')} className="back-button">
+          <button onClick={() => navigate('/market')} className="back-button">
             Back to Market
           </button>
         </div>

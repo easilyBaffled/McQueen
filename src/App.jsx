@@ -3,6 +3,7 @@ import { GameProvider } from './context/GameContext';
 import { ToastProvider } from './components/Toast';
 import { OnboardingProvider } from './components/Onboarding';
 import Layout from './components/Layout';
+import Timeline from './pages/Timeline';
 import Market from './pages/Market';
 import Portfolio from './pages/Portfolio';
 import Watchlist from './pages/Watchlist';
@@ -24,7 +25,8 @@ function App() {
             <PlayoffAnnouncementModal />
             <Routes>
               <Route path="/" element={<Layout />}>
-                <Route index element={<Market />} />
+                <Route index element={<Timeline />} />
+                <Route path="market" element={<Market />} />
                 <Route path="portfolio" element={<Portfolio />} />
                 <Route path="watchlist" element={<Watchlist />} />
                 <Route path="mission" element={<Mission />} />

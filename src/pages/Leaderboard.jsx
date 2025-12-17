@@ -55,7 +55,7 @@ export default function Leaderboard() {
             <strong>Ready to climb the leaderboard?</strong>
             <p>Start trading to grow your portfolio value and compete with other traders!</p>
           </div>
-          <Link to="/" className="tip-cta">Start Trading →</Link>
+          <Link to="/market" className="tip-cta">Start Trading →</Link>
         </motion.div>
       )}
 
