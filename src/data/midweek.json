@@ -2,6 +2,11 @@
   "scenario": "midweek",
   "timestamp": "2025-12-03T14:00:00",
   "headline": "Trade Rumors & Injury Updates Shake Up the Market",
+  "startingPortfolio": {
+    "mahomes": { "shares": 3, "avgCost": 138.00 },
+    "mccaffrey": { "shares": 2, "avgCost": 148.00 },
+    "jefferson": { "shares": 2, "avgCost": 130.00 }
+  },
   "players": [
     {
       "id": "mahomes",

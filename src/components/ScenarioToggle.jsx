@@ -25,6 +25,13 @@ const scenarios = [
     tooltip: 'Playoff scenario with high-stakes games and championship implications'
   },
   { 
+    id: 'superbowl', 
+    label: 'Super Bowl', 
+    description: 'Chiefs vs 49ers',
+    isLive: true,
+    tooltip: 'Live Super Bowl simulation with dramatic price swings and buyback mechanics for the losing team'
+  },
+  { 
     id: 'espn-live', 
     label: 'ESPN Live', 
     description: 'Real News', 
@@ -70,7 +77,7 @@ export default function ScenarioToggle() {
           <span className="mobile-dropdown-label">
             <span className="mobile-dropdown-badge">DEMO</span>
             <span className="mobile-dropdown-current">{currentScenario.label}</span>
-            {scenario === 'live' && (
+            {(scenario === 'live' || scenario === 'superbowl') && (
               <span className="mobile-live-dot" />
             )}
             {scenario === 'espn-live' && (
@@ -118,7 +125,7 @@ export default function ScenarioToggle() {
                     <div className="mobile-dropdown-item-content">
                       <span className="mobile-dropdown-item-label">
                         {s.label}
-                        {s.id === 'live' && <span className="mobile-item-live-badge">LIVE</span>}
+                        {(s.id === 'live' || s.isLive) && <span className="mobile-item-live-badge">LIVE</span>}
                         {s.id === 'espn-live' && <span className="mobile-item-espn-badge">ESPN</span>}
                       </span>
                       <span className="mobile-dropdown-item-desc">{s.tooltip}</span>
@@ -179,6 +186,7 @@ export default function ScenarioToggle() {
                 <li><strong>Midweek:</strong> Quiet market with news-driven changes</li>
                 <li><strong>Live Game:</strong> Real-time price action during a game</li>
                 <li><strong>Playoffs:</strong> High-stakes championship scenarios</li>
+                <li><strong>Super Bowl:</strong> Live simulation with buyback mechanics</li>
                 <li><strong>ESPN Live:</strong> Real current NFL news</li>
               </ul>
               <p className="demo-tooltip-note">
@@ -209,7 +217,7 @@ export default function ScenarioToggle() {
               <span className="scenario-label">{s.label}</span>
               <span className="scenario-desc">{s.description}</span>
             </span>
-            {s.id === 'live' && scenario === 'live' && (
+            {(s.id === 'live' || s.isLive) && scenario === s.id && (
               <span className="live-indicator">
                 <span className="live-dot" />
                 LIVE

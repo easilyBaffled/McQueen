@@ -1,0 +1,1404 @@
+{
+  "scenario": "superbowl",
+  "timestamp": "2026-02-08T18:30:00",
+  "headline": "Super Bowl LX: Chiefs vs 49ers - Live from New Orleans",
+  "startingPortfolio": {
+    "mahomes": { "shares": 3, "avgCost": 145.00 },
+    "kelce": { "shares": 2, "avgCost": 105.00 },
+    "purdy": { "shares": 3, "avgCost": 135.00 },
+    "mccaffrey": { "shares": 2, "avgCost": 162.00 }
+  },
+  "players": [
+    {
+      "id": "mahomes",
+      "name": "Patrick Mahomes",
+      "team": "KC",
+      "position": "QB",
+      "basePrice": 145.00,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "priceHistory": [
+        {
+          "timestamp": "2026-02-08T16:00:00",
+          "price": 145.00,
+          "reason": {
+            "type": "news",
+            "headline": "Super Bowl LX pregame - Mahomes seeking 4th ring",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "analysis", "title": "Mahomes: The GOAT Debate", "source": "NFL Live", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T17:30:00",
+          "price": 147.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "GridironGuru bought 10 shares pre-kickoff",
+            "source": "McQueen Market",
+            "memberId": "gridiron",
+            "action": "buy",
+            "shares": 10
+          }
+        },
+        {
+          "timestamp": "2026-02-08T18:30:00",
+          "price": 147.50,
+          "reason": {
+            "type": "news",
+            "headline": "KICKOFF! Super Bowl LX underway in New Orleans",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T18:42:00",
+          "price": 144.25,
+          "reason": {
+            "type": "game_event",
+            "eventType": "INT",
+            "headline": "INTERCEPTION! Mahomes picked off on opening drive by Greenlaw",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Early Mahomes Turnover!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T18:55:00",
+          "price": 142.80,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 sold 3 shares on early struggles",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "sell",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2026-02-08T19:08:00",
+          "price": 145.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Mahomes completes 25-yard strike to Rice on 3rd down",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T19:22:00",
+          "price": 149.75,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Mahomes hits Kelce for 12-yard TD - Chiefs respond!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Mahomes to Kelce - Classic Connection!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T19:35:00",
+          "price": 151.20,
+          "reason": {
+            "type": "league_trade",
+            "headline": "FantasyMVP bought 5 shares",
+            "source": "McQueen Market",
+            "memberId": "fantasymvp",
+            "action": "buy",
+            "shares": 5
+          }
+        },
+        {
+          "timestamp": "2026-02-08T19:48:00",
+          "price": 154.80,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Mahomes scrambles, finds Rice in the back of the endzone!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Mahomes Magic - Improvised TD!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T19:55:00",
+          "price": 156.40,
+          "reason": {
+            "type": "news",
+            "headline": "HALFTIME: Chiefs 17, 49ers 14 - Mahomes 18/24, 185 yds, 2 TD, 1 INT",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "analysis", "title": "Halftime Analysis: Mahomes Finding Rhythm", "source": "NFL Live", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T20:25:00",
+          "price": 153.10,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Mahomes sacked on 3rd down, Chiefs punt",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T20:42:00",
+          "price": 156.85,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Mahomes threads needle to Worthy for 35 yards!",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T20:55:00",
+          "price": 154.20,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Mahomes overthrows open Kelce in endzone - FG attempt",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:12:00",
+          "price": 157.60,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Mahomes 22-yard completion to Rice on key 3rd down",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:28:00",
+          "price": 155.40,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "End of Q4 - Game tied 24-24! We're going to OVERTIME!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "news", "title": "Super Bowl Going to OT!", "source": "ESPN NFL", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T21:35:00",
+          "price": 158.90,
+          "reason": {
+            "type": "league_trade",
+            "headline": "GridironGuru bought 8 more shares - all in on Mahomes",
+            "source": "McQueen Market",
+            "memberId": "gridiron",
+            "action": "buy",
+            "shares": 8
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:42:00",
+          "price": 162.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Mahomes finds Kelce for 18 yards, Chiefs at 49ers 40",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:48:00",
+          "price": 168.25,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Mahomes escapes sack, scrambles for 12 yards!",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:55:00",
+          "price": 178.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! CHIEFS WIN! Mahomes to Worthy for 22-yard game-winner!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "MAHOMES DOES IT AGAIN! Super Bowl MVP!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" },
+            { "type": "analysis", "title": "Mahomes Cements GOAT Status", "source": "NFL Live", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T22:05:00",
+          "price": 182.40,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 bought 6 shares post-game",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "buy",
+            "shares": 6
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:15:00",
+          "price": 185.00,
+          "reason": {
+            "type": "news",
+            "headline": "SUPER BOWL MVP: Patrick Mahomes - 32/42, 378 yds, 3 TD, 1 INT",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "article", "title": "Mahomes: The Greatest of His Generation", "source": "ESPN NFL", "url": "https://www.espn.com/nfl/player/news/_/id/3139477/patrick-mahomes" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kelce",
+      "name": "Travis Kelce",
+      "team": "KC",
+      "position": "TE",
+      "basePrice": 105.00,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "priceHistory": [
+        {
+          "timestamp": "2026-02-08T16:00:00",
+          "price": 105.00,
+          "reason": {
+            "type": "news",
+            "headline": "Kelce chasing 5th Super Bowl ring - can he silence the doubters?",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T17:45:00",
+          "price": 107.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "BullMarketBob bought 6 shares",
+            "source": "McQueen Market",
+            "memberId": "bullmarket",
+            "action": "buy",
+            "shares": 6
+          }
+        },
+        {
+          "timestamp": "2026-02-08T18:30:00",
+          "price": 107.25,
+          "reason": {
+            "type": "news",
+            "headline": "KICKOFF! Kelce looking to make history",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T18:50:00",
+          "price": 105.80,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Kelce with only 1 target in opening quarter",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T19:22:00",
+          "price": 114.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Kelce hauls in 12-yard TD from Mahomes!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Kelce TD - Vintage Performance!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/15847/travis-kelce" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T19:38:00",
+          "price": 116.80,
+          "reason": {
+            "type": "league_trade",
+            "headline": "StockJock bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "stockjock",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2026-02-08T19:55:00",
+          "price": 118.40,
+          "reason": {
+            "type": "news",
+            "headline": "HALFTIME: Kelce 5 catches, 62 yards, 1 TD",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T20:32:00",
+          "price": 120.25,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Kelce 15-yard catch on crossing route",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T20:55:00",
+          "price": 117.60,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Mahomes overthrows Kelce in endzone - missed opportunity",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:18:00",
+          "price": 122.40,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Kelce clutch 3rd down catch for 14 yards",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:42:00",
+          "price": 126.80,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Kelce 18-yard catch in OT - Chiefs driving!",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:55:00",
+          "price": 130.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "CHIEFS WIN! Kelce celebrates 5th ring!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Kelce: 5-Time Champion!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/15847/travis-kelce" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T22:10:00",
+          "price": 133.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "EndZoneElite bought 5 shares",
+            "source": "McQueen Market",
+            "memberId": "endzone",
+            "action": "buy",
+            "shares": 5
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:15:00",
+          "price": 135.00,
+          "reason": {
+            "type": "news",
+            "headline": "Kelce final: 9 catches, 108 yards, 1 TD - Super Bowl legend",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "article", "title": "Kelce: Greatest TE in Super Bowl History", "source": "ESPN NFL", "url": "https://www.espn.com/nfl/player/news/_/id/15847/travis-kelce" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rice",
+      "name": "Rashee Rice",
+      "team": "KC",
+      "position": "WR",
+      "basePrice": 80.00,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "priceHistory": [
+        {
+          "timestamp": "2026-02-08T16:00:00",
+          "price": 80.00,
+          "reason": {
+            "type": "news",
+            "headline": "Rice ready for Super Bowl spotlight as Chiefs WR1",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T17:50:00",
+          "price": 82.40,
+          "reason": {
+            "type": "league_trade",
+            "headline": "NFLNerd bought 5 shares",
+            "source": "McQueen Market",
+            "memberId": "nflnerd",
+            "action": "buy",
+            "shares": 5
+          }
+        },
+        {
+          "timestamp": "2026-02-08T19:08:00",
+          "price": 85.60,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Rice 25-yard catch on 3rd down conversion",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T19:48:00",
+          "price": 92.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Rice hauls in TD in back of endzone!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Rice TD Grab!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/4429795/rashee-rice" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T19:55:00",
+          "price": 94.25,
+          "reason": {
+            "type": "news",
+            "headline": "HALFTIME: Rice 6 catches, 78 yards, 1 TD",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T20:18:00",
+          "price": 95.80,
+          "reason": {
+            "type": "league_trade",
+            "headline": "FantasyMVP bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "fantasymvp",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:12:00",
+          "price": 99.40,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Rice 22-yard catch on crucial 3rd down in Q4",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:55:00",
+          "price": 102.80,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "CHIEFS WIN! Rice celebrates first Super Bowl",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:15:00",
+          "price": 105.00,
+          "reason": {
+            "type": "news",
+            "headline": "Rice final: 9 catches, 118 yards, 1 TD - Breakout performance",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "analysis", "title": "Rice Arrives on Biggest Stage", "source": "Fantasy Focus", "url": "https://www.espn.com/nfl/player/news/_/id/4429795/rashee-rice" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "worthy",
+      "name": "Xavier Worthy",
+      "team": "KC",
+      "position": "WR",
+      "basePrice": 62.00,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "priceHistory": [
+        {
+          "timestamp": "2026-02-08T16:00:00",
+          "price": 62.00,
+          "reason": {
+            "type": "news",
+            "headline": "Rookie Worthy ready for Super Bowl - speed kills",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T17:55:00",
+          "price": 64.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "RookieTrader bought 8 shares",
+            "source": "McQueen Market",
+            "memberId": "rookie",
+            "action": "buy",
+            "shares": 8
+          }
+        },
+        {
+          "timestamp": "2026-02-08T18:45:00",
+          "price": 63.20,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Worthy quiet early with only 1 target",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T19:55:00",
+          "price": 65.80,
+          "reason": {
+            "type": "news",
+            "headline": "HALFTIME: Worthy 2 catches, 28 yards - waiting for his moment",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T20:42:00",
+          "price": 71.25,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Worthy BURNS the 49ers secondary for 35 yards!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Worthy Speed on Display!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/4432577/xavier-worthy" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T21:05:00",
+          "price": 73.40,
+          "reason": {
+            "type": "league_trade",
+            "headline": "ChartChaser bought 5 shares",
+            "source": "McQueen Market",
+            "memberId": "chartchaser",
+            "action": "buy",
+            "shares": 5
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:28:00",
+          "price": 75.80,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Worthy 18-yard catch sets up game-tying FG - OT!",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:55:00",
+          "price": 85.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! WORTHY GAME-WINNER! 22-yard TD in OT - CHIEFS WIN!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "WORTHY SUPER BOWL HERO!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/4432577/xavier-worthy" },
+            { "type": "analysis", "title": "Rookie Makes Super Bowl History", "source": "NFL Live", "url": "https://www.espn.com/nfl/player/news/_/id/4432577/xavier-worthy" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T22:08:00",
+          "price": 86.80,
+          "reason": {
+            "type": "league_trade",
+            "headline": "RookieTrader bought 10 more shares - vindicated!",
+            "source": "McQueen Market",
+            "memberId": "rookie",
+            "action": "buy",
+            "shares": 10
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:15:00",
+          "price": 88.00,
+          "reason": {
+            "type": "news",
+            "headline": "Worthy final: 5 catches, 98 yards, 1 TD - GAME-WINNING TD!",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "article", "title": "Worthy: From Rookie to Super Bowl Hero", "source": "ESPN NFL", "url": "https://www.espn.com/nfl/player/news/_/id/4432577/xavier-worthy" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "purdy",
+      "name": "Brock Purdy",
+      "team": "SF",
+      "position": "QB",
+      "basePrice": 135.00,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "isBuyback": true,
+      "priceHistory": [
+        {
+          "timestamp": "2026-02-08T16:00:00",
+          "price": 135.00,
+          "reason": {
+            "type": "news",
+            "headline": "Purdy seeking to prove he's no system QB with Super Bowl win",
+            "source": "ESPN NFL"
+          },
+          "content": [
+            { "type": "analysis", "title": "Purdy: Ready for the Moment?", "source": "NFL Live", "url": "https://www.espn.com/nfl/player/news/_/id/4432166/brock-purdy" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T17:40:00",
+          "price": 137.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "PigSkinPro bought 6 shares",
+            "source": "McQueen Market",
+            "memberId": "pigskin",
+            "action": "buy",
+            "shares": 6
+          }
+        },
+        {
+          "timestamp": "2026-02-08T18:38:00",
+          "price": 140.25,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Purdy completes first 4 passes, 49ers moving",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T18:52:00",
+          "price": 146.80,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Purdy hits CMC for 8-yard TD! 49ers strike first!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Purdy TD Pass to CMC!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/4432166/brock-purdy" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T19:15:00",
+          "price": 144.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Purdy sacked on 3rd down, 49ers punt",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T19:55:00",
+          "price": 142.80,
+          "reason": {
+            "type": "news",
+            "headline": "HALFTIME: Purdy 14/20, 156 yards, 1 TD - solid but Chiefs lead",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T20:15:00",
+          "price": 146.25,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Purdy 28-yard strike to Deebo on opening drive of 2nd half",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T20:28:00",
+          "price": 152.40,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Purdy to Kittle for 15-yard TD! Game tied!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Purdy Finding Kittle!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/4432166/brock-purdy" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T20:48:00",
+          "price": 145.60,
+          "reason": {
+            "type": "game_event",
+            "eventType": "INT",
+            "headline": "INTERCEPTION! Purdy picked off by Chris Jones on tipped pass!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Costly Purdy Turnover!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/4432166/brock-purdy" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T21:02:00",
+          "price": 143.80,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 sold 4 shares after INT",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "sell",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:22:00",
+          "price": 148.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Purdy finds Deebo for 32 yards! 49ers driving!",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:28:00",
+          "price": 150.20,
+          "reason": {
+            "type": "news",
+            "headline": "END OF REGULATION: Tied 24-24! Overtime in Super Bowl!",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:55:00",
+          "price": 128.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "49ERS LOSE IN OT - Chiefs win Super Bowl LX",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "news", "title": "Purdy Falls Short in Super Bowl", "source": "ESPN NFL", "url": "https://www.espn.com/nfl/player/news/_/id/4432166/brock-purdy" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T22:05:00",
+          "price": 105.20,
+          "reason": {
+            "type": "league_trade",
+            "headline": "PigSkinPro panic sold all 6 shares",
+            "source": "McQueen Market",
+            "memberId": "pigskin",
+            "action": "sell",
+            "shares": 6
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:12:00",
+          "price": 82.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "Mass selloff - NFLNerd sold 8 shares",
+            "source": "McQueen Market",
+            "memberId": "nflnerd",
+            "action": "sell",
+            "shares": 8
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:20:00",
+          "price": 65.00,
+          "reason": {
+            "type": "league_trade",
+            "headline": "ChartChaser liquidated position - sold 10 shares",
+            "source": "McQueen Market",
+            "memberId": "chartchaser",
+            "action": "sell",
+            "shares": 10
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:30:00",
+          "price": 52.00,
+          "reason": {
+            "type": "news",
+            "headline": "BUYBACK ACTIVE - Purdy shares bought back at $52",
+            "source": "McQueen Market"
+          },
+          "content": [
+            { "type": "news", "title": "49ers Season Over - Buyback Initiated", "source": "McQueen Market", "url": "https://www.espn.com/nfl/player/news/_/id/4432166/brock-purdy" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mccaffrey",
+      "name": "Christian McCaffrey",
+      "team": "SF",
+      "position": "RB",
+      "basePrice": 162.00,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "isBuyback": true,
+      "priceHistory": [
+        {
+          "timestamp": "2026-02-08T16:00:00",
+          "price": 162.00,
+          "reason": {
+            "type": "news",
+            "headline": "CMC healthy and ready - 49ers' Super Bowl weapon",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T17:35:00",
+          "price": 165.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "GridironGuru bought 5 shares",
+            "source": "McQueen Market",
+            "memberId": "gridiron",
+            "action": "buy",
+            "shares": 5
+          }
+        },
+        {
+          "timestamp": "2026-02-08T18:40:00",
+          "price": 168.25,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "CMC 12-yard run on first carry",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T18:52:00",
+          "price": 176.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! CMC 8-yard TD catch from Purdy! 49ers lead!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "CMC Opens Scoring!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/3117251/christian-mccaffrey" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T19:10:00",
+          "price": 178.80,
+          "reason": {
+            "type": "league_trade",
+            "headline": "FantasyMVP bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "fantasymvp",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2026-02-08T19:55:00",
+          "price": 175.40,
+          "reason": {
+            "type": "news",
+            "headline": "HALFTIME: CMC 8 carries, 42 yards, 3 catches, 28 yards, 1 TD",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T20:22:00",
+          "price": 178.60,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "CMC breaks tackle for 18-yard gain",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:08:00",
+          "price": 180.25,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "CMC 15-yard reception, 49ers in Chiefs territory",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:28:00",
+          "price": 182.50,
+          "reason": {
+            "type": "news",
+            "headline": "REGULATION ENDS TIED - CMC has been dominant",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:55:00",
+          "price": 158.20,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "49ERS LOSE - CMC's incredible game not enough",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "news", "title": "CMC Heartbreak Despite Monster Game", "source": "ESPN NFL", "url": "https://www.espn.com/nfl/player/news/_/id/3117251/christian-mccaffrey" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T22:05:00",
+          "price": 128.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "GridironGuru panic sold 5 shares",
+            "source": "McQueen Market",
+            "memberId": "gridiron",
+            "action": "sell",
+            "shares": 5
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:12:00",
+          "price": 102.40,
+          "reason": {
+            "type": "league_trade",
+            "headline": "FantasyMVP liquidated - sold 4 shares",
+            "source": "McQueen Market",
+            "memberId": "fantasymvp",
+            "action": "sell",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:20:00",
+          "price": 82.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "BullMarketBob sold 8 shares",
+            "source": "McQueen Market",
+            "memberId": "bullmarket",
+            "action": "sell",
+            "shares": 8
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:30:00",
+          "price": 65.00,
+          "reason": {
+            "type": "news",
+            "headline": "BUYBACK ACTIVE - CMC shares bought back at $65",
+            "source": "McQueen Market"
+          },
+          "content": [
+            { "type": "news", "title": "CMC Buyback Triggered", "source": "McQueen Market", "url": "https://www.espn.com/nfl/player/news/_/id/3117251/christian-mccaffrey" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "samuel",
+      "name": "Deebo Samuel",
+      "team": "SF",
+      "position": "WR",
+      "basePrice": 102.00,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "isBuyback": true,
+      "priceHistory": [
+        {
+          "timestamp": "2026-02-08T16:00:00",
+          "price": 102.00,
+          "reason": {
+            "type": "news",
+            "headline": "Deebo's versatility key to 49ers' Super Bowl hopes",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T17:42:00",
+          "price": 104.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "EndZoneElite bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "endzone",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2026-02-08T18:48:00",
+          "price": 106.80,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Deebo 12-yard catch on opening drive",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T19:55:00",
+          "price": 108.40,
+          "reason": {
+            "type": "news",
+            "headline": "HALFTIME: Deebo 4 catches, 45 yards - solid start",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T20:15:00",
+          "price": 115.25,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Deebo 28-yard catch! Big play to start 2nd half!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Deebo Explosive Play!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/4360797/deebo-samuel" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T20:38:00",
+          "price": 117.80,
+          "reason": {
+            "type": "league_trade",
+            "headline": "StockJock bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "stockjock",
+            "action": "buy",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:22:00",
+          "price": 124.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Deebo 32-yard catch! 49ers threatening!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Deebo Clutch in 4th Quarter!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/4360797/deebo-samuel" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T21:28:00",
+          "price": 126.80,
+          "reason": {
+            "type": "news",
+            "headline": "REGULATION TIED - Deebo having huge game",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:55:00",
+          "price": 105.40,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "49ERS LOSE IN OT - Deebo's big game wasted",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:05:00",
+          "price": 82.20,
+          "reason": {
+            "type": "league_trade",
+            "headline": "EndZoneElite sold all 4 shares",
+            "source": "McQueen Market",
+            "memberId": "endzone",
+            "action": "sell",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:12:00",
+          "price": 62.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "StockJock panic sold 3 shares",
+            "source": "McQueen Market",
+            "memberId": "stockjock",
+            "action": "sell",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:30:00",
+          "price": 38.00,
+          "reason": {
+            "type": "news",
+            "headline": "BUYBACK ACTIVE - Deebo shares bought back at $38",
+            "source": "McQueen Market"
+          }
+        }
+      ]
+    },
+    {
+      "id": "kittle",
+      "name": "George Kittle",
+      "team": "SF",
+      "position": "TE",
+      "basePrice": 88.00,
+      "totalSharesAvailable": 1000,
+      "isActive": true,
+      "isBuyback": true,
+      "priceHistory": [
+        {
+          "timestamp": "2026-02-08T16:00:00",
+          "price": 88.00,
+          "reason": {
+            "type": "news",
+            "headline": "Kittle seeking first Super Bowl ring",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T17:48:00",
+          "price": 90.25,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 bought 4 shares",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "buy",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2026-02-08T18:55:00",
+          "price": 88.80,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "Kittle with 1 catch early, mostly blocking",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T19:55:00",
+          "price": 87.20,
+          "reason": {
+            "type": "news",
+            "headline": "HALFTIME: Kittle quiet - 2 catches, 18 yards",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T20:28:00",
+          "price": 96.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "TD",
+            "headline": "TOUCHDOWN! Kittle 15-yard TD from Purdy! Game tied!",
+            "source": "ESPN Gamecast"
+          },
+          "content": [
+            { "type": "video", "title": "Kittle TD! Game Tied!", "source": "ESPN Gamecast", "url": "https://www.espn.com/nfl/player/news/_/id/3046779/george-kittle" }
+          ]
+        },
+        {
+          "timestamp": "2026-02-08T20:45:00",
+          "price": 98.80,
+          "reason": {
+            "type": "league_trade",
+            "headline": "NFLNerd bought 3 shares",
+            "source": "McQueen Market",
+            "memberId": "nflnerd",
+            "action": "buy",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:28:00",
+          "price": 100.40,
+          "reason": {
+            "type": "news",
+            "headline": "REGULATION TIED - Kittle contributing",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T21:55:00",
+          "price": 78.50,
+          "reason": {
+            "type": "game_event",
+            "eventType": "stats",
+            "headline": "49ERS LOSE - Kittle's ring chase continues",
+            "source": "ESPN Gamecast"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:05:00",
+          "price": 58.20,
+          "reason": {
+            "type": "league_trade",
+            "headline": "TDKing2024 sold 4 shares",
+            "source": "McQueen Market",
+            "memberId": "tdking",
+            "action": "sell",
+            "shares": 4
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:12:00",
+          "price": 45.60,
+          "reason": {
+            "type": "league_trade",
+            "headline": "NFLNerd sold 3 shares",
+            "source": "McQueen Market",
+            "memberId": "nflnerd",
+            "action": "sell",
+            "shares": 3
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:30:00",
+          "price": 32.00,
+          "reason": {
+            "type": "news",
+            "headline": "BUYBACK ACTIVE - Kittle shares bought back at $32",
+            "source": "McQueen Market"
+          }
+        }
+      ]
+    },
+    {
+      "id": "jefferson",
+      "name": "Justin Jefferson",
+      "team": "MIN",
+      "position": "WR",
+      "basePrice": 134.00,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2026-02-08T12:00:00",
+          "price": 134.00,
+          "reason": {
+            "type": "news",
+            "headline": "Jefferson watching Super Bowl - Vikings eliminated in playoffs",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T18:00:00",
+          "price": 134.80,
+          "reason": {
+            "type": "league_trade",
+            "headline": "PigSkinPro bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "pigskin",
+            "action": "buy",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2026-02-08T20:00:00",
+          "price": 135.50,
+          "reason": {
+            "type": "news",
+            "headline": "Jefferson tweets 'Next year is our year'",
+            "source": "Twitter"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:30:00",
+          "price": 136.25,
+          "reason": {
+            "type": "news",
+            "headline": "Jefferson: 'Congrats to the champs, we're coming next year'",
+            "source": "Twitter"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lamar",
+      "name": "Lamar Jackson",
+      "team": "BAL",
+      "position": "QB",
+      "basePrice": 158.75,
+      "totalSharesAvailable": 1000,
+      "isActive": false,
+      "priceHistory": [
+        {
+          "timestamp": "2026-02-08T12:00:00",
+          "price": 158.75,
+          "reason": {
+            "type": "news",
+            "headline": "Lamar watching Super Bowl after AFC Championship loss",
+            "source": "ESPN NFL"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T18:00:00",
+          "price": 159.50,
+          "reason": {
+            "type": "league_trade",
+            "headline": "BullMarketBob bought 2 shares",
+            "source": "McQueen Market",
+            "memberId": "bullmarket",
+            "action": "buy",
+            "shares": 2
+          }
+        },
+        {
+          "timestamp": "2026-02-08T20:00:00",
+          "price": 160.25,
+          "reason": {
+            "type": "news",
+            "headline": "Lamar: 'Mahomes is special, but we'll be back'",
+            "source": "Twitter"
+          }
+        },
+        {
+          "timestamp": "2026-02-08T22:30:00",
+          "price": 161.00,
+          "reason": {
+            "type": "news",
+            "headline": "Lamar congratulates Mahomes on 4th ring",
+            "source": "Twitter"
+          }
+        }
+      ]
+    }
+  ]
+}
+

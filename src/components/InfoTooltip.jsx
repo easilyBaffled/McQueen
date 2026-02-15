@@ -59,3 +59,4 @@ export default function InfoTooltip({ term, children, inline = false }) {
   );
 }
 
+

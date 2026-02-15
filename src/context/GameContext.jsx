@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect, useRef, us
 import midweekData from '../data/midweek.json';
 import liveData from '../data/live.json';
 import playoffsData from '../data/playoffs.json';
+import superbowlData from '../data/superbowl.json';
 import leagueData from '../data/leagueMembers.json';
 import espnPlayersData from '../data/espnPlayers.json';
 
@@ -16,6 +17,7 @@ const scenarioData = {
   midweek: midweekData,
   live: liveData,
   playoffs: playoffsData,
+  superbowl: superbowlData,
   'espn-live': { scenario: 'espn-live', players: espnPlayersData.players }, // ESPN Live mode
 };
 
@@ -185,9 +187,9 @@ export function GameProvider({ children }) {
   const currentData = scenarioData[scenario];
   const players = currentData?.players || [];
 
-  // Build unified timeline for live simulation
+  // Build unified timeline for live simulation (live and superbowl scenarios)
   const unifiedTimeline = useMemo(() => {
-    if (scenario === 'live') {
+    if (scenario === 'live' || scenario === 'superbowl') {
       return buildUnifiedTimeline(players);
     }
     return [];
@@ -313,6 +315,11 @@ export function GameProvider({ children }) {
     setUserImpact({});
     setPlayoffDilutionApplied(false); // Reset dilution state when changing scenarios
     
+    // Reset portfolio and cash to scenario's starting values
+    const startingPortfolio = currentData?.startingPortfolio || {};
+    setPortfolio(startingPortfolio);
+    setCash(INITIAL_CASH);
+    
     // Reset ESPN state when switching scenarios
     setEspnNews([]);
     setEspnError(null);
@@ -336,9 +343,9 @@ export function GameProvider({ children }) {
     setHistory([{ tick: 0, prices: initialPrices, action: actionMessage }]);
   }, [scenario]);
 
-  // Apply tick updates for live scenario using unified timeline
+  // Apply tick updates for live scenarios (live and superbowl) using unified timeline
   useEffect(() => {
-    if (scenario === 'live' && isPlaying && unifiedTimeline.length > 0) {
+    if ((scenario === 'live' || scenario === 'superbowl') && isPlaying && unifiedTimeline.length > 0) {
       tickIntervalRef.current = setInterval(() => {
         setTick((prevTick) => {
           const nextTick = prevTick + 1;
@@ -782,8 +789,8 @@ export function GameProvider({ children }) {
 
   // Scenario setter with reset
   const setScenario = useCallback((newScenario) => {
-    // Auto-start playing when switching to live scenario
-    setIsPlaying(newScenario === 'live');
+    // Auto-start playing when switching to live scenarios (live or superbowl)
+    setIsPlaying(newScenario === 'live' || newScenario === 'superbowl');
     setScenarioState(newScenario);
   }, []);
 

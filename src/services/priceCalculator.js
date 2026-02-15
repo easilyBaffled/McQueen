@@ -211,3 +211,4 @@ export default {
   PRICE_IMPACT_RANGES
 };
 
+
