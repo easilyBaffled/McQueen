@@ -1,0 +1,3 @@
+# Ralph Progress Log (append-only)
+# Format: YYYY-MM-DD HH:MM | BEAD_ID | STATUS | Summary
+# -----------------------------------------------------------
