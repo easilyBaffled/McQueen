@@ -1,0 +1,10 @@
+{
+  "suites": 1,
+  "tests": 5,
+  "passes": 5,
+  "pending": 0,
+  "failures": 0,
+  "start": "2026-02-18T21:06:56.552Z",
+  "duration": 4819,
+  "file": "cypress/e2e/onboarding.cy.js"
+}

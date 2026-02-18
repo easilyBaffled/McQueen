@@ -1,0 +1,67 @@
+describe('Onboarding', () => {
+  beforeEach(() => {
+    cy.clearAppState();
+  });
+
+  // TC-OB-001
+  it('shows onboarding modal for new users', () => {
+    cy.visit('/');
+    cy.get('.onboarding-overlay').should('be.visible');
+    cy.get('.onboarding-modal').should('be.visible');
+  });
+
+  // TC-OB-002
+  it('progresses through all 6 steps', () => {
+    cy.visit('/');
+    cy.get('.onboarding-modal').should('be.visible');
+
+    for (let step = 0; step < 5; step++) {
+      cy.get('.next-button').click();
+    }
+    // On the last step, clicking next completes onboarding
+    cy.get('.next-button').click();
+    cy.get('.onboarding-overlay').should('not.exist');
+  });
+
+  // TC-OB-003
+  it('supports back button navigation', () => {
+    cy.visit('/');
+    cy.get('.onboarding-modal').should('be.visible');
+
+    // On step 0, back button should not be visible
+    cy.get('.back-button').should('not.exist');
+
+    // Go to step 2
+    cy.get('.next-button').click();
+    cy.get('.next-button').click();
+
+    // Back button should be visible
+    cy.get('.back-button').should('be.visible');
+    cy.get('.back-button').click();
+    // Should be back on step 1
+    cy.get('.step-dot.active').should('exist');
+  });
+
+  // TC-OB-004
+  it('allows skipping onboarding', () => {
+    cy.visit('/');
+    cy.get('.onboarding-modal').should('be.visible');
+    cy.get('.skip-button').click();
+    cy.get('.onboarding-overlay').should('not.exist');
+
+    cy.window().then((win) => {
+      expect(win.localStorage.getItem('mcqueen-onboarded')).to.equal('true');
+    });
+  });
+
+  // TC-OB-005
+  it('does not show again after completion', () => {
+    cy.visit('/');
+    cy.get('.onboarding-modal').should('be.visible');
+    cy.get('.skip-button').click();
+    cy.get('.onboarding-overlay').should('not.exist');
+
+    cy.reload();
+    cy.get('.onboarding-overlay').should('not.exist');
+  });
+});

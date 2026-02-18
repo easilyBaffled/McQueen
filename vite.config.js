@@ -59,6 +59,16 @@ function jsonApiPlugin() {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), jsonApiPlugin()],
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+    setupFiles: './src/test/setup.js',
+    css: true,
+  },
+  preview: {
+    port: 4173,
+    strictPort: true,
+  },
   server: {
     proxy: {
       // Proxy ESPN API requests to avoid CORS issues in development
