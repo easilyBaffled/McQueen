@@ -12,16 +12,16 @@
 
 The default landing page. Presents a reverse-chronological feed of every price-moving event across all players in the current scenario.
 
-| Step | Interaction | Outcome |
-|------|------------|---------|
-| Browse | Scroll the event feed | See timestamp, player badge, event type, headline, price, change % |
-| Filter | Type dropdown (all / news / trades / game events) | Narrows visible events |
-| Filter | Magnitude slider (all / >2% / >5%) | Shows only significant moves |
-| Filter | Time dropdown (all / today / this week) | Restricts time window |
-| Search | Text input | Filters by player name, team, or headline text |
-| Expand | Click event card | Reveals trade widget + content links |
-| Trade inline | Set quantity, click Buy/Sell | Executes trade via `buyShares()`/`sellShares()`, toast confirmation |
-| Navigate | Click player badge | Routes to `/player/:playerId` |
+| Step         | Interaction                                       | Outcome                                                             |
+| ------------ | ------------------------------------------------- | ------------------------------------------------------------------- |
+| Browse       | Scroll the event feed                             | See timestamp, player badge, event type, headline, price, change %  |
+| Filter       | Type dropdown (all / news / trades / game events) | Narrows visible events                                              |
+| Filter       | Magnitude slider (all / >2% / >5%)                | Shows only significant moves                                        |
+| Filter       | Time dropdown (all / today / this week)           | Restricts time window                                               |
+| Search       | Text input                                        | Filters by player name, team, or headline text                      |
+| Expand       | Click event card                                  | Reveals trade widget + content links                                |
+| Trade inline | Set quantity, click Buy/Sell                      | Executes trade via `buyShares()`/`sellShares()`, toast confirmation |
+| Navigate     | Click player badge                                | Routes to `/player/:playerId`                                       |
 
 **Context consumed**: `getPlayers()`, `getPlayer()`, `cash`, `buyShares()`, `sellShares()`, `portfolio`
 
@@ -33,14 +33,14 @@ The default landing page. Presents a reverse-chronological feed of every price-m
 
 Grid of player cards with search and sorting.
 
-| Step | Interaction | Outcome |
-|------|------------|---------|
-| Browse | View player card grid | See headshot, name, team, price, change %, sparkline |
-| Sort | Tab bar (Biggest Risers / Biggest Fallers / Most Active / Highest Price) | Re-orders grid |
-| Search | Text input | Filters by player name or team |
-| Navigate | Click any player card | Routes to `/player/:playerId` |
-| Dismiss | Close welcome banner | Persisted to localStorage, never shown again |
-| First trade | View FirstTradeGuide tooltip | Shown until first trade is made |
+| Step        | Interaction                                                              | Outcome                                              |
+| ----------- | ------------------------------------------------------------------------ | ---------------------------------------------------- |
+| Browse      | View player card grid                                                    | See headshot, name, team, price, change %, sparkline |
+| Sort        | Tab bar (Biggest Risers / Biggest Fallers / Most Active / Highest Price) | Re-orders grid                                       |
+| Search      | Text input                                                               | Filters by player name or team                       |
+| Navigate    | Click any player card                                                    | Routes to `/player/:playerId`                        |
+| Dismiss     | Close welcome banner                                                     | Persisted to localStorage, never shown again         |
+| First trade | View FirstTradeGuide tooltip                                             | Shown until first trade is made                      |
 
 **Context consumed**: `getPlayers()`, `currentData`, `scenario`, `portfolio`
 
@@ -52,16 +52,16 @@ Grid of player cards with search and sorting.
 
 Central trading screen with price chart, buy/sell interface, and player context.
 
-| Step | Interaction | Outcome |
-|------|------------|---------|
-| View | Land on page | See price chart, current price, change %, move reason |
-| Buy | Select shares → "Buy X Shares" | `buyShares()` called, cash deducted, portfolio updated, +0.1%/share price impact, toast |
-| Sell | Switch to Sell tab → select shares → "Sell" | `sellShares()` called, cash added, portfolio updated, -0.1%/share price impact, toast |
-| Watchlist | Click heart icon | `addToWatchlist()` / `removeFromWatchlist()`, toast |
-| Chart | Click event marker on chart | `<EventMarkerPopup />` shows headline, price, source link |
-| Content | Scroll to content tiles | News articles, videos, analysis links |
-| League | View "Who Owns This" section | Shows league member holdings |
-| Navigate back | Click back button | `navigate(-1)` |
+| Step          | Interaction                                 | Outcome                                                                                 |
+| ------------- | ------------------------------------------- | --------------------------------------------------------------------------------------- |
+| View          | Land on page                                | See price chart, current price, change %, move reason                                   |
+| Buy           | Select shares → "Buy X Shares"              | `buyShares()` called, cash deducted, portfolio updated, +0.1%/share price impact, toast |
+| Sell          | Switch to Sell tab → select shares → "Sell" | `sellShares()` called, cash added, portfolio updated, -0.1%/share price impact, toast   |
+| Watchlist     | Click heart icon                            | `addToWatchlist()` / `removeFromWatchlist()`, toast                                     |
+| Chart         | Click event marker on chart                 | `<EventMarkerPopup />` shows headline, price, source link                               |
+| Content       | Scroll to content tiles                     | News articles, videos, analysis links                                                   |
+| League        | View "Who Owns This" section                | Shows league member holdings                                                            |
+| Navigate back | Click back button                           | `navigate(-1)`                                                                          |
 
 **Context consumed**: `getPlayer()`, `portfolio`, `buyShares()`, `sellShares()`, `addToWatchlist()`, `removeFromWatchlist()`, `isWatching()`, `getLeagueHoldings()`
 
@@ -73,13 +73,13 @@ Central trading screen with price chart, buy/sell interface, and player context.
 
 Displays user's holdings and financial summary.
 
-| Step | Interaction | Outcome |
-|------|------------|---------|
-| View summary | See 4 cards | Total Value, Cash Available, Invested, Total Gain/Loss |
-| View holdings | See table rows | Player, Shares, Avg Cost, Current Price, Value, Gain/Loss (color-coded) |
-| Navigate | Click holding row | Routes to `/player/:playerId` |
-| Empty state | No holdings | Shows trending players (top 3 risers) with navigation to Market |
-| Tooltips | Hover info icons on summary cards | Explains each metric |
+| Step          | Interaction                       | Outcome                                                                 |
+| ------------- | --------------------------------- | ----------------------------------------------------------------------- |
+| View summary  | See 4 cards                       | Total Value, Cash Available, Invested, Total Gain/Loss                  |
+| View holdings | See table rows                    | Player, Shares, Avg Cost, Current Price, Value, Gain/Loss (color-coded) |
+| Navigate      | Click holding row                 | Routes to `/player/:playerId`                                           |
+| Empty state   | No holdings                       | Shows trending players (top 3 risers) with navigation to Market         |
+| Tooltips      | Hover info icons on summary cards | Explains each metric                                                    |
 
 **Context consumed**: `portfolio`, `getPlayer()`, `getPlayers()`, `getPortfolioValue()`, `cash`
 
@@ -91,14 +91,14 @@ Displays user's holdings and financial summary.
 
 Curated list of players the user is tracking.
 
-| Step | Interaction | Outcome |
-|------|------------|---------|
-| View | See watched player cards | Grid of `<PlayerCard />` components |
-| Remove | Click X on card | `removeFromWatchlist()`, toast |
-| Quick add | Click "+" on suggested player | `addToWatchlist()`, toast |
-| Navigate | Click card | Routes to `/player/:playerId` |
-| Empty state | No watched players | Shows top 4 popular players (by absolute change) with quick-add buttons |
-| CTA | "Browse All Players" | Routes to `/market` |
+| Step        | Interaction                   | Outcome                                                                 |
+| ----------- | ----------------------------- | ----------------------------------------------------------------------- |
+| View        | See watched player cards      | Grid of `<PlayerCard />` components                                     |
+| Remove      | Click X on card               | `removeFromWatchlist()`, toast                                          |
+| Quick add   | Click "+" on suggested player | `addToWatchlist()`, toast                                               |
+| Navigate    | Click card                    | Routes to `/player/:playerId`                                           |
+| Empty state | No watched players            | Shows top 4 popular players (by absolute change) with quick-add buttons |
+| CTA         | "Browse All Players"          | Routes to `/market`                                                     |
 
 **Context consumed**: `watchlist`, `getPlayer()`, `getPlayers()`, `removeFromWatchlist()`, `addToWatchlist()`
 
@@ -108,14 +108,14 @@ Curated list of players the user is tracking.
 
 Prediction mini-game: pick 3 risers and 3 fallers.
 
-| Step | Interaction | Outcome |
-|------|------------|---------|
-| Learn | Toggle "How It Works" | Expands help section (localStorage tracks first view) |
-| Pick risers | Click ▲ on up to 3 players | Added to risers column |
-| Pick fallers | Click ▼ on up to 3 players | Added to fallers column |
-| Remove pick | Click × on pick chip | Removed from selection |
-| Reveal | Click "Reveal Results!" (requires 6 picks) | Score shown: correct/total + percentile |
-| Play again | Click "Play Again" | Picks cleared, results hidden |
+| Step         | Interaction                                | Outcome                                               |
+| ------------ | ------------------------------------------ | ----------------------------------------------------- |
+| Learn        | Toggle "How It Works"                      | Expands help section (localStorage tracks first view) |
+| Pick risers  | Click ▲ on up to 3 players                 | Added to risers column                                |
+| Pick fallers | Click ▼ on up to 3 players                 | Added to fallers column                               |
+| Remove pick  | Click × on pick chip                       | Removed from selection                                |
+| Reveal       | Click "Reveal Results!" (requires 6 picks) | Score shown: correct/total + percentile               |
+| Play again   | Click "Play Again"                         | Picks cleared, results hidden                         |
 
 **Context consumed**: `getPlayers()`, `missionPicks`, `missionRevealed`, `setMissionPick()`, `clearMissionPick()`, `revealMission()`, `resetMission()`, `getMissionScore()`
 
@@ -127,12 +127,12 @@ Prediction mini-game: pick 3 risers and 3 fallers.
 
 Rankings against AI league members.
 
-| Step | Interaction | Outcome |
-|------|------------|---------|
-| View rank | See user rank card | Current rank, total value, gain % |
-| View table | See top 10 traders | Rank, name, portfolio value, weekly gain (medal icons for top 3) |
-| User row | If rank > 10 | User's row shown below divider |
-| CTA | "Start Trading →" (empty portfolio) | Routes to `/market` |
+| Step       | Interaction                         | Outcome                                                          |
+| ---------- | ----------------------------------- | ---------------------------------------------------------------- |
+| View rank  | See user rank card                  | Current rank, total value, gain %                                |
+| View table | See top 10 traders                  | Rank, name, portfolio value, weekly gain (medal icons for top 3) |
+| User row   | If rank > 10                        | User's row shown below divider                                   |
+| CTA        | "Start Trading →" (empty portfolio) | Routes to `/market`                                              |
 
 **Context consumed**: `cash`, `getPortfolioValue()`, `portfolio`
 
@@ -143,6 +143,7 @@ Rankings against AI league members.
 ### 1.8 Onboarding + Scenario Switching
 
 **Onboarding** (first visit):
+
 1. Modal overlay with 6-step tutorial
 2. Progress indicators, back/next navigation
 3. Can be skipped via "Skip" button
@@ -150,6 +151,7 @@ Rankings against AI league members.
 5. After onboarding, `<FirstTradeGuide />` appears until first trade
 
 **Scenario Toggle** (header, always visible):
+
 - Desktop: tab bar; Mobile: dropdown
 - Options: Midweek, Live Game, Playoffs, Super Bowl, ESPN Live
 - Switching resets: `priceOverrides`, `tick`, `userImpact`, `cash` (to $10,000), `portfolio` (to scenario's `startingPortfolio`)
@@ -250,12 +252,14 @@ Three sources of truth converge, making price logic hard to reason about.
 ### 2.4 Simulation Modes
 
 **Mode A — Tick-based (live, superbowl)**:
+
 - `buildUnifiedTimeline(players)` merges all players' `priceHistory` arrays chronologically
 - `useEffect` runs a 3-second interval, incrementing `tick`
 - Each tick reads `unifiedTimeline[tick]`, writes `priceOverrides[playerId] = entry.price`
 - Stops when `tick >= unifiedTimeline.length`
 
 **Mode B — Event-driven (espn-live)**:
+
 - `fetchNFLNews()` called every 60 seconds
 - Each article matched to players via `searchTerms`
 - `analyzeSentiment(headline)` returns sentiment + magnitude
@@ -267,26 +271,26 @@ The two modes share no code paths. Different state variables (`unifiedTimeline`/
 
 ### 2.5 Service Responsibilities
 
-| Service | Purpose | Functions | Dependencies |
-|---------|---------|-----------|-------------|
-| `espnService.js` | ESPN API client | `fetchNFLNews()`, `fetchTeamNews()`, `fetchPlayerNews()`, `fetchScoreboard()`, `clearCache()`, `getCacheStats()` | None (native fetch) |
-| `sentimentEngine.js` | Keyword-based NLP | `analyzeSentiment()`, `getMagnitudeLevel()`, `getSentimentDescription()` | None |
-| `priceCalculator.js` | Price impact math | `calculatePriceImpact()`, `applyPriceImpact()`, `calculateNewPrice()`, `calculateCumulativeImpact()`, `createPriceHistoryEntry()` | sentimentEngine |
+| Service              | Purpose           | Functions                                                                                                                         | Dependencies        |
+| -------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `espnService.js`     | ESPN API client   | `fetchNFLNews()`, `fetchTeamNews()`, `fetchPlayerNews()`, `fetchScoreboard()`, `clearCache()`, `getCacheStats()`                  | None (native fetch) |
+| `sentimentEngine.js` | Keyword-based NLP | `analyzeSentiment()`, `getMagnitudeLevel()`, `getSentimentDescription()`                                                          | None                |
+| `priceCalculator.js` | Price impact math | `calculatePriceImpact()`, `applyPriceImpact()`, `calculateNewPrice()`, `calculateCumulativeImpact()`, `createPriceHistoryEntry()` | sentimentEngine     |
 
 ### 2.6 Component Context Dependency Map
 
 Components that consume `GameContext` (via `useGame()` hook):
 
-| Component | State Read | Functions Called |
-|-----------|-----------|----------------|
-| Layout | `cash`, `scenario` | `getPortfolioValue()` |
-| PlayerCard | `scenario`, `portfolio` | `isWatching()`, `getLeagueHoldings()` |
-| MiniLeaderboard | — | `getLeaderboardRankings()` |
-| ScenarioToggle | `scenario`, `espnLoading`, `espnError` | `setScenario()`, `refreshEspnNews()` |
-| LiveTicker | `scenario`, `history`, `tick`, `currentData`, `unifiedTimeline` | — |
-| TimelineDebugger | `history`, `tick`, `isPlaying` | `goToHistoryPoint()`, `setIsPlaying()` |
-| DailyMission | `missionPicks`, `missionRevealed` | `getPlayers()`, `setMissionPick()`, `clearMissionPick()`, `revealMission()`, `resetMission()`, `getMissionScore()` |
-| PlayoffAnnouncementModal | `scenario`, `currentData`, `playoffDilutionApplied` | `applyPlayoffDilution()` |
+| Component                | State Read                                                      | Functions Called                                                                                                   |
+| ------------------------ | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Layout                   | `cash`, `scenario`                                              | `getPortfolioValue()`                                                                                              |
+| PlayerCard               | `scenario`, `portfolio`                                         | `isWatching()`, `getLeagueHoldings()`                                                                              |
+| MiniLeaderboard          | —                                                               | `getLeaderboardRankings()`                                                                                         |
+| ScenarioToggle           | `scenario`, `espnLoading`, `espnError`                          | `setScenario()`, `refreshEspnNews()`                                                                               |
+| LiveTicker               | `scenario`, `history`, `tick`, `currentData`, `unifiedTimeline` | —                                                                                                                  |
+| TimelineDebugger         | `history`, `tick`, `isPlaying`                                  | `goToHistoryPoint()`, `setIsPlaying()`                                                                             |
+| DailyMission             | `missionPicks`, `missionRevealed`                               | `getPlayers()`, `setMissionPick()`, `clearMissionPick()`, `revealMission()`, `resetMission()`, `getMissionScore()` |
+| PlayoffAnnouncementModal | `scenario`, `currentData`, `playoffDilutionApplied`             | `applyPlayoffDilution()`                                                                                           |
 
 **Standalone components** (no context): EventMarkerPopup, Glossary, InfoTooltip, SkeletonLoader, FirstTradeGuide, AddEventModal
 
@@ -300,62 +304,62 @@ These behaviors are user-facing or structurally load-bearing. They must survive 
 
 ### 3.1 Core Simulation
 
-| # | Behavior | Detail |
-|---|----------|--------|
-| 1 | 4 scenario modes | Midweek (news-driven), Live (MNF simulation), Playoffs (buyback mechanics), Super Bowl (live simulation) |
-| 2 | ESPN Live mode | Real-time price movement from ESPN API news articles |
-| 3 | Tick-based simulation | 3-second interval advancing through unified timeline for live/superbowl |
-| 4 | Scenario switching | Full state reset (cash, portfolio, overrides, tick) on scenario change |
-| 5 | Starting portfolios | Each scenario seeds the user with pre-defined holdings |
+| #   | Behavior              | Detail                                                                                                   |
+| --- | --------------------- | -------------------------------------------------------------------------------------------------------- |
+| 1   | 4 scenario modes      | Midweek (news-driven), Live (MNF simulation), Playoffs (buyback mechanics), Super Bowl (live simulation) |
+| 2   | ESPN Live mode        | Real-time price movement from ESPN API news articles                                                     |
+| 3   | Tick-based simulation | 3-second interval advancing through unified timeline for live/superbowl                                  |GFM
+| 4   | Scenario switching    | Full state reset (cash, portfolio, overrides, tick) on scenario change                                   |
+| 5   | Starting portfolios   | Each scenario seeds the user with pre-defined holdings                                                   |
 
 ### 3.2 Trading & Portfolio
 
-| # | Behavior | Detail |
-|---|----------|--------|
-| 6 | Buy/sell mechanics | Share-based trading with immediate portfolio + cash updates |
-| 7 | User price impact | ±0.1% per share traded, applied as multiplier on base price |
-| 8 | Portfolio persistence | `portfolio`, `watchlist`, `cash`, `scenario` saved to localStorage |
-| 9 | Portfolio summary | Total value, cash, invested, gain/loss calculations |
-| 10 | Inline trading | Buy/sell from Timeline event cards (not just PlayerDetail) |
+| #   | Behavior              | Detail                                                             |
+| --- | --------------------- | ------------------------------------------------------------------ |
+| 6   | Buy/sell mechanics    | Share-based trading with immediate portfolio + cash updates        |
+| 7   | User price impact     | ±0.1% per share traded, applied as multiplier on base price        |
+| 8   | Portfolio persistence | `portfolio`, `watchlist`, `cash`, `scenario` saved to localStorage |
+| 9   | Portfolio summary     | Total value, cash, invested, gain/loss calculations                |
+| 10  | Inline trading        | Buy/sell from Timeline event cards (not just PlayerDetail)         |
 
 ### 3.3 Social & Gamification
 
-| # | Behavior | Detail |
-|---|----------|--------|
-| 11 | Daily Mission | Pick 3 risers + 3 fallers, reveal score with percentile |
-| 12 | Leaderboard | User ranked against AI traders (currently hardcoded data) |
-| 13 | League holdings | "Who owns this player" section on PlayerDetail |
-| 14 | MiniLeaderboard | Sidebar widget on Market page |
+| #   | Behavior        | Detail                                                    |
+| --- | --------------- | --------------------------------------------------------- |
+| 11  | Daily Mission   | Pick 3 risers + 3 fallers, reveal score with percentile   |
+| 12  | Leaderboard     | User ranked against AI traders (currently hardcoded data) |
+| 13  | League holdings | "Who owns this player" section on PlayerDetail            |
+| 14  | MiniLeaderboard | Sidebar widget on Market page                             |
 
 ### 3.4 Onboarding & UX
 
-| # | Behavior | Detail |
-|---|----------|--------|
-| 15 | 6-step onboarding modal | First visit tutorial, skippable, completion persisted |
-| 16 | First trade guide | Post-onboarding tooltip until first trade |
-| 17 | Welcome banner | Market page, dismissible, persisted |
-| 18 | Framer Motion transitions | Fade + slide page transitions (0.2s) |
-| 19 | Toast notifications | Success/error/info toasts on trade, watchlist, etc. |
-| 20 | Glossary | Side panel with searchable trading term definitions |
+| #   | Behavior                  | Detail                                                |
+| --- | ------------------------- | ----------------------------------------------------- |
+| 15  | 6-step onboarding modal   | First visit tutorial, skippable, completion persisted |
+| 16  | First trade guide         | Post-onboarding tooltip until first trade             |
+| 17  | Welcome banner            | Market page, dismissible, persisted                   |
+| 18  | Framer Motion transitions | Fade + slide page transitions (0.2s)                  |
+| 19  | Toast notifications       | Success/error/info toasts on trade, watchlist, etc.   |
+| 20  | Glossary                  | Side panel with searchable trading term definitions   |
 
 ### 3.5 Content & Integration
 
-| # | Behavior | Detail |
-|---|----------|--------|
-| 21 | Price chart | Recharts LineChart with event markers on PlayerDetail |
-| 22 | Content tiles | News articles, videos, analysis linked from player events |
-| 23 | Player sparklines | Mini charts on PlayerCard components |
-| 24 | Chrome extension | Standalone extension injecting stock badges on ESPN.com pages |
-| 25 | ScenarioInspector | Dev tool for editing scenario JSON, adding events, viewing timeline |
+| #   | Behavior          | Detail                                                              |
+| --- | ----------------- | ------------------------------------------------------------------- |
+| 21  | Price chart       | Recharts LineChart with event markers on PlayerDetail               |
+| 22  | Content tiles     | News articles, videos, analysis linked from player events           |
+| 23  | Player sparklines | Mini charts on PlayerCard components                                |
+| 24  | Chrome extension  | Standalone extension injecting stock badges on ESPN.com pages       |
+| 25  | ScenarioInspector | Dev tool for editing scenario JSON, adding events, viewing timeline |
 
 ### 3.6 Data Contracts
 
-| # | Behavior | Detail |
-|---|----------|--------|
-| 26 | Scenario JSON schema | `{ scenario, timestamp, headline, startingPortfolio, players[] }` |
-| 27 | Price history entries | `{ timestamp, price, reason: { type, headline, source }, content[] }` |
-| 28 | League members data | `{ members[], holdings: { playerId: [{ memberId, shares, avgCost }] } }` |
-| 29 | ESPN player mapping | `{ id, espnId, name, searchTerms[], team, position, basePrice }` |
+| #   | Behavior              | Detail                                                                   |
+| --- | --------------------- | ------------------------------------------------------------------------ |
+| 26  | Scenario JSON schema  | `{ scenario, timestamp, headline, startingPortfolio, players[] }`        |
+| 27  | Price history entries | `{ timestamp, price, reason: { type, headline, source }, content[] }`    |
+| 28  | League members data   | `{ members[], holdings: { playerId: [{ memberId, shares, avgCost }] } }` |
+| 29  | ESPN player mapping   | `{ id, espnId, name, searchTerms[], team, position, basePrice }`         |
 
 ---
 
@@ -363,42 +367,42 @@ These behaviors are user-facing or structurally load-bearing. They must survive 
 
 ### Critical
 
-| # | Issue | Impact | Detail |
-|---|-------|--------|--------|
-| C1 | Monolithic GameContext | Maintainability, testability | 866 lines, 16 `useState` hooks, 25+ functions, 5 `useEffect` hooks. Manages scenario selection, simulation, trading, portfolio, watchlist, mission, leaderboard, ESPN integration, and debug tools in a single file. Every state change re-renders every consumer. |
-| C2 | No TypeScript | Reliability, refactorability | Entire codebase is `.jsx`/`.js`. No type safety for props, context values, service contracts, or data schemas. Makes large refactors risky — no compiler to catch breakage. |
+| #   | Issue                  | Impact                       | Detail                                                                                                                                                                                                                                                             |
+| --- | ---------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| C1  | Monolithic GameContext | Maintainability, testability | 866 lines, 16 `useState` hooks, 25+ functions, 5 `useEffect` hooks. Manages scenario selection, simulation, trading, portfolio, watchlist, mission, leaderboard, ESPN integration, and debug tools in a single file. Every state change re-renders every consumer. |
+| C2  | No TypeScript          | Reliability, refactorability | Entire codebase is `.jsx`/`.js`. No type safety for props, context values, service contracts, or data schemas. Makes large refactors risky — no compiler to catch breakage.                                                                                        |
 
 ### High
 
-| # | Issue | Impact | Detail |
-|---|-------|--------|--------|
-| H1 | Thin unit test coverage | Confidence | Only 3 unit tests exist (`priceCalculator`, `PlayerCard`, `formatters`). Business logic in GameContext, sentimentEngine, and espnService has zero unit test coverage. The 75 Cypress E2E tests cover user flows but are slow (~40s) and can't isolate logic bugs. |
-| H2 | Dual simulation modes share no code | Complexity | Tick-based (live/superbowl) and event-driven (ESPN Live) use entirely different state variables, update mechanisms, and data shapes. Adding a third mode would require a third parallel implementation. |
-| H3 | 1MB production bundle | Performance | `dist/assets/index-Bg6Npo5b.js` is 993 KB (278 KB gzipped). No code splitting, no dynamic imports, no `manualChunks`. All 4 scenario JSON files (~100KB+ each) are bundled statically. Vite warns about this at build time. |
-| H4 | Direct JSON imports in context | Testability, bundle size | All scenario data files are imported at the top of `GameContext.jsx` (lines 2-7). Cannot lazy-load scenarios, cannot mock data for testing, all scenarios bundled regardless of which is used. |
+| #   | Issue                               | Impact                   | Detail                                                                                                                                                                                                                                                            |
+| --- | ----------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| H1  | Thin unit test coverage             | Confidence               | Only 3 unit tests exist (`priceCalculator`, `PlayerCard`, `formatters`). Business logic in GameContext, sentimentEngine, and espnService has zero unit test coverage. The 75 Cypress E2E tests cover user flows but are slow (~40s) and can't isolate logic bugs. |
+| H2  | Dual simulation modes share no code | Complexity               | Tick-based (live/superbowl) and event-driven (ESPN Live) use entirely different state variables, update mechanisms, and data shapes. Adding a third mode would require a third parallel implementation.                                                           |
+| H3  | 1MB production bundle               | Performance              | `dist/assets/index-Bg6Npo5b.js` is 993 KB (278 KB gzipped). No code splitting, no dynamic imports, no `manualChunks`. All 4 scenario JSON files (~100KB+ each) are bundled statically. Vite warns about this at build time.                                       |
+| H4  | Direct JSON imports in context      | Testability, bundle size | All scenario data files are imported at the top of `GameContext.jsx` (lines 2-7). Cannot lazy-load scenarios, cannot mock data for testing, all scenarios bundled regardless of which is used.                                                                    |
 
 ### Medium
 
-| # | Issue | Impact | Detail |
-|---|-------|--------|--------|
-| M1 | Price resolution complexity | Debuggability | Three price sources (`priceOverrides` → `priceHistory` → `basePrice`) plus `userImpact` multiplier, with ESPN Live branching differently. Hard to answer "why is this player at this price?" |
-| M2 | Leaderboard uses fake data | Correctness | `Leaderboard.jsx` has hardcoded fake traders instead of calling `getLeaderboardRankings()` which exists in GameContext and uses real league member data. The two implementations will drift. |
-| M3 | Global CSS without isolation | Maintainability | 24 CSS files with BEM-like naming but no CSS Modules or scoping. Class name collisions possible. No design tokens beyond CSS variables in `index.css`. |
-| M4 | Chrome extension has stale data | Correctness | `chrome-extension/playerData.js` has hardcoded player prices. No sync mechanism with the main app. Prices shown on ESPN.com will diverge from the app immediately. |
-| M5 | localStorage as persistence layer | Robustness | Portfolio, watchlist, cash, and scenario stored directly in localStorage with no versioning, no migration strategy, and no validation. Schema changes will silently corrupt saved state. |
-| M6 | No error boundaries | Reliability | A rendering error in any component crashes the entire app. No `<ErrorBoundary>` wrappers around pages or critical sections. |
-| M7 | Expensive re-computation | Performance | `getPlayers()` iterates all players on every call. `getLeaderboardRankings()` recalculates all portfolio values. Neither is memoized. Called on every render cycle from multiple consumers. |
+| #   | Issue                             | Impact          | Detail                                                                                                                                                                                       |
+| --- | --------------------------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M1  | Price resolution complexity       | Debuggability   | Three price sources (`priceOverrides` → `priceHistory` → `basePrice`) plus `userImpact` multiplier, with ESPN Live branching differently. Hard to answer "why is this player at this price?" |
+| M2  | Leaderboard uses fake data        | Correctness     | `Leaderboard.jsx` has hardcoded fake traders instead of calling `getLeaderboardRankings()` which exists in GameContext and uses real league member data. The two implementations will drift. |
+| M3  | Global CSS without isolation      | Maintainability | 24 CSS files with BEM-like naming but no CSS Modules or scoping. Class name collisions possible. No design tokens beyond CSS variables in `index.css`.                                       |
+| M4  | Chrome extension has stale data   | Correctness     | `chrome-extension/playerData.js` has hardcoded player prices. No sync mechanism with the main app. Prices shown on ESPN.com will diverge from the app immediately.                           |
+| M5  | localStorage as persistence layer | Robustness      | Portfolio, watchlist, cash, and scenario stored directly in localStorage with no versioning, no migration strategy, and no validation. Schema changes will silently corrupt saved state.     |
+| M6  | No error boundaries               | Reliability     | A rendering error in any component crashes the entire app. No `<ErrorBoundary>` wrappers around pages or critical sections.                                                                  |
+| M7  | Expensive re-computation          | Performance     | `getPlayers()` iterates all players on every call. `getLeaderboardRankings()` recalculates all portfolio values. Neither is memoized. Called on every render cycle from multiple consumers.  |
 
 ### Low
 
-| # | Issue | Impact | Detail |
-|---|-------|--------|--------|
-| L1 | Barrel file incomplete | DX | `components/index.js` is missing exports for `Glossary`, `InfoTooltip`, `LiveTicker`. Consumers import these directly rather than through the barrel. |
-| L2 | Magic numbers | Readability | `3000` (tick interval), `60000` (ESPN refresh), `0.001` (user impact factor), `10000` (initial cash) scattered as literals. Should be configurable constants. |
-| L3 | History array unbounded | Memory | `history` state array grows with every tick and trade. `espnPriceHistory` accumulates entries indefinitely. No cleanup or size limit. Long sessions could degrade performance. |
-| L4 | Async error handling minimal | Reliability | ESPN fetch in GameContext has basic try/catch but no retry logic, no timeout, no circuit breaker. `espnError` state is set but recovery requires manual refresh. |
-| L5 | Stale closure risk in effects | Correctness | Simulation `useEffect` (line 347) depends on `scenario`, `isPlaying`, `unifiedTimeline`, `players` — complex dependency array with potential for stale closures when multiple state updates batch. |
-| L6 | No a11y considerations | Accessibility | No ARIA attributes, no keyboard navigation support, no screen reader testing, no `eslint-plugin-jsx-a11y`. Color-coding (red/green) has no alternative indicator. |
+| #   | Issue                         | Impact        | Detail                                                                                                                                                                                             |
+| --- | ----------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| L1  | Barrel file incomplete        | DX            | `components/index.js` is missing exports for `Glossary`, `InfoTooltip`, `LiveTicker`. Consumers import these directly rather than through the barrel.                                              |
+| L2  | Magic numbers                 | Readability   | `3000` (tick interval), `60000` (ESPN refresh), `0.001` (user impact factor), `10000` (initial cash) scattered as literals. Should be configurable constants.                                      |
+| L3  | History array unbounded       | Memory        | `history` state array grows with every tick and trade. `espnPriceHistory` accumulates entries indefinitely. No cleanup or size limit. Long sessions could degrade performance.                     |
+| L4  | Async error handling minimal  | Reliability   | ESPN fetch in GameContext has basic try/catch but no retry logic, no timeout, no circuit breaker. `espnError` state is set but recovery requires manual refresh.                                   |
+| L5  | Stale closure risk in effects | Correctness   | Simulation `useEffect` (line 347) depends on `scenario`, `isPlaying`, `unifiedTimeline`, `players` — complex dependency array with potential for stale closures when multiple state updates batch. |
+| L6  | No a11y considerations        | Accessibility | No ARIA attributes, no keyboard navigation support, no screen reader testing, no `eslint-plugin-jsx-a11y`. Color-coding (red/green) has no alternative indicator.                                  |
 
 ---
 
