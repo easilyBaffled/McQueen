@@ -10,7 +10,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "tracker": "bash -c 'source ~/.nvm/nvm.sh && nvm exec 22 bdui start --open'"
   },
   "dependencies": {
     "framer-motion": "^12.23.25",
