@@ -28,6 +28,19 @@ You have been assigned exactly **one** issue to complete. Do not work on anythin
 
 ---
 
+## Development Workflow (Red-Green-Refactor)
+
+For every code change, follow the TDD cycle:
+
+1. **Red** -- Write a failing test first. Before touching any production code, add a test that captures the behavior described in the acceptance criteria (or one slice of it). Run `npm run test:run` and confirm the new test **fails**.
+2. **Green** -- Write the minimum production code to make the test pass. Run `npm run test:run` and confirm **all** tests pass.
+3. **Refactor** -- Clean up the code you just wrote (remove duplication, improve naming, simplify logic) while keeping all tests green. Run `npm run test:run` after each change.
+4. **Repeat** -- Pick the next slice of acceptance criteria and start another Red-Green-Refactor cycle until the issue is fully implemented.
+
+Place unit/component tests in a `__tests__/` directory next to the source file, following the existing convention (e.g. `src/components/__tests__/PlayerCard.test.jsx`).
+
+---
+
 ## Rules (STRICT -- do not violate)
 
 1. **One issue per run.** You may ONLY work on the bead listed above (`{{BEAD_ID}}`). Do not fix unrelated bugs, refactor unrelated code, or add features not described in this issue.
@@ -41,7 +54,7 @@ You have been assigned exactly **one** issue to complete. Do not work on anythin
 
 4. **Do not touch unrelated files.** If you discover a bug or improvement opportunity outside the scope of this bead, note it but do NOT fix it. Leave a comment in the commit message or bead notes instead.
 
-5. **Test your changes.** Run `npm run lint` before finishing. If you add a component, verify it renders by checking for obvious errors.
+5. **Test your changes.** Follow the Red-Green-Refactor workflow above. Run `npm run test:run` to execute unit tests and `npm run lint` to check for lint errors before finishing.
 
 6. **Keep changes minimal.** Prefer the smallest diff that satisfies the acceptance criteria. Do not over-engineer.
 
