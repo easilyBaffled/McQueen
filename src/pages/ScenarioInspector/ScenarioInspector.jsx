@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import AddEventModal from '../components/AddEventModal/AddEventModal';
+import AddEventModal from '../../components/AddEventModal/AddEventModal';
 import './ScenarioInspector.css';
 
 const scenarioLoaders = {
-  midweek: () => import('../data/midweek.json').then((m) => m.default),
-  live: () => import('../data/live.json').then((m) => m.default),
-  playoffs: () => import('../data/playoffs.json').then((m) => m.default),
+  midweek: () => import('../../data/midweek.json').then((m) => m.default),
+  live: () => import('../../data/live.json').then((m) => m.default),
+  playoffs: () => import('../../data/playoffs.json').then((m) => m.default),
 };
 
 const TEMPLATES = {

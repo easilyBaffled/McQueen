@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useTrading } from '../context/TradingContext';
+import { useTrading } from '../../context/TradingContext';
 import './Leaderboard.css';
 
 // Fake leaderboard data

@@ -7,8 +7,8 @@ import Layout from '../Layout/Layout';
 import Onboarding from '../Onboarding/Onboarding';
 import AddEventModal from '../AddEventModal/AddEventModal';
 import { Glossary, EventMarkerPopup, FirstTradeGuide } from '../../shared';
-import Portfolio from '../../pages/Portfolio';
-import Leaderboard from '../../pages/Leaderboard';
+import Portfolio from '../../pages/Portfolio/Portfolio';
+import Leaderboard from '../../pages/Leaderboard/Leaderboard';
 
 vi.mock('../../context/ScenarioContext', () => ({
   useScenario: () => ({

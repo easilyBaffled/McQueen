@@ -1,12 +1,12 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useScenario } from '../context/ScenarioContext';
-import { useTrading } from '../context/TradingContext';
-import PlayerCard from '../components/PlayerCard/PlayerCard';
-import MiniLeaderboard from '../components/MiniLeaderboard/MiniLeaderboard';
-import { MarketSkeleton, LeaderboardSkeleton } from '../shared';
-import { FirstTradeGuide } from '../shared';
+import { useScenario } from '../../context/ScenarioContext';
+import { useTrading } from '../../context/TradingContext';
+import PlayerCard from '../../components/PlayerCard/PlayerCard';
+import MiniLeaderboard from '../../components/MiniLeaderboard/MiniLeaderboard';
+import { MarketSkeleton, LeaderboardSkeleton } from '../../shared';
+import { FirstTradeGuide } from '../../shared';
 import './Market.css';
 
 const WELCOME_DISMISSED_KEY = 'mcqueen-welcome-dismissed';

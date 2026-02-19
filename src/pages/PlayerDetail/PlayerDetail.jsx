@@ -11,12 +11,12 @@ import {
   ReferenceLine,
   Customized,
 } from 'recharts';
-import { useTrading } from '../context/TradingContext';
-import { useSocial } from '../context/SocialContext';
-import { EventMarkerPopup, getEventConfig } from '../shared';
-import { useToast } from '../components';
-import { getPlayerNewsUrls, getTeamNewsUrl } from '../utils/espnUrls';
-import { getPlayerHeadshotUrl } from '../utils/playerImages';
+import { useTrading } from '../../context/TradingContext';
+import { useSocial } from '../../context/SocialContext';
+import { EventMarkerPopup, getEventConfig } from '../../shared';
+import { useToast } from '../../components';
+import { getPlayerNewsUrls, getTeamNewsUrl } from '../../utils/espnUrls';
+import { getPlayerHeadshotUrl } from '../../utils/playerImages';
 import './PlayerDetail.css';
 
 // Event type colors (matching ScenarioInspector)
