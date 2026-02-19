@@ -13,16 +13,16 @@ deployed on Vercel.
 
 ## Tech Stack
 
-| Layer       | Tool / Version                       |
-|-------------|--------------------------------------|
-| Framework   | React 19 (functional components only)|
-| Build       | Vite 5                               |
-| Routing     | React Router DOM 7                   |
-| Animations  | Framer Motion 12                     |
-| Charts      | Recharts 3                           |
-| Linting     | ESLint 9 (flat config)               |
-| Deployment  | Vercel                               |
-| Node        | 20.x                                 |
+| Layer      | Tool / Version                        |
+| ---------- | ------------------------------------- |
+| Framework  | React 19 (functional components only) |
+| Build      | Vite 5                                |
+| Routing    | React Router DOM 7                    |
+| Animations | Framer Motion 12                      |
+| Charts     | Recharts 3                            |
+| Linting    | ESLint 9 (flat config)                |
+| Deployment | Vercel                                |
+| Node       | 20.x                                  |
 
 ## Folder Structure
 
@@ -40,17 +40,17 @@ src/
 
 ## Naming Conventions
 
-| What                  | Pattern                          | Example                     |
-|-----------------------|----------------------------------|-----------------------------|
-| Component file        | `PascalCase.jsx`                 | `PlayerCard.jsx`            |
-| Component CSS         | `PascalCase.css` (co-located)    | `PlayerCard.css`            |
-| Service / util file   | `camelCase.js`                   | `priceCalculator.js`        |
-| Custom hook file      | `camelCase.js` (use-prefix)      | `usePortfolio.js`           |
-| Data file             | `lowercase.json`                 | `midweek.json`              |
-| CSS class names       | `kebab-case`                     | `.player-card-header`       |
-| JS variables/funcs    | `camelCase`                      | `calculateNewPrice`         |
-| React components      | `PascalCase`                     | `<PlayerCard />`            |
-| Constants             | `UPPER_SNAKE_CASE`               | `INITIAL_CASH`              |
+| What                | Pattern                       | Example               |
+| ------------------- | ----------------------------- | --------------------- |
+| Component file      | `PascalCase.jsx`              | `PlayerCard.jsx`      |
+| Component CSS       | `PascalCase.css` (co-located) | `PlayerCard.css`      |
+| Service / util file | `camelCase.js`                | `priceCalculator.js`  |
+| Custom hook file    | `camelCase.js` (use-prefix)   | `usePortfolio.js`     |
+| Data file           | `lowercase.json`              | `midweek.json`        |
+| CSS class names     | `kebab-case`                  | `.player-card-header` |
+| JS variables/funcs  | `camelCase`                   | `calculateNewPrice`   |
+| React components    | `PascalCase`                  | `<PlayerCard />`      |
+| Constants           | `UPPER_SNAKE_CASE`            | `INITIAL_CASH`        |
 
 ## Barrel Exports
 
@@ -108,12 +108,12 @@ unless the bead description explicitly requires it.
 
 ## Build & Dev Commands
 
-| Command            | Purpose                        |
-|--------------------|--------------------------------|
-| `npm run dev`      | Start Vite dev server          |
-| `npm run build`    | Production build to `dist/`    |
-| `npm run lint`     | ESLint check                   |
-| `npm run preview`  | Preview production build       |
+| Command           | Purpose                     |
+| ----------------- | --------------------------- |
+| `npm run dev`     | Start Vite dev server       |
+| `npm run build`   | Production build to `dist/` |
+| `npm run lint`    | ESLint check                |
+| `npm run preview` | Preview production build    |
 
 ## Proxy / API
 

@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import fs from 'fs'
-import path from 'path'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import fs from 'fs';
+import path from 'path';
 
 // Custom plugin to handle JSON file saves during development
 function jsonApiPlugin() {
@@ -10,50 +10,58 @@ function jsonApiPlugin() {
     configureServer(server) {
       server.middlewares.use('/api/save-scenario', async (req, res) => {
         if (req.method !== 'POST') {
-          res.statusCode = 405
-          res.end(JSON.stringify({ error: 'Method not allowed' }))
-          return
+          res.statusCode = 405;
+          res.end(JSON.stringify({ error: 'Method not allowed' }));
+          return;
         }
 
-        let body = ''
-        req.on('data', chunk => {
-          body += chunk.toString()
-        })
+        let body = '';
+        req.on('data', (chunk) => {
+          body += chunk.toString();
+        });
 
         req.on('end', () => {
           try {
-            const { scenario, data } = JSON.parse(body)
-            
+            const { scenario, data } = JSON.parse(body);
+
             if (!scenario || !data) {
-              res.statusCode = 400
-              res.end(JSON.stringify({ error: 'Missing scenario or data' }))
-              return
+              res.statusCode = 400;
+              res.end(JSON.stringify({ error: 'Missing scenario or data' }));
+              return;
             }
 
-            const validScenarios = ['midweek', 'live', 'playoffs']
+            const validScenarios = ['midweek', 'live', 'playoffs'];
             if (!validScenarios.includes(scenario)) {
-              res.statusCode = 400
-              res.end(JSON.stringify({ error: 'Invalid scenario name' }))
-              return
+              res.statusCode = 400;
+              res.end(JSON.stringify({ error: 'Invalid scenario name' }));
+              return;
             }
 
-            const filePath = path.resolve(__dirname, `src/data/${scenario}.json`)
-            const jsonContent = JSON.stringify(data, null, 2)
-            
-            fs.writeFileSync(filePath, jsonContent, 'utf-8')
-            
-            res.statusCode = 200
-            res.setHeader('Content-Type', 'application/json')
-            res.end(JSON.stringify({ success: true, message: `Saved ${scenario}.json` }))
+            const filePath = path.resolve(
+              __dirname,
+              `src/data/${scenario}.json`,
+            );
+            const jsonContent = JSON.stringify(data, null, 2);
+
+            fs.writeFileSync(filePath, jsonContent, 'utf-8');
+
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(
+              JSON.stringify({
+                success: true,
+                message: `Saved ${scenario}.json`,
+              }),
+            );
           } catch (err) {
-            console.error('Error saving scenario:', err)
-            res.statusCode = 500
-            res.end(JSON.stringify({ error: err.message }))
+            console.error('Error saving scenario:', err);
+            res.statusCode = 500;
+            res.end(JSON.stringify({ error: err.message }));
           }
-        })
-      })
-    }
-  }
+        });
+      });
+    },
+  };
 }
 
 // https://vite.dev/config/
@@ -89,4 +97,4 @@ export default defineConfig({
       },
     },
   },
-})
+});

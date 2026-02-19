@@ -9,11 +9,13 @@ describe('Leaderboard Page', () => {
   it('renders the leaderboard table', () => {
     cy.get('.leaderboard-table').should('exist');
     cy.get('.table-row').should('have.length.gte', 10);
-    cy.get('.table-row').first().within(() => {
-      cy.get('.col-trader').should('exist');
-      cy.get('.col-value').should('contain.text', '$');
-      cy.get('.col-gain').should('contain.text', '%');
-    });
+    cy.get('.table-row')
+      .first()
+      .within(() => {
+        cy.get('.col-trader').should('exist');
+        cy.get('.col-value').should('contain.text', '$');
+        cy.get('.col-gain').should('contain.text', '%');
+      });
   });
 
   // TC-LB-002

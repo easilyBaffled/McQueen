@@ -7,12 +7,12 @@ You have been assigned exactly **one** issue to complete. Do not work on anythin
 
 ## Your Assignment
 
-| Field       | Value                    |
-|-------------|--------------------------|
-| **Bead ID** | `{{BEAD_ID}}`            |
-| **Title**   | {{BEAD_TITLE}}           |
-| **Type**    | {{BEAD_TYPE}}            |
-| **Priority**| {{BEAD_PRIORITY}}        |
+| Field        | Value             |
+| ------------ | ----------------- |
+| **Bead ID**  | `{{BEAD_ID}}`     |
+| **Title**    | {{BEAD_TITLE}}    |
+| **Type**     | {{BEAD_TYPE}}     |
+| **Priority** | {{BEAD_PRIORITY}} |
 
 ### Description
 
@@ -48,6 +48,7 @@ Place unit/component tests in a `__tests__/` directory next to the source file, 
 2. **Follow project conventions.** Read and obey `.ralph/AGENT.md` before writing any code. It contains folder structure, naming conventions, styling rules, and architectural constraints.
 
 3. **Commit with bead ID.** Every git commit message MUST include the bead ID in parentheses at the end:
+
    ```
    Add watchlist search filter ({{BEAD_ID}})
    ```

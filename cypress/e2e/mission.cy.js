@@ -30,7 +30,10 @@ describe('Mission Page', () => {
         cy.wrap($btns[i]).click();
       }
     });
-    cy.get('.picks-column.risers .pick-chip:not(.empty)').should('have.length', 3);
+    cy.get('.picks-column.risers .pick-chip:not(.empty)').should(
+      'have.length',
+      3,
+    );
   });
 
   // TC-MS-004
@@ -40,16 +43,27 @@ describe('Mission Page', () => {
         cy.wrap($btns[i]).click();
       }
     });
-    cy.get('.picks-column.fallers .pick-chip:not(.empty)').should('have.length', 3);
+    cy.get('.picks-column.fallers .pick-chip:not(.empty)').should(
+      'have.length',
+      3,
+    );
   });
 
   // TC-MS-005
   it('removes a pick', () => {
     cy.get('.selector-btn.up').first().click();
-    cy.get('.picks-column.risers .pick-chip:not(.empty)').should('have.length', 1);
+    cy.get('.picks-column.risers .pick-chip:not(.empty)').should(
+      'have.length',
+      1,
+    );
 
-    cy.get('.picks-column.risers .pick-chip:not(.empty) button').first().click();
-    cy.get('.picks-column.risers .pick-chip:not(.empty)').should('have.length', 0);
+    cy.get('.picks-column.risers .pick-chip:not(.empty) button')
+      .first()
+      .click();
+    cy.get('.picks-column.risers .pick-chip:not(.empty)').should(
+      'have.length',
+      0,
+    );
   });
 
   // TC-MS-006

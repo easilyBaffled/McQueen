@@ -15,10 +15,38 @@ const cache = new Map();
 
 // ESPN Team IDs for NFL
 export const NFL_TEAM_IDS = {
-  ARI: 22, ATL: 1, BAL: 33, BUF: 2, CAR: 29, CHI: 3, CIN: 4, CLE: 5,
-  DAL: 6, DEN: 7, DET: 8, GB: 9, HOU: 34, IND: 11, JAX: 30, KC: 12,
-  LV: 13, LAC: 24, LAR: 14, MIA: 15, MIN: 16, NE: 17, NO: 18, NYG: 19,
-  NYJ: 20, PHI: 21, PIT: 23, SF: 25, SEA: 26, TB: 27, TEN: 10, WAS: 28
+  ARI: 22,
+  ATL: 1,
+  BAL: 33,
+  BUF: 2,
+  CAR: 29,
+  CHI: 3,
+  CIN: 4,
+  CLE: 5,
+  DAL: 6,
+  DEN: 7,
+  DET: 8,
+  GB: 9,
+  HOU: 34,
+  IND: 11,
+  JAX: 30,
+  KC: 12,
+  LV: 13,
+  LAC: 24,
+  LAR: 14,
+  MIA: 15,
+  MIN: 16,
+  NE: 17,
+  NO: 18,
+  NYG: 19,
+  NYJ: 20,
+  PHI: 21,
+  PIT: 23,
+  SF: 25,
+  SEA: 26,
+  TB: 27,
+  TEN: 10,
+  WAS: 28,
 };
 
 /**
@@ -53,7 +81,7 @@ async function fetchWithFallback(endpoint) {
   try {
     // Try proxied endpoint first
     let response = await fetch(`${ESPN_API_BASE}${endpoint}`);
-    
+
     if (!response.ok) {
       // Fallback to direct (may fail due to CORS in browser)
       console.warn('Proxy failed, trying direct ESPN API...');
@@ -80,7 +108,9 @@ async function fetchWithFallback(endpoint) {
  */
 export async function fetchNFLNews(limit = 20) {
   try {
-    const data = await fetchWithFallback(`/apis/site/v2/sports/football/nfl/news?limit=${limit}`);
+    const data = await fetchWithFallback(
+      `/apis/site/v2/sports/football/nfl/news?limit=${limit}`,
+    );
     return normalizeNewsArticles(data.articles || []);
   } catch (error) {
     console.error('Failed to fetch NFL news:', error);
@@ -102,7 +132,9 @@ export async function fetchTeamNews(teamAbbr, limit = 10) {
   }
 
   try {
-    const data = await fetchWithFallback(`/apis/site/v2/sports/football/nfl/teams/${teamId}/news?limit=${limit}`);
+    const data = await fetchWithFallback(
+      `/apis/site/v2/sports/football/nfl/teams/${teamId}/news?limit=${limit}`,
+    );
     return normalizeNewsArticles(data.articles || []);
   } catch (error) {
     console.error(`Failed to fetch news for team ${teamAbbr}:`, error);
@@ -116,11 +148,13 @@ export async function fetchTeamNews(teamAbbr, limit = 10) {
  */
 export async function fetchScoreboard() {
   try {
-    const data = await fetchWithFallback('/apis/site/v2/sports/football/nfl/scoreboard');
+    const data = await fetchWithFallback(
+      '/apis/site/v2/sports/football/nfl/scoreboard',
+    );
     return {
       events: (data.events || []).map(normalizeGameEvent),
       week: data.week,
-      season: data.season
+      season: data.season,
     };
   } catch (error) {
     console.error('Failed to fetch scoreboard:', error);
@@ -135,11 +169,15 @@ export async function fetchScoreboard() {
  * @param {string} teamAbbr - Player's team
  * @returns {Promise<Array>} Filtered news articles
  */
-export async function fetchPlayerNews(playerName, searchTerms = [], teamAbbr = '') {
+export async function fetchPlayerNews(
+  playerName,
+  searchTerms = [],
+  teamAbbr = '',
+) {
   // Build search terms array
   const terms = [
     playerName.toLowerCase(),
-    ...searchTerms.map(t => t.toLowerCase())
+    ...searchTerms.map((t) => t.toLowerCase()),
   ];
 
   // Fetch team news first (more relevant)
@@ -150,19 +188,20 @@ export async function fetchPlayerNews(playerName, searchTerms = [], teamAbbr = '
 
   // Also fetch general NFL news
   const generalNews = await fetchNFLNews(30);
-  
+
   // Combine and dedupe
   const allArticles = [...articles];
-  generalNews.forEach(article => {
-    if (!allArticles.find(a => a.id === article.id)) {
+  generalNews.forEach((article) => {
+    if (!allArticles.find((a) => a.id === article.id)) {
       allArticles.push(article);
     }
   });
 
   // Filter articles that mention the player
-  const playerArticles = allArticles.filter(article => {
-    const searchText = `${article.headline} ${article.description}`.toLowerCase();
-    return terms.some(term => searchText.includes(term));
+  const playerArticles = allArticles.filter((article) => {
+    const searchText =
+      `${article.headline} ${article.description}`.toLowerCase();
+    return terms.some((term) => searchText.includes(term));
   });
 
   return playerArticles;
@@ -172,7 +211,7 @@ export async function fetchPlayerNews(playerName, searchTerms = [], teamAbbr = '
  * Normalize ESPN news article to our format
  */
 function normalizeNewsArticles(articles) {
-  return articles.map(article => ({
+  return articles.map((article) => ({
     id: article.id || String(Date.now() + Math.random()),
     headline: article.headline || '',
     description: article.description || '',
@@ -185,7 +224,7 @@ function normalizeNewsArticles(articles) {
     premium: article.premium || false,
     categories: article.categories || [],
     // Keep original for debugging
-    _raw: article
+    _raw: article,
   }));
 }
 
@@ -194,8 +233,8 @@ function normalizeNewsArticles(articles) {
  */
 function normalizeGameEvent(event) {
   const competition = event.competitions?.[0] || {};
-  const homeTeam = competition.competitors?.find(c => c.homeAway === 'home');
-  const awayTeam = competition.competitors?.find(c => c.homeAway === 'away');
+  const homeTeam = competition.competitors?.find((c) => c.homeAway === 'home');
+  const awayTeam = competition.competitors?.find((c) => c.homeAway === 'away');
 
   return {
     id: event.id,
@@ -206,24 +245,28 @@ function normalizeGameEvent(event) {
       type: competition.status?.type?.name || 'scheduled',
       description: competition.status?.type?.description || '',
       period: competition.status?.period || 0,
-      clock: competition.status?.displayClock || ''
+      clock: competition.status?.displayClock || '',
     },
-    homeTeam: homeTeam ? {
-      id: homeTeam.team?.id,
-      abbr: homeTeam.team?.abbreviation,
-      name: homeTeam.team?.displayName,
-      score: homeTeam.score,
-      logo: homeTeam.team?.logo
-    } : null,
-    awayTeam: awayTeam ? {
-      id: awayTeam.team?.id,
-      abbr: awayTeam.team?.abbreviation,
-      name: awayTeam.team?.displayName,
-      score: awayTeam.score,
-      logo: awayTeam.team?.logo
-    } : null,
+    homeTeam: homeTeam
+      ? {
+          id: homeTeam.team?.id,
+          abbr: homeTeam.team?.abbreviation,
+          name: homeTeam.team?.displayName,
+          score: homeTeam.score,
+          logo: homeTeam.team?.logo,
+        }
+      : null,
+    awayTeam: awayTeam
+      ? {
+          id: awayTeam.team?.id,
+          abbr: awayTeam.team?.abbreviation,
+          name: awayTeam.team?.displayName,
+          score: awayTeam.score,
+          logo: awayTeam.team?.logo,
+        }
+      : null,
     venue: competition.venue?.fullName || '',
-    broadcast: competition.broadcasts?.[0]?.names?.join(', ') || ''
+    broadcast: competition.broadcasts?.[0]?.names?.join(', ') || '',
   };
 }
 
@@ -244,8 +287,8 @@ export function getCacheStats() {
     entries: Array.from(cache.entries()).map(([key, value]) => ({
       key,
       age: Date.now() - value.timestamp,
-      expired: Date.now() - value.timestamp > CACHE_TTL
-    }))
+      expired: Date.now() - value.timestamp > CACHE_TTL,
+    })),
   };
 }
 
@@ -256,7 +299,5 @@ export default {
   fetchScoreboard,
   clearCache,
   getCacheStats,
-  NFL_TEAM_IDS
+  NFL_TEAM_IDS,
 };
-
-

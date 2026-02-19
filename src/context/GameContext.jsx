@@ -1,4 +1,12 @@
-import { createContext, useContext, useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  useMemo,
+} from 'react';
 import midweekData from '../data/midweek.json';
 import liveData from '../data/live.json';
 import playoffsData from '../data/playoffs.json';
@@ -8,8 +16,14 @@ import espnPlayersData from '../data/espnPlayers.json';
 
 // ESPN Services
 import { fetchNFLNews, fetchPlayerNews } from '../services/espnService';
-import { analyzeSentiment, getSentimentDescription } from '../services/sentimentEngine';
-import { calculateNewPrice, createPriceHistoryEntry } from '../services/priceCalculator';
+import {
+  analyzeSentiment,
+  getSentimentDescription,
+} from '../services/sentimentEngine';
+import {
+  calculateNewPrice,
+  createPriceHistoryEntry,
+} from '../services/priceCalculator';
 
 const GameContext = createContext(null);
 
@@ -77,7 +91,7 @@ function getLatestContentFromHistory(player) {
 function getAllContentFromHistory(player) {
   if (!player || !player.priceHistory) return [];
   const allContent = [];
-  player.priceHistory.forEach(entry => {
+  player.priceHistory.forEach((entry) => {
     if (entry.content && entry.content.length > 0) {
       allContent.push(...entry.content);
     }
@@ -88,8 +102,8 @@ function getAllContentFromHistory(player) {
 // Build a unified timeline from all players' priceHistory entries
 function buildUnifiedTimeline(players) {
   const timeline = [];
-  
-  players.forEach(player => {
+
+  players.forEach((player) => {
     if (player.priceHistory) {
       player.priceHistory.forEach((entry, index) => {
         timeline.push({
@@ -104,10 +118,10 @@ function buildUnifiedTimeline(players) {
       });
     }
   });
-  
+
   // Sort by timestamp
   timeline.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-  
+
   return timeline;
 }
 
@@ -133,21 +147,21 @@ const getFromStorage = (key, defaultValue) => {
 };
 
 export function GameProvider({ children }) {
-  const [scenario, setScenarioState] = useState(() => 
-    getFromStorage(STORAGE_KEYS.scenario, 'midweek')
+  const [scenario, setScenarioState] = useState(() =>
+    getFromStorage(STORAGE_KEYS.scenario, 'midweek'),
   );
   const [tick, setTick] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [priceOverrides, setPriceOverrides] = useState({}); // Override prices during simulation
   const [userImpact, setUserImpact] = useState({}); // Track price impact from user trades
-  const [portfolio, setPortfolio] = useState(() => 
-    getFromStorage(STORAGE_KEYS.portfolio, {})
+  const [portfolio, setPortfolio] = useState(() =>
+    getFromStorage(STORAGE_KEYS.portfolio, {}),
   ); // { playerId: { shares: number, avgCost: number } }
-  const [watchlist, setWatchlist] = useState(() => 
-    getFromStorage(STORAGE_KEYS.watchlist, [])
+  const [watchlist, setWatchlist] = useState(() =>
+    getFromStorage(STORAGE_KEYS.watchlist, []),
   );
-  const [cash, setCash] = useState(() => 
-    getFromStorage(STORAGE_KEYS.cash, INITIAL_CASH)
+  const [cash, setCash] = useState(() =>
+    getFromStorage(STORAGE_KEYS.cash, INITIAL_CASH),
   );
   const [missionPicks, setMissionPicks] = useState({ risers: [], fallers: [] });
   const [missionRevealed, setMissionRevealed] = useState(false);
@@ -221,10 +235,11 @@ export function GameProvider({ children }) {
         // Find which players this article is about
         for (const player of players) {
           const searchTerms = player.searchTerms || [player.name];
-          const articleText = `${article.headline} ${article.description}`.toLowerCase();
-          
-          const isRelevant = searchTerms.some(term => 
-            articleText.includes(term.toLowerCase())
+          const articleText =
+            `${article.headline} ${article.description}`.toLowerCase();
+
+          const isRelevant = searchTerms.some((term) =>
+            articleText.includes(term.toLowerCase()),
           );
 
           if (isRelevant) {
@@ -232,18 +247,26 @@ export function GameProvider({ children }) {
             const sentimentResult = analyzeSentiment(
               `${article.headline} ${article.description}`,
               player.name,
-              player.position
+              player.position,
             );
 
             // Get current price
             const currentPrice = priceOverrides[player.id] ?? player.basePrice;
 
             // Calculate new price
-            const { newPrice, changePercent } = calculateNewPrice(currentPrice, sentimentResult);
+            const { newPrice, changePercent } = calculateNewPrice(
+              currentPrice,
+              sentimentResult,
+            );
 
             // Create price history entry
-            const historyEntry = createPriceHistoryEntry(article, sentimentResult, newPrice);
-            historyEntry.sentimentDescription = getSentimentDescription(sentimentResult);
+            const historyEntry = createPriceHistoryEntry(
+              article,
+              sentimentResult,
+              newPrice,
+            );
+            historyEntry.sentimentDescription =
+              getSentimentDescription(sentimentResult);
 
             // Add to player's price history
             if (!newPriceHistory[player.id]) {
@@ -252,21 +275,24 @@ export function GameProvider({ children }) {
             newPriceHistory[player.id].push(historyEntry);
 
             // Update price override
-            setPriceOverrides(prev => ({
+            setPriceOverrides((prev) => ({
               ...prev,
-              [player.id]: newPrice
+              [player.id]: newPrice,
             }));
 
             // Add to history log
-            setHistory(h => [...h, {
-              tick: Date.now(),
-              prices: { [player.id]: newPrice },
-              action: `ESPN: ${article.headline.substring(0, 50)}...`,
-              playerId: player.id,
-              playerName: player.name,
-              sentiment: sentimentResult.sentiment,
-              changePercent
-            }]);
+            setHistory((h) => [
+              ...h,
+              {
+                tick: Date.now(),
+                prices: { [player.id]: newPrice },
+                action: `ESPN: ${article.headline.substring(0, 50)}...`,
+                playerId: player.id,
+                playerName: player.name,
+                sentiment: sentimentResult.sentiment,
+                changePercent,
+              },
+            ]);
           }
         }
 
@@ -275,14 +301,19 @@ export function GameProvider({ children }) {
 
       setEspnPriceHistory(newPriceHistory);
       setProcessedArticleIds(newProcessedIds);
-
     } catch (error) {
       console.error('ESPN fetch error:', error);
       setEspnError(error.message || 'Failed to fetch ESPN news');
     } finally {
       setEspnLoading(false);
     }
-  }, [isEspnLiveMode, players, espnPriceHistory, processedArticleIds, priceOverrides]);
+  }, [
+    isEspnLiveMode,
+    players,
+    espnPriceHistory,
+    processedArticleIds,
+    priceOverrides,
+  ]);
 
   // ESPN Live: Auto-refresh effect
   useEffect(() => {
@@ -291,7 +322,10 @@ export function GameProvider({ children }) {
       fetchAndProcessEspnNews();
 
       // Set up refresh interval
-      espnRefreshRef.current = setInterval(fetchAndProcessEspnNews, ESPN_REFRESH_INTERVAL);
+      espnRefreshRef.current = setInterval(
+        fetchAndProcessEspnNews,
+        ESPN_REFRESH_INTERVAL,
+      );
 
       return () => {
         if (espnRefreshRef.current) {
@@ -314,18 +348,18 @@ export function GameProvider({ children }) {
     setTick(0);
     setUserImpact({});
     setPlayoffDilutionApplied(false); // Reset dilution state when changing scenarios
-    
+
     // Reset portfolio and cash to scenario's starting values
     const startingPortfolio = currentData?.startingPortfolio || {};
     setPortfolio(startingPortfolio);
     setCash(INITIAL_CASH);
-    
+
     // Reset ESPN state when switching scenarios
     setEspnNews([]);
     setEspnError(null);
     setEspnPriceHistory({});
     setProcessedArticleIds(new Set());
-    
+
     // Build initial prices from priceHistory (or basePrice for ESPN Live)
     const initialPrices = {};
     players.forEach((player) => {
@@ -335,17 +369,22 @@ export function GameProvider({ children }) {
         initialPrices[player.id] = getCurrentPriceFromHistory(player);
       }
     });
-    
-    const actionMessage = scenario === 'espn-live' 
-      ? 'ESPN Live mode activated - fetching real news...'
-      : 'Scenario loaded';
-    
+
+    const actionMessage =
+      scenario === 'espn-live'
+        ? 'ESPN Live mode activated - fetching real news...'
+        : 'Scenario loaded';
+
     setHistory([{ tick: 0, prices: initialPrices, action: actionMessage }]);
   }, [scenario]);
 
   // Apply tick updates for live scenarios (live and superbowl) using unified timeline
   useEffect(() => {
-    if ((scenario === 'live' || scenario === 'superbowl') && isPlaying && unifiedTimeline.length > 0) {
+    if (
+      (scenario === 'live' || scenario === 'superbowl') &&
+      isPlaying &&
+      unifiedTimeline.length > 0
+    ) {
       tickIntervalRef.current = setInterval(() => {
         setTick((prevTick) => {
           const nextTick = prevTick + 1;
@@ -353,103 +392,115 @@ export function GameProvider({ children }) {
             setIsPlaying(false);
             return prevTick;
           }
-          
+
           // Get the timeline entry for this tick
           const timelineEntry = unifiedTimeline[nextTick];
           if (timelineEntry) {
             setPriceOverrides((prev) => {
               const newOverrides = { ...prev };
               newOverrides[timelineEntry.playerId] = timelineEntry.price;
-              
+
               // Build current prices for history
               const currentPrices = {};
-              players.forEach(p => {
-                currentPrices[p.id] = newOverrides[p.id] || getCurrentPriceFromHistory(p);
+              players.forEach((p) => {
+                currentPrices[p.id] =
+                  newOverrides[p.id] || getCurrentPriceFromHistory(p);
               });
-              
-              setHistory((h) => [...h, { 
-                tick: nextTick, 
-                prices: currentPrices, 
-                action: timelineEntry.reason?.headline || 'Price update',
-                playerId: timelineEntry.playerId,
-                playerName: timelineEntry.playerName,
-              }]);
-              
+
+              setHistory((h) => [
+                ...h,
+                {
+                  tick: nextTick,
+                  prices: currentPrices,
+                  action: timelineEntry.reason?.headline || 'Price update',
+                  playerId: timelineEntry.playerId,
+                  playerName: timelineEntry.playerName,
+                },
+              ]);
+
               return newOverrides;
             });
           }
-          
+
           return nextTick;
         });
       }, 3000); // Update every 3 seconds
-      
+
       return () => clearInterval(tickIntervalRef.current);
     }
   }, [scenario, isPlaying, unifiedTimeline, players]);
 
   // Get effective price (from priceHistory or overrides + user impact)
-  const getEffectivePrice = useCallback((playerId) => {
-    const player = players.find(p => p.id === playerId);
-    
-    // Start with the price from priceHistory or override
-    let basePrice;
-    if (priceOverrides[playerId] !== undefined) {
-      basePrice = priceOverrides[playerId];
-    } else {
-      basePrice = getCurrentPriceFromHistory(player);
-    }
-    
-    // Apply user impact
-    const impact = userImpact[playerId] || 0;
-    return +(basePrice * (1 + impact)).toFixed(2);
-  }, [players, priceOverrides, userImpact]);
+  const getEffectivePrice = useCallback(
+    (playerId) => {
+      const player = players.find((p) => p.id === playerId);
+
+      // Start with the price from priceHistory or override
+      let basePrice;
+      if (priceOverrides[playerId] !== undefined) {
+        basePrice = priceOverrides[playerId];
+      } else {
+        basePrice = getCurrentPriceFromHistory(player);
+      }
+
+      // Apply user impact
+      const impact = userImpact[playerId] || 0;
+      return +(basePrice * (1 + impact)).toFixed(2);
+    },
+    [players, priceOverrides, userImpact],
+  );
 
   // Get player with computed derived fields
-  const getPlayer = useCallback((playerId) => {
-    const player = players.find((p) => p.id === playerId);
-    if (!player) return null;
-    
-    const currentPrice = getEffectivePrice(playerId);
-    const changePercent = ((currentPrice - player.basePrice) / player.basePrice) * 100;
-    
-    // In ESPN Live mode, use ESPN price history; otherwise use scenario data
-    let moveReason, contentTiles, allContent, priceHistory;
-    
-    if (isEspnLiveMode && espnPriceHistory[playerId]?.length > 0) {
-      const espnHistory = espnPriceHistory[playerId];
-      const latestEntry = espnHistory[espnHistory.length - 1];
-      moveReason = latestEntry.reason?.headline || '';
-      contentTiles = latestEntry.content || [];
-      allContent = espnHistory.flatMap(entry => entry.content || []);
-      priceHistory = espnHistory;
-    } else {
-      moveReason = getMoveReasonFromHistory(player);
-      contentTiles = getLatestContentFromHistory(player);
-      allContent = getAllContentFromHistory(player);
-      priceHistory = player.priceHistory;
-    }
-    
-    return {
-      ...player,
-      currentPrice,
-      changePercent: +changePercent.toFixed(2),
-      priceChange: +changePercent.toFixed(2), // Alias for backward compatibility
-      moveReason,
-      contentTiles,
-      allContent,
-      priceHistory,
-    };
-  }, [players, getEffectivePrice, isEspnLiveMode, espnPriceHistory]);
+  const getPlayer = useCallback(
+    (playerId) => {
+      const player = players.find((p) => p.id === playerId);
+      if (!player) return null;
+
+      const currentPrice = getEffectivePrice(playerId);
+      const changePercent =
+        ((currentPrice - player.basePrice) / player.basePrice) * 100;
+
+      // In ESPN Live mode, use ESPN price history; otherwise use scenario data
+      let moveReason, contentTiles, allContent, priceHistory;
+
+      if (isEspnLiveMode && espnPriceHistory[playerId]?.length > 0) {
+        const espnHistory = espnPriceHistory[playerId];
+        const latestEntry = espnHistory[espnHistory.length - 1];
+        moveReason = latestEntry.reason?.headline || '';
+        contentTiles = latestEntry.content || [];
+        allContent = espnHistory.flatMap((entry) => entry.content || []);
+        priceHistory = espnHistory;
+      } else {
+        moveReason = getMoveReasonFromHistory(player);
+        contentTiles = getLatestContentFromHistory(player);
+        allContent = getAllContentFromHistory(player);
+        priceHistory = player.priceHistory;
+      }
+
+      return {
+        ...player,
+        currentPrice,
+        changePercent: +changePercent.toFixed(2),
+        priceChange: +changePercent.toFixed(2), // Alias for backward compatibility
+        moveReason,
+        contentTiles,
+        allContent,
+        priceHistory,
+      };
+    },
+    [players, getEffectivePrice, isEspnLiveMode, espnPriceHistory],
+  );
 
   // Get all players with computed derived fields
   const getPlayers = useCallback(() => {
     return players.map((player) => {
       const currentPrice = getEffectivePrice(player.id);
-      const changePercent = ((currentPrice - player.basePrice) / player.basePrice) * 100;
-      
+      const changePercent =
+        ((currentPrice - player.basePrice) / player.basePrice) * 100;
+
       // In ESPN Live mode, use ESPN price history
       let moveReason, contentTiles;
-      
+
       if (isEspnLiveMode && espnPriceHistory[player.id]?.length > 0) {
         const espnHistory = espnPriceHistory[player.id];
         const latestEntry = espnHistory[espnHistory.length - 1];
@@ -459,7 +510,7 @@ export function GameProvider({ children }) {
         moveReason = getMoveReasonFromHistory(player);
         contentTiles = getLatestContentFromHistory(player);
       }
-      
+
       return {
         ...player,
         currentPrice,
@@ -472,101 +523,113 @@ export function GameProvider({ children }) {
   }, [players, getEffectivePrice, isEspnLiveMode, espnPriceHistory]);
 
   // Buy shares
-  const buyShares = useCallback((playerId, shares) => {
-    const price = getEffectivePrice(playerId);
-    const cost = price * shares;
-    
-    if (cost > cash) return false;
-    
-    setCash((prev) => +(prev - cost).toFixed(2));
-    
-    setPortfolio((prev) => {
-      const existing = prev[playerId] || { shares: 0, avgCost: 0 };
-      const totalShares = existing.shares + shares;
-      const totalCost = existing.shares * existing.avgCost + cost;
-      return {
+  const buyShares = useCallback(
+    (playerId, shares) => {
+      const price = getEffectivePrice(playerId);
+      const cost = price * shares;
+
+      if (cost > cash) return false;
+
+      setCash((prev) => +(prev - cost).toFixed(2));
+
+      setPortfolio((prev) => {
+        const existing = prev[playerId] || { shares: 0, avgCost: 0 };
+        const totalShares = existing.shares + shares;
+        const totalCost = existing.shares * existing.avgCost + cost;
+        return {
+          ...prev,
+          [playerId]: {
+            shares: totalShares,
+            avgCost: +(totalCost / totalShares).toFixed(2),
+          },
+        };
+      });
+
+      // User buying increases price
+      setUserImpact((prev) => ({
         ...prev,
-        [playerId]: {
-          shares: totalShares,
-          avgCost: +(totalCost / totalShares).toFixed(2),
+        [playerId]: (prev[playerId] || 0) + shares * USER_IMPACT_FACTOR,
+      }));
+
+      // Build current prices for history
+      const currentPrices = {};
+      players.forEach((p) => {
+        currentPrices[p.id] = getEffectivePrice(p.id);
+      });
+
+      setHistory((h) => [
+        ...h,
+        {
+          tick,
+          prices: currentPrices,
+          action: `Bought ${shares} shares of ${playerId}`,
         },
-      };
-    });
-    
-    // User buying increases price
-    setUserImpact((prev) => ({
-      ...prev,
-      [playerId]: (prev[playerId] || 0) + shares * USER_IMPACT_FACTOR,
-    }));
-    
-    // Build current prices for history
-    const currentPrices = {};
-    players.forEach(p => {
-      currentPrices[p.id] = getEffectivePrice(p.id);
-    });
-    
-    setHistory((h) => [...h, { 
-      tick, 
-      prices: currentPrices, 
-      action: `Bought ${shares} shares of ${playerId}` 
-    }]);
-    
-    return true;
-  }, [cash, getEffectivePrice, tick, players]);
+      ]);
+
+      return true;
+    },
+    [cash, getEffectivePrice, tick, players],
+  );
 
   // Sell shares
-  const sellShares = useCallback((playerId, shares) => {
-    const holding = portfolio[playerId];
-    if (!holding || holding.shares < shares) return false;
-    
-    const price = getEffectivePrice(playerId);
-    const proceeds = price * shares;
-    
-    setCash((prev) => +(prev + proceeds).toFixed(2));
-    
-    setPortfolio((prev) => {
-      const existing = prev[playerId];
-      const remainingShares = existing.shares - shares;
-      
-      if (remainingShares === 0) {
-        const { [playerId]: _, ...rest } = prev;
-        return rest;
-      }
-      
-      return {
+  const sellShares = useCallback(
+    (playerId, shares) => {
+      const holding = portfolio[playerId];
+      if (!holding || holding.shares < shares) return false;
+
+      const price = getEffectivePrice(playerId);
+      const proceeds = price * shares;
+
+      setCash((prev) => +(prev + proceeds).toFixed(2));
+
+      setPortfolio((prev) => {
+        const existing = prev[playerId];
+        const remainingShares = existing.shares - shares;
+
+        if (remainingShares === 0) {
+          const { [playerId]: _, ...rest } = prev;
+          return rest;
+        }
+
+        return {
+          ...prev,
+          [playerId]: {
+            ...existing,
+            shares: remainingShares,
+          },
+        };
+      });
+
+      // User selling decreases price
+      setUserImpact((prev) => ({
         ...prev,
-        [playerId]: {
-          ...existing,
-          shares: remainingShares,
+        [playerId]: (prev[playerId] || 0) - shares * USER_IMPACT_FACTOR,
+      }));
+
+      // Build current prices for history
+      const currentPrices = {};
+      players.forEach((p) => {
+        currentPrices[p.id] = getEffectivePrice(p.id);
+      });
+
+      setHistory((h) => [
+        ...h,
+        {
+          tick,
+          prices: currentPrices,
+          action: `Sold ${shares} shares of ${playerId}`,
         },
-      };
-    });
-    
-    // User selling decreases price
-    setUserImpact((prev) => ({
-      ...prev,
-      [playerId]: (prev[playerId] || 0) - shares * USER_IMPACT_FACTOR,
-    }));
-    
-    // Build current prices for history
-    const currentPrices = {};
-    players.forEach(p => {
-      currentPrices[p.id] = getEffectivePrice(p.id);
-    });
-    
-    setHistory((h) => [...h, { 
-      tick, 
-      prices: currentPrices, 
-      action: `Sold ${shares} shares of ${playerId}` 
-    }]);
-    
-    return true;
-  }, [portfolio, getEffectivePrice, tick, players]);
+      ]);
+
+      return true;
+    },
+    [portfolio, getEffectivePrice, tick, players],
+  );
 
   // Watchlist operations
   const addToWatchlist = useCallback((playerId) => {
-    setWatchlist((prev) => 
-      prev.includes(playerId) ? prev : [...prev, playerId]
+    setWatchlist((prev) =>
+      prev.includes(playerId) ? prev : [...prev, playerId],
     );
   }, []);
 
@@ -574,26 +637,29 @@ export function GameProvider({ children }) {
     setWatchlist((prev) => prev.filter((id) => id !== playerId));
   }, []);
 
-  const isWatching = useCallback((playerId) => {
-    return watchlist.includes(playerId);
-  }, [watchlist]);
+  const isWatching = useCallback(
+    (playerId) => {
+      return watchlist.includes(playerId);
+    },
+    [watchlist],
+  );
 
   // Mission operations
   const setMissionPick = useCallback((playerId, type) => {
     setMissionPicks((prev) => {
       const newPicks = { ...prev };
-      
+
       // Remove from both arrays first
       newPicks.risers = newPicks.risers.filter((id) => id !== playerId);
       newPicks.fallers = newPicks.fallers.filter((id) => id !== playerId);
-      
+
       // Add to appropriate array if not already at limit
       if (type === 'riser' && newPicks.risers.length < 3) {
         newPicks.risers.push(playerId);
       } else if (type === 'faller' && newPicks.fallers.length < 3) {
         newPicks.fallers.push(playerId);
       }
-      
+
       return newPicks;
     });
   }, []);
@@ -617,22 +683,22 @@ export function GameProvider({ children }) {
   // Calculate mission score
   const getMissionScore = useCallback(() => {
     if (!missionRevealed) return null;
-    
+
     let correct = 0;
-    
+
     missionPicks.risers.forEach((playerId) => {
       const player = getPlayer(playerId);
       if (player && player.changePercent > 0) correct++;
     });
-    
+
     missionPicks.fallers.forEach((playerId) => {
       const player = getPlayer(playerId);
       if (player && player.changePercent < 0) correct++;
     });
-    
+
     const total = missionPicks.risers.length + missionPicks.fallers.length;
     const percentile = Math.round(50 + (correct / Math.max(total, 1)) * 50);
-    
+
     return { correct, total, percentile };
   }, [missionRevealed, missionPicks, getPlayer]);
 
@@ -640,46 +706,60 @@ export function GameProvider({ children }) {
   const getPortfolioValue = useCallback(() => {
     let totalValue = 0;
     let totalCost = 0;
-    
+
     Object.entries(portfolio).forEach(([playerId, holding]) => {
       const currentPrice = getEffectivePrice(playerId);
       totalValue += currentPrice * holding.shares;
       totalCost += holding.avgCost * holding.shares;
     });
-    
+
     return {
       value: +totalValue.toFixed(2),
       cost: +totalCost.toFixed(2),
       gain: +(totalValue - totalCost).toFixed(2),
-      gainPercent: totalCost > 0 ? +((totalValue - totalCost) / totalCost * 100).toFixed(2) : 0,
+      gainPercent:
+        totalCost > 0
+          ? +(((totalValue - totalCost) / totalCost) * 100).toFixed(2)
+          : 0,
     };
   }, [portfolio, getEffectivePrice]);
 
   // Get league holdings for a player
-  const getLeagueHoldings = useCallback((playerId) => {
-    const holdings = leagueHoldings[playerId] || [];
-    const currentPrice = getEffectivePrice(playerId);
-    
-    // Add user's holdings if they have any
-    const userHolding = portfolio[playerId];
-    const allHoldings = userHolding 
-      ? [{ memberId: 'user', shares: userHolding.shares, avgCost: userHolding.avgCost }, ...holdings]
-      : holdings;
-    
-    return allHoldings.map((holding) => {
-      const member = leagueMembers.find((m) => m.id === holding.memberId);
-      const gainPercent = ((currentPrice - holding.avgCost) / holding.avgCost) * 100;
-      
-      return {
-        ...holding,
-        name: member?.name || holding.memberId,
-        avatar: member?.avatar || '👤',
-        isUser: member?.isUser || false,
-        currentValue: +(currentPrice * holding.shares).toFixed(2),
-        gainPercent: +gainPercent.toFixed(2),
-      };
-    });
-  }, [portfolio, getEffectivePrice]);
+  const getLeagueHoldings = useCallback(
+    (playerId) => {
+      const holdings = leagueHoldings[playerId] || [];
+      const currentPrice = getEffectivePrice(playerId);
+
+      // Add user's holdings if they have any
+      const userHolding = portfolio[playerId];
+      const allHoldings = userHolding
+        ? [
+            {
+              memberId: 'user',
+              shares: userHolding.shares,
+              avgCost: userHolding.avgCost,
+            },
+            ...holdings,
+          ]
+        : holdings;
+
+      return allHoldings.map((holding) => {
+        const member = leagueMembers.find((m) => m.id === holding.memberId);
+        const gainPercent =
+          ((currentPrice - holding.avgCost) / holding.avgCost) * 100;
+
+        return {
+          ...holding,
+          name: member?.name || holding.memberId,
+          avatar: member?.avatar || '👤',
+          isUser: member?.isUser || false,
+          currentValue: +(currentPrice * holding.shares).toFixed(2),
+          gainPercent: +gainPercent.toFixed(2),
+        };
+      });
+    },
+    [portfolio, getEffectivePrice],
+  );
 
   // Get all league members
   const getLeagueMembers = useCallback(() => {
@@ -690,10 +770,10 @@ export function GameProvider({ children }) {
   const getLeaderboardRankings = useCallback(() => {
     // Calculate portfolio value for each league member from their holdings
     const memberPortfolios = {};
-    
+
     // Initialize all members with base cash (simulated starting cash for AI traders)
     const AI_BASE_CASH = 2000; // AI traders hold some cash reserve
-    leagueMembers.forEach(member => {
+    leagueMembers.forEach((member) => {
       if (!member.isUser) {
         memberPortfolios[member.id] = {
           memberId: member.id,
@@ -706,12 +786,12 @@ export function GameProvider({ children }) {
         };
       }
     });
-    
+
     // Calculate holdings value for each member
     Object.entries(leagueHoldings).forEach(([playerId, holdings]) => {
       const currentPrice = getEffectivePrice(playerId);
-      
-      holdings.forEach(holding => {
+
+      holdings.forEach((holding) => {
         if (memberPortfolios[holding.memberId]) {
           const holdingValue = currentPrice * holding.shares;
           memberPortfolios[holding.memberId].holdingsValue += holdingValue;
@@ -719,7 +799,7 @@ export function GameProvider({ children }) {
         }
       });
     });
-    
+
     // Add user to the rankings
     const portfolioStats = getPortfolioValue();
     const userEntry = {
@@ -733,59 +813,72 @@ export function GameProvider({ children }) {
       gain: portfolioStats.gain,
       gainPercent: portfolioStats.gainPercent,
     };
-    
+
     // Combine all traders and sort by total value
     const allTraders = [...Object.values(memberPortfolios), userEntry];
     allTraders.sort((a, b) => b.totalValue - a.totalValue);
-    
+
     // Add rank and gap to next
     return allTraders.map((trader, index) => ({
       ...trader,
       rank: index + 1,
-      gapToNext: index > 0 ? allTraders[index - 1].totalValue - trader.totalValue : 0,
+      gapToNext:
+        index > 0 ? allTraders[index - 1].totalValue - trader.totalValue : 0,
       traderAhead: index > 0 ? allTraders[index - 1] : null,
     }));
   }, [cash, getEffectivePrice, getPortfolioValue]);
 
   // Timeline debugger - go to specific history point
-  const goToHistoryPoint = useCallback((index) => {
-    if (index >= 0 && index < history.length) {
-      const point = history[index];
-      setPriceOverrides(point.prices || {});
-      setTick(point.tick);
-      setHistory((h) => h.slice(0, index + 1));
-    }
-  }, [history]);
+  const goToHistoryPoint = useCallback(
+    (index) => {
+      if (index >= 0 && index < history.length) {
+        const point = history[index];
+        setPriceOverrides(point.prices || {});
+        setTick(point.tick);
+        setHistory((h) => h.slice(0, index + 1));
+      }
+    },
+    [history],
+  );
 
   // Apply playoff dilution to non-buyback players
-  const applyPlayoffDilution = useCallback((dilutionPercent) => {
-    if (playoffDilutionApplied || scenario !== 'playoffs') return;
-    
-    const dilutionMultiplier = 1 - (dilutionPercent / 100);
-    
-    setPriceOverrides((prev) => {
-      const newOverrides = { ...prev };
-      
-      // Apply dilution only to playoff players (not buyback players)
-      players.forEach((player) => {
-        if (!player.isBuyback) {
-          const currentPrice = prev[player.id] ?? getCurrentPriceFromHistory(player);
-          newOverrides[player.id] = +(currentPrice * dilutionMultiplier).toFixed(2);
-        }
+  const applyPlayoffDilution = useCallback(
+    (dilutionPercent) => {
+      if (playoffDilutionApplied || scenario !== 'playoffs') return;
+
+      const dilutionMultiplier = 1 - dilutionPercent / 100;
+
+      setPriceOverrides((prev) => {
+        const newOverrides = { ...prev };
+
+        // Apply dilution only to playoff players (not buyback players)
+        players.forEach((player) => {
+          if (!player.isBuyback) {
+            const currentPrice =
+              prev[player.id] ?? getCurrentPriceFromHistory(player);
+            newOverrides[player.id] = +(
+              currentPrice * dilutionMultiplier
+            ).toFixed(2);
+          }
+        });
+
+        return newOverrides;
       });
-      
-      return newOverrides;
-    });
-    
-    setPlayoffDilutionApplied(true);
-    
-    // Add to history
-    setHistory((h) => [...h, {
-      tick,
-      prices: {},
-      action: `Playoff stock issuance: ${dilutionPercent}% dilution applied`
-    }]);
-  }, [playoffDilutionApplied, scenario, players, tick]);
+
+      setPlayoffDilutionApplied(true);
+
+      // Add to history
+      setHistory((h) => [
+        ...h,
+        {
+          tick,
+          prices: {},
+          action: `Playoff stock issuance: ${dilutionPercent}% dilution applied`,
+        },
+      ]);
+    },
+    [playoffDilutionApplied, scenario, players, tick],
+  );
 
   // Scenario setter with reset
   const setScenario = useCallback((newScenario) => {
@@ -813,14 +906,14 @@ export function GameProvider({ children }) {
     currentData,
     unifiedTimeline,
     playoffDilutionApplied,
-    
+
     // ESPN Live state
     isEspnLiveMode,
     espnNews,
     espnLoading,
     espnError,
     espnPriceHistory,
-    
+
     // Actions
     setScenario,
     setIsPlaying,
@@ -836,7 +929,7 @@ export function GameProvider({ children }) {
     goToHistoryPoint,
     applyPlayoffDilution,
     refreshEspnNews, // Manual ESPN refresh
-    
+
     // Getters
     getPlayer,
     getPlayers,
@@ -849,11 +942,7 @@ export function GameProvider({ children }) {
     getUnifiedTimeline,
   };
 
-  return (
-    <GameContext.Provider value={value}>
-      {children}
-    </GameContext.Provider>
-  );
+  return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 }
 
 export function useGame() {

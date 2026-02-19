@@ -38,4 +38,3 @@ export function disableDevMode() {
   localStorage.removeItem('mcqueen-dev-mode');
   window.location.reload();
 }
-

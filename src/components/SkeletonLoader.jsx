@@ -4,20 +4,20 @@ import './SkeletonLoader.css';
 // Generic skeleton pulse animation
 const shimmer = {
   initial: { opacity: 0.5 },
-  animate: { 
+  animate: {
     opacity: [0.5, 0.8, 0.5],
-    transition: { 
-      duration: 1.5, 
-      repeat: Infinity, 
-      ease: "easeInOut" 
-    }
-  }
+    transition: {
+      duration: 1.5,
+      repeat: Infinity,
+      ease: 'easeInOut',
+    },
+  },
 };
 
 // Skeleton for player cards on market page
 export function PlayerCardSkeleton() {
   return (
-    <motion.div 
+    <motion.div
       className="skeleton-card"
       variants={shimmer}
       initial="initial"
@@ -58,7 +58,7 @@ export function MarketSkeleton({ count = 6 }) {
 // Skeleton for leaderboard
 export function LeaderboardSkeleton() {
   return (
-    <motion.div 
+    <motion.div
       className="skeleton-leaderboard"
       variants={shimmer}
       initial="initial"
@@ -79,7 +79,7 @@ export function LeaderboardSkeleton() {
 // Skeleton for mission page player grid
 export function MissionSkeleton() {
   return (
-    <motion.div 
+    <motion.div
       className="skeleton-mission"
       variants={shimmer}
       initial="initial"
@@ -104,7 +104,7 @@ export function MissionSkeleton() {
 // Simple text line skeleton
 export function TextSkeleton({ width = '100%', height = '16px' }) {
   return (
-    <motion.div 
+    <motion.div
       className="skeleton-text"
       style={{ width, height }}
       variants={shimmer}
@@ -121,5 +121,3 @@ export default {
   MissionSkeleton,
   TextSkeleton,
 };
-
-

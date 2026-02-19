@@ -1298,23 +1298,23 @@
 }
 
 .stat-item.td .stat-value {
-  color: #00C853;
+  color: #00c853;
 }
 
 .stat-item.int .stat-value {
-  color: #FF1744;
+  color: #ff1744;
 }
 
 .stat-item.stats-type .stat-value {
-  color: #00BCD4;
+  color: #00bcd4;
 }
 
 .stat-item.news .stat-value {
-  color: #2196F3;
+  color: #2196f3;
 }
 
 .stat-item.trade .stat-value {
-  color: #9C27B0;
+  color: #9c27b0;
 }
 
 .timeline-filter {
@@ -1410,7 +1410,9 @@
 
 .timeline-event:hover .timeline-marker {
   transform: scale(1.15);
-  box-shadow: 0 0 0 4px var(--color-bg-dark), 0 0 12px currentColor;
+  box-shadow:
+    0 0 0 4px var(--color-bg-dark),
+    0 0 12px currentColor;
 }
 
 .timeline-marker.marker-td {
@@ -1448,11 +1450,11 @@
 }
 
 .timeline-event.is-td .timeline-event-content {
-  border-left: 3px solid #00C853;
+  border-left: 3px solid #00c853;
 }
 
 .timeline-event.is-int .timeline-event-content {
-  border-left: 3px solid #FF1744;
+  border-left: 3px solid #ff1744;
 }
 
 .timeline-event-header {
@@ -1580,15 +1582,15 @@
   .inspector-header {
     padding: 12px 16px;
   }
-  
+
   .inspector-controls {
     gap: 12px;
   }
-  
+
   .metadata-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .detail-grid {
     grid-template-columns: 1fr;
   }
@@ -1721,4 +1723,3 @@
     transform: rotate(360deg);
   }
 }
-

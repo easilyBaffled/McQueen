@@ -20,9 +20,9 @@
   height: 3px;
   background: linear-gradient(
     90deg,
-    #FFD700 0%,
-    #C0C0C0 33%,
-    #CD7F32 66%,
+    #ffd700 0%,
+    #c0c0c0 33%,
+    #cd7f32 66%,
     var(--color-primary) 100%
   );
   opacity: 0.8;
@@ -188,7 +188,7 @@
 }
 
 .mini-rank-row.is-leader .trader-value {
-  color: #FFD700;
+  color: #ffd700;
 }
 
 /* Divider */
@@ -235,7 +235,7 @@
 .status-leader {
   font-size: 13px;
   font-weight: 600;
-  color: #FFD700;
+  color: #ffd700;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -299,10 +299,8 @@
     padding: 8px 12px;
     gap: 10px;
   }
-  
+
   .trader-name {
     max-width: 80px;
   }
 }
-
-

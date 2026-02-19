@@ -28,7 +28,11 @@
 }
 
 .summary-card.total {
-  background: linear-gradient(135deg, var(--color-bg-elevated) 0%, var(--color-bg-surface) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-bg-elevated) 0%,
+    var(--color-bg-surface) 100%
+  );
   border-color: var(--color-border-light);
 }
 
@@ -76,7 +80,11 @@
 .empty-state.enhanced {
   padding: 48px 32px;
   border: 1px solid var(--color-border);
-  background: linear-gradient(180deg, var(--color-bg-surface) 0%, rgba(0,200,83,0.03) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-bg-surface) 0%,
+    rgba(0, 200, 83, 0.03) 100%
+  );
 }
 
 .empty-illustration {
@@ -98,17 +106,29 @@
 
 .chart-bar.bar-1 {
   height: 35px;
-  background: linear-gradient(180deg, var(--color-up) 0%, rgba(0,200,83,0.4) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-up) 0%,
+    rgba(0, 200, 83, 0.4) 100%
+  );
 }
 
 .chart-bar.bar-2 {
   height: 50px;
-  background: linear-gradient(180deg, var(--color-up) 0%, rgba(0,200,83,0.5) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-up) 0%,
+    rgba(0, 200, 83, 0.5) 100%
+  );
 }
 
 .chart-bar.bar-3 {
   height: 70px;
-  background: linear-gradient(180deg, var(--color-up) 0%, rgba(0,200,83,0.6) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-up) 0%,
+    rgba(0, 200, 83, 0.6) 100%
+  );
 }
 
 .chart-line {
@@ -306,7 +326,7 @@
   .holding-row {
     grid-template-columns: 1.5fr 1fr 1fr 1fr;
   }
-  
+
   .holdings-header span:nth-child(3),
   .holdings-header span:nth-child(5),
   .holding-row .holding-cost,
@@ -320,10 +340,9 @@
   .holding-row {
     grid-template-columns: 1fr 1fr 1fr;
   }
-  
+
   .holdings-header span:nth-child(2),
   .holding-row .holding-shares {
     display: none;
   }
 }
-

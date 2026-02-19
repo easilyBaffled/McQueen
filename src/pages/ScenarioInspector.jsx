@@ -14,29 +14,29 @@ const scenarioSources = {
 
 const TEMPLATES = {
   priceChange: {
-    timestamp: "2025-12-09T20:00:00",
-    price: 0.00,
+    timestamp: '2025-12-09T20:00:00',
+    price: 0.0,
     reason: {
-      type: "game_event",
-      eventType: "stats",
-      headline: "",
-      source: "",
-      url: ""
+      type: 'game_event',
+      eventType: 'stats',
+      headline: '',
+      source: '',
+      url: '',
     },
-    content: []
+    content: [],
   },
   leagueTrade: {
-    timestamp: "2025-12-09T20:00:00",
-    price: 0.00,
+    timestamp: '2025-12-09T20:00:00',
+    price: 0.0,
     reason: {
-      type: "league_trade",
-      headline: "Member bought X shares",
-      source: "McQueen Market",
-      memberId: "",
-      action: "buy",
-      shares: 1
-    }
-  }
+      type: 'league_trade',
+      headline: 'Member bought X shares',
+      source: 'McQueen Market',
+      memberId: '',
+      action: 'buy',
+      shares: 1,
+    },
+  },
 };
 
 // Map reason types to display colors
@@ -70,7 +70,8 @@ export default function ScenarioInspector() {
   const [isDragging, setIsDragging] = useState(false);
   const [highlightedLine, setHighlightedLine] = useState(null);
   const [isAddEventModalOpen, setIsAddEventModalOpen] = useState(false);
-  const [modalPreselectedPlayerId, setModalPreselectedPlayerId] = useState(null);
+  const [modalPreselectedPlayerId, setModalPreselectedPlayerId] =
+    useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null);
   const editorRef = useRef(null);
@@ -90,7 +91,7 @@ export default function ScenarioInspector() {
   const handleJsonChange = useCallback((e) => {
     const text = e.target.value;
     setJsonText(text);
-    
+
     try {
       const parsed = JSON.parse(text);
       setParsedData(parsed);
@@ -113,149 +114,168 @@ export default function ScenarioInspector() {
 
   // Toggle section expansion
   const toggleSection = useCallback((section) => {
-    setExpandedSections(prev => ({
+    setExpandedSections((prev) => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section],
     }));
   }, []);
 
   // Toggle player expansion
   const togglePlayer = useCallback((playerId) => {
-    setExpandedPlayers(prev => ({
+    setExpandedPlayers((prev) => ({
       ...prev,
-      [playerId]: !prev[playerId]
+      [playerId]: !prev[playerId],
     }));
   }, []);
 
   // Scroll to JSON location
-  const scrollToJson = useCallback((searchPattern, options = {}) => {
-    if (!jsonText) return;
-    
-    const lines = jsonText.split('\n');
-    let targetLine = -1;
-    
-    // Find the line containing the search pattern
-    if (typeof searchPattern === 'string') {
-      for (let i = 0; i < lines.length; i++) {
-        if (lines[i].includes(searchPattern)) {
-          targetLine = i;
-          break;
+  const scrollToJson = useCallback(
+    (searchPattern, options = {}) => {
+      if (!jsonText) return;
+
+      const lines = jsonText.split('\n');
+      let targetLine = -1;
+
+      // Find the line containing the search pattern
+      if (typeof searchPattern === 'string') {
+        for (let i = 0; i < lines.length; i++) {
+          if (lines[i].includes(searchPattern)) {
+            targetLine = i;
+            break;
+          }
         }
-      }
-    } else if (searchPattern instanceof RegExp) {
-      for (let i = 0; i < lines.length; i++) {
-        if (searchPattern.test(lines[i])) {
-          targetLine = i;
-          break;
-        }
-      }
-    }
-    
-    // For finding nth occurrence
-    if (options.occurrence && options.occurrence > 1) {
-      let count = 0;
-      for (let i = 0; i < lines.length; i++) {
-        const matches = typeof searchPattern === 'string' 
-          ? lines[i].includes(searchPattern)
-          : searchPattern.test(lines[i]);
-        if (matches) {
-          count++;
-          if (count === options.occurrence) {
+      } else if (searchPattern instanceof RegExp) {
+        for (let i = 0; i < lines.length; i++) {
+          if (searchPattern.test(lines[i])) {
             targetLine = i;
             break;
           }
         }
       }
-    }
-    
-    if (targetLine >= 0) {
-      setHighlightedLine(targetLine);
-      
-      if (editorRef.current) {
-        const lineHeight = 19.5;
-        const scrollTop = Math.max(0, (targetLine * lineHeight) - 100);
-        editorRef.current.scrollTop = scrollTop;
+
+      // For finding nth occurrence
+      if (options.occurrence && options.occurrence > 1) {
+        let count = 0;
+        for (let i = 0; i < lines.length; i++) {
+          const matches =
+            typeof searchPattern === 'string'
+              ? lines[i].includes(searchPattern)
+              : searchPattern.test(lines[i]);
+          if (matches) {
+            count++;
+            if (count === options.occurrence) {
+              targetLine = i;
+              break;
+            }
+          }
+        }
       }
-      
-      if (textareaRef.current) {
-        const lineHeight = 19.5;
-        const scrollTop = Math.max(0, (targetLine * lineHeight) - 100);
-        textareaRef.current.scrollTop = scrollTop;
+
+      if (targetLine >= 0) {
+        setHighlightedLine(targetLine);
+
+        if (editorRef.current) {
+          const lineHeight = 19.5;
+          const scrollTop = Math.max(0, targetLine * lineHeight - 100);
+          editorRef.current.scrollTop = scrollTop;
+        }
+
+        if (textareaRef.current) {
+          const lineHeight = 19.5;
+          const scrollTop = Math.max(0, targetLine * lineHeight - 100);
+          textareaRef.current.scrollTop = scrollTop;
+        }
+
+        setTimeout(() => setHighlightedLine(null), 2000);
       }
-      
-      setTimeout(() => setHighlightedLine(null), 2000);
-    }
-  }, [jsonText]);
+    },
+    [jsonText],
+  );
 
   // Find player's line in JSON
-  const scrollToPlayer = useCallback((playerId) => {
-    scrollToJson(`"id": "${playerId}"`);
-  }, [scrollToJson]);
+  const scrollToPlayer = useCallback(
+    (playerId) => {
+      scrollToJson(`"id": "${playerId}"`);
+    },
+    [scrollToJson],
+  );
 
   // Find priceHistory entry in JSON (within a specific player)
-  const scrollToPriceEntry = useCallback((playerId, entryIndex) => {
-    const lines = jsonText.split('\n');
-    let inPlayer = false;
-    let inPriceHistory = false;
-    let entryCount = 0;
-    let bracketDepth = 0;
-    
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      
-      // Find the player
-      if (line.includes(`"id": "${playerId}"`)) {
-        inPlayer = true;
-      }
-      
-      if (inPlayer) {
-        // Track if we enter priceHistory array
-        if (line.includes('"priceHistory"')) {
-          inPriceHistory = true;
-          bracketDepth = 0;
+  const scrollToPriceEntry = useCallback(
+    (playerId, entryIndex) => {
+      const lines = jsonText.split('\n');
+      let inPlayer = false;
+      let inPriceHistory = false;
+      let entryCount = 0;
+      let bracketDepth = 0;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        // Find the player
+        if (line.includes(`"id": "${playerId}"`)) {
+          inPlayer = true;
         }
-        
-        if (inPriceHistory) {
-          // Count opening braces for priceHistory entries
-          if (line.includes('{')) {
-            if (bracketDepth > 0) {
-              if (entryCount === entryIndex) {
-                setHighlightedLine(i);
-                if (editorRef.current) {
-                  const lineHeight = 19.5;
-                  editorRef.current.scrollTop = Math.max(0, (i * lineHeight) - 100);
+
+        if (inPlayer) {
+          // Track if we enter priceHistory array
+          if (line.includes('"priceHistory"')) {
+            inPriceHistory = true;
+            bracketDepth = 0;
+          }
+
+          if (inPriceHistory) {
+            // Count opening braces for priceHistory entries
+            if (line.includes('{')) {
+              if (bracketDepth > 0) {
+                if (entryCount === entryIndex) {
+                  setHighlightedLine(i);
+                  if (editorRef.current) {
+                    const lineHeight = 19.5;
+                    editorRef.current.scrollTop = Math.max(
+                      0,
+                      i * lineHeight - 100,
+                    );
+                  }
+                  if (textareaRef.current) {
+                    const lineHeight = 19.5;
+                    textareaRef.current.scrollTop = Math.max(
+                      0,
+                      i * lineHeight - 100,
+                    );
+                  }
+                  setTimeout(() => setHighlightedLine(null), 2000);
+                  return;
                 }
-                if (textareaRef.current) {
-                  const lineHeight = 19.5;
-                  textareaRef.current.scrollTop = Math.max(0, (i * lineHeight) - 100);
-                }
-                setTimeout(() => setHighlightedLine(null), 2000);
-                return;
+                entryCount++;
               }
-              entryCount++;
+              bracketDepth++;
             }
-            bracketDepth++;
+            if (line.includes('}')) bracketDepth--;
+
+            // Exit priceHistory array
+            if (line.includes(']') && bracketDepth <= 0) {
+              inPriceHistory = false;
+            }
           }
-          if (line.includes('}')) bracketDepth--;
-          
-          // Exit priceHistory array
-          if (line.includes(']') && bracketDepth <= 0) {
-            inPriceHistory = false;
+
+          // Exit player if we hit next player or end of players array
+          if (line.includes('"id":') && !line.includes(playerId) && inPlayer) {
+            break;
           }
-        }
-        
-        // Exit player if we hit next player or end of players array
-        if (line.includes('"id":') && !line.includes(playerId) && inPlayer) {
-          break;
         }
       }
-    }
-  }, [jsonText]);
+    },
+    [jsonText],
+  );
 
   // Scroll to metadata field
-  const scrollToMetadata = useCallback((field) => {
-    scrollToJson(`"${field}":`);
-  }, [scrollToJson]);
+  const scrollToMetadata = useCallback(
+    (field) => {
+      scrollToJson(`"${field}":`);
+    },
+    [scrollToJson],
+  );
 
   // Open Add Event modal
   const openAddEventModal = useCallback((playerId = null) => {
@@ -270,36 +290,41 @@ export default function ScenarioInspector() {
   }, []);
 
   // Add event to a player's priceHistory
-  const handleAddEvent = useCallback(async ({ playerId, entry }) => {
-    if (!parsedData || !playerId || !entry) return;
+  const handleAddEvent = useCallback(
+    async ({ playerId, entry }) => {
+      if (!parsedData || !playerId || !entry) return;
 
-    // Create updated data
-    const updatedData = {
-      ...parsedData,
-      players: parsedData.players.map(player => {
-        if (player.id !== playerId) return player;
-        
-        // Add entry to priceHistory in chronological order
-        const newHistory = [...(player.priceHistory || []), entry];
-        newHistory.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-        
-        return {
-          ...player,
-          priceHistory: newHistory,
-        };
-      }),
-    };
+      // Create updated data
+      const updatedData = {
+        ...parsedData,
+        players: parsedData.players.map((player) => {
+          if (player.id !== playerId) return player;
 
-    // Update local state
-    const newJsonText = JSON.stringify(updatedData, null, 2);
-    setJsonText(newJsonText);
-    setParsedData(updatedData);
+          // Add entry to priceHistory in chronological order
+          const newHistory = [...(player.priceHistory || []), entry];
+          newHistory.sort(
+            (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
+          );
 
-    // Save to file via dev server
-    await saveScenarioToFile(selectedScenario, updatedData);
-    
-    closeAddEventModal();
-  }, [parsedData, selectedScenario, closeAddEventModal]);
+          return {
+            ...player,
+            priceHistory: newHistory,
+          };
+        }),
+      };
+
+      // Update local state
+      const newJsonText = JSON.stringify(updatedData, null, 2);
+      setJsonText(newJsonText);
+      setParsedData(updatedData);
+
+      // Save to file via dev server
+      await saveScenarioToFile(selectedScenario, updatedData);
+
+      closeAddEventModal();
+    },
+    [parsedData, selectedScenario, closeAddEventModal],
+  );
 
   // Save scenario to JSON file
   const saveScenarioToFile = useCallback(async (scenario, data) => {
@@ -318,10 +343,16 @@ export default function ScenarioInspector() {
       const result = await response.json();
 
       if (response.ok) {
-        setSaveStatus({ type: 'success', message: `Saved to ${scenario}.json` });
+        setSaveStatus({
+          type: 'success',
+          message: `Saved to ${scenario}.json`,
+        });
         setTimeout(() => setSaveStatus(null), 3000);
       } else {
-        setSaveStatus({ type: 'error', message: result.error || 'Failed to save' });
+        setSaveStatus({
+          type: 'error',
+          message: result.error || 'Failed to save',
+        });
       }
     } catch (err) {
       setSaveStatus({ type: 'error', message: err.message });
@@ -363,12 +394,12 @@ export default function ScenarioInspector() {
   // Get current view data
   const getViewData = useCallback(() => {
     if (!parsedData) return null;
-    
+
     if (viewMode === 'player' && selectedPlayerId) {
-      const player = parsedData.players?.find(p => p.id === selectedPlayerId);
+      const player = parsedData.players?.find((p) => p.id === selectedPlayerId);
       return player || null;
     }
-    
+
     return parsedData;
   }, [parsedData, viewMode, selectedPlayerId]);
 
@@ -378,9 +409,9 @@ export default function ScenarioInspector() {
   // Build unified timeline from all players' priceHistory
   const unifiedTimeline = useMemo(() => {
     if (!parsedData?.players) return [];
-    
+
     const timeline = [];
-    parsedData.players.forEach(player => {
+    parsedData.players.forEach((player) => {
       if (player.priceHistory) {
         player.priceHistory.forEach((entry, index) => {
           timeline.push({
@@ -397,10 +428,10 @@ export default function ScenarioInspector() {
         });
       }
     });
-    
+
     // Sort by timestamp
     timeline.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-    
+
     return timeline;
   }, [parsedData]);
 
@@ -412,13 +443,13 @@ export default function ScenarioInspector() {
           <span className="inspector-icon">🔍</span>
           <h1>Scenario Inspector</h1>
         </div>
-        
+
         <div className="inspector-controls">
           {/* Scenario Selector */}
           <div className="control-group">
             <label>Scenario</label>
-            <select 
-              value={selectedScenario} 
+            <select
+              value={selectedScenario}
               onChange={(e) => setSelectedScenario(e.target.value)}
             >
               <option value="midweek">Midweek</option>
@@ -431,19 +462,19 @@ export default function ScenarioInspector() {
           <div className="control-group">
             <label>View</label>
             <div className="toggle-buttons">
-              <button 
+              <button
                 className={viewMode === 'full' ? 'active' : ''}
                 onClick={() => setViewMode('full')}
               >
                 Full Scenario
               </button>
-              <button 
+              <button
                 className={viewMode === 'player' ? 'active' : ''}
                 onClick={() => setViewMode('player')}
               >
                 Single Player
               </button>
-              <button 
+              <button
                 className={viewMode === 'timeline' ? 'active' : ''}
                 onClick={() => setViewMode('timeline')}
               >
@@ -456,11 +487,11 @@ export default function ScenarioInspector() {
           {viewMode === 'player' && (
             <div className="control-group">
               <label>Player</label>
-              <select 
-                value={selectedPlayerId || ''} 
+              <select
+                value={selectedPlayerId || ''}
                 onChange={(e) => setSelectedPlayerId(e.target.value)}
               >
-                {players.map(player => (
+                {players.map((player) => (
                   <option key={player.id} value={player.id}>
                     {player.name} ({player.team})
                   </option>
@@ -473,15 +504,25 @@ export default function ScenarioInspector() {
         {/* Templates Bar */}
         <div className="templates-bar">
           <span className="templates-label">Templates:</span>
-          <button 
+          <button
             className={`template-btn ${copiedId === 'tpl-pricechange' ? 'copied' : ''}`}
-            onClick={() => copyToClipboard(JSON.stringify(TEMPLATES.priceChange, null, 2), 'tpl-pricechange')}
+            onClick={() =>
+              copyToClipboard(
+                JSON.stringify(TEMPLATES.priceChange, null, 2),
+                'tpl-pricechange',
+              )
+            }
           >
             {copiedId === 'tpl-pricechange' ? '✓ Copied!' : '📋 PriceChange'}
           </button>
-          <button 
+          <button
             className={`template-btn ${copiedId === 'tpl-leaguetrade' ? 'copied' : ''}`}
-            onClick={() => copyToClipboard(JSON.stringify(TEMPLATES.leagueTrade, null, 2), 'tpl-leaguetrade')}
+            onClick={() =>
+              copyToClipboard(
+                JSON.stringify(TEMPLATES.leagueTrade, null, 2),
+                'tpl-leaguetrade',
+              )
+            }
           >
             {copiedId === 'tpl-leaguetrade' ? '✓ Copied!' : '📋 League Trade'}
           </button>
@@ -499,8 +540,8 @@ export default function ScenarioInspector() {
           <div className="editor-wrapper" ref={editorRef}>
             <div className="line-numbers">
               {jsonText.split('\n').map((_, i) => (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className={`line-number ${highlightedLine === i ? 'highlighted' : ''}`}
                 >
                   {i + 1}
@@ -514,10 +555,12 @@ export default function ScenarioInspector() {
                 value={jsonText}
                 onChange={handleJsonChange}
                 spellCheck={false}
-                style={{ height: `${jsonText.split('\n').length * 19.5 + 32}px` }}
+                style={{
+                  height: `${jsonText.split('\n').length * 19.5 + 32}px`,
+                }}
               />
               {highlightedLine !== null && (
-                <div 
+                <div
                   className="line-highlight"
                   style={{ top: `${highlightedLine * 19.5 + 16}px` }}
                 />
@@ -527,28 +570,28 @@ export default function ScenarioInspector() {
         </div>
 
         {/* Divider */}
-        <div 
-          className="panel-divider"
-          onMouseDown={handleMouseDown}
-        >
+        <div className="panel-divider" onMouseDown={handleMouseDown}>
           <div className="divider-handle" />
         </div>
 
         {/* Formatted View Panel */}
-        <div className="formatted-panel" style={{ width: `${100 - dividerPosition}%` }}>
+        <div
+          className="formatted-panel"
+          style={{ width: `${100 - dividerPosition}%` }}
+        >
           <div className="panel-header">
             <h2>Formatted View</h2>
-            <button 
+            <button
               className={`copy-full-btn ${copiedId === 'full' ? 'copied' : ''}`}
               onClick={() => copyToClipboard(jsonText, 'full')}
             >
               {copiedId === 'full' ? '✓ Copied!' : '📋 Copy Full JSON'}
             </button>
           </div>
-          
+
           <div className="formatted-content">
             {viewMode === 'full' ? (
-              <FullScenarioView 
+              <FullScenarioView
                 data={parsedData}
                 expandedSections={expandedSections}
                 toggleSection={toggleSection}
@@ -562,7 +605,7 @@ export default function ScenarioInspector() {
                 onAddEvent={openAddEventModal}
               />
             ) : viewMode === 'timeline' ? (
-              <TimelineView 
+              <TimelineView
                 timeline={unifiedTimeline}
                 players={players}
                 copyToClipboard={copyToClipboard}
@@ -571,7 +614,7 @@ export default function ScenarioInspector() {
                 onAddEvent={openAddEventModal}
               />
             ) : (
-              <PlayerDetailView 
+              <PlayerDetailView
                 player={viewData}
                 copyToClipboard={copyToClipboard}
                 copiedId={copiedId}
@@ -595,7 +638,7 @@ export default function ScenarioInspector() {
       {/* Save Status Toast */}
       <AnimatePresence>
         {saveStatus && (
-          <motion.div 
+          <motion.div
             className={`save-toast ${saveStatus.type}`}
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -619,8 +662,10 @@ export default function ScenarioInspector() {
 
 // Calculate change percent from priceHistory
 function getChangePercent(player) {
-  if (!player || !player.priceHistory || player.priceHistory.length === 0) return 0;
-  const currentPrice = player.priceHistory[player.priceHistory.length - 1].price;
+  if (!player || !player.priceHistory || player.priceHistory.length === 0)
+    return 0;
+  const currentPrice =
+    player.priceHistory[player.priceHistory.length - 1].price;
   const basePrice = player.basePrice;
   if (basePrice === 0) return 0;
   return ((currentPrice - basePrice) / basePrice) * 100;
@@ -628,46 +673,64 @@ function getChangePercent(player) {
 
 // Get current price from priceHistory
 function getCurrentPrice(player) {
-  if (!player || !player.priceHistory || player.priceHistory.length === 0) return player?.basePrice || 0;
+  if (!player || !player.priceHistory || player.priceHistory.length === 0)
+    return player?.basePrice || 0;
   return player.priceHistory[player.priceHistory.length - 1].price;
 }
 
 // Full Scenario View Component
-function FullScenarioView({ data, expandedSections, toggleSection, expandedPlayers, togglePlayer, copyToClipboard, copiedId, scrollToPlayer, scrollToPriceEntry, scrollToMetadata, onAddEvent }) {
+function FullScenarioView({
+  data,
+  expandedSections,
+  toggleSection,
+  expandedPlayers,
+  togglePlayer,
+  copyToClipboard,
+  copiedId,
+  scrollToPlayer,
+  scrollToPriceEntry,
+  scrollToMetadata,
+  onAddEvent,
+}) {
   if (!data) return <div className="empty-state">No valid data</div>;
 
   return (
     <div className="full-scenario-view">
       {/* Metadata Section */}
       <section className="inspector-section">
-        <button className="section-header" onClick={() => toggleSection('metadata')}>
-          <span className="section-icon">{expandedSections.metadata ? '▼' : '▶'}</span>
+        <button
+          className="section-header"
+          onClick={() => toggleSection('metadata')}
+        >
+          <span className="section-icon">
+            {expandedSections.metadata ? '▼' : '▶'}
+          </span>
           <span className="section-title">Scenario Metadata</span>
         </button>
         <AnimatePresence>
           {expandedSections.metadata && (
-            <motion.div 
+            <motion.div
               className="section-content"
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
             >
               <div className="metadata-grid">
-                <div 
+                <div
                   className="metadata-item clickable"
                   onClick={() => scrollToMetadata('scenario')}
                 >
                   <span className="metadata-label">Scenario</span>
                   <span className="metadata-value">{data.scenario}</span>
                 </div>
-                <div 
+                <div
                   className="metadata-item clickable"
                   onClick={() => scrollToMetadata('timestamp')}
                 >
                   <span className="metadata-label">Timestamp</span>
                   <span className="metadata-value">{data.timestamp}</span>
                 </div>
-                <div 
+                <div
                   className="metadata-item full-width clickable"
                   onClick={() => scrollToMetadata('headline')}
                 >
@@ -682,13 +745,20 @@ function FullScenarioView({ data, expandedSections, toggleSection, expandedPlaye
 
       {/* Players Section */}
       <section className="inspector-section">
-        <button className="section-header" onClick={() => toggleSection('players')}>
-          <span className="section-icon">{expandedSections.players ? '▼' : '▶'}</span>
-          <span className="section-title">Players ({data.players?.length || 0})</span>
+        <button
+          className="section-header"
+          onClick={() => toggleSection('players')}
+        >
+          <span className="section-icon">
+            {expandedSections.players ? '▼' : '▶'}
+          </span>
+          <span className="section-title">
+            Players ({data.players?.length || 0})
+          </span>
         </button>
         <AnimatePresence>
           {expandedSections.players && (
-            <motion.div 
+            <motion.div
               className="section-content"
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
@@ -696,7 +766,7 @@ function FullScenarioView({ data, expandedSections, toggleSection, expandedPlaye
             >
               <div className="players-list">
                 {data.players?.map((player, idx) => (
-                  <PlayerCard 
+                  <PlayerCard
                     key={player.id || idx}
                     player={player}
                     isExpanded={expandedPlayers[player.id]}
@@ -704,7 +774,9 @@ function FullScenarioView({ data, expandedSections, toggleSection, expandedPlaye
                     copyToClipboard={copyToClipboard}
                     copiedId={copiedId}
                     onScrollToPlayer={() => scrollToPlayer(player.id)}
-                    onScrollToPriceEntry={(entryIdx) => scrollToPriceEntry(player.id, entryIdx)}
+                    onScrollToPriceEntry={(entryIdx) =>
+                      scrollToPriceEntry(player.id, entryIdx)
+                    }
                     onAddEvent={() => onAddEvent(player.id)}
                   />
                 ))}
@@ -718,13 +790,23 @@ function FullScenarioView({ data, expandedSections, toggleSection, expandedPlaye
 }
 
 // Player Card Component
-function PlayerCard({ player, isExpanded, onToggle, copyToClipboard, copiedId, onScrollToPlayer, onScrollToPriceEntry, onAddEvent }) {
+function PlayerCard({
+  player,
+  isExpanded,
+  onToggle,
+  copyToClipboard,
+  copiedId,
+  onScrollToPlayer,
+  onScrollToPriceEntry,
+  onAddEvent,
+}) {
   const changePercent = getChangePercent(player);
   const currentPrice = getCurrentPrice(player);
   const changeClass = changePercent >= 0 ? 'up' : 'down';
-  
+
   const handleHeaderClick = (e) => {
-    if (e.target.closest('.locate-btn') || e.target.closest('.add-event-btn')) return;
+    if (e.target.closest('.locate-btn') || e.target.closest('.add-event-btn'))
+      return;
     onToggle();
   };
 
@@ -739,33 +821,39 @@ function PlayerCard({ player, isExpanded, onToggle, copyToClipboard, copiedId, o
       minute: '2-digit',
     });
   };
-  
+
   return (
     <div className="player-card">
       <button className="player-header" onClick={handleHeaderClick}>
         <div className="player-info">
           <span className="player-name">{player.name}</span>
-          <span className="player-meta">{player.team} • {player.position}</span>
+          <span className="player-meta">
+            {player.team} • {player.position}
+          </span>
         </div>
         <div className="player-price">
           <span className="base-price">${currentPrice.toFixed(2)}</span>
           <span className={`change-percent ${changeClass}`}>
-            {changePercent >= 0 ? '+' : ''}{changePercent.toFixed(2)}%
+            {changePercent >= 0 ? '+' : ''}
+            {changePercent.toFixed(2)}%
           </span>
         </div>
-        <span 
-          className="locate-btn" 
-          onClick={(e) => { e.stopPropagation(); onScrollToPlayer(); }}
+        <span
+          className="locate-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            onScrollToPlayer();
+          }}
           title="Locate in JSON"
         >
           ⎋
         </span>
         <span className="expand-icon">{isExpanded ? '▼' : '▶'}</span>
       </button>
-      
+
       <AnimatePresence>
         {isExpanded && (
-          <motion.div 
+          <motion.div
             className="player-details"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
@@ -781,11 +869,15 @@ function PlayerCard({ player, isExpanded, onToggle, copyToClipboard, copiedId, o
             </div>
             <div className="detail-row">
               <span className="detail-label">Total Shares</span>
-              <span className="detail-value">{player.totalSharesAvailable || 'N/A'}</span>
+              <span className="detail-value">
+                {player.totalSharesAvailable || 'N/A'}
+              </span>
             </div>
             <div className="detail-row">
               <span className="detail-label">Active</span>
-              <span className="detail-value">{player.isActive ? '✓ Yes' : '✗ No'}</span>
+              <span className="detail-value">
+                {player.isActive ? '✓ Yes' : '✗ No'}
+              </span>
             </div>
             {player.isBuyback && (
               <div className="detail-row">
@@ -793,15 +885,18 @@ function PlayerCard({ player, isExpanded, onToggle, copyToClipboard, copiedId, o
                 <span className="detail-value buyback">⚠️ Active</span>
               </div>
             )}
-            
+
             {/* Price History */}
             <div className="price-history-section">
               <div className="price-history-header">
                 <h4>Price History ({player.priceHistory?.length || 0})</h4>
                 {onAddEvent && (
-                  <button 
+                  <button
                     className="add-event-btn small"
-                    onClick={(e) => { e.stopPropagation(); onAddEvent(); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onAddEvent();
+                    }}
                     title="Add event to this player"
                   >
                     + Add Event
@@ -810,51 +905,69 @@ function PlayerCard({ player, isExpanded, onToggle, copyToClipboard, copiedId, o
               </div>
               {player.priceHistory?.length > 0 && (
                 <>
-                {player.priceHistory.map((entry, idx) => {
-                  const reasonType = entry.reason?.type || 'unknown';
-                  const eventType = entry.reason?.eventType;
-                  const typeColor = eventType ? EVENT_TYPE_COLORS[eventType] : REASON_TYPE_COLORS[reasonType];
-                  
-                  return (
-                    <div 
-                      key={idx} 
-                      className="price-entry-card clickable"
-                      onClick={() => onScrollToPriceEntry(idx)}
-                    >
-                      <div className="price-entry-header">
-                        <span className="entry-timestamp">{formatTimestamp(entry.timestamp)}</span>
-                        <span className="entry-price">${entry.price.toFixed(2)}</span>
-                      </div>
-                      <div className="price-entry-content">
-                        <span 
-                          className="reason-type-badge"
-                          style={{ backgroundColor: `${typeColor}25`, color: typeColor }}
-                        >
-                          {eventType || reasonType}
-                        </span>
-                        <span className="entry-headline">{entry.reason?.headline}</span>
-                      </div>
-                      {entry.content?.length > 0 && (
-                        <div className="entry-content-badges">
-                          {entry.content.map((c, i) => (
-                            <span key={i} className="content-badge">{c.type}</span>
-                          ))}
-                        </div>
-                      )}
-                      <button 
-                        className={`copy-btn ${copiedId === `entry-${player.id}-${idx}` ? 'copied' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          copyToClipboard(JSON.stringify(entry, null, 2), `entry-${player.id}-${idx}`);
-                        }}
+                  {player.priceHistory.map((entry, idx) => {
+                    const reasonType = entry.reason?.type || 'unknown';
+                    const eventType = entry.reason?.eventType;
+                    const typeColor = eventType
+                      ? EVENT_TYPE_COLORS[eventType]
+                      : REASON_TYPE_COLORS[reasonType];
+
+                    return (
+                      <div
+                        key={idx}
+                        className="price-entry-card clickable"
+                        onClick={() => onScrollToPriceEntry(idx)}
                       >
-                        {copiedId === `entry-${player.id}-${idx}` ? '✓' : '📋'}
-                      </button>
-                    </div>
-                  );
-                })}
-              </>
-            )}
+                        <div className="price-entry-header">
+                          <span className="entry-timestamp">
+                            {formatTimestamp(entry.timestamp)}
+                          </span>
+                          <span className="entry-price">
+                            ${entry.price.toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="price-entry-content">
+                          <span
+                            className="reason-type-badge"
+                            style={{
+                              backgroundColor: `${typeColor}25`,
+                              color: typeColor,
+                            }}
+                          >
+                            {eventType || reasonType}
+                          </span>
+                          <span className="entry-headline">
+                            {entry.reason?.headline}
+                          </span>
+                        </div>
+                        {entry.content?.length > 0 && (
+                          <div className="entry-content-badges">
+                            {entry.content.map((c, i) => (
+                              <span key={i} className="content-badge">
+                                {c.type}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <button
+                          className={`copy-btn ${copiedId === `entry-${player.id}-${idx}` ? 'copied' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            copyToClipboard(
+                              JSON.stringify(entry, null, 2),
+                              `entry-${player.id}-${idx}`,
+                            );
+                          }}
+                        >
+                          {copiedId === `entry-${player.id}-${idx}`
+                            ? '✓'
+                            : '📋'}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </>
+              )}
             </div>
           </motion.div>
         )}
@@ -864,7 +977,13 @@ function PlayerCard({ player, isExpanded, onToggle, copyToClipboard, copiedId, o
 }
 
 // Player Detail View Component (for single player mode)
-function PlayerDetailView({ player, copyToClipboard, copiedId, scrollToPriceEntry, onAddEvent }) {
+function PlayerDetailView({
+  player,
+  copyToClipboard,
+  copiedId,
+  scrollToPriceEntry,
+  onAddEvent,
+}) {
   if (!player) return <div className="empty-state">Select a player</div>;
 
   const changePercent = getChangePercent(player);
@@ -909,12 +1028,15 @@ function PlayerDetailView({ player, copyToClipboard, copiedId, scrollToPriceEntr
           <div className="detail-row">
             <span>Change</span>
             <span className={`value ${changeClass}`}>
-              {changePercent >= 0 ? '+' : ''}{changePercent.toFixed(2)}%
+              {changePercent >= 0 ? '+' : ''}
+              {changePercent.toFixed(2)}%
             </span>
           </div>
           <div className="detail-row">
             <span>Total Shares</span>
-            <span className="value">{player.totalSharesAvailable || 'N/A'}</span>
+            <span className="value">
+              {player.totalSharesAvailable || 'N/A'}
+            </span>
           </div>
         </div>
 
@@ -923,10 +1045,15 @@ function PlayerDetailView({ player, copyToClipboard, copiedId, scrollToPriceEntr
           {player.priceHistory?.length > 0 ? (
             <>
               <p className="move-reason">
-                {player.priceHistory[player.priceHistory.length - 1].reason?.headline}
+                {
+                  player.priceHistory[player.priceHistory.length - 1].reason
+                    ?.headline
+                }
               </p>
               <span className="update-time">
-                {formatTimestamp(player.priceHistory[player.priceHistory.length - 1].timestamp)}
+                {formatTimestamp(
+                  player.priceHistory[player.priceHistory.length - 1].timestamp,
+                )}
               </span>
             </>
           ) : (
@@ -940,7 +1067,7 @@ function PlayerDetailView({ player, copyToClipboard, copiedId, scrollToPriceEntr
         <div className="price-history-header">
           <h4>Price History ({player.priceHistory?.length || 0})</h4>
           {onAddEvent && (
-            <button 
+            <button
               className="add-event-btn"
               onClick={() => onAddEvent(player.id)}
             >
@@ -954,58 +1081,83 @@ function PlayerDetailView({ player, copyToClipboard, copiedId, scrollToPriceEntr
               const actualIdx = player.priceHistory.length - 1 - idx;
               const reasonType = entry.reason?.type || 'unknown';
               const eventType = entry.reason?.eventType;
-              const typeColor = eventType ? EVENT_TYPE_COLORS[eventType] : REASON_TYPE_COLORS[reasonType];
-              const prevPrice = actualIdx > 0 ? player.priceHistory[actualIdx - 1].price : player.basePrice;
+              const typeColor = eventType
+                ? EVENT_TYPE_COLORS[eventType]
+                : REASON_TYPE_COLORS[reasonType];
+              const prevPrice =
+                actualIdx > 0
+                  ? player.priceHistory[actualIdx - 1].price
+                  : player.basePrice;
               const priceDiff = entry.price - prevPrice;
               const isPositive = priceDiff >= 0;
-              
+
               return (
-                <div 
-                  key={idx} 
+                <div
+                  key={idx}
                   className="price-entry-card-large clickable"
                   onClick={() => scrollToPriceEntry(player.id, actualIdx)}
                 >
                   <div className="entry-main">
-                    <span 
+                    <span
                       className="reason-type-badge"
-                      style={{ backgroundColor: `${typeColor}25`, color: typeColor }}
+                      style={{
+                        backgroundColor: `${typeColor}25`,
+                        color: typeColor,
+                      }}
                     >
                       {eventType || reasonType}
                     </span>
-                    <span className="entry-headline">{entry.reason?.headline}</span>
+                    <span className="entry-headline">
+                      {entry.reason?.headline}
+                    </span>
                   </div>
                   <div className="entry-details">
-                    <span className="entry-timestamp">{formatTimestamp(entry.timestamp)}</span>
-                    <span className={`entry-price ${isPositive ? 'up' : 'down'}`}>
+                    <span className="entry-timestamp">
+                      {formatTimestamp(entry.timestamp)}
+                    </span>
+                    <span
+                      className={`entry-price ${isPositive ? 'up' : 'down'}`}
+                    >
                       ${entry.price.toFixed(2)}
                       <span className="price-diff">
-                        ({isPositive ? '+' : ''}{priceDiff.toFixed(2)})
+                        ({isPositive ? '+' : ''}
+                        {priceDiff.toFixed(2)})
                       </span>
                     </span>
                   </div>
                   {entry.reason?.type === 'league_trade' && (
                     <div className="trade-details">
-                      <span>{entry.reason.memberId} {entry.reason.action} {entry.reason.shares} shares</span>
+                      <span>
+                        {entry.reason.memberId} {entry.reason.action}{' '}
+                        {entry.reason.shares} shares
+                      </span>
                     </div>
                   )}
                   {entry.content?.length > 0 && (
                     <div className="entry-content-list">
                       {entry.content.map((c, i) => (
                         <div key={i} className="content-item">
-                          <span className={`content-type type-${c.type}`}>{c.type}</span>
+                          <span className={`content-type type-${c.type}`}>
+                            {c.type}
+                          </span>
                           <span className="content-title">{c.title}</span>
                         </div>
                       ))}
                     </div>
                   )}
-                  <button 
+                  <button
                     className={`copy-btn ${copiedId === `detail-entry-${idx}` ? 'copied' : ''}`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      copyToClipboard(JSON.stringify(entry, null, 2), `detail-entry-${idx}`);
+                      copyToClipboard(
+                        JSON.stringify(entry, null, 2),
+                        `detail-entry-${idx}`,
+                      );
                     }}
                   >
-                    {copiedId === `detail-entry-${idx}` ? '✓ Copied!' : '📋 Copy Entry'}
+                    {copiedId === `detail-entry-${idx}`
+                      ? '✓ Copied!'
+                      : '📋 Copy Entry'}
                   </button>
                 </div>
               );
@@ -1020,7 +1172,14 @@ function PlayerDetailView({ player, copyToClipboard, copiedId, scrollToPriceEntr
 }
 
 // Timeline View Component
-function TimelineView({ timeline, players, copyToClipboard, copiedId, scrollToPriceEntry, onAddEvent }) {
+function TimelineView({
+  timeline,
+  players,
+  copyToClipboard,
+  copiedId,
+  scrollToPriceEntry,
+  onAddEvent,
+}) {
   const [filterPlayer, setFilterPlayer] = useState('all');
   const [selectedEvent, setSelectedEvent] = useState(null);
 
@@ -1050,25 +1209,30 @@ function TimelineView({ timeline, players, copyToClipboard, copiedId, scrollToPr
   };
 
   // Filter timeline by player if selected
-  const filteredTimeline = filterPlayer === 'all' 
-    ? timeline 
-    : timeline.filter(event => event.playerId === filterPlayer);
+  const filteredTimeline =
+    filterPlayer === 'all'
+      ? timeline
+      : timeline.filter((event) => event.playerId === filterPlayer);
 
   // Calculate stats
   const stats = {
     total: filteredTimeline.length,
-    tds: filteredTimeline.filter(e => e.reason?.eventType === 'TD').length,
-    ints: filteredTimeline.filter(e => e.reason?.eventType === 'INT').length,
-    stats: filteredTimeline.filter(e => e.reason?.eventType === 'stats').length,
-    news: filteredTimeline.filter(e => e.reason?.type === 'news').length,
-    trades: filteredTimeline.filter(e => e.reason?.type === 'league_trade').length,
+    tds: filteredTimeline.filter((e) => e.reason?.eventType === 'TD').length,
+    ints: filteredTimeline.filter((e) => e.reason?.eventType === 'INT').length,
+    stats: filteredTimeline.filter((e) => e.reason?.eventType === 'stats')
+      .length,
+    news: filteredTimeline.filter((e) => e.reason?.type === 'news').length,
+    trades: filteredTimeline.filter((e) => e.reason?.type === 'league_trade')
+      .length,
   };
 
   // Get unique players for filter
-  const uniquePlayers = [...new Set(timeline.map(e => e.playerId))].map(id => {
-    const event = timeline.find(e => e.playerId === id);
-    return { id, name: event.playerName, team: event.playerTeam };
-  });
+  const uniquePlayers = [...new Set(timeline.map((e) => e.playerId))].map(
+    (id) => {
+      const event = timeline.find((e) => e.playerId === id);
+      return { id, name: event.playerName, team: event.playerTeam };
+    },
+  );
 
   return (
     <div className="timeline-view">
@@ -1103,9 +1267,12 @@ function TimelineView({ timeline, players, copyToClipboard, copiedId, scrollToPr
 
         <div className="timeline-filter">
           <label>Filter by Player:</label>
-          <select value={filterPlayer} onChange={(e) => setFilterPlayer(e.target.value)}>
+          <select
+            value={filterPlayer}
+            onChange={(e) => setFilterPlayer(e.target.value)}
+          >
             <option value="all">All Players</option>
-            {uniquePlayers.map(player => (
+            {uniquePlayers.map((player) => (
               <option key={player.id} value={player.id}>
                 {player.name} ({player.team})
               </option>
@@ -1114,9 +1281,11 @@ function TimelineView({ timeline, players, copyToClipboard, copiedId, scrollToPr
         </div>
 
         {onAddEvent && (
-          <button 
+          <button
             className="add-event-btn timeline-add-btn"
-            onClick={() => onAddEvent(filterPlayer !== 'all' ? filterPlayer : null)}
+            onClick={() =>
+              onAddEvent(filterPlayer !== 'all' ? filterPlayer : null)
+            }
           >
             + Add Event
           </button>
@@ -1128,14 +1297,16 @@ function TimelineView({ timeline, players, copyToClipboard, copiedId, scrollToPr
         {filteredTimeline.map((event, idx) => {
           const reasonType = event.reason?.type || 'unknown';
           const eventType = event.reason?.eventType;
-          const typeColor = eventType ? EVENT_TYPE_COLORS[eventType] : REASON_TYPE_COLORS[reasonType];
+          const typeColor = eventType
+            ? EVENT_TYPE_COLORS[eventType]
+            : REASON_TYPE_COLORS[reasonType];
           const isSelected = selectedEvent === idx;
           const isTD = eventType === 'TD';
           const isINT = eventType === 'INT';
 
           return (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className={`timeline-event ${isSelected ? 'selected' : ''} ${isTD ? 'is-td' : ''} ${isINT ? 'is-int' : ''}`}
               onClick={() => {
                 setSelectedEvent(isSelected ? null : idx);
@@ -1143,40 +1314,70 @@ function TimelineView({ timeline, players, copyToClipboard, copiedId, scrollToPr
               }}
             >
               {/* Connecting line */}
-              {idx < filteredTimeline.length - 1 && <div className="timeline-connector" />}
-              
+              {idx < filteredTimeline.length - 1 && (
+                <div className="timeline-connector" />
+              )}
+
               {/* Event marker */}
-              <div 
+              <div
                 className={`timeline-marker ${isTD ? 'marker-td' : ''} ${isINT ? 'marker-int' : ''}`}
                 style={{ backgroundColor: typeColor }}
               >
                 {/* TD - Star */}
                 {isTD && (
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    width="14"
+                    height="14"
+                  >
                     <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                   </svg>
                 )}
                 {/* INT - X */}
                 {isINT && (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" width="12" height="12">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    width="12"
+                    height="12"
+                  >
                     <path d="M6 6L18 18M18 6L6 18" />
                   </svg>
                 )}
                 {/* News - Document */}
                 {!isTD && !isINT && reasonType === 'news' && (
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    width="12"
+                    height="12"
+                  >
                     <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
                   </svg>
                 )}
                 {/* Game Event (stats) - Bar chart */}
                 {!isTD && !isINT && reasonType === 'game_event' && (
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    width="12"
+                    height="12"
+                  >
                     <path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z" />
                   </svg>
                 )}
                 {/* Trade - Arrows */}
                 {!isTD && !isINT && reasonType === 'league_trade' && (
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    width="12"
+                    height="12"
+                  >
                     <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" />
                   </svg>
                 )}
@@ -1185,13 +1386,21 @@ function TimelineView({ timeline, players, copyToClipboard, copiedId, scrollToPr
               {/* Event content */}
               <div className="timeline-event-content">
                 <div className="timeline-event-header">
-                  <span className="timeline-time">{formatTime(event.timestamp)}</span>
-                  <span className="timeline-player-badge" style={{ borderColor: typeColor }}>
+                  <span className="timeline-time">
+                    {formatTime(event.timestamp)}
+                  </span>
+                  <span
+                    className="timeline-player-badge"
+                    style={{ borderColor: typeColor }}
+                  >
                     {event.playerName}
                   </span>
-                  <span 
+                  <span
                     className="timeline-type-badge"
-                    style={{ backgroundColor: `${typeColor}25`, color: typeColor }}
+                    style={{
+                      backgroundColor: `${typeColor}25`,
+                      color: typeColor,
+                    }}
                   >
                     {eventType || reasonType}
                   </span>
@@ -1199,13 +1408,11 @@ function TimelineView({ timeline, players, copyToClipboard, copiedId, scrollToPr
                 <div className="timeline-headline">
                   {event.reason?.headline}
                 </div>
-                <div className="timeline-price">
-                  ${event.price.toFixed(2)}
-                </div>
+                <div className="timeline-price">${event.price.toFixed(2)}</div>
 
                 {/* Expanded details */}
                 {isSelected && (
-                  <motion.div 
+                  <motion.div
                     className="timeline-event-details"
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
@@ -1217,7 +1424,10 @@ function TimelineView({ timeline, players, copyToClipboard, copiedId, scrollToPr
                     </div>
                     <div className="detail-row">
                       <span>Player</span>
-                      <span>{event.playerName} ({event.playerTeam} {event.playerPosition})</span>
+                      <span>
+                        {event.playerName} ({event.playerTeam}{' '}
+                        {event.playerPosition})
+                      </span>
                     </div>
                     {event.reason?.source && (
                       <div className="detail-row">
@@ -1228,18 +1438,26 @@ function TimelineView({ timeline, players, copyToClipboard, copiedId, scrollToPr
                     {event.reason?.type === 'league_trade' && (
                       <div className="detail-row">
                         <span>Trade</span>
-                        <span>{event.reason.memberId} {event.reason.action} {event.reason.shares} shares</span>
+                        <span>
+                          {event.reason.memberId} {event.reason.action}{' '}
+                          {event.reason.shares} shares
+                        </span>
                       </div>
                     )}
                     {event.content?.length > 0 && (
                       <div className="timeline-content-list">
                         <span className="content-label">Content:</span>
                         {event.content.map((c, i) => (
-                          <span key={i} className={`content-badge type-${c.type}`}>{c.type}: {c.title}</span>
+                          <span
+                            key={i}
+                            className={`content-badge type-${c.type}`}
+                          >
+                            {c.type}: {c.title}
+                          </span>
                         ))}
                       </div>
                     )}
-                    <button 
+                    <button
                       className={`copy-btn ${copiedId === `timeline-${idx}` ? 'copied' : ''}`}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -1249,10 +1467,15 @@ function TimelineView({ timeline, players, copyToClipboard, copiedId, scrollToPr
                           reason: event.reason,
                           content: event.content,
                         };
-                        copyToClipboard(JSON.stringify(entryData, null, 2), `timeline-${idx}`);
+                        copyToClipboard(
+                          JSON.stringify(entryData, null, 2),
+                          `timeline-${idx}`,
+                        );
                       }}
                     >
-                      {copiedId === `timeline-${idx}` ? '✓ Copied!' : '📋 Copy Entry'}
+                      {copiedId === `timeline-${idx}`
+                        ? '✓ Copied!'
+                        : '📋 Copy Entry'}
                     </button>
                   </motion.div>
                 )}

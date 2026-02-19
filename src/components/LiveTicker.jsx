@@ -11,7 +11,7 @@ export default function LiveTicker() {
   // Get recent events from the unified timeline (up to current tick)
   const recentEvents = useMemo(() => {
     if (!unifiedTimeline || unifiedTimeline.length === 0) return [];
-    
+
     // Get events up to the current tick position, then take the last 3
     const eventsUpToTick = unifiedTimeline.slice(0, tick + 1);
     return eventsUpToTick.slice(-3).reverse();
@@ -32,7 +32,10 @@ export default function LiveTicker() {
       .reverse();
   }, [history]);
 
-  const displayEvent = currentEvent || (recentEvents[0]?.reason?.headline) || (historyEvents[0]?.action);
+  const displayEvent =
+    currentEvent ||
+    recentEvents[0]?.reason?.headline ||
+    historyEvents[0]?.action;
 
   return (
     <div className="live-ticker">

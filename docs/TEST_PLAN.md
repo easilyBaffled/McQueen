@@ -147,7 +147,7 @@ McQueen is a fantasy football stock market simulator built with React 19 + Vite.
 **Priority:** P0 | **Type:** Functional
 
 1. Expand an event, set quantity to 2, click "Buy"
-   **Expected:** Toast shows success, cash decreases by (price * 2), portfolio updates
+   **Expected:** Toast shows success, cash decreases by (price \* 2), portfolio updates
 2. Navigate to Portfolio page
    **Expected:** Newly purchased player appears in holdings
 
@@ -286,10 +286,10 @@ McQueen is a fantasy football stock market simulator built with React 19 + Vite.
 
 1. Navigate to Portfolio
    **Expected:**
-   - Total Value = cash + (5 * currentPrice)
+   - Total Value = cash + (5 \* currentPrice)
    - Cash Available = $10,000 - $250
-   - Invested = 5 * currentPrice
-   - Gain/Loss = (currentPrice - 50) * 5
+   - Invested = 5 \* currentPrice
+   - Gain/Loss = (currentPrice - 50) \* 5
 
 ### TC-PF-004: Holdings Table
 
@@ -550,7 +550,7 @@ McQueen is a fantasy football stock market simulator built with React 19 + Vite.
 **Priority:** P0 | **Type:** Functional
 
 1. Select "Buy" tab, set quantity to 3
-   **Expected:** Cost preview shows (price * 3)
+   **Expected:** Cost preview shows (price \* 3)
 2. Click "Buy"
    **Expected:** Toast confirms purchase, cash decreases, holdings card appears/updates
 
@@ -568,7 +568,7 @@ McQueen is a fantasy football stock market simulator built with React 19 + Vite.
 **Precondition:** Own shares of this player
 
 1. Select "Sell" tab, set quantity to 1
-   **Expected:** Proceeds preview shows (price * 1)
+   **Expected:** Proceeds preview shows (price \* 1)
 2. Click "Sell"
    **Expected:** Toast confirms sale, cash increases, holdings updated
 
@@ -829,21 +829,21 @@ McQueen is a fantasy football stock market simulator built with React 19 + Vite.
 
 ## Test Case Summary
 
-| Section | P0 | P1 | P2 | Total |
-|---------|----|----|----|----|
-| Layout/Navigation | 2 | 2 | 2 | 6 |
-| Timeline | 4 | 3 | 2 | 9 |
-| Market | 2 | 3 | 3 | 8 |
-| Portfolio | 3 | 3 | 2 | 8 |
-| Watchlist | 0 | 4 | 2 | 6 |
-| Leaderboard | 1 | 2 | 3 | 6 |
-| Mission | 4 | 3 | 1 | 8 |
-| Player Detail | 5 | 6 | 6 | 17 |
-| Scenario Inspector | 1 | 5 | 2 | 8 |
-| Onboarding | 2 | 3 | 0 | 5 |
-| Playoff Modal | 2 | 1 | 0 | 3 |
-| Toast Notifications | 0 | 2 | 1 | 3 |
-| **Totals** | **26** | **37** | **24** | **87** |
+| Section             | P0     | P1     | P2     | Total  |
+| ------------------- | ------ | ------ | ------ | ------ |
+| Layout/Navigation   | 2      | 2      | 2      | 6      |
+| Timeline            | 4      | 3      | 2      | 9      |
+| Market              | 2      | 3      | 3      | 8      |
+| Portfolio           | 3      | 3      | 2      | 8      |
+| Watchlist           | 0      | 4      | 2      | 6      |
+| Leaderboard         | 1      | 2      | 3      | 6      |
+| Mission             | 4      | 3      | 1      | 8      |
+| Player Detail       | 5      | 6      | 6      | 17     |
+| Scenario Inspector  | 1      | 5      | 2      | 8      |
+| Onboarding          | 2      | 3      | 0      | 5      |
+| Playoff Modal       | 2      | 1      | 0      | 3      |
+| Toast Notifications | 0      | 2      | 1      | 3      |
+| **Totals**          | **26** | **37** | **24** | **87** |
 
 ---
 
@@ -863,9 +863,9 @@ McQueen is a fantasy football stock market simulator built with React 19 + Vite.
 
 ## Risk Assessment
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| Calculation errors in portfolio P/L | Medium | High | Dedicated P0 tests for trading math |
-| localStorage corruption | Low | High | Test clearing and reloading states |
-| Scenario switching breaks page state | Medium | Medium | Test switching mid-interaction |
-| Missing/malformed player data | Low | Medium | Test with invalid player IDs and empty data |
+| Risk                                 | Probability | Impact | Mitigation                                  |
+| ------------------------------------ | ----------- | ------ | ------------------------------------------- |
+| Calculation errors in portfolio P/L  | Medium      | High   | Dedicated P0 tests for trading math         |
+| localStorage corruption              | Low         | High   | Test clearing and reloading states          |
+| Scenario switching breaks page state | Medium      | Medium | Test switching mid-interaction              |
+| Missing/malformed player data        | Low         | Medium | Test with invalid player IDs and empty data |

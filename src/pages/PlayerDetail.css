@@ -229,22 +229,22 @@
 
 .tile-type.article {
   background: rgba(33, 150, 243, 0.2);
-  color: #2196F3;
+  color: #2196f3;
 }
 
 .tile-type.video {
   background: rgba(156, 39, 176, 0.2);
-  color: #9C27B0;
+  color: #9c27b0;
 }
 
 .tile-type.analysis {
   background: rgba(255, 152, 0, 0.2);
-  color: #FF9800;
+  color: #ff9800;
 }
 
 .tile-type.news {
   background: rgba(0, 200, 83, 0.2);
-  color: #00C853;
+  color: #00c853;
 }
 
 .tile-title {
@@ -357,7 +357,7 @@
 }
 
 .trade-button.buy:hover {
-  background: #00E676;
+  background: #00e676;
 }
 
 .trade-button.sell {
@@ -366,7 +366,7 @@
 }
 
 .trade-button.sell:hover {
-  background: #FF5252;
+  background: #ff5252;
 }
 
 /* Holdings Card */
@@ -587,7 +587,9 @@
 
 .timeline-entry:hover .timeline-marker {
   transform: scale(1.15);
-  box-shadow: 0 0 0 4px var(--color-bg-surface), 0 0 12px currentColor;
+  box-shadow:
+    0 0 0 4px var(--color-bg-surface),
+    0 0 12px currentColor;
 }
 
 .timeline-marker.marker-td,
@@ -617,11 +619,11 @@
 }
 
 .timeline-entry.is-td .timeline-entry-card {
-  border-left: 3px solid #00C853;
+  border-left: 3px solid #00c853;
 }
 
 .timeline-entry.is-int .timeline-entry-card {
-  border-left: 3px solid #FF1744;
+  border-left: 3px solid #ff1744;
 }
 
 /* Entry header with badges */
@@ -678,7 +680,9 @@
 .timeline-headline-link .link-icon {
   font-size: 11px;
   opacity: 0.5;
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .timeline-headline-link:hover .link-icon {
@@ -743,25 +747,24 @@
   .player-content {
     grid-template-columns: 1fr;
   }
-  
+
   .sidebar-column {
     order: -1;
   }
-  
+
   .player-header {
     flex-direction: column;
   }
-  
+
   .player-price-section {
     text-align: left;
   }
-  
+
   .player-price {
     align-items: flex-start;
   }
-  
+
   .player-name {
     font-size: 32px;
   }
 }
-

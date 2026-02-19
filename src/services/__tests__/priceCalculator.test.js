@@ -13,8 +13,8 @@ describe('applyPriceImpact', () => {
   });
 
   it('returns the same price when multiplier is 1', () => {
-    const result = applyPriceImpact(42.50, { impactMultiplier: 1 });
-    expect(result).toBe(42.50);
+    const result = applyPriceImpact(42.5, { impactMultiplier: 1 });
+    expect(result).toBe(42.5);
   });
 
   it('rounds to two decimal places', () => {

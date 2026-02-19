@@ -31,7 +31,8 @@ export default function PlayerCard({ player, showFirstTradeTip = false }) {
   const headshotUrl = getPlayerHeadshotUrl(player.id, 'medium');
 
   // Generate sparkline data
-  const sparklineData = player.priceHistory?.map((price, i) => ({ price })) || [];
+  const sparklineData =
+    player.priceHistory?.map((price, i) => ({ price })) || [];
   if (sparklineData.length > 0) {
     sparklineData.push({ price: player.currentPrice });
   }
@@ -49,14 +50,10 @@ export default function PlayerCard({ player, showFirstTradeTip = false }) {
         </div>
       )}
 
-      {isBuyback && (
-        <div className="buyback-badge">
-          BUYBACK
-        </div>
-      )}
+      {isBuyback && <div className="buyback-badge">BUYBACK</div>}
 
       {showFirstTradeTip && (
-        <motion.div 
+        <motion.div
           className="first-trade-tip"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -81,8 +78,8 @@ export default function PlayerCard({ player, showFirstTradeTip = false }) {
         </div>
         {headshotUrl && !imageError ? (
           <div className="player-headshot">
-            <img 
-              src={headshotUrl} 
+            <img
+              src={headshotUrl}
               alt={player.name}
               onError={() => setImageError(true)}
             />
@@ -90,7 +87,7 @@ export default function PlayerCard({ player, showFirstTradeTip = false }) {
         ) : (
           <div className="player-headshot placeholder">
             <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
             </svg>
           </div>
         )}
@@ -98,9 +95,11 @@ export default function PlayerCard({ player, showFirstTradeTip = false }) {
 
       <div className="card-body">
         <h3 className="player-name">{player.name}</h3>
-        
+
         <div className="price-row">
-          <span className="current-price">${player.currentPrice.toFixed(2)}</span>
+          <span className="current-price">
+            ${player.currentPrice.toFixed(2)}
+          </span>
           <span className={`price-change ${isUp ? 'up' : 'down'}`}>
             {isUp ? '▲' : '▼'} {Math.abs(player.changePercent).toFixed(2)}%
           </span>
@@ -127,21 +126,19 @@ export default function PlayerCard({ player, showFirstTradeTip = false }) {
       )}
 
       {leagueHoldings.length > 0 && (
-        <div 
+        <div
           className="league-holders"
           onMouseEnter={() => !tooltipDismissed && setShowLeagueTooltip(true)}
           onMouseLeave={() => setShowLeagueTooltip(false)}
         >
           <div className="holders-label-row">
             <span className="holders-label">Also owned by:</span>
-            {!tooltipDismissed && (
-              <span className="holders-info-icon">ⓘ</span>
-            )}
+            {!tooltipDismissed && <span className="holders-info-icon">ⓘ</span>}
           </div>
-          
+
           <AnimatePresence>
             {showLeagueTooltip && !tooltipDismissed && (
-              <motion.div 
+              <motion.div
                 className="league-tooltip"
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -150,31 +147,52 @@ export default function PlayerCard({ player, showFirstTradeTip = false }) {
               >
                 <div className="league-tooltip-content">
                   <strong>League Members</strong>
-                  <p>See who else in your league owns this player and how their investment is performing.</p>
-                  <p className="tooltip-detail">
-                    <span className="text-up">+%</span> = profit since they bought<br/>
-                    <span className="text-down">−%</span> = loss since they bought
+                  <p>
+                    See who else in your league owns this player and how their
+                    investment is performing.
                   </p>
-                  <button className="tooltip-dismiss" onClick={dismissLeagueTooltip}>
+                  <p className="tooltip-detail">
+                    <span className="text-up">+%</span> = profit since they
+                    bought
+                    <br />
+                    <span className="text-down">−%</span> = loss since they
+                    bought
+                  </p>
+                  <button
+                    className="tooltip-dismiss"
+                    onClick={dismissLeagueTooltip}
+                  >
                     Got it!
                   </button>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
-          
+
           <div className="holders-list">
             {leagueHoldings.slice(0, 3).map((holder) => (
-              <div key={holder.memberId} className={`holder-chip ${holder.isUser ? 'user' : ''}`}>
-                <span className="holder-avatar">{holder.isUser ? '👤' : holder.avatar}</span>
-                <span className="holder-name">{holder.isUser ? 'You' : holder.name.substring(0, 8)}</span>
-                <span className={`holder-gain ${holder.gainPercent >= 0 ? 'up' : 'down'}`}>
-                  {holder.gainPercent >= 0 ? '+' : ''}{holder.gainPercent.toFixed(1)}%
+              <div
+                key={holder.memberId}
+                className={`holder-chip ${holder.isUser ? 'user' : ''}`}
+              >
+                <span className="holder-avatar">
+                  {holder.isUser ? '👤' : holder.avatar}
+                </span>
+                <span className="holder-name">
+                  {holder.isUser ? 'You' : holder.name.substring(0, 8)}
+                </span>
+                <span
+                  className={`holder-gain ${holder.gainPercent >= 0 ? 'up' : 'down'}`}
+                >
+                  {holder.gainPercent >= 0 ? '+' : ''}
+                  {holder.gainPercent.toFixed(1)}%
                 </span>
               </div>
             ))}
             {leagueHoldings.length > 3 && (
-              <span className="holders-more">+{leagueHoldings.length - 3} more</span>
+              <span className="holders-more">
+                +{leagueHoldings.length - 3} more
+              </span>
             )}
           </div>
         </div>
@@ -182,4 +200,3 @@ export default function PlayerCard({ player, showFirstTradeTip = false }) {
     </motion.div>
   );
 }
-

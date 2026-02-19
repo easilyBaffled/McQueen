@@ -23,8 +23,10 @@ export function OnboardingProvider({ children }) {
     return localStorage.getItem(ONBOARDING_KEY) === 'true';
   });
   const [showFirstTradeGuide, setShowFirstTradeGuide] = useState(() => {
-    return localStorage.getItem(ONBOARDING_COMPLETED_KEY) === 'true' && 
-           localStorage.getItem(FIRST_TRADE_KEY) !== 'true';
+    return (
+      localStorage.getItem(ONBOARDING_COMPLETED_KEY) === 'true' &&
+      localStorage.getItem(FIRST_TRADE_KEY) !== 'true'
+    );
   });
   const [isNewUser, setIsNewUser] = useState(() => {
     return localStorage.getItem(ONBOARDING_KEY) !== 'true';
@@ -45,13 +47,15 @@ export function OnboardingProvider({ children }) {
   };
 
   return (
-    <OnboardingContext.Provider value={{ 
-      hasCompletedOnboarding, 
-      showFirstTradeGuide, 
-      dismissFirstTradeGuide,
-      isNewUser,
-      markOnboardingComplete 
-    }}>
+    <OnboardingContext.Provider
+      value={{
+        hasCompletedOnboarding,
+        showFirstTradeGuide,
+        dismissFirstTradeGuide,
+        isNewUser,
+        markOnboardingComplete,
+      }}
+    >
       {children}
     </OnboardingContext.Provider>
   );
@@ -71,7 +75,7 @@ export default function Onboarding() {
         setIsVisible(true);
       }
     }, 300);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -99,46 +103,52 @@ export default function Onboarding() {
 
   const steps = [
     {
-      title: "Welcome to McQueen",
-      subtitle: "The NFL Stock Market",
-      content: "Imagine if NFL players were stocks. When they score touchdowns or make headlines, their value goes up. When they get injured or underperform, it goes down.",
-      icon: "🏈",
+      title: 'Welcome to McQueen',
+      subtitle: 'The NFL Stock Market',
+      content:
+        'Imagine if NFL players were stocks. When they score touchdowns or make headlines, their value goes up. When they get injured or underperform, it goes down.',
+      icon: '🏈',
       highlight: null,
     },
     {
-      title: "Your Starting Balance",
-      subtitle: "$10,000 in virtual cash",
-      content: "You start with $10,000 of play money to invest. Don't worry — it's not real money! Use it to buy shares of your favorite players.",
-      icon: "💵",
-      highlight: "virtual",
+      title: 'Your Starting Balance',
+      subtitle: '$10,000 in virtual cash',
+      content:
+        "You start with $10,000 of play money to invest. Don't worry — it's not real money! Use it to buy shares of your favorite players.",
+      icon: '💵',
+      highlight: 'virtual',
     },
     {
-      title: "Reading the Market",
-      subtitle: "Green = up, Red = down",
-      content: "Player prices change based on real NFL news and game performance. Green means their value increased today. Red means it dropped. Your goal: buy low, sell high!",
-      icon: "📊",
-      highlight: "colors",
+      title: 'Reading the Market',
+      subtitle: 'Green = up, Red = down',
+      content:
+        'Player prices change based on real NFL news and game performance. Green means their value increased today. Red means it dropped. Your goal: buy low, sell high!',
+      icon: '📊',
+      highlight: 'colors',
     },
     {
-      title: "Build Your Portfolio",
-      subtitle: "Your collection of player investments",
-      content: "A portfolio is simply all the players you've bought shares in. Track your investments and watch your total value grow as your players perform well.",
-      icon: "📁",
+      title: 'Build Your Portfolio',
+      subtitle: 'Your collection of player investments',
+      content:
+        "A portfolio is simply all the players you've bought shares in. Track your investments and watch your total value grow as your players perform well.",
+      icon: '📁',
       highlight: null,
     },
     {
-      title: "Daily Predictions",
-      subtitle: "Test your NFL knowledge",
-      content: "Each day, predict which 3 players will go UP and which 3 will go DOWN. Compete with other fans to see who knows the market best!",
-      icon: "🎯",
+      title: 'Daily Predictions',
+      subtitle: 'Test your NFL knowledge',
+      content:
+        'Each day, predict which 3 players will go UP and which 3 will go DOWN. Compete with other fans to see who knows the market best!',
+      icon: '🎯',
       highlight: null,
     },
     {
-      title: "Ready to Trade!",
-      subtitle: "Your first move awaits",
-      content: "Browse the Market, find a player you believe in, and buy your first shares. Look for players with news that might boost their value!",
-      icon: "🚀",
-      highlight: "cta",
+      title: 'Ready to Trade!',
+      subtitle: 'Your first move awaits',
+      content:
+        'Browse the Market, find a player you believe in, and buy your first shares. Look for players with news that might boost their value!',
+      icon: '🚀',
+      highlight: 'cta',
     },
   ];
 
@@ -186,7 +196,7 @@ export default function Onboarding() {
                 <h2 className="onboarding-title">{currentStep.title}</h2>
                 <p className="onboarding-subtitle">{currentStep.subtitle}</p>
                 <p className="onboarding-text">{currentStep.content}</p>
-                
+
                 {currentStep.highlight === 'colors' && (
                   <div className="onboarding-demo">
                     <div className="demo-price up">
@@ -199,11 +209,13 @@ export default function Onboarding() {
                     </div>
                   </div>
                 )}
-                
+
                 {currentStep.highlight === 'virtual' && (
                   <div className="onboarding-balance-demo">
                     <span className="demo-cash">$10,000.00</span>
-                    <span className="demo-note">Play money to start trading</span>
+                    <span className="demo-note">
+                      Play money to start trading
+                    </span>
                   </div>
                 )}
               </motion.div>
@@ -213,15 +225,18 @@ export default function Onboarding() {
               {step > 0 && (
                 <button className="back-button" onClick={handleBack}>
                   <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
                   </svg>
                   Back
                 </button>
               )}
-              <button className={`next-button ${step === steps.length - 1 ? 'final' : ''}`} onClick={handleNext}>
-                {step === steps.length - 1 ? "Start Trading!" : 'Next'}
+              <button
+                className={`next-button ${step === steps.length - 1 ? 'final' : ''}`}
+                onClick={handleNext}
+              >
+                {step === steps.length - 1 ? 'Start Trading!' : 'Next'}
                 <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                  <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
                 </svg>
               </button>
             </div>
@@ -258,4 +273,3 @@ export function resetOnboarding() {
   localStorage.removeItem(ONBOARDING_KEY);
   window.location.reload();
 }
-

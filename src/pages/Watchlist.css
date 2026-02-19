@@ -32,7 +32,11 @@
 .empty-state.enhanced {
   padding: 48px 32px;
   border: 1px solid var(--color-border);
-  background: linear-gradient(180deg, var(--color-bg-surface) 0%, rgba(212,48,32,0.03) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-bg-surface) 0%,
+    rgba(212, 48, 32, 0.03) 100%
+  );
 }
 
 .empty-illustration.watchlist-illustration {
@@ -238,4 +242,3 @@
   width: 14px;
   height: 14px;
 }
-

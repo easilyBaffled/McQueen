@@ -4,7 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '../context/GameContext';
 import PlayerCard from '../components/PlayerCard';
 import MiniLeaderboard from '../components/MiniLeaderboard';
-import { MarketSkeleton, LeaderboardSkeleton } from '../components/SkeletonLoader';
+import {
+  MarketSkeleton,
+  LeaderboardSkeleton,
+} from '../components/SkeletonLoader';
 import FirstTradeGuide from '../components/FirstTradeGuide';
 import './Market.css';
 
@@ -49,9 +52,10 @@ export default function Market() {
   }, [scenario]);
 
   const sortedPlayers = useMemo(() => {
-    let filtered = players.filter((p) =>
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.team.toLowerCase().includes(searchQuery.toLowerCase())
+    let filtered = players.filter(
+      (p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.team.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
     switch (sortBy) {
@@ -60,7 +64,9 @@ export default function Market() {
       case 'fallers':
         return [...filtered].sort((a, b) => a.changePercent - b.changePercent);
       case 'active':
-        return [...filtered].sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent));
+        return [...filtered].sort(
+          (a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent),
+        );
       case 'price':
         return [...filtered].sort((a, b) => b.currentPrice - a.currentPrice);
       default:
@@ -71,10 +77,10 @@ export default function Market() {
   return (
     <div className="market-page">
       <FirstTradeGuide hasCompletedFirstTrade={!hasNoTrades} />
-      
+
       <AnimatePresence>
         {showWelcome && (
-          <motion.div 
+          <motion.div
             className="welcome-banner"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -85,15 +91,20 @@ export default function Market() {
               <div className="welcome-text">
                 <h3>Welcome to McQueen!</h3>
                 <p>
-                  This is a fantasy NFL stock market. Buy and sell shares of NFL players — 
-                  prices go up when they score touchdowns, make big plays, or get good news. 
+                  This is a fantasy NFL stock market. Buy and sell shares of NFL
+                  players — prices go up when they score touchdowns, make big
+                  plays, or get good news.
                   <strong> It's all play money, so experiment freely!</strong>
                 </p>
               </div>
             </div>
-            <button className="welcome-dismiss" onClick={dismissWelcome} title="Dismiss">
+            <button
+              className="welcome-dismiss"
+              onClick={dismissWelcome}
+              title="Dismiss"
+            >
               <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
               </svg>
             </button>
           </motion.div>
@@ -103,15 +114,16 @@ export default function Market() {
       <div className="market-header">
         <div className="market-title-section">
           <h1 className="market-title">Today's Movers</h1>
-          <p className="market-subtitle">{currentData?.headline || 'Market activity'}</p>
+          <p className="market-subtitle">
+            {currentData?.headline || 'Market activity'}
+          </p>
         </div>
-        
       </div>
 
       <div className="market-controls">
         <div className="search-box">
           <svg viewBox="0 0 24 24" fill="currentColor" className="search-icon">
-            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
           </svg>
           <input
             type="text"
@@ -139,7 +151,7 @@ export default function Market() {
         <div className="market-sidebar">
           {isLoading ? <LeaderboardSkeleton /> : <MiniLeaderboard />}
         </div>
-        
+
         <div className="market-main">
           {isLoading ? (
             <MarketSkeleton count={6} />
@@ -156,8 +168,8 @@ export default function Market() {
                     transition={{ duration: 0.2, delay: index * 0.02 }}
                   >
                     <Link to={`/player/${player.id}`}>
-                      <PlayerCard 
-                        player={player} 
+                      <PlayerCard
+                        player={player}
                         showFirstTradeTip={hasNoTrades && index === 0}
                       />
                     </Link>
@@ -171,4 +183,3 @@ export default function Market() {
     </div>
   );
 }
-

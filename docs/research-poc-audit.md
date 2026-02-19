@@ -305,10 +305,10 @@ These behaviors are user-facing or structurally load-bearing. They must survive 
 ### 3.1 Core Simulation
 
 | #   | Behavior              | Detail                                                                                                   |
-| --- | --------------------- | -------------------------------------------------------------------------------------------------------- |
+| --- | --------------------- | -------------------------------------------------------------------------------------------------------- | --- |
 | 1   | 4 scenario modes      | Midweek (news-driven), Live (MNF simulation), Playoffs (buyback mechanics), Super Bowl (live simulation) |
 | 2   | ESPN Live mode        | Real-time price movement from ESPN API news articles                                                     |
-| 3   | Tick-based simulation | 3-second interval advancing through unified timeline for live/superbowl                                  |GFM
+| 3   | Tick-based simulation | 3-second interval advancing through unified timeline for live/superbowl                                  | GFM |
 | 4   | Scenario switching    | Full state reset (cash, portfolio, overrides, tick) on scenario change                                   |
 | 5   | Starting portfolios   | Each scenario seeds the user with pre-defined holdings                                                   |
 

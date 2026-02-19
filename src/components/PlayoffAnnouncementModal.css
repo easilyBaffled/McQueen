@@ -14,7 +14,11 @@
   width: 100%;
   max-width: 580px;
   max-height: 90vh;
-  background: linear-gradient(180deg, var(--color-bg-elevated) 0%, var(--color-bg-surface) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-bg-elevated) 0%,
+    var(--color-bg-surface) 100%
+  );
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   overflow: hidden;
@@ -374,5 +378,3 @@
     font-size: 14px;
   }
 }
-
-

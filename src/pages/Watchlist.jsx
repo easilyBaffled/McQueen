@@ -6,16 +6,20 @@ import PlayerCard from '../components/PlayerCard';
 import './Watchlist.css';
 
 export default function Watchlist() {
-  const { watchlist, getPlayer, getPlayers, removeFromWatchlist, addToWatchlist } = useGame();
+  const {
+    watchlist,
+    getPlayer,
+    getPlayers,
+    removeFromWatchlist,
+    addToWatchlist,
+  } = useGame();
   const { addToast } = useToast();
 
-  const watchedPlayers = watchlist
-    .map((id) => getPlayer(id))
-    .filter(Boolean);
-  
+  const watchedPlayers = watchlist.map((id) => getPlayer(id)).filter(Boolean);
+
   // Get popular players that aren't already watched
   const popularPlayers = getPlayers()
-    .filter(p => !watchlist.includes(p.id))
+    .filter((p) => !watchlist.includes(p.id))
     .sort((a, b) => Math.abs(b.changePercent) - Math.abs(a.changePercent))
     .slice(0, 4);
 
@@ -36,21 +40,27 @@ export default function Watchlist() {
       <p className="page-subtitle">Players you're keeping an eye on</p>
 
       {watchedPlayers.length === 0 ? (
-        <motion.div 
+        <motion.div
           className="empty-state enhanced"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
           <div className="empty-illustration watchlist-illustration">
-            <motion.svg 
-              viewBox="0 0 80 80" 
+            <motion.svg
+              viewBox="0 0 80 80"
               className="heart-icon"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
             >
               <defs>
-                <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient
+                  id="heartGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="100%"
+                >
                   <stop offset="0%" stopColor="var(--color-primary)" />
                   <stop offset="100%" stopColor="#ff6b6b" />
                 </linearGradient>
@@ -63,25 +73,28 @@ export default function Watchlist() {
                 transition={{ delay: 0.3, duration: 0.8 }}
               />
             </motion.svg>
-            <motion.div 
+            <motion.div
               className="pulse-ring"
-              animate={{ 
+              animate={{
                 scale: [1, 1.3, 1],
-                opacity: [0.5, 0, 0.5]
+                opacity: [0.5, 0, 0.5],
               }}
               transition={{ duration: 2, repeat: Infinity }}
             />
           </div>
-          
+
           <h3>Track Your Favorites</h3>
-          <p>Watch players you're interested in without committing to buy. Get notified when prices move.</p>
-          
+          <p>
+            Watch players you're interested in without committing to buy. Get
+            notified when prices move.
+          </p>
+
           {popularPlayers.length > 0 && (
             <div className="quick-add-section">
               <span className="quick-add-label">📊 Popular Players</span>
               <div className="quick-add-list">
                 {popularPlayers.map((player) => (
-                  <button 
+                  <button
                     key={player.id}
                     className="quick-add-player"
                     onClick={() => handleQuickAdd(player.id, player.name)}
@@ -90,8 +103,11 @@ export default function Watchlist() {
                       <span className="quick-add-team">{player.team}</span>
                       <span className="quick-add-name">{player.name}</span>
                     </div>
-                    <div className={`quick-add-change ${player.changePercent >= 0 ? 'up' : 'down'}`}>
-                      {player.changePercent >= 0 ? '▲' : '▼'} {Math.abs(player.changePercent).toFixed(1)}%
+                    <div
+                      className={`quick-add-change ${player.changePercent >= 0 ? 'up' : 'down'}`}
+                    >
+                      {player.changePercent >= 0 ? '▲' : '▼'}{' '}
+                      {Math.abs(player.changePercent).toFixed(1)}%
                     </div>
                     <span className="quick-add-icon">+</span>
                   </button>
@@ -99,10 +115,10 @@ export default function Watchlist() {
               </div>
             </div>
           )}
-          
+
           <Link to="/market" className="cta-button">
             <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-              <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+              <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
             </svg>
             Browse All Players
           </Link>
@@ -126,7 +142,7 @@ export default function Watchlist() {
                 title="Remove from watchlist"
               >
                 <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                 </svg>
               </button>
             </motion.div>
@@ -136,4 +152,3 @@ export default function Watchlist() {
     </div>
   );
 }
-

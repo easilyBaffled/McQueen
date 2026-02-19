@@ -3,7 +3,7 @@
  * Scans ESPN.com pages for player names and injects stock market indicators
  */
 
-(function() {
+(function () {
   'use strict';
 
   // Marker class to avoid processing same element twice
@@ -27,22 +27,22 @@
   function createIndicatorBadge(player) {
     const badge = document.createElement('span');
     badge.className = INDICATOR_CLASS;
-    
+
     const priceSpan = document.createElement('span');
     priceSpan.className = 'mcqueen-price';
     priceSpan.textContent = `$${player.currentPrice.toFixed(2)}`;
-    
+
     const trendSpan = document.createElement('span');
     trendSpan.className = `mcqueen-trend mcqueen-trend-${player.trend}`;
-    
+
     const arrow = player.trend === 'up' ? '▲' : '▼';
     const percentChange = Math.abs(player.changePercent).toFixed(2);
     trendSpan.textContent = `${arrow} ${percentChange}%`;
-    
+
     badge.appendChild(priceSpan);
     badge.appendChild(document.createTextNode(' '));
     badge.appendChild(trendSpan);
-    
+
     return badge;
   }
 
@@ -53,15 +53,22 @@
     // Skip if already processed
     if (element.closest(`.${PROCESSED_MARKER}`)) return true;
     if (element.closest(`.${INDICATOR_CLASS}`)) return true;
-    
+
     // Skip form elements, scripts, styles
-    const skipTags = ['SCRIPT', 'STYLE', 'TEXTAREA', 'INPUT', 'SELECT', 'NOSCRIPT'];
+    const skipTags = [
+      'SCRIPT',
+      'STYLE',
+      'TEXTAREA',
+      'INPUT',
+      'SELECT',
+      'NOSCRIPT',
+    ];
     if (skipTags.includes(element.tagName)) return true;
-    
+
     // Skip hidden elements
     const style = window.getComputedStyle(element);
     if (style.display === 'none' || style.visibility === 'hidden') return true;
-    
+
     return false;
   }
 
@@ -83,10 +90,23 @@
 
       // Verify it's a word boundary match (not partial word)
       const beforeChar = index > 0 ? lowerText[index - 1] : ' ';
-      const afterChar = index + term.length < lowerText.length ? lowerText[index + term.length] : ' ';
-      
-      if (!/\s|[,.:;!?()[\]{}'"<>]/.test(beforeChar) && beforeChar !== ' ' && index !== 0) continue;
-      if (!/\s|[,.:;!?()[\]{}'"<>]/.test(afterChar) && afterChar !== ' ' && index + term.length !== lowerText.length) continue;
+      const afterChar =
+        index + term.length < lowerText.length
+          ? lowerText[index + term.length]
+          : ' ';
+
+      if (
+        !/\s|[,.:;!?()[\]{}'"<>]/.test(beforeChar) &&
+        beforeChar !== ' ' &&
+        index !== 0
+      )
+        continue;
+      if (
+        !/\s|[,.:;!?()[\]{}'"<>]/.test(afterChar) &&
+        afterChar !== ' ' &&
+        index + term.length !== lowerText.length
+      )
+        continue;
 
       const player = players[term];
       if (!player) continue;
@@ -103,7 +123,7 @@
 
       // Insert indicator after the parent element
       const badge = createIndicatorBadge(player);
-      
+
       // Try to insert after the name, or append to parent
       if (parent.nextSibling) {
         parent.parentNode.insertBefore(badge, parent.nextSibling);
@@ -121,25 +141,21 @@
   function scanDocument(root = document.body) {
     if (!root) return;
 
-    const walker = document.createTreeWalker(
-      root,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode: function(node) {
-          if (!node.textContent || node.textContent.trim().length < 3) {
-            return NodeFilter.FILTER_REJECT;
-          }
-          if (shouldSkipElement(node.parentElement)) {
-            return NodeFilter.FILTER_REJECT;
-          }
-          return NodeFilter.FILTER_ACCEPT;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (node) {
+        if (!node.textContent || node.textContent.trim().length < 3) {
+          return NodeFilter.FILTER_REJECT;
         }
-      }
-    );
+        if (shouldSkipElement(node.parentElement)) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
 
     const textNodes = [];
     let node;
-    while (node = walker.nextNode()) {
+    while ((node = walker.nextNode())) {
       textNodes.push(node);
     }
 
@@ -164,7 +180,7 @@
 
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
     });
   }
 
@@ -179,14 +195,18 @@
       return;
     }
 
-    console.log('[McQueen] Extension initialized with', Object.keys(window.MCQUEEN_PLAYERS).length, 'player terms');
-    
+    console.log(
+      '[McQueen] Extension initialized with',
+      Object.keys(window.MCQUEEN_PLAYERS).length,
+      'player terms',
+    );
+
     // Initial scan
     scanDocument();
-    
+
     // Watch for dynamic content (ESPN uses client-side routing)
     observeDynamicContent();
-    
+
     // Re-scan on URL changes (for SPA navigation)
     let lastUrl = location.href;
     new MutationObserver(() => {
@@ -204,6 +224,4 @@
   } else {
     init();
   }
-
 })();
-

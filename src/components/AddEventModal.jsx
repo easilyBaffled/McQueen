@@ -19,10 +19,10 @@ const EVENT_TYPES = {
   },
 };
 
-export default function AddEventModal({ 
-  isOpen, 
-  onClose, 
-  onSubmit, 
+export default function AddEventModal({
+  isOpen,
+  onClose,
+  onSubmit,
   players = [],
   preselectedPlayerId = null,
 }) {
@@ -52,14 +52,14 @@ export default function AddEventModal({
   // Update playerId when preselectedPlayerId changes
   useEffect(() => {
     if (preselectedPlayerId) {
-      setFormData(prev => ({ ...prev, playerId: preselectedPlayerId }));
+      setFormData((prev) => ({ ...prev, playerId: preselectedPlayerId }));
     }
   }, [preselectedPlayerId]);
 
   // Reset form when modal opens
   useEffect(() => {
     if (isOpen) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         playerId: preselectedPlayerId || prev.playerId || '',
         timestamp: new Date().toISOString().slice(0, 16),
@@ -69,15 +69,17 @@ export default function AddEventModal({
   }, [isOpen, preselectedPlayerId]);
 
   // Get the selected player's current price for reference
-  const selectedPlayer = players.find(p => p.id === formData.playerId);
-  const currentPrice = selectedPlayer?.priceHistory?.length > 0
-    ? selectedPlayer.priceHistory[selectedPlayer.priceHistory.length - 1].price
-    : selectedPlayer?.basePrice || 0;
+  const selectedPlayer = players.find((p) => p.id === formData.playerId);
+  const currentPrice =
+    selectedPlayer?.priceHistory?.length > 0
+      ? selectedPlayer.priceHistory[selectedPlayer.priceHistory.length - 1]
+          .price
+      : selectedPlayer?.basePrice || 0;
 
   const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: null }));
+      setErrors((prev) => ({ ...prev, [field]: null }));
     }
   };
 
@@ -111,7 +113,7 @@ export default function AddEventModal({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     // Build the price history entry
@@ -123,12 +125,14 @@ export default function AddEventModal({
 
     // Add content if enabled
     if (formData.contentEnabled && formData.contentTitle.trim()) {
-      entry.content = [{
-        type: formData.contentType,
-        title: formData.contentTitle,
-        source: formData.contentSource || formData.source,
-        url: formData.contentUrl || '#',
-      }];
+      entry.content = [
+        {
+          type: formData.contentType,
+          title: formData.contentTitle,
+          source: formData.contentSource || formData.source,
+          url: formData.contentUrl || '#',
+        },
+      ];
     }
 
     onSubmit({
@@ -137,7 +141,7 @@ export default function AddEventModal({
     });
 
     // Reset form
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       price: '',
       headline: '',
@@ -178,7 +182,7 @@ export default function AddEventModal({
   // Calculate suggested price based on event type
   const getSuggestedPrice = () => {
     if (!currentPrice) return '';
-    
+
     const changes = {
       TD: currentPrice * 1.025,
       INT: currentPrice * 0.97,
@@ -209,14 +213,14 @@ export default function AddEventModal({
 
   return (
     <AnimatePresence>
-      <motion.div 
+      <motion.div
         className="modal-overlay"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
       >
-        <motion.div 
+        <motion.div
           className="add-event-modal"
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -225,26 +229,30 @@ export default function AddEventModal({
         >
           <header className="modal-header">
             <h2>Add Price Event</h2>
-            <button className="close-btn" onClick={onClose}>×</button>
+            <button className="close-btn" onClick={onClose}>
+              ×
+            </button>
           </header>
 
           <form onSubmit={handleSubmit} className="event-form">
             {/* Player Selection */}
             <div className="form-group">
               <label>Player</label>
-              <select 
+              <select
                 value={formData.playerId}
                 onChange={(e) => handleChange('playerId', e.target.value)}
                 className={errors.playerId ? 'error' : ''}
               >
                 <option value="">Select a player...</option>
-                {players.map(player => (
+                {players.map((player) => (
                   <option key={player.id} value={player.id}>
                     {player.name} ({player.team} - {player.position})
                   </option>
                 ))}
               </select>
-              {errors.playerId && <span className="error-text">{errors.playerId}</span>}
+              {errors.playerId && (
+                <span className="error-text">{errors.playerId}</span>
+              )}
             </div>
 
             {/* Current Price Reference */}
@@ -258,7 +266,7 @@ export default function AddEventModal({
             {/* Timestamp */}
             <div className="form-group">
               <label>Timestamp</label>
-              <input 
+              <input
                 type="datetime-local"
                 value={formData.timestamp}
                 onChange={(e) => handleChange('timestamp', e.target.value)}
@@ -288,7 +296,7 @@ export default function AddEventModal({
               <div className="form-group">
                 <label>Game Event Type</label>
                 <div className="sub-type-buttons">
-                  {EVENT_TYPES.game_event.eventTypes.map(type => (
+                  {EVENT_TYPES.game_event.eventTypes.map((type) => (
                     <button
                       key={type}
                       type="button"
@@ -308,14 +316,16 @@ export default function AddEventModal({
                 <div className="form-row">
                   <div className="form-group">
                     <label>Member ID</label>
-                    <input 
+                    <input
                       type="text"
                       value={formData.memberId}
                       onChange={(e) => handleChange('memberId', e.target.value)}
                       placeholder="e.g., gridiron"
                       className={errors.memberId ? 'error' : ''}
                     />
-                    {errors.memberId && <span className="error-text">{errors.memberId}</span>}
+                    {errors.memberId && (
+                      <span className="error-text">{errors.memberId}</span>
+                    )}
                   </div>
                   <div className="form-group">
                     <label>Action</label>
@@ -338,14 +348,16 @@ export default function AddEventModal({
                   </div>
                   <div className="form-group">
                     <label>Shares</label>
-                    <input 
+                    <input
                       type="number"
                       min="1"
                       value={formData.shares}
                       onChange={(e) => handleChange('shares', e.target.value)}
                       className={errors.shares ? 'error' : ''}
                     />
-                    {errors.shares && <span className="error-text">{errors.shares}</span>}
+                    {errors.shares && (
+                      <span className="error-text">{errors.shares}</span>
+                    )}
                   </div>
                 </div>
               </>
@@ -355,7 +367,7 @@ export default function AddEventModal({
             <div className="form-group">
               <label>New Price ($)</label>
               <div className="price-input-row">
-                <input 
+                <input
                   type="number"
                   step="0.01"
                   value={formData.price}
@@ -364,8 +376,8 @@ export default function AddEventModal({
                   className={errors.price ? 'error' : ''}
                 />
                 {currentPrice > 0 && (
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="suggest-btn"
                     onClick={applySuggestedPrice}
                     title={`Suggested: $${getSuggestedPrice()}`}
@@ -374,45 +386,51 @@ export default function AddEventModal({
                   </button>
                 )}
               </div>
-              {errors.price && <span className="error-text">{errors.price}</span>}
+              {errors.price && (
+                <span className="error-text">{errors.price}</span>
+              )}
             </div>
 
             {/* Headline */}
             <div className="form-group">
               <label>Headline</label>
-              <input 
+              <input
                 type="text"
                 value={formData.headline}
                 onChange={(e) => handleChange('headline', e.target.value)}
                 placeholder={
-                  formData.reasonType === 'game_event' 
+                  formData.reasonType === 'game_event'
                     ? 'TOUCHDOWN! Player scores from 5 yards out'
                     : formData.reasonType === 'league_trade'
-                    ? 'MemberName bought X shares'
-                    : 'Breaking news headline...'
+                      ? 'MemberName bought X shares'
+                      : 'Breaking news headline...'
                 }
                 className={errors.headline ? 'error' : ''}
               />
-              {errors.headline && <span className="error-text">{errors.headline}</span>}
+              {errors.headline && (
+                <span className="error-text">{errors.headline}</span>
+              )}
             </div>
 
             {/* Source */}
             <div className="form-group">
               <label>Source</label>
-              <input 
+              <input
                 type="text"
                 value={formData.source}
                 onChange={(e) => handleChange('source', e.target.value)}
                 placeholder="ESPN Gamecast"
                 className={errors.source ? 'error' : ''}
               />
-              {errors.source && <span className="error-text">{errors.source}</span>}
+              {errors.source && (
+                <span className="error-text">{errors.source}</span>
+              )}
             </div>
 
             {/* URL (optional) */}
             <div className="form-group">
               <label>URL (optional)</label>
-              <input 
+              <input
                 type="text"
                 value={formData.url}
                 onChange={(e) => handleChange('url', e.target.value)}
@@ -423,10 +441,12 @@ export default function AddEventModal({
             {/* Content Tile Toggle */}
             <div className="form-group content-toggle">
               <label className="checkbox-label">
-                <input 
+                <input
                   type="checkbox"
                   checked={formData.contentEnabled}
-                  onChange={(e) => handleChange('contentEnabled', e.target.checked)}
+                  onChange={(e) =>
+                    handleChange('contentEnabled', e.target.checked)
+                  }
                 />
                 <span>Add content tile (video, article, etc.)</span>
               </label>
@@ -438,9 +458,11 @@ export default function AddEventModal({
                 <div className="form-row">
                   <div className="form-group">
                     <label>Content Type</label>
-                    <select 
+                    <select
                       value={formData.contentType}
-                      onChange={(e) => handleChange('contentType', e.target.value)}
+                      onChange={(e) =>
+                        handleChange('contentType', e.target.value)
+                      }
                     >
                       <option value="video">🎬 Video</option>
                       <option value="article">📰 Article</option>
@@ -450,10 +472,12 @@ export default function AddEventModal({
                   </div>
                   <div className="form-group flex-grow">
                     <label>Content Title</label>
-                    <input 
+                    <input
                       type="text"
                       value={formData.contentTitle}
-                      onChange={(e) => handleChange('contentTitle', e.target.value)}
+                      onChange={(e) =>
+                        handleChange('contentTitle', e.target.value)
+                      }
                       placeholder="Content title..."
                     />
                   </div>
@@ -461,19 +485,23 @@ export default function AddEventModal({
                 <div className="form-row">
                   <div className="form-group">
                     <label>Content Source</label>
-                    <input 
+                    <input
                       type="text"
                       value={formData.contentSource}
-                      onChange={(e) => handleChange('contentSource', e.target.value)}
+                      onChange={(e) =>
+                        handleChange('contentSource', e.target.value)
+                      }
                       placeholder="Same as above if empty"
                     />
                   </div>
                   <div className="form-group flex-grow">
                     <label>Content URL</label>
-                    <input 
+                    <input
                       type="text"
                       value={formData.contentUrl}
-                      onChange={(e) => handleChange('contentUrl', e.target.value)}
+                      onChange={(e) =>
+                        handleChange('contentUrl', e.target.value)
+                      }
                       placeholder="#"
                     />
                   </div>
@@ -496,4 +524,3 @@ export default function AddEventModal({
     </AnimatePresence>
   );
 }
-

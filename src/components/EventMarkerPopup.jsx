@@ -47,7 +47,13 @@ const Icons = {
   football: (
     <svg viewBox="0 0 24 24" fill="currentColor">
       <ellipse cx="12" cy="12" rx="10" ry="6" />
-      <path d="M7 12h10M12 8v8" stroke="currentColor" strokeWidth="1.5" fill="none" opacity="0.6" />
+      <path
+        d="M7 12h10M12 8v8"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        fill="none"
+        opacity="0.6"
+      />
     </svg>
   ),
   dot: (
@@ -76,7 +82,7 @@ export function getEventConfig(type) {
 
 export default function EventMarkerPopup({ event, position, onClose }) {
   const popupRef = useRef(null);
-  
+
   // Handle both old event format and new PriceChange format
   const eventType = event?.type || 'default';
   const config = getEventConfig(eventType);
@@ -107,7 +113,7 @@ export default function EventMarkerPopup({ event, position, onClose }) {
 
   // Format price if available
   const priceDisplay = event.price ? `$${event.price.toFixed(2)}` : null;
-  
+
   // Format timestamp if available
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return null;
@@ -137,7 +143,10 @@ export default function EventMarkerPopup({ event, position, onClose }) {
         <div className="event-popup-header">
           <span
             className="event-type-badge"
-            style={{ backgroundColor: `${config.color}25`, color: config.color }}
+            style={{
+              backgroundColor: `${config.color}25`,
+              color: config.color,
+            }}
           >
             <span className="event-type-icon">{config.icon}</span>
             {config.label}
@@ -163,18 +172,20 @@ export default function EventMarkerPopup({ event, position, onClose }) {
         {event.type === 'league_trade' && event.memberId && (
           <div className="event-trade-info">
             <span className="trade-member">{event.memberId}</span>
-            <span className="trade-action">{event.action} {event.shares} shares</span>
+            <span className="trade-action">
+              {event.action} {event.shares} shares
+            </span>
           </div>
         )}
 
         {/* Timestamp if available */}
         {event.timestamp && (
-          <span className="event-timestamp">{formatTimestamp(event.timestamp)}</span>
+          <span className="event-timestamp">
+            {formatTimestamp(event.timestamp)}
+          </span>
         )}
 
-        {event.source && (
-          <span className="event-source">{event.source}</span>
-        )}
+        {event.source && <span className="event-source">{event.source}</span>}
 
         {event.url && (
           <a

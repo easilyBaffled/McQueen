@@ -6,32 +6,42 @@ import './MiniLeaderboard.css';
 
 export default function MiniLeaderboard() {
   const { getLeaderboardRankings } = useGame();
-  
-  const rankings = useMemo(() => getLeaderboardRankings(), [getLeaderboardRankings]);
-  
+
+  const rankings = useMemo(
+    () => getLeaderboardRankings(),
+    [getLeaderboardRankings],
+  );
+
   // Find user and top 3
   const top3 = rankings.slice(0, 3);
-  const userRanking = rankings.find(r => r.isUser);
+  const userRanking = rankings.find((r) => r.isUser);
   const userInTop3 = userRanking && userRanking.rank <= 3;
-  
+
   const getMedal = (rank) => {
     switch (rank) {
-      case 1: return '🥇';
-      case 2: return '🥈';
-      case 3: return '🥉';
-      default: return null;
+      case 1:
+        return '🥇';
+      case 2:
+        return '🥈';
+      case 3:
+        return '🥉';
+      default:
+        return null;
     }
   };
 
   const formatValue = (value) => {
-    return '$' + value.toLocaleString('en-US', { 
-      minimumFractionDigits: 0, 
-      maximumFractionDigits: 0 
-    });
+    return (
+      '$' +
+      value.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      })
+    );
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="mini-leaderboard"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -45,7 +55,7 @@ export default function MiniLeaderboard() {
         <Link to="/leaderboard" className="view-all-link">
           View All
           <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
           </svg>
         </Link>
       </div>
@@ -61,11 +71,11 @@ export default function MiniLeaderboard() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
             >
-              <div className="rank-indicator">
-                {getMedal(trader.rank)}
-              </div>
+              <div className="rank-indicator">{getMedal(trader.rank)}</div>
               <div className="trader-info">
-                <span className="trader-avatar">{trader.isUser ? '👤' : trader.avatar}</span>
+                <span className="trader-avatar">
+                  {trader.isUser ? '👤' : trader.avatar}
+                </span>
                 <span className="trader-name">{trader.name}</span>
               </div>
               <div className="trader-value">
@@ -98,10 +108,10 @@ export default function MiniLeaderboard() {
                 {formatValue(userRanking.totalValue)}
               </div>
             </motion.div>
-            
+
             {/* Gap indicator */}
             {userRanking.gapToNext > 0 && userRanking.traderAhead && (
-              <motion.div 
+              <motion.div
                 className="gap-indicator"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -120,7 +130,7 @@ export default function MiniLeaderboard() {
 
         {/* Motivational message if user is in top 3 */}
         {userInTop3 && userRanking && (
-          <motion.div 
+          <motion.div
             className="top-status"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -139,5 +149,3 @@ export default function MiniLeaderboard() {
     </motion.div>
   );
 }
-
-

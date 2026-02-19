@@ -166,7 +166,7 @@
 .trade-member {
   font-size: 13px;
   font-weight: 600;
-  color: #9C27B0;
+  color: #9c27b0;
 }
 
 .trade-action {
@@ -192,4 +192,3 @@
 .event-marker:hover {
   transform: scale(1.3);
 }
-

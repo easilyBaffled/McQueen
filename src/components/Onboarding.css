@@ -12,7 +12,11 @@
 .onboarding-modal {
   width: 100%;
   max-width: 480px;
-  background: linear-gradient(180deg, var(--color-bg-elevated) 0%, var(--color-bg-surface) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-bg-elevated) 0%,
+    var(--color-bg-surface) 100%
+  );
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   overflow: hidden;
@@ -145,7 +149,7 @@
 }
 
 .next-button.final:hover {
-  background: #00E676;
+  background: #00e676;
 }
 
 .next-button svg {
@@ -257,17 +261,16 @@
   .onboarding-content {
     padding: 16px 24px 32px;
   }
-  
+
   .onboarding-icon {
     font-size: 48px;
   }
-  
+
   .onboarding-title {
     font-size: 28px;
   }
-  
+
   .onboarding-text {
     font-size: 14px;
   }
 }
-

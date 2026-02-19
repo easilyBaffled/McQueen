@@ -17,9 +17,9 @@ const ESPN_BASE = 'https://www.espn.com/nfl';
 export function nameToSlug(name) {
   return name
     .toLowerCase()
-    .replace(/[.']/g, '')  // Remove periods and apostrophes
-    .replace(/\s+/g, '-')  // Replace spaces with hyphens
-    .replace(/-+/g, '-');  // Collapse multiple hyphens
+    .replace(/[.']/g, '') // Remove periods and apostrophes
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-'); // Collapse multiple hyphens
 }
 
 /**
@@ -77,7 +77,7 @@ export function getGameUrl(gameId) {
  * @returns {string|null} ESPN player ID or null if not found
  */
 export function getEspnIdFromPlayerId(playerId) {
-  const player = espnPlayersData.players.find(p => p.id === playerId);
+  const player = espnPlayersData.players.find((p) => p.id === playerId);
   return player?.espnId || null;
 }
 
@@ -87,7 +87,7 @@ export function getEspnIdFromPlayerId(playerId) {
  * @returns {Object|null} Player data or null if not found
  */
 export function getPlayerData(playerId) {
-  return espnPlayersData.players.find(p => p.id === playerId) || null;
+  return espnPlayersData.players.find((p) => p.id === playerId) || null;
 }
 
 /**
@@ -103,10 +103,10 @@ export function getPlayerNewsUrlById(playerId) {
 
 // Export a lookup table for quick access to player URLs
 export const PLAYER_NEWS_URLS = Object.fromEntries(
-  espnPlayersData.players.map(p => [
+  espnPlayersData.players.map((p) => [
     p.id,
-    getPlayerNewsUrl(p.espnId, p.name)
-  ])
+    getPlayerNewsUrl(p.espnId, p.name),
+  ]),
 );
 
 // Export a lookup table for team news URLs
@@ -138,5 +138,3 @@ export default {
   PLAYER_NEWS_URLS,
   TEAM_NEWS_URLS,
 };
-
-

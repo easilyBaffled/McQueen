@@ -13,16 +13,22 @@ describe('Market Page', () => {
 
   // TC-MKT-002
   it('sorts players with tabs', () => {
-    cy.get('.sort-tab').contains('Biggest Risers').should('have.class', 'active');
+    cy.get('.sort-tab')
+      .contains('Biggest Risers')
+      .should('have.class', 'active');
 
     cy.get('.sort-tab').contains('Biggest Fallers').click();
-    cy.get('.sort-tab').contains('Biggest Fallers').should('have.class', 'active');
+    cy.get('.sort-tab')
+      .contains('Biggest Fallers')
+      .should('have.class', 'active');
 
     cy.get('.sort-tab').contains('Most Active').click();
     cy.get('.sort-tab').contains('Most Active').should('have.class', 'active');
 
     cy.get('.sort-tab').contains('Highest Price').click();
-    cy.get('.sort-tab').contains('Highest Price').should('have.class', 'active');
+    cy.get('.sort-tab')
+      .contains('Highest Price')
+      .should('have.class', 'active');
   });
 
   // TC-MKT-003
@@ -50,7 +56,9 @@ describe('Market Page', () => {
 
   // TC-MKT-005
   it('navigates to player detail on card click', () => {
-    cy.get('.players-grid a[href*="/player/"]', { timeout: 10000 }).first().click();
+    cy.get('.players-grid a[href*="/player/"]', { timeout: 10000 })
+      .first()
+      .click();
     cy.url().should('include', '/player/');
     cy.get('.player-detail-page').should('exist');
   });

@@ -3,10 +3,10 @@
   "timestamp": "2026-01-18T10:00:00",
   "headline": "Conference Championship Weekend - Final Roster Moves Before Kickoff",
   "startingPortfolio": {
-    "mahomes": { "shares": 2, "avgCost": 155.00 },
-    "purdy": { "shares": 2, "avgCost": 135.00 },
-    "allen": { "shares": 2, "avgCost": 162.00 },
-    "mccaffrey": { "shares": 2, "avgCost": 162.00 }
+    "mahomes": { "shares": 2, "avgCost": 155.0 },
+    "purdy": { "shares": 2, "avgCost": 135.0 },
+    "allen": { "shares": 2, "avgCost": 162.0 },
+    "mccaffrey": { "shares": 2, "avgCost": 162.0 }
   },
   "players": [
     {

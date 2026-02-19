@@ -16,16 +16,20 @@ describe('Portfolio Page', () => {
     cy.visit('/portfolio');
     cy.get('.portfolio-summary').should('exist');
     cy.get('.summary-card').should('have.length', 4);
-    cy.get('.summary-card').first().within(() => {
-      cy.get('.summary-label').should('contain.text', 'Total Value');
-      cy.get('.summary-value').should('contain.text', '$');
-    });
+    cy.get('.summary-card')
+      .first()
+      .within(() => {
+        cy.get('.summary-label').should('contain.text', 'Total Value');
+        cy.get('.summary-value').should('contain.text', '$');
+      });
   });
 
   // TC-PF-003
   it('updates summary after buying shares', () => {
     cy.visit('/market');
-    cy.get('.players-grid a[href*="/player/"]', { timeout: 10000 }).first().click();
+    cy.get('.players-grid a[href*="/player/"]', { timeout: 10000 })
+      .first()
+      .click();
     cy.get('.trade-button.buy').click();
     cy.get('.toast').should('be.visible');
 
@@ -37,28 +41,36 @@ describe('Portfolio Page', () => {
   it('shows holdings table with player details', () => {
     // Buy two different players
     cy.visit('/market');
-    cy.get('.players-grid a[href*="/player/"]', { timeout: 10000 }).first().click();
+    cy.get('.players-grid a[href*="/player/"]', { timeout: 10000 })
+      .first()
+      .click();
     cy.get('.trade-button.buy').click();
     cy.get('nav a[href="/market"]').click();
 
-    cy.get('.players-grid a[href*="/player/"]', { timeout: 10000 }).eq(1).click();
+    cy.get('.players-grid a[href*="/player/"]', { timeout: 10000 })
+      .eq(1)
+      .click();
     cy.get('.trade-button.buy').click();
 
     cy.get('nav a[href="/portfolio"]').click();
     cy.get('.holding-row').should('have.length.gte', 2);
-    cy.get('.holding-row').first().within(() => {
-      cy.get('.player-name').should('exist');
-      cy.get('.holding-shares').should('exist');
-      cy.get('.holding-cost').should('exist');
-      cy.get('.holding-value').should('exist');
-      cy.get('.holding-gain').should('exist');
-    });
+    cy.get('.holding-row')
+      .first()
+      .within(() => {
+        cy.get('.player-name').should('exist');
+        cy.get('.holding-shares').should('exist');
+        cy.get('.holding-cost').should('exist');
+        cy.get('.holding-value').should('exist');
+        cy.get('.holding-gain').should('exist');
+      });
   });
 
   // TC-PF-005
   it('navigates to player detail from holdings row', () => {
     cy.visit('/market');
-    cy.get('.players-grid a[href*="/player/"]', { timeout: 10000 }).first().click();
+    cy.get('.players-grid a[href*="/player/"]', { timeout: 10000 })
+      .first()
+      .click();
     cy.get('.trade-button.buy').click();
 
     cy.get('nav a[href="/portfolio"]').click();
@@ -69,9 +81,11 @@ describe('Portfolio Page', () => {
   // TC-PF-006
   it('color-codes gain and loss', () => {
     cy.visit('/portfolio');
-    cy.get('.summary-card').last().within(() => {
-      cy.get('.summary-value').should('exist');
-    });
+    cy.get('.summary-card')
+      .last()
+      .within(() => {
+        cy.get('.summary-value').should('exist');
+      });
   });
 
   // TC-PF-007

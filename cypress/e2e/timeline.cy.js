@@ -8,9 +8,11 @@ describe('Timeline Page', () => {
   // TC-TL-001
   it('loads with timeline events', () => {
     cy.get('.timeline-event').should('have.length.greaterThan', 0);
-    cy.get('.timeline-event').first().within(() => {
-      cy.get('.timeline-event-content').should('exist');
-    });
+    cy.get('.timeline-event')
+      .first()
+      .within(() => {
+        cy.get('.timeline-event-content').should('exist');
+      });
   });
 
   // TC-TL-002
@@ -78,9 +80,11 @@ describe('Timeline Page', () => {
 
   // TC-TL-009
   it('navigates to player detail from event badge', () => {
-    cy.get('.timeline-event').first().within(() => {
-      cy.get('a[href*="/player/"]').first().click();
-    });
+    cy.get('.timeline-event')
+      .first()
+      .within(() => {
+        cy.get('a[href*="/player/"]').first().click();
+      });
     cy.url().should('include', '/player/');
   });
 });

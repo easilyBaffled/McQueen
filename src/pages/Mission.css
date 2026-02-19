@@ -132,9 +132,8 @@
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .help-toggle {
     justify-content: center;
   }
 }
-

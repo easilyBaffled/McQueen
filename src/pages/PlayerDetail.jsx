@@ -1,7 +1,16 @@
 import { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Customized } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
+  Customized,
+} from 'recharts';
 import { useGame } from '../context/GameContext';
 import { EventMarkerPopup, getEventConfig, useToast } from '../components';
 import { PLAYER_NEWS_URLS, getTeamNewsUrl } from '../utils/espnUrls';
@@ -30,7 +39,7 @@ const REASON_TYPE_COLORS = {
 // Map reason types to event config types
 function getReasonEventType(reason) {
   if (!reason) return 'default';
-  
+
   if (reason.type === 'game_event') {
     return reason.eventType || 'stats';
   } else if (reason.type === 'news') {
@@ -38,14 +47,14 @@ function getReasonEventType(reason) {
   } else if (reason.type === 'league_trade') {
     return 'trade';
   }
-  
+
   return 'default';
 }
 
 // Get display label for event type
 function getEventTypeLabel(reason) {
   if (!reason) return 'Event';
-  
+
   if (reason.type === 'game_event') {
     return reason.eventType || 'STATS';
   } else if (reason.type === 'news') {
@@ -53,7 +62,7 @@ function getEventTypeLabel(reason) {
   } else if (reason.type === 'league_trade') {
     return 'TRADE';
   }
-  
+
   return 'EVENT';
 }
 
@@ -100,13 +109,14 @@ export default function PlayerDetail() {
   }
 
   // Generate chart data from new priceHistory format
-  const chartData = player.priceHistory?.map((entry, i) => ({
-    time: i,
-    price: entry.price,
-    timestamp: entry.timestamp,
-    reason: entry.reason,
-    content: entry.content,
-  })) || [];
+  const chartData =
+    player.priceHistory?.map((entry, i) => ({
+      time: i,
+      price: entry.price,
+      timestamp: entry.timestamp,
+      reason: entry.reason,
+      content: entry.content,
+    })) || [];
 
   // Format date for x-axis labels (e.g., "Nov 5")
   const formatDateLabel = (index) => {
@@ -162,9 +172,9 @@ export default function PlayerDetail() {
     const config = getEventConfig(eventType);
     const path = markerPaths[eventType] || markerPaths.default;
     const isStroke = ['INT', 'injury', 'news', 'stats'].includes(eventType);
-    
+
     return (
-      <g 
+      <g
         style={{ cursor: 'pointer' }}
         onClick={() => handleEventClick(priceEntry, cx, cy)}
         transform={`translate(${cx}, ${cy})`}
@@ -196,7 +206,7 @@ export default function PlayerDetail() {
     if (buyShares(playerId, buyAmount)) {
       addToast(
         `Purchased ${buyAmount} share${buyAmount > 1 ? 's' : ''} of ${player.name} for $${cost.toFixed(2)}`,
-        'success'
+        'success',
       );
       setBuyAmount(1);
     } else {
@@ -209,7 +219,7 @@ export default function PlayerDetail() {
     if (sellShares(playerId, sellAmount)) {
       addToast(
         `Sold ${sellAmount} share${sellAmount > 1 ? 's' : ''} of ${player.name} for $${proceeds.toFixed(2)}`,
-        'success'
+        'success',
       );
       setSellAmount(1);
     } else {
@@ -245,7 +255,7 @@ export default function PlayerDetail() {
     <div className="player-detail-page">
       <button onClick={() => navigate(-1)} className="back-link">
         <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
         </svg>
         Back
       </button>
@@ -254,15 +264,15 @@ export default function PlayerDetail() {
         <div className="player-header-left">
           <div className="player-avatar">
             {getPlayerHeadshotUrl(playerId, 'large') && !imageError ? (
-              <img 
-                src={getPlayerHeadshotUrl(playerId, 'large')} 
+              <img
+                src={getPlayerHeadshotUrl(playerId, 'large')}
                 alt={player.name}
                 onError={() => setImageError(true)}
               />
             ) : (
               <div className="avatar-placeholder">
                 <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                 </svg>
               </div>
             )}
@@ -278,7 +288,9 @@ export default function PlayerDetail() {
 
         <div className="player-price-section">
           <div className={`player-price ${isUp ? 'up' : 'down'}`}>
-            <span className="price-value">${player.currentPrice.toFixed(2)}</span>
+            <span className="price-value">
+              ${player.currentPrice.toFixed(2)}
+            </span>
             <span className={`price-change ${isUp ? 'text-up' : 'text-down'}`}>
               {isUp ? '▲' : '▼'} {Math.abs(player.changePercent).toFixed(2)}%
             </span>
@@ -297,7 +309,10 @@ export default function PlayerDetail() {
             <h3>Price History</h3>
             <div className="chart-container" ref={chartContainerRef}>
               <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+                <LineChart
+                  data={chartData}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+                >
                   <XAxis
                     dataKey="time"
                     axisLine={false}
@@ -325,11 +340,17 @@ export default function PlayerDetail() {
                       const entry = props.payload;
                       return [
                         `$${value.toFixed(2)}`,
-                        entry.reason?.headline ? entry.reason.headline.substring(0, 40) + '...' : 'Price'
+                        entry.reason?.headline
+                          ? entry.reason.headline.substring(0, 40) + '...'
+                          : 'Price',
                       ];
                     }}
                   />
-                  <ReferenceLine y={player.basePrice} stroke="#666" strokeDasharray="3 3" />
+                  <ReferenceLine
+                    y={player.basePrice}
+                    stroke="#666"
+                    strokeDasharray="3 3"
+                  />
                   <Line
                     type="linear"
                     dataKey="price"
@@ -344,28 +365,33 @@ export default function PlayerDetail() {
                       const xAxis = xAxisMap && Object.values(xAxisMap)[0];
                       const yAxis = yAxisMap && Object.values(yAxisMap)[0];
                       if (!xAxis?.scale || !yAxis?.scale) return null;
-                      
+
                       return (
                         <g className="event-markers">
                           {chartData.map((entry, idx) => {
                             // Only show markers for significant events (not baseline entries)
                             const reason = entry.reason;
-                            if (!reason || (reason.type === 'news' && reason.headline?.includes('baseline'))) {
+                            if (
+                              !reason ||
+                              (reason.type === 'news' &&
+                                reason.headline?.includes('baseline'))
+                            ) {
                               return null;
                             }
-                            
+
                             // Show markers for game events or significant news
-                            const showMarker = reason.type === 'game_event' || 
-                                              (reason.type === 'news' && reason.eventType) ||
-                                              reason.type === 'league_trade';
-                            
+                            const showMarker =
+                              reason.type === 'game_event' ||
+                              (reason.type === 'news' && reason.eventType) ||
+                              reason.type === 'league_trade';
+
                             if (!showMarker) return null;
-                            
+
                             const cx = xAxis.scale(entry.time);
                             const cy = yAxis.scale(entry.price);
-                            
+
                             if (isNaN(cx) || isNaN(cy)) return null;
-                            
+
                             return (
                               <EventMarker
                                 key={idx}
@@ -413,8 +439,16 @@ export default function PlayerDetail() {
               <h3>Related Content</h3>
               <div className="content-tiles">
                 {player.contentTiles.map((tile, i) => (
-                  <a key={i} href={tile.url} className="content-tile" target="_blank" rel="noopener noreferrer">
-                    <span className={`tile-type ${tile.type}`}>{tile.type}</span>
+                  <a
+                    key={i}
+                    href={tile.url}
+                    className="content-tile"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className={`tile-type ${tile.type}`}>
+                      {tile.type}
+                    </span>
                     <span className="tile-title">{tile.title}</span>
                     <span className="tile-source">{tile.source}</span>
                   </a>
@@ -435,97 +469,143 @@ export default function PlayerDetail() {
               {[...chartData].reverse().map((entry, i, arr) => {
                 const reasonType = entry.reason?.type || 'unknown';
                 const eventType = entry.reason?.eventType;
-                const typeColor = eventType ? EVENT_TYPE_COLORS[eventType] : REASON_TYPE_COLORS[reasonType];
+                const typeColor = eventType
+                  ? EVENT_TYPE_COLORS[eventType]
+                  : REASON_TYPE_COLORS[reasonType];
                 const typeLabel = getEventTypeLabel(entry.reason);
                 const isTD = eventType === 'TD';
                 const isINT = eventType === 'INT';
-                const prevPrice = chartData[chartData.length - 1 - i - 1]?.price || player.basePrice;
+                const prevPrice =
+                  chartData[chartData.length - 1 - i - 1]?.price ||
+                  player.basePrice;
                 const priceDiff = entry.price - prevPrice;
                 const isPositive = priceDiff >= 0;
-                
+
                 // Get URL from entry, or fallback to player's ESPN news page
-                const entryUrl = entry.reason?.url && entry.reason.url !== '#' 
-                  ? entry.reason.url 
-                  : (entry.reason?.type === 'news' || entry.reason?.type === 'game_event') 
-                    ? PLAYER_NEWS_URLS[player.id] || null
-                    : null;
-                
+                const entryUrl =
+                  entry.reason?.url && entry.reason.url !== '#'
+                    ? entry.reason.url
+                    : entry.reason?.type === 'news' ||
+                        entry.reason?.type === 'game_event'
+                      ? PLAYER_NEWS_URLS[player.id] || null
+                      : null;
+
                 return (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className={`timeline-entry ${isTD ? 'is-td' : ''} ${isINT ? 'is-int' : ''}`}
                   >
                     {/* Connector line */}
-                    {i < arr.length - 1 && <div className="timeline-connector" />}
-                    
+                    {i < arr.length - 1 && (
+                      <div className="timeline-connector" />
+                    )}
+
                     {/* Event marker with inline SVG */}
-                    <div 
+                    <div
                       className={`timeline-marker ${isTD ? 'marker-td' : ''} ${isINT ? 'marker-int' : ''}`}
                       style={{ backgroundColor: typeColor }}
                     >
                       {/* TD - Star */}
                       {isTD && (
-                        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          width="14"
+                          height="14"
+                        >
                           <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                         </svg>
                       )}
                       {/* INT - X */}
                       {isINT && (
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" width="12" height="12">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          width="12"
+                          height="12"
+                        >
                           <path d="M6 6L18 18M18 6L6 18" />
                         </svg>
                       )}
                       {/* News - Document */}
                       {!isTD && !isINT && reasonType === 'news' && (
-                        <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          width="12"
+                          height="12"
+                        >
                           <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
                         </svg>
                       )}
                       {/* Game Event (stats) - Bar chart */}
                       {!isTD && !isINT && reasonType === 'game_event' && (
-                        <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          width="12"
+                          height="12"
+                        >
                           <path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z" />
                         </svg>
                       )}
                       {/* Trade - Chart */}
                       {!isTD && !isINT && reasonType === 'league_trade' && (
-                        <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          width="12"
+                          height="12"
+                        >
                           <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" />
                         </svg>
                       )}
                     </div>
-                    
+
                     {/* Event card */}
                     <div className="timeline-entry-card">
                       <div className="timeline-entry-header">
-                        <span className="timeline-time-badge">{formatTimestamp(entry.timestamp)}</span>
-                        <span 
+                        <span className="timeline-time-badge">
+                          {formatTimestamp(entry.timestamp)}
+                        </span>
+                        <span
                           className="timeline-type-badge"
-                          style={{ backgroundColor: `${typeColor}25`, color: typeColor }}
+                          style={{
+                            backgroundColor: `${typeColor}25`,
+                            color: typeColor,
+                          }}
                         >
                           {typeLabel}
                         </span>
                       </div>
-                      
+
                       {entryUrl ? (
-                        <a 
-                          href={entryUrl} 
+                        <a
+                          href={entryUrl}
                           className="timeline-headline timeline-headline-link"
-                          target="_blank" 
+                          target="_blank"
                           rel="noopener noreferrer"
                         >
                           {entry.reason?.headline}
                           <span className="link-icon">↗</span>
                         </a>
                       ) : (
-                        <p className="timeline-headline">{entry.reason?.headline}</p>
+                        <p className="timeline-headline">
+                          {entry.reason?.headline}
+                        </p>
                       )}
-                      
-                      <div className={`timeline-price-display ${isPositive ? 'up' : 'down'}`}>
+
+                      <div
+                        className={`timeline-price-display ${isPositive ? 'up' : 'down'}`}
+                      >
                         ${entry.price.toFixed(2)}
                         {i < arr.length - 1 && (
                           <span className="price-diff">
-                            ({isPositive ? '+' : ''}{priceDiff.toFixed(2)})
+                            ({isPositive ? '+' : ''}
+                            {priceDiff.toFixed(2)})
                           </span>
                         )}
                       </div>
@@ -568,13 +648,17 @@ export default function PlayerDetail() {
                     type="number"
                     min="1"
                     value={buyAmount}
-                    onChange={(e) => setBuyAmount(Math.max(1, parseInt(e.target.value) || 1))}
+                    onChange={(e) =>
+                      setBuyAmount(Math.max(1, parseInt(e.target.value) || 1))
+                    }
                     className="form-input"
                   />
                 </label>
                 <div className="order-summary">
                   <span>Estimated Cost</span>
-                  <span className="order-total">${(player.currentPrice * buyAmount).toFixed(2)}</span>
+                  <span className="order-total">
+                    ${(player.currentPrice * buyAmount).toFixed(2)}
+                  </span>
                 </div>
                 <button className="trade-button buy" onClick={handleBuy}>
                   Buy {buyAmount} Share{buyAmount > 1 ? 's' : ''}
@@ -589,13 +673,25 @@ export default function PlayerDetail() {
                     min="1"
                     max={holding?.shares || 0}
                     value={sellAmount}
-                    onChange={(e) => setSellAmount(Math.max(1, Math.min(holding?.shares || 1, parseInt(e.target.value) || 1)))}
+                    onChange={(e) =>
+                      setSellAmount(
+                        Math.max(
+                          1,
+                          Math.min(
+                            holding?.shares || 1,
+                            parseInt(e.target.value) || 1,
+                          ),
+                        ),
+                      )
+                    }
                     className="form-input"
                   />
                 </label>
                 <div className="order-summary">
                   <span>Estimated Proceeds</span>
-                  <span className="order-total">${(player.currentPrice * sellAmount).toFixed(2)}</span>
+                  <span className="order-total">
+                    ${(player.currentPrice * sellAmount).toFixed(2)}
+                  </span>
                 </div>
                 <button className="trade-button sell" onClick={handleSell}>
                   Sell {sellAmount} Share{sellAmount > 1 ? 's' : ''}
@@ -620,17 +716,26 @@ export default function PlayerDetail() {
                 </div>
                 <div className="holdings-stat">
                   <span className="stat-label">Avg Cost</span>
-                  <span className="stat-value">${holding.avgCost.toFixed(2)}</span>
+                  <span className="stat-value">
+                    ${holding.avgCost.toFixed(2)}
+                  </span>
                 </div>
                 <div className="holdings-stat">
                   <span className="stat-label">Market Value</span>
-                  <span className="stat-value">${(player.currentPrice * holding.shares).toFixed(2)}</span>
+                  <span className="stat-value">
+                    ${(player.currentPrice * holding.shares).toFixed(2)}
+                  </span>
                 </div>
                 <div className="holdings-stat">
                   <span className="stat-label">P/L</span>
-                  <span className={`stat-value ${(player.currentPrice - holding.avgCost) >= 0 ? 'text-up' : 'text-down'}`}>
-                    {(player.currentPrice - holding.avgCost) >= 0 ? '+' : ''}
-                    ${((player.currentPrice - holding.avgCost) * holding.shares).toFixed(2)}
+                  <span
+                    className={`stat-value ${player.currentPrice - holding.avgCost >= 0 ? 'text-up' : 'text-down'}`}
+                  >
+                    {player.currentPrice - holding.avgCost >= 0 ? '+' : ''}$
+                    {(
+                      (player.currentPrice - holding.avgCost) *
+                      holding.shares
+                    ).toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -642,8 +747,13 @@ export default function PlayerDetail() {
             className={`watchlist-button ${watching ? 'watching' : ''}`}
             onClick={handleWatchlistToggle}
           >
-            <svg viewBox="0 0 24 24" fill={watching ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            <svg
+              viewBox="0 0 24 24"
+              fill={watching ? 'currentColor' : 'none'}
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
             </svg>
             {watching ? 'Watching' : 'Add to Watchlist'}
           </button>
@@ -659,15 +769,25 @@ export default function PlayerDetail() {
               <h4>League Owners ({leagueHoldings.length})</h4>
               <div className="league-owners-list">
                 {leagueHoldings.map((holder) => (
-                  <div key={holder.memberId} className={`league-owner-row ${holder.isUser ? 'is-user' : ''}`}>
+                  <div
+                    key={holder.memberId}
+                    className={`league-owner-row ${holder.isUser ? 'is-user' : ''}`}
+                  >
                     <div className="owner-info">
-                      <span className="owner-avatar">{holder.isUser ? '👤' : holder.avatar}</span>
+                      <span className="owner-avatar">
+                        {holder.isUser ? '👤' : holder.avatar}
+                      </span>
                       <span className="owner-name">{holder.name}</span>
                     </div>
                     <div className="owner-stats">
-                      <span className="owner-shares">{holder.shares} shares</span>
-                      <span className={`owner-gain ${holder.gainPercent >= 0 ? 'text-up' : 'text-down'}`}>
-                        {holder.gainPercent >= 0 ? '+' : ''}{holder.gainPercent.toFixed(1)}%
+                      <span className="owner-shares">
+                        {holder.shares} shares
+                      </span>
+                      <span
+                        className={`owner-gain ${holder.gainPercent >= 0 ? 'text-up' : 'text-down'}`}
+                      >
+                        {holder.gainPercent >= 0 ? '+' : ''}
+                        {holder.gainPercent.toFixed(1)}%
                       </span>
                     </div>
                   </div>

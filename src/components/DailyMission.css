@@ -412,9 +412,8 @@
   .results-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .selector-chips {
     grid-template-columns: 1fr;
   }
 }
-

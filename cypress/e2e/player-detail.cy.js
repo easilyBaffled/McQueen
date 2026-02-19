@@ -149,7 +149,9 @@ describe('Player Detail Page', () => {
   // TC-PD-016
   it('navigates back', () => {
     cy.visit('/market');
-    cy.get('.players-grid a[href*="/player/"]', { timeout: 10000 }).first().click();
+    cy.get('.players-grid a[href*="/player/"]', { timeout: 10000 })
+      .first()
+      .click();
     cy.get('.back-link').click();
     cy.url().should('include', '/market');
   });

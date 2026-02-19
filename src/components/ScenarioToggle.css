@@ -189,7 +189,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -255,8 +256,12 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ESPN Refresh button */
@@ -573,23 +578,23 @@
   .mobile-scenario-dropdown {
     display: block;
   }
-  
+
   .desktop-only {
     display: none !important;
   }
-  
+
   .scenario-tab {
     padding: 6px 12px;
   }
-  
+
   .scenario-label {
     font-size: 11px;
   }
-  
+
   .scenario-desc {
     display: none;
   }
-  
+
   .espn-refresh-btn {
     width: 28px;
     height: 28px;
@@ -603,4 +608,3 @@
     display: none;
   }
 }
-

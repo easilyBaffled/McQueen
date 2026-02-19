@@ -53,8 +53,8 @@ ESLint 9 is deprecating its stylistic/formatting rules. Adding Prettier with `es
 
 Concrete implementation tasks filed as child issues:
 
-| Task | Description |
-| --- | --- |
-| Add Prettier | Install `prettier` + `eslint-config-prettier`. Create `.prettierrc`. Add `format` / `format:check` scripts. Run initial format pass. Update `eslint.config.js`. |
-| Clean up @types packages | Keep `@types/react` and `@types/react-dom` for IntelliSense. Add `jsconfig.json` to formalize the JS-only setup. |
-| Extract magic numbers | Create `src/constants.js` with `TICK_INTERVAL_MS`, `ESPN_REFRESH_MS`, `USER_IMPACT_FACTOR`, `INITIAL_CASH`, etc. (Pain point L2.) |
+| Task                     | Description                                                                                                                                                     |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Add Prettier             | Install `prettier` + `eslint-config-prettier`. Create `.prettierrc`. Add `format` / `format:check` scripts. Run initial format pass. Update `eslint.config.js`. |
+| Clean up @types packages | Keep `@types/react` and `@types/react-dom` for IntelliSense. Add `jsconfig.json` to formalize the JS-only setup.                                                |
+| Extract magic numbers    | Create `src/constants.js` with `TICK_INTERVAL_MS`, `ESPN_REFRESH_MS`, `USER_IMPACT_FACTOR`, `INITIAL_CASH`, etc. (Pain point L2.)                               |

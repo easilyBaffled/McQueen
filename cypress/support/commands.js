@@ -1,6 +1,8 @@
 Cypress.Commands.add('clearAppState', () => {
   cy.window().then((win) => {
-    const keys = Object.keys(win.localStorage).filter((k) => k.startsWith('mcqueen'));
+    const keys = Object.keys(win.localStorage).filter((k) =>
+      k.startsWith('mcqueen'),
+    );
     keys.forEach((k) => win.localStorage.removeItem(k));
   });
 });
