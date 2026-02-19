@@ -14,6 +14,17 @@ import superbowlData from '../data/superbowl.json';
 import leagueData from '../data/leagueMembers.json';
 import espnPlayersData from '../data/espnPlayers.json';
 
+import {
+  INITIAL_CASH,
+  USER_IMPACT_FACTOR,
+  AI_BASE_CASH,
+  TICK_INTERVAL_MS,
+  ESPN_REFRESH_MS,
+  ESPN_NEWS_LIMIT,
+  MISSION_PICKS_PER_CATEGORY,
+  STORAGE_KEYS,
+} from '../constants';
+
 // ESPN Services
 import { fetchNFLNews, fetchPlayerNews } from '../services/espnService';
 import {
@@ -34,9 +45,6 @@ const scenarioData = {
   superbowl: superbowlData,
   'espn-live': { scenario: 'espn-live', players: espnPlayersData.players }, // ESPN Live mode
 };
-
-const INITIAL_CASH = 10000;
-const USER_IMPACT_FACTOR = 0.001; // Each share bought/sold moves price by 0.1%
 
 // League members data
 const leagueMembers = leagueData.members;
@@ -125,17 +133,6 @@ function buildUnifiedTimeline(players) {
   return timeline;
 }
 
-// ESPN Live mode refresh interval
-const ESPN_REFRESH_INTERVAL = 60 * 1000; // 1 minute
-
-// Storage keys
-const STORAGE_KEYS = {
-  scenario: 'mcqueen-scenario',
-  portfolio: 'mcqueen-portfolio',
-  watchlist: 'mcqueen-watchlist',
-  cash: 'mcqueen-cash',
-};
-
 // Helper to safely get from localStorage
 const getFromStorage = (key, defaultValue) => {
   try {
@@ -221,7 +218,7 @@ export function GameProvider({ children }) {
 
     try {
       // Fetch general NFL news
-      const news = await fetchNFLNews(30);
+      const news = await fetchNFLNews(ESPN_NEWS_LIMIT);
       setEspnNews(news);
 
       // Process each article to find relevant players and calculate price impacts
@@ -324,7 +321,7 @@ export function GameProvider({ children }) {
       // Set up refresh interval
       espnRefreshRef.current = setInterval(
         fetchAndProcessEspnNews,
-        ESPN_REFRESH_INTERVAL,
+        ESPN_REFRESH_MS,
       );
 
       return () => {
@@ -424,7 +421,7 @@ export function GameProvider({ children }) {
 
           return nextTick;
         });
-      }, 3000); // Update every 3 seconds
+      }, TICK_INTERVAL_MS);
 
       return () => clearInterval(tickIntervalRef.current);
     }
@@ -654,9 +651,15 @@ export function GameProvider({ children }) {
       newPicks.fallers = newPicks.fallers.filter((id) => id !== playerId);
 
       // Add to appropriate array if not already at limit
-      if (type === 'riser' && newPicks.risers.length < 3) {
+      if (
+        type === 'riser' &&
+        newPicks.risers.length < MISSION_PICKS_PER_CATEGORY
+      ) {
         newPicks.risers.push(playerId);
-      } else if (type === 'faller' && newPicks.fallers.length < 3) {
+      } else if (
+        type === 'faller' &&
+        newPicks.fallers.length < MISSION_PICKS_PER_CATEGORY
+      ) {
         newPicks.fallers.push(playerId);
       }
 
@@ -772,7 +775,6 @@ export function GameProvider({ children }) {
     const memberPortfolios = {};
 
     // Initialize all members with base cash (simulated starting cash for AI traders)
-    const AI_BASE_CASH = 2000; // AI traders hold some cash reserve
     leagueMembers.forEach((member) => {
       if (!member.isUser) {
         memberPortfolios[member.id] = {
