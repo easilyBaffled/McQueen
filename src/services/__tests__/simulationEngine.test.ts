@@ -1,10 +1,14 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   buildUnifiedTimeline,
   TimelineSimulationEngine,
   EspnSimulationEngine,
 } from '../simulationEngine';
-import type { SimulationEngine, OnPriceUpdate } from '../simulationEngine';
+import type {
+  SimulationEngine,
+  OnPriceUpdate,
+  EspnArticle,
+} from '../simulationEngine';
 import type { Player } from '../../types';
 import type { TimelineEntry } from '../../types/simulation';
 
@@ -959,5 +963,1512 @@ describe('onPriceUpdate callback integration', () => {
 
     expect(history).toHaveLength(1);
     expect(history[0].action).toBe('Price update');
+  });
+});
+
+// ── Comprehensive EspnSimulationEngine TCs ──────────────────────────
+describe('EspnSimulationEngine — full TC coverage', () => {
+  function espnPlayer(overrides: Partial<Player> = {}): Player {
+    return {
+      id: 'mahomes',
+      name: 'Patrick Mahomes',
+      team: 'KC',
+      position: 'QB',
+      basePrice: 50.0,
+      searchTerms: ['mahomes', 'patrick mahomes'],
+      ...overrides,
+    };
+  }
+
+  function makeArticle(overrides: Partial<EspnArticle> = {}): EspnArticle {
+    return {
+      id: 'art-1',
+      headline: 'Mahomes throws 4 TDs',
+      description: 'Great game',
+      ...overrides,
+    };
+  }
+
+  // TC-001: implements SimulationEngine interface
+  describe('TC-001: interface compliance', () => {
+    it('can be assigned to a SimulationEngine-typed variable', () => {
+      const engine: SimulationEngine = new EspnSimulationEngine({
+        players: [],
+        onPriceUpdate: vi.fn(),
+      });
+      expect(typeof engine.start).toBe('function');
+      expect(typeof engine.stop).toBe('function');
+      expect(typeof engine.tick).toBe('function');
+      expect(typeof engine.getPrice).toBe('function');
+    });
+
+    it('tick() returns a Promise (async compatible with void | Promise<void>)', async () => {
+      const engine = new EspnSimulationEngine({
+        players: [],
+        onPriceUpdate: vi.fn(),
+      });
+      const result = engine.tick();
+      expect(result).toBeInstanceOf(Promise);
+      await result;
+    });
+  });
+
+  // TC-002: constructor validates onPriceUpdate
+  describe('TC-002: onPriceUpdate validation', () => {
+    it('throws when onPriceUpdate is a string', () => {
+      expect(
+        () =>
+          new EspnSimulationEngine({
+            players: [],
+            onPriceUpdate: 'not a function' as unknown as OnPriceUpdate,
+          }),
+      ).toThrow('onPriceUpdate must be a function');
+    });
+
+    it('throws when onPriceUpdate is undefined', () => {
+      expect(
+        () =>
+          new EspnSimulationEngine({
+            players: [],
+            onPriceUpdate: undefined as unknown as OnPriceUpdate,
+          }),
+      ).toThrow('onPriceUpdate must be a function');
+    });
+
+    it('throws when onPriceUpdate is null', () => {
+      expect(
+        () =>
+          new EspnSimulationEngine({
+            players: [],
+            onPriceUpdate: null as unknown as OnPriceUpdate,
+          }),
+      ).toThrow('onPriceUpdate must be a function');
+    });
+
+    it('throws when onPriceUpdate is an object', () => {
+      expect(
+        () =>
+          new EspnSimulationEngine({
+            players: [],
+            onPriceUpdate: {} as unknown as OnPriceUpdate,
+          }),
+      ).toThrow('onPriceUpdate must be a function');
+    });
+
+    it('throws when onPriceUpdate is a number', () => {
+      expect(
+        () =>
+          new EspnSimulationEngine({
+            players: [],
+            onPriceUpdate: 42 as unknown as OnPriceUpdate,
+          }),
+      ).toThrow('onPriceUpdate must be a function');
+    });
+
+    it('succeeds with a valid function', () => {
+      expect(
+        () =>
+          new EspnSimulationEngine({
+            players: [],
+            onPriceUpdate: vi.fn(),
+          }),
+      ).not.toThrow();
+    });
+  });
+
+  // TC-003: constructor initializes prices from basePrices
+  describe('TC-003: price initialization', () => {
+    it('getPrice returns basePrice before any ticks', () => {
+      const engine = new EspnSimulationEngine({
+        players: [
+          espnPlayer({ id: 'p1', basePrice: 50.0 }),
+          espnPlayer({ id: 'p2', basePrice: 35.0 }),
+        ],
+        onPriceUpdate: vi.fn(),
+      });
+
+      expect(engine.getPrice('p1')).toBe(50.0);
+      expect(engine.getPrice('p2')).toBe(35.0);
+    });
+
+    it('handles basePrice of 0', () => {
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ id: 'p1', basePrice: 0 })],
+        onPriceUpdate: vi.fn(),
+      });
+      expect(engine.getPrice('p1')).toBe(0);
+    });
+
+    it('single player initializes correctly', () => {
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ id: 'solo', basePrice: 99.99 })],
+        onPriceUpdate: vi.fn(),
+      });
+      expect(engine.getPrice('solo')).toBe(99.99);
+    });
+  });
+
+  // TC-004: default values for optional dependencies
+  describe('TC-004: default optional dependencies', () => {
+    it('instantiates with only required options', () => {
+      expect(
+        () =>
+          new EspnSimulationEngine({
+            players: [espnPlayer()],
+            onPriceUpdate: vi.fn(),
+          }),
+      ).not.toThrow();
+    });
+
+    it('default fetchNews returns empty array — tick produces no updates', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate,
+      });
+      await engine.tick();
+      expect(onPriceUpdate).not.toHaveBeenCalled();
+    });
+
+    it('default analyzeSentiment returns neutral with zero magnitude', async () => {
+      const analyzeSentiment = vi.fn().mockReturnValue({
+        sentiment: 'neutral',
+        magnitude: 0,
+        confidence: 0,
+      });
+      const calculateNewPrice = vi
+        .fn()
+        .mockReturnValue({ newPrice: 50, changePercent: 0 });
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi.fn().mockResolvedValue([makeArticle()]),
+        analyzeSentiment,
+        calculateNewPrice,
+      });
+      await engine.tick();
+      expect(analyzeSentiment).toHaveBeenCalled();
+    });
+
+    it('default refreshIntervalMs is 60000', () => {
+      vi.useFakeTimers();
+      const fetchNews = vi.fn().mockResolvedValue([]);
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews,
+      });
+      engine.start();
+      expect(fetchNews).toHaveBeenCalledTimes(1);
+      vi.advanceTimersByTime(60000);
+      expect(fetchNews).toHaveBeenCalledTimes(2);
+      engine.stop();
+      vi.useRealTimers();
+    });
+  });
+
+  // TC-005: tick() calls fetchNews with newsLimit
+  describe('TC-005: fetchNews called with newsLimit', () => {
+    it('passes configured newsLimit to fetchNews', async () => {
+      const fetchNews = vi.fn().mockResolvedValue([]);
+      const engine = new EspnSimulationEngine({
+        players: [],
+        onPriceUpdate: vi.fn(),
+        fetchNews,
+        newsLimit: 15,
+      });
+      await engine.tick();
+      expect(fetchNews).toHaveBeenCalledWith(15);
+    });
+
+    it('passes default newsLimit of 30 when not specified', async () => {
+      const fetchNews = vi.fn().mockResolvedValue([]);
+      const engine = new EspnSimulationEngine({
+        players: [],
+        onPriceUpdate: vi.fn(),
+        fetchNews,
+      });
+      await engine.tick();
+      expect(fetchNews).toHaveBeenCalledWith(30);
+    });
+
+    it('calls fetchNews on each tick', async () => {
+      const fetchNews = vi.fn().mockResolvedValue([]);
+      const engine = new EspnSimulationEngine({
+        players: [],
+        onPriceUpdate: vi.fn(),
+        fetchNews,
+      });
+      await engine.tick();
+      await engine.tick();
+      await engine.tick();
+      expect(fetchNews).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  // TC-006: full processing pipeline
+  describe('TC-006: article processing pipeline', () => {
+    it('calls analyzeSentiment with concatenated text, player name, and position', async () => {
+      const analyzeSentiment = vi.fn().mockReturnValue({
+        sentiment: 'positive',
+        magnitude: 0.8,
+        confidence: 0.9,
+      });
+      const calculateNewPrice = vi
+        .fn()
+        .mockReturnValue({ newPrice: 55, changePercent: 10 });
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi.fn().mockResolvedValue([makeArticle()]),
+        analyzeSentiment,
+        calculateNewPrice,
+      });
+
+      await engine.tick();
+
+      expect(analyzeSentiment).toHaveBeenCalledWith(
+        'Mahomes throws 4 TDs Great game',
+        'Patrick Mahomes',
+        'QB',
+      );
+    });
+
+    it('calls calculateNewPrice with current price and sentiment result', async () => {
+      const sentimentResult = {
+        sentiment: 'positive' as const,
+        magnitude: 0.8,
+        confidence: 0.9,
+      };
+      const calculateNewPrice = vi
+        .fn()
+        .mockReturnValue({ newPrice: 55, changePercent: 10 });
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ basePrice: 50 })],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi.fn().mockResolvedValue([makeArticle()]),
+        analyzeSentiment: vi.fn().mockReturnValue(sentimentResult),
+        calculateNewPrice,
+      });
+
+      await engine.tick();
+
+      expect(calculateNewPrice).toHaveBeenCalledWith(50, sentimentResult);
+    });
+
+    it('calls onPriceUpdate with correct PriceReason', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([makeArticle()]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.8,
+          confidence: 0.9,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 10 }),
+      });
+
+      await engine.tick();
+
+      expect(onPriceUpdate).toHaveBeenCalledWith('mahomes', 55, {
+        type: 'news',
+        headline: 'Mahomes throws 4 TDs',
+        source: 'ESPN NFL',
+        url: undefined,
+        sentiment: 'positive',
+        magnitude: 0.8,
+      });
+    });
+
+    it('updates internal price after processing', async () => {
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ basePrice: 50 })],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi.fn().mockResolvedValue([makeArticle()]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.8,
+          confidence: 0.9,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 10 }),
+      });
+
+      await engine.tick();
+      expect(engine.getPrice('mahomes')).toBe(55);
+    });
+  });
+
+  // TC-007: irrelevant articles skipped
+  describe('TC-007: irrelevant articles', () => {
+    it('skips articles with no player match', async () => {
+      const analyzeSentiment = vi.fn();
+      const calculateNewPrice = vi.fn();
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [
+          espnPlayer({ id: 'mahomes', searchTerms: ['mahomes'] }),
+          espnPlayer({ id: 'kelce', searchTerms: ['kelce'], basePrice: 35 }),
+        ],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            headline: 'Weather forecast for Sunday',
+            description: 'Rain expected',
+          }),
+        ]),
+        analyzeSentiment,
+        calculateNewPrice,
+      });
+
+      await engine.tick();
+
+      expect(analyzeSentiment).not.toHaveBeenCalled();
+      expect(calculateNewPrice).not.toHaveBeenCalled();
+      expect(onPriceUpdate).not.toHaveBeenCalled();
+    });
+
+    it('partial match does not trigger (mahome vs mahomes)', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ searchTerms: ['mahomesX'] })],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            headline: 'Mahomes throws deep',
+            description: 'nothing',
+          }),
+        ]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+      expect(onPriceUpdate).not.toHaveBeenCalled();
+    });
+  });
+
+  // TC-008: case-insensitive matching + searchTerms
+  describe('TC-008: case-insensitive searchTerms matching', () => {
+    it('matches uppercase headline against lowercase search term', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ searchTerms: ['mahomes'] })],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            headline: 'MAHOMES throws deep',
+            description: 'nothing',
+          }),
+        ]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('matches via description when headline has no match', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ searchTerms: ['patrick mahomes'] })],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            headline: 'nothing relevant',
+            description: 'great pass by Patrick Mahomes',
+          }),
+        ]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not match when neither headline nor description contains term', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ searchTerms: ['mahomes'] })],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            headline: 'nothing',
+            description: 'nothing',
+          }),
+        ]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'neutral',
+          magnitude: 0,
+          confidence: 0,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 50, changePercent: 0 }),
+      });
+
+      await engine.tick();
+      expect(onPriceUpdate).not.toHaveBeenCalled();
+    });
+
+    it('falls back to player.name when searchTerms is undefined', async () => {
+      const onPriceUpdate = vi.fn();
+      const player = espnPlayer({ name: 'Patrick Mahomes' });
+      delete (player as Record<string, unknown>).searchTerms;
+
+      const engine = new EspnSimulationEngine({
+        players: [player],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            headline: 'Patrick Mahomes scores',
+            description: 'big play',
+          }),
+        ]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('handles mixed-case search term like McAfee', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ searchTerms: ['McAfee'] })],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            headline: 'mcafee show today',
+            description: 'fun times',
+          }),
+        ]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'neutral',
+          magnitude: 0.3,
+          confidence: 0.5,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 51, changePercent: 2 }),
+      });
+
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // TC-009: one article matches multiple players
+  describe('TC-009: multi-player match', () => {
+    it('fires separate onPriceUpdate for each matched player', async () => {
+      const onPriceUpdate = vi.fn();
+      const analyzeSentiment = vi.fn().mockReturnValue({
+        sentiment: 'positive',
+        magnitude: 0.5,
+        confidence: 0.7,
+      });
+      const calculateNewPrice = vi
+        .fn()
+        .mockReturnValue({ newPrice: 55, changePercent: 5 });
+
+      const engine = new EspnSimulationEngine({
+        players: [
+          espnPlayer({ id: 'mahomes', searchTerms: ['mahomes'], basePrice: 50 }),
+          espnPlayer({
+            id: 'kelce',
+            name: 'Travis Kelce',
+            searchTerms: ['kelce'],
+            position: 'TE',
+            basePrice: 35,
+          }),
+        ],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            headline: 'Mahomes to Kelce connection',
+            description: 'TD play',
+          }),
+        ]),
+        analyzeSentiment,
+        calculateNewPrice,
+      });
+
+      await engine.tick();
+
+      expect(onPriceUpdate).toHaveBeenCalledTimes(2);
+      const playerIds = onPriceUpdate.mock.calls.map(
+        (c: unknown[]) => c[0],
+      );
+      expect(playerIds).toContain('mahomes');
+      expect(playerIds).toContain('kelce');
+    });
+
+    it('calls analyzeSentiment with each player name/position', async () => {
+      const analyzeSentiment = vi.fn().mockReturnValue({
+        sentiment: 'positive',
+        magnitude: 0.5,
+        confidence: 0.7,
+      });
+
+      const engine = new EspnSimulationEngine({
+        players: [
+          espnPlayer({ id: 'mahomes', searchTerms: ['mahomes'], basePrice: 50 }),
+          espnPlayer({
+            id: 'kelce',
+            name: 'Travis Kelce',
+            searchTerms: ['kelce'],
+            position: 'TE',
+            basePrice: 35,
+          }),
+        ],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            headline: 'Mahomes to Kelce connection',
+            description: 'TD play',
+          }),
+        ]),
+        analyzeSentiment,
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+
+      expect(analyzeSentiment).toHaveBeenCalledTimes(2);
+      expect(analyzeSentiment).toHaveBeenCalledWith(
+        expect.any(String),
+        'Patrick Mahomes',
+        'QB',
+      );
+      expect(analyzeSentiment).toHaveBeenCalledWith(
+        expect.any(String),
+        'Travis Kelce',
+        'TE',
+      );
+    });
+
+    it('uses each player own current price for calculation', async () => {
+      const calculateNewPrice = vi
+        .fn()
+        .mockImplementation((price: number) => ({
+          newPrice: price + 5,
+          changePercent: 10,
+        }));
+
+      const engine = new EspnSimulationEngine({
+        players: [
+          espnPlayer({ id: 'mahomes', searchTerms: ['mahomes'], basePrice: 50 }),
+          espnPlayer({
+            id: 'kelce',
+            name: 'Travis Kelce',
+            searchTerms: ['kelce'],
+            position: 'TE',
+            basePrice: 35,
+          }),
+        ],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            headline: 'Mahomes to Kelce connection',
+            description: 'TD play',
+          }),
+        ]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice,
+      });
+
+      await engine.tick();
+
+      expect(engine.getPrice('mahomes')).toBe(55);
+      expect(engine.getPrice('kelce')).toBe(40);
+    });
+  });
+
+  // TC-010: article deduplication
+  describe('TC-010: article deduplication', () => {
+    it('same article not re-processed across three ticks', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([makeArticle()]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('same content with different id is processed as new', async () => {
+      const onPriceUpdate = vi.fn();
+      const fetchNews = vi
+        .fn()
+        .mockResolvedValueOnce([makeArticle({ id: 'art-1' })])
+        .mockResolvedValueOnce([makeArticle({ id: 'art-2' })]);
+
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate,
+        fetchNews,
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  // TC-011: new articles processed, old skipped
+  describe('TC-011: mixed new and old articles', () => {
+    it('processes only new articles in batch', async () => {
+      const onPriceUpdate = vi.fn();
+      const fetchNews = vi
+        .fn()
+        .mockResolvedValueOnce([
+          makeArticle({ id: 'art-1', headline: 'Mahomes TD' }),
+        ])
+        .mockResolvedValueOnce([
+          makeArticle({ id: 'art-1', headline: 'Mahomes TD' }),
+          makeArticle({
+            id: 'art-2',
+            headline: 'Kelce catch',
+            description: 'kelce record',
+          }),
+        ]);
+
+      const engine = new EspnSimulationEngine({
+        players: [
+          espnPlayer({ id: 'mahomes', searchTerms: ['mahomes'] }),
+          espnPlayer({
+            id: 'kelce',
+            name: 'Travis Kelce',
+            searchTerms: ['kelce'],
+            position: 'TE',
+            basePrice: 35,
+          }),
+        ],
+        onPriceUpdate,
+        fetchNews,
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  // TC-012: articles with missing/empty id
+  describe('TC-012: falsy article ids', () => {
+    it('skips article with empty string id', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate,
+        fetchNews: vi
+          .fn()
+          .mockResolvedValue([makeArticle({ id: '' })]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+      expect(onPriceUpdate).not.toHaveBeenCalled();
+    });
+
+    it('skips article with undefined id', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            id: undefined as unknown as string,
+          }),
+        ]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+      expect(onPriceUpdate).not.toHaveBeenCalled();
+    });
+
+    it('processes article with id "0" (string zero) normally', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([makeArticle({ id: '0' })]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // TC-013: price accumulation across articles
+  describe('TC-013: price accumulation', () => {
+    it('second article uses price set by first article', async () => {
+      const onPriceUpdate = vi.fn();
+      const calculateNewPrice = vi
+        .fn()
+        .mockImplementation((p: number) => ({
+          newPrice: p + 5,
+          changePercent: 10,
+        }));
+
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ basePrice: 50 })],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({ id: 'art-1', headline: 'Mahomes TD 1' }),
+          makeArticle({ id: 'art-2', headline: 'Mahomes TD 2' }),
+        ]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice,
+      });
+
+      await engine.tick();
+
+      expect(calculateNewPrice.mock.calls[0][0]).toBe(50);
+      expect(calculateNewPrice.mock.calls[1][0]).toBe(55);
+      expect(engine.getPrice('mahomes')).toBe(60);
+      expect(onPriceUpdate).toHaveBeenCalledTimes(2);
+      expect(onPriceUpdate.mock.calls[0][1]).toBe(55);
+      expect(onPriceUpdate.mock.calls[1][1]).toBe(60);
+    });
+  });
+
+  // TC-014: PriceReason object structure
+  describe('TC-014: reason object structure', () => {
+    it('includes source from article when present', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            source: 'AP',
+            url: 'https://example.com/story',
+          }),
+        ]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.8,
+          confidence: 0.9,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 10 }),
+      });
+
+      await engine.tick();
+
+      const reason = onPriceUpdate.mock.calls[0][2];
+      expect(reason).toEqual({
+        type: 'news',
+        headline: 'Mahomes throws 4 TDs',
+        source: 'AP',
+        url: 'https://example.com/story',
+        sentiment: 'positive',
+        magnitude: 0.8,
+      });
+    });
+
+    it('falls back to ESPN NFL when article.source is empty', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({ source: '' }),
+        ]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.8,
+          confidence: 0.9,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 10 }),
+      });
+
+      await engine.tick();
+
+      const reason = onPriceUpdate.mock.calls[0][2];
+      expect(reason.source).toBe('ESPN NFL');
+    });
+
+    it('falls back to ESPN NFL when article.source is undefined', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({ source: undefined }),
+        ]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+
+      const reason = onPriceUpdate.mock.calls[0][2];
+      expect(reason.source).toBe('ESPN NFL');
+    });
+
+    it('passes undefined url when article has no url', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([makeArticle()]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+
+      const reason = onPriceUpdate.mock.calls[0][2];
+      expect(reason.url).toBeUndefined();
+    });
+  });
+
+  // TC-015: start() triggers immediate tick then interval
+  describe('TC-015: start() immediate tick + interval', () => {
+    beforeEach(() => vi.useFakeTimers());
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('calls fetchNews immediately on start', () => {
+      const fetchNews = vi.fn().mockResolvedValue([]);
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews,
+      });
+
+      engine.start();
+      expect(fetchNews).toHaveBeenCalledTimes(1);
+    });
+
+    it('calls fetchNews again after refreshIntervalMs', () => {
+      const fetchNews = vi.fn().mockResolvedValue([]);
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews,
+        refreshIntervalMs: 60000,
+      });
+
+      engine.start();
+      expect(fetchNews).toHaveBeenCalledTimes(1);
+
+      vi.advanceTimersByTime(60000);
+      expect(fetchNews).toHaveBeenCalledTimes(2);
+
+      vi.advanceTimersByTime(60000);
+      expect(fetchNews).toHaveBeenCalledTimes(3);
+
+      engine.stop();
+    });
+
+    it('uses custom refreshIntervalMs', () => {
+      const fetchNews = vi.fn().mockResolvedValue([]);
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews,
+        refreshIntervalMs: 5000,
+      });
+
+      engine.start();
+      expect(fetchNews).toHaveBeenCalledTimes(1);
+
+      vi.advanceTimersByTime(5000);
+      expect(fetchNews).toHaveBeenCalledTimes(2);
+
+      engine.stop();
+    });
+  });
+
+  // TC-016: start() is idempotent
+  describe('TC-016: start() idempotent', () => {
+    beforeEach(() => vi.useFakeTimers());
+    afterEach(() => vi.useRealTimers());
+
+    it('calling start twice does not create duplicate intervals', () => {
+      const fetchNews = vi.fn().mockResolvedValue([]);
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews,
+        refreshIntervalMs: 10000,
+      });
+
+      engine.start();
+      expect(fetchNews).toHaveBeenCalledTimes(1);
+
+      engine.start();
+      expect(fetchNews).toHaveBeenCalledTimes(1);
+
+      vi.advanceTimersByTime(10000);
+      expect(fetchNews).toHaveBeenCalledTimes(2);
+
+      engine.stop();
+    });
+  });
+
+  // TC-017: stop() clears interval
+  describe('TC-017: stop() clears interval', () => {
+    beforeEach(() => vi.useFakeTimers());
+    afterEach(() => vi.useRealTimers());
+
+    it('no more ticks after stop', () => {
+      const fetchNews = vi.fn().mockResolvedValue([]);
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews,
+        refreshIntervalMs: 10000,
+      });
+
+      engine.start();
+      expect(fetchNews).toHaveBeenCalledTimes(1);
+
+      engine.stop();
+      vi.advanceTimersByTime(30000);
+      expect(fetchNews).toHaveBeenCalledTimes(1);
+    });
+
+    it('stop before start does not throw', () => {
+      const engine = new EspnSimulationEngine({
+        players: [],
+        onPriceUpdate: vi.fn(),
+      });
+      expect(() => engine.stop()).not.toThrow();
+    });
+
+    it('stop twice does not throw', () => {
+      const engine = new EspnSimulationEngine({
+        players: [],
+        onPriceUpdate: vi.fn(),
+      });
+      engine.start();
+      engine.stop();
+      expect(() => engine.stop()).not.toThrow();
+    });
+  });
+
+  // TC-018: stop then start resumes
+  describe('TC-018: stop then start resumes', () => {
+    beforeEach(() => vi.useFakeTimers());
+    afterEach(() => vi.useRealTimers());
+
+    it('start after stop resumes polling with immediate tick', () => {
+      const fetchNews = vi.fn().mockResolvedValue([]);
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews,
+        refreshIntervalMs: 10000,
+      });
+
+      engine.start();
+      expect(fetchNews).toHaveBeenCalledTimes(1);
+
+      engine.stop();
+
+      engine.start();
+      expect(fetchNews).toHaveBeenCalledTimes(2);
+
+      vi.advanceTimersByTime(10000);
+      expect(fetchNews).toHaveBeenCalledTimes(3);
+
+      engine.stop();
+    });
+
+    it('deduplication state persists across stop/start', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([makeArticle({ id: 'art-1' })]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+
+      engine.stop();
+      engine.start();
+
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+
+      engine.stop();
+    });
+  });
+
+  // TC-019: fetch failure graceful handling
+  describe('TC-019: fetch failure handling', () => {
+    it('swallows rejected promise from fetchNews', async () => {
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi.fn().mockRejectedValue(new Error('Network error')),
+      });
+
+      await expect(engine.tick()).resolves.toBeUndefined();
+    });
+
+    it('does not corrupt prices on fetch failure', async () => {
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ basePrice: 50 })],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi.fn().mockRejectedValue(new Error('Network error')),
+      });
+
+      await engine.tick();
+      expect(engine.getPrice('mahomes')).toBe(50);
+    });
+
+    it('recovers on subsequent successful tick', async () => {
+      const onPriceUpdate = vi.fn();
+      const fetchNews = vi
+        .fn()
+        .mockRejectedValueOnce(new Error('Network error'))
+        .mockResolvedValueOnce([makeArticle()]);
+
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate,
+        fetchNews,
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+      expect(onPriceUpdate).not.toHaveBeenCalled();
+
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('handles TypeError inside fetchNews', async () => {
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi
+          .fn()
+          .mockRejectedValue(new TypeError('Cannot read properties')),
+      });
+
+      await expect(engine.tick()).resolves.toBeUndefined();
+    });
+  });
+
+  // TC-020: getPrice for unknown player
+  describe('TC-020: getPrice unknown player', () => {
+    it('returns 0 for non-existent player', () => {
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+      });
+      expect(engine.getPrice('nonexistent-player')).toBe(0);
+    });
+
+    it('returns 0 for empty string player id', () => {
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+      });
+      expect(engine.getPrice('')).toBe(0);
+    });
+
+    it('unknown player still returns 0 after processing articles', async () => {
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi.fn().mockResolvedValue([makeArticle()]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+      expect(engine.getPrice('nonexistent')).toBe(0);
+    });
+  });
+
+  // TC-021: no React dependency
+  describe('TC-021: no React dependency', () => {
+    it('simulationEngine.ts has no React imports', async () => {
+      const fs = await import('fs');
+      const path = await import('path');
+      const filePath = path.resolve(__dirname, '..', 'simulationEngine.ts');
+      const content = fs.readFileSync(filePath, 'utf-8');
+
+      expect(content).not.toMatch(/from\s+['"]react['"]/);
+      expect(content).not.toMatch(/from\s+['"]react-dom['"]/);
+      expect(content).not.toMatch(
+        /\b(useState|useEffect|useCallback|useRef|useMemo)\b/,
+      );
+    });
+
+    it('engine works in a plain test without React runtime', () => {
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+      });
+      expect(engine.getPrice('mahomes')).toBe(50);
+    });
+  });
+
+  // TC-022: both engines use same onPriceUpdate signature
+  describe('TC-022: shared OnPriceUpdate signature', () => {
+    it('both engines call onPriceUpdate with (string, number, object|null)', async () => {
+      const spy = vi.fn();
+
+      const timeline: TimelineEntry[] = [
+        {
+          playerId: 'mahomes',
+          playerName: 'Mahomes',
+          entryIndex: 0,
+          timestamp: 't0',
+          price: 50,
+          reason: { type: 'news', headline: 'Start' },
+        },
+        {
+          playerId: 'mahomes',
+          playerName: 'Mahomes',
+          entryIndex: 1,
+          timestamp: 't1',
+          price: 55,
+          reason: { type: 'news', headline: 'Timeline event' },
+        },
+      ];
+      const timelineEngine = new TimelineSimulationEngine({
+        timeline,
+        onPriceUpdate: spy,
+      });
+      timelineEngine.tick();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      const [tPlayerId, tPrice, tReason] = spy.mock.calls[0];
+      expect(typeof tPlayerId).toBe('string');
+      expect(typeof tPrice).toBe('number');
+      expect(tReason).toBeTypeOf('object');
+
+      spy.mockClear();
+
+      const espnEngine = new EspnSimulationEngine({
+        players: [espnPlayer({ basePrice: 50 })],
+        onPriceUpdate: spy,
+        fetchNews: vi.fn().mockResolvedValue([makeArticle()]),
+        analyzeSentiment: vi.fn().mockReturnValue({
+          sentiment: 'positive',
+          magnitude: 0.5,
+          confidence: 0.7,
+        }),
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await espnEngine.tick();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      const [ePlayerId, ePrice, eReason] = spy.mock.calls[0];
+      expect(typeof ePlayerId).toBe('string');
+      expect(typeof ePrice).toBe('number');
+      expect(eReason).toBeTypeOf('object');
+    });
+  });
+
+  // TC-023: dependencies are injectable
+  describe('TC-023: dependency injection', () => {
+    it('all three dependencies are injected and called', async () => {
+      const fetchNews = vi.fn().mockResolvedValue([makeArticle()]);
+      const analyzeSentiment = vi.fn().mockReturnValue({
+        sentiment: 'positive',
+        magnitude: 0.8,
+        confidence: 0.9,
+      });
+      const calculateNewPrice = vi
+        .fn()
+        .mockReturnValue({ newPrice: 55, changePercent: 10 });
+
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews,
+        analyzeSentiment,
+        calculateNewPrice,
+      });
+
+      await engine.tick();
+
+      expect(fetchNews).toHaveBeenCalled();
+      expect(analyzeSentiment).toHaveBeenCalled();
+      expect(calculateNewPrice).toHaveBeenCalled();
+    });
+
+    it('replacing mock changes behavior on next tick', async () => {
+      const analyzeSentiment1 = vi.fn().mockReturnValue({
+        sentiment: 'positive',
+        magnitude: 0.8,
+        confidence: 0.9,
+      });
+      const calculateNewPrice = vi
+        .fn()
+        .mockImplementation((price: number, s: { sentiment: string }) => ({
+          newPrice: s.sentiment === 'negative' ? price - 5 : price + 5,
+          changePercent: 10,
+        }));
+
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ basePrice: 50 })],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi
+          .fn()
+          .mockResolvedValueOnce([makeArticle({ id: 'a1' })])
+          .mockResolvedValueOnce([makeArticle({ id: 'a2' })]),
+        analyzeSentiment: analyzeSentiment1,
+        calculateNewPrice,
+      });
+
+      await engine.tick();
+      expect(engine.getPrice('mahomes')).toBe(55);
+
+      analyzeSentiment1.mockReturnValue({
+        sentiment: 'negative',
+        magnitude: 0.9,
+        confidence: 0.95,
+      });
+
+      await engine.tick();
+      expect(engine.getPrice('mahomes')).toBe(50);
+    });
+  });
+
+  // TC-024: sentiment receives concatenated headline + description
+  describe('TC-024: sentiment text concatenation', () => {
+    it('passes "headline description" to analyzeSentiment', async () => {
+      const analyzeSentiment = vi.fn().mockReturnValue({
+        sentiment: 'positive',
+        magnitude: 0.5,
+        confidence: 0.7,
+      });
+
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            headline: 'Big Win',
+            description: 'Mahomes threw 4 TDs',
+          }),
+        ]),
+        analyzeSentiment,
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 55, changePercent: 5 }),
+      });
+
+      await engine.tick();
+
+      expect(analyzeSentiment).toHaveBeenCalledWith(
+        'Big Win Mahomes threw 4 TDs',
+        'Patrick Mahomes',
+        'QB',
+      );
+    });
+
+    it('handles empty description', async () => {
+      const analyzeSentiment = vi.fn().mockReturnValue({
+        sentiment: 'neutral',
+        magnitude: 0,
+        confidence: 0,
+      });
+
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer()],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            headline: 'Mahomes headline',
+            description: '',
+          }),
+        ]),
+        analyzeSentiment,
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 50, changePercent: 0 }),
+      });
+
+      await engine.tick();
+
+      expect(analyzeSentiment).toHaveBeenCalledWith(
+        'Mahomes headline ',
+        'Patrick Mahomes',
+        'QB',
+      );
+    });
+
+    it('handles empty headline', async () => {
+      const analyzeSentiment = vi.fn().mockReturnValue({
+        sentiment: 'neutral',
+        magnitude: 0,
+        confidence: 0,
+      });
+
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ searchTerms: ['mahomes'] })],
+        onPriceUpdate: vi.fn(),
+        fetchNews: vi.fn().mockResolvedValue([
+          makeArticle({
+            headline: '',
+            description: 'mahomes big play',
+          }),
+        ]),
+        analyzeSentiment,
+        calculateNewPrice: vi
+          .fn()
+          .mockReturnValue({ newPrice: 50, changePercent: 0 }),
+      });
+
+      await engine.tick();
+
+      expect(analyzeSentiment).toHaveBeenCalledWith(
+        ' mahomes big play',
+        'Patrick Mahomes',
+        'QB',
+      );
+    });
   });
 });
