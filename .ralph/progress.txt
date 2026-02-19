@@ -4,3 +4,5 @@
 2026-02-19 06:28:43 | mcq-b6u | DONE | Build Tooling Foundation
 2026-02-19 06:29:19 | mcq-b6u.1 | DONE | Add tsconfig.json with strict mode
 2026-02-19 06:35:07 | mcq-qbm | DONE | Testing Infrastructure
+2026-02-19 06:54:00 | mcq-o0b | DONE | Accessibility
+2026-02-19 06:55:11 | mcq-b6u.2 | DONE | Configure Vite vendor chunking

@@ -285,6 +285,7 @@ export default function Timeline() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input"
+              aria-label="Search players or headlines"
             />
           </div>
 
@@ -529,6 +530,7 @@ export default function Timeline() {
                             <div className="trade-quantity">
                               <button
                                 className="qty-btn"
+                                aria-label="Decrease quantity"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setTradeQuantity(event.id, quantity - 1);
@@ -548,9 +550,11 @@ export default function Timeline() {
                                 onClick={(e) => e.stopPropagation()}
                                 min="1"
                                 className="qty-input"
+                                aria-label="Trade quantity"
                               />
                               <button
                                 className="qty-btn"
+                                aria-label="Increase quantity"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setTradeQuantity(event.id, quantity + 1);
