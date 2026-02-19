@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import type { SentimentInput } from '../priceCalculator';
 import {
   applyPriceImpact,
   createPriceHistoryEntry,
@@ -37,7 +38,7 @@ describe('createPriceHistoryEntry', () => {
       source: 'ESPN',
       url: 'https://espn.com/article/123',
     };
-    const sentiment = { sentiment: 'positive', magnitude: 0.8 };
+    const sentiment: SentimentInput = { sentiment: 'positive', magnitude: 0.8 };
 
     const entry = createPriceHistoryEntry(article, sentiment, 55.25);
 
@@ -65,7 +66,7 @@ describe('createPriceHistoryEntry', () => {
 
   it('produces empty content array when url is "#"', () => {
     const article = { headline: 'Test', url: '#' };
-    const sentiment = { sentiment: 'neutral', magnitude: 0 };
+    const sentiment: SentimentInput = { sentiment: 'neutral', magnitude: 0 };
 
     const entry = createPriceHistoryEntry(article, sentiment, 10);
     expect(entry.content).toEqual([]);
@@ -153,7 +154,7 @@ describe('calculateNewPrice', () => {
 
 describe('calculateCumulativeImpact', () => {
   it('processes multiple sentiment results', () => {
-    const results = [
+    const results: SentimentInput[] = [
       { sentiment: 'positive', magnitude: 0.5, confidence: 0.8 },
       { sentiment: 'positive', magnitude: 0.3, confidence: 0.6 },
     ];
@@ -166,7 +167,7 @@ describe('calculateCumulativeImpact', () => {
   });
 
   it('applies decay factor to subsequent articles', () => {
-    const results = [
+    const results: SentimentInput[] = [
       { sentiment: 'positive', magnitude: 0.5, confidence: 0.8 },
       { sentiment: 'positive', magnitude: 0.5, confidence: 0.8 },
     ];
@@ -177,7 +178,7 @@ describe('calculateCumulativeImpact', () => {
   });
 
   it('respects maxTotalImpact cap', () => {
-    const results = Array(20).fill({
+    const results: SentimentInput[] = Array(20).fill({
       sentiment: 'positive',
       magnitude: 1.0,
       confidence: 1.0,

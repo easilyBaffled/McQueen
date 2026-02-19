@@ -1,14 +1,86 @@
 import { getMagnitudeLevel } from './sentimentEngine';
+import type { SentimentResult } from './sentimentEngine';
 
-interface SentimentInput {
-  sentiment: string;
-  magnitude: number;
+type SentimentType = SentimentResult['sentiment'];
+type MagnitudeLevel = ReturnType<typeof getMagnitudeLevel>;
+
+export type SentimentInput = Pick<SentimentResult, 'sentiment' | 'magnitude'> & {
   confidence?: number;
+};
+
+interface PriceRange {
+  min: number;
+  max: number;
+}
+
+export interface PriceImpact {
+  impactPercent: number;
+  impactMultiplier: number;
+  description: string;
+  details: {
+    sentiment: SentimentType;
+    level: MagnitudeLevel;
+    baseImpact: number;
+    confidence: number;
+    confidenceMultiplier: number;
+  };
+}
+
+export interface PriceResult {
+  newPrice: number;
+  previousPrice: number;
+  change: number;
+  changePercent: number;
+  impact: PriceImpact;
+}
+
+interface CumulativeImpactItem extends PriceImpact {
+  decay: number;
+  runningPrice: number;
+}
+
+interface CumulativeImpactOptions {
+  maxTotalImpact?: number;
+  decayFactor?: number;
+}
+
+export interface CumulativeImpactResult {
+  newPrice: number;
+  previousPrice: number;
+  change: number;
+  totalImpactPercent: number;
+  impacts: CumulativeImpactItem[];
+}
+
+interface ArticleInput {
+  headline?: string;
+  published?: string;
+  source?: string;
+  url?: string;
+}
+
+interface PriceHistoryEntry {
+  timestamp: string;
+  price: number;
+  reason: {
+    type: 'news';
+    headline: string | undefined;
+    source: string;
+    url: string | undefined;
+    sentiment: SentimentType;
+    magnitude: number;
+  };
+  content: Array<{
+    type: 'article';
+    title: string | undefined;
+    source: string;
+    url: string;
+  }>;
 }
 
 const PRICE_IMPACT_RANGES: Record<
-  string,
-  Record<string, { min: number; max: number }>
+  SentimentType,
+  Record<MagnitudeLevel, PriceRange>
 > = {
   positive: {
     high: { min: 0.03, max: 0.05 },
@@ -29,7 +101,9 @@ const PRICE_IMPACT_RANGES: Record<
 
 const CONFIDENCE_WEIGHT = 0.7;
 
-export function calculatePriceImpact(sentimentResult: SentimentInput) {
+export function calculatePriceImpact(
+  sentimentResult: SentimentInput,
+): PriceImpact {
   const { sentiment, magnitude, confidence = 0.5 } = sentimentResult;
   const level = getMagnitudeLevel(magnitude);
 
@@ -67,7 +141,7 @@ export function applyPriceImpact(
 export function calculateNewPrice(
   currentPrice: number,
   sentimentResult: SentimentInput,
-) {
+): PriceResult {
   const impact = calculatePriceImpact(sentimentResult);
   const newPrice = applyPriceImpact(currentPrice, impact);
 
@@ -83,13 +157,13 @@ export function calculateNewPrice(
 export function calculateCumulativeImpact(
   currentPrice: number,
   sentimentResults: SentimentInput[],
-  options: { maxTotalImpact?: number; decayFactor?: number } = {},
-) {
+  options: CumulativeImpactOptions = {},
+): CumulativeImpactResult {
   const { maxTotalImpact = 0.1, decayFactor = 0.7 } = options;
 
   let runningPrice = currentPrice;
   let totalImpactPercent = 0;
-  const impacts: Array<Record<string, unknown>> = [];
+  const impacts: CumulativeImpactItem[] = [];
 
   const sortedResults = [...sentimentResults].sort(
     (a, b) => (b.confidence || 0.5) - (a.confidence || 0.5),
@@ -99,7 +173,7 @@ export function calculateCumulativeImpact(
     const decay = Math.pow(decayFactor, index);
     const impact = calculatePriceImpact(result);
 
-    const decayedImpact = {
+    const decayedImpact: PriceImpact = {
       ...impact,
       impactPercent: impact.impactPercent * decay,
       impactMultiplier: 1 + (impact.impactMultiplier - 1) * decay,
@@ -152,20 +226,15 @@ function getImpactDescription(impact: number): string {
 }
 
 export function createPriceHistoryEntry(
-  article: {
-    headline?: string;
-    published?: string;
-    source?: string;
-    url?: string;
-  },
-  sentimentResult: { sentiment: string; magnitude: number },
+  article: ArticleInput,
+  sentimentResult: SentimentInput,
   newPrice: number,
-) {
+): PriceHistoryEntry {
   return {
     timestamp: article.published || new Date().toISOString(),
     price: newPrice,
     reason: {
-      type: 'news' as const,
+      type: 'news',
       headline: article.headline,
       source: article.source || 'ESPN NFL',
       url: article.url,
