@@ -22,3 +22,4 @@
 2026-02-19 10:33:16 | mcq-qzq.4 | DONE | Extract priceResolver as pure module
 2026-02-19 10:43:03 | mcq-tj0.4 | DONE | Convert scenario data loading to dynamic import()
 2026-02-19 11:26:38 | mcq-vlu | DONE | State Management: Split GameContext
+2026-02-19 11:36:29 | mcq-qzq.2 | DONE | Convert priceCalculator to TypeScript

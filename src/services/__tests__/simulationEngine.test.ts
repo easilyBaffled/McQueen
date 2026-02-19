@@ -4,6 +4,7 @@ import {
   TimelineSimulationEngine,
   EspnSimulationEngine,
 } from '../simulationEngine';
+import type { SimulationEngine, OnPriceUpdate } from '../simulationEngine';
 import type { Player } from '../../types';
 import type { TimelineEntry } from '../../types/simulation';
 
@@ -134,6 +135,51 @@ describe('buildUnifiedTimeline', () => {
 
   it('returns empty array for empty players', () => {
     expect(buildUnifiedTimeline([])).toEqual([]);
+  });
+
+  it('does not mutate input players array (pure function)', () => {
+    const players: Player[] = [
+      makePlayer({
+        id: 'a',
+        name: 'Player A',
+        priceHistory: [
+          {
+            timestamp: '2026-01-01T10:00:00Z',
+            price: 40,
+            reason: { type: 'news', headline: 'A1' },
+          },
+        ],
+      }),
+    ];
+    const clone = JSON.parse(JSON.stringify(players));
+
+    buildUnifiedTimeline(players);
+
+    expect(players).toEqual(clone);
+  });
+
+  it('returns identical results on repeated calls (deterministic)', () => {
+    const players: Player[] = [
+      makePlayer({
+        id: 'a',
+        name: 'A',
+        priceHistory: [
+          {
+            timestamp: '2026-01-01T10:00:00Z',
+            price: 40,
+            reason: { type: 'news', headline: 'A1' },
+          },
+          {
+            timestamp: '2026-01-01T12:00:00Z',
+            price: 42,
+            reason: { type: 'news', headline: 'A2' },
+          },
+        ],
+      }),
+    ];
+    const result1 = buildUnifiedTimeline(players);
+    const result2 = buildUnifiedTimeline(players);
+    expect(result1).toEqual(result2);
   });
 
   it('single player timeline equals that player history in order', () => {
@@ -305,6 +351,192 @@ describe('TimelineSimulationEngine', () => {
       onPriceUpdate: vi.fn(),
     });
     expect(engine.getPrice('unknown')).toBe(0);
+  });
+
+  it('getPrice returns 0 for empty string player id', () => {
+    const engine = new TimelineSimulationEngine({
+      timeline: makeTimeline(3),
+      onPriceUpdate: vi.fn(),
+    });
+    expect(engine.getPrice('')).toBe(0);
+  });
+
+  it('throws when onPriceUpdate is null', () => {
+    expect(
+      () =>
+        new TimelineSimulationEngine({
+          timeline: [],
+          onPriceUpdate: null as unknown as OnPriceUpdate,
+        }),
+    ).toThrow('onPriceUpdate must be a function');
+  });
+
+  it('throws when onPriceUpdate is undefined', () => {
+    expect(
+      () =>
+        new TimelineSimulationEngine({
+          timeline: [],
+          onPriceUpdate: undefined as unknown as OnPriceUpdate,
+        }),
+    ).toThrow('onPriceUpdate must be a function');
+  });
+
+  it('throws when onPriceUpdate is a string', () => {
+    expect(
+      () =>
+        new TimelineSimulationEngine({
+          timeline: [],
+          onPriceUpdate: 'not a function' as unknown as OnPriceUpdate,
+        }),
+    ).toThrow('onPriceUpdate must be a function');
+  });
+
+  it('seeds initial price from first timeline entry before any tick', () => {
+    const timeline: TimelineEntry[] = [
+      {
+        playerId: 'mahomes',
+        playerName: 'Mahomes',
+        entryIndex: 0,
+        timestamp: '2026-01-01T10:00:00Z',
+        price: 50,
+        reason: { type: 'news', headline: 'Start' },
+      },
+    ];
+    const engine = new TimelineSimulationEngine({
+      timeline,
+      onPriceUpdate: vi.fn(),
+    });
+    expect(engine.getPrice('mahomes')).toBe(50);
+  });
+
+  it('does not seed any price when timeline is empty', () => {
+    const engine = new TimelineSimulationEngine({
+      timeline: [],
+      onPriceUpdate: vi.fn(),
+    });
+    expect(engine.getPrice('anyone')).toBe(0);
+  });
+
+  it('1-entry timeline: first tick immediately stops', () => {
+    const onPriceUpdate = vi.fn();
+    const timeline: TimelineEntry[] = [
+      {
+        playerId: 'a',
+        playerName: 'A',
+        entryIndex: 0,
+        timestamp: 't0',
+        price: 50,
+        reason: { type: 'news', headline: '' },
+      },
+    ];
+    const engine = new TimelineSimulationEngine({ timeline, onPriceUpdate });
+    engine.tick();
+    expect(onPriceUpdate).not.toHaveBeenCalled();
+  });
+
+  it('restart after stop works correctly', () => {
+    vi.useFakeTimers();
+    const onPriceUpdate = vi.fn();
+    const timeline = makeTimeline(10);
+    const engine = new TimelineSimulationEngine({
+      timeline,
+      onPriceUpdate,
+      tickIntervalMs: 3000,
+    });
+
+    engine.start();
+    vi.advanceTimersByTime(3000);
+    expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+
+    engine.stop();
+    engine.start();
+    vi.advanceTimersByTime(3000);
+    expect(onPriceUpdate).toHaveBeenCalledTimes(2);
+
+    engine.stop();
+    vi.useRealTimers();
+  });
+
+  it('uses custom tickIntervalMs', () => {
+    vi.useFakeTimers();
+    const onPriceUpdate = vi.fn();
+    const timeline = makeTimeline(10);
+    const engine = new TimelineSimulationEngine({
+      timeline,
+      onPriceUpdate,
+      tickIntervalMs: 1000,
+    });
+
+    engine.start();
+    vi.advanceTimersByTime(1000);
+    expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+
+    engine.stop();
+    vi.useRealTimers();
+  });
+
+  it('getPrice updates when same player appears multiple times', () => {
+    const onPriceUpdate = vi.fn();
+    const timeline: TimelineEntry[] = [
+      {
+        playerId: 'mahomes',
+        playerName: 'M',
+        entryIndex: 0,
+        timestamp: 't0',
+        price: 50,
+        reason: { type: 'news', headline: '' },
+      },
+      {
+        playerId: 'mahomes',
+        playerName: 'M',
+        entryIndex: 1,
+        timestamp: 't1',
+        price: 55,
+        reason: { type: 'news', headline: '' },
+      },
+      {
+        playerId: 'mahomes',
+        playerName: 'M',
+        entryIndex: 2,
+        timestamp: 't2',
+        price: 60,
+        reason: { type: 'news', headline: '' },
+      },
+    ];
+    const engine = new TimelineSimulationEngine({ timeline, onPriceUpdate });
+
+    engine.tick();
+    expect(engine.getPrice('mahomes')).toBe(55);
+    engine.tick();
+    expect(engine.getPrice('mahomes')).toBe(60);
+  });
+});
+
+describe('SimulationEngine interface contract', () => {
+  it('has no React imports in simulationEngine.ts', async () => {
+    const fs = await import('fs');
+    const path = await import('path');
+    const filePath = path.resolve(__dirname, '..', 'simulationEngine.ts');
+    const content = fs.readFileSync(filePath, 'utf-8');
+    expect(content).not.toMatch(/from\s+['"]react['"]/);
+    expect(content).not.toMatch(/from\s+['"]react-dom['"]/);
+  });
+
+  it('a stub third engine class can implement SimulationEngine', () => {
+    class StubEngine implements SimulationEngine {
+      start() {}
+      stop() {}
+      tick() {}
+      getPrice(_id: string) {
+        return 0;
+      }
+    }
+
+    const engine: SimulationEngine = new StubEngine();
+    expect(typeof engine.start).toBe('function');
+    expect(typeof engine.stop).toBe('function');
+    expect(typeof engine.tick).toBe('function');
+    expect(typeof engine.getPrice).toBe('function');
   });
 });
 
