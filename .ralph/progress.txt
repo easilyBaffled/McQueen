@@ -33,3 +33,7 @@
 2026-02-19 13:58:53 | mcq-35g.3 | DONE | Restructure feature components into co-located directories
 2026-02-19 14:02:29 | mcq-35g.4 | DONE | Restructure pages into co-located directories
 2026-02-19 14:11:27 | mcq-35g.6 | DONE | Fix Leaderboard to use real league data
+2026-02-19 16:53:53 | mcq-8hr.1 | DONE | Create shared test helpers (renderWithProviders + mockData)
+2026-02-19 16:59:30 | mcq-8hr.2 | DONE | Add Vitest tests for Market page (0% coverage)
+2026-02-19 17:04:34 | mcq-8hr.3 | DONE | Add Vitest tests for Watchlist page (0% coverage)
+2026-02-19 17:09:41 | mcq-8hr.4 | DONE | Add Vitest tests for Mission page (0% coverage)
