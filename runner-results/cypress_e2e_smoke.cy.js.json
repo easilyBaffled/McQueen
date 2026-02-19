@@ -1,0 +1,10 @@
+{
+  "suites": 1,
+  "tests": 5,
+  "passes": 5,
+  "pending": 0,
+  "failures": 0,
+  "start": "2026-02-19T11:19:59.601Z",
+  "duration": 1186,
+  "file": "cypress/e2e/smoke.cy.js"
+}

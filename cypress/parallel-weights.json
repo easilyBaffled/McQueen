@@ -1,12 +1,1 @@
-{
-  "cypress/e2e/leaderboard.cy.js": { "time": 727, "weight": 1 },
-  "cypress/e2e/market.cy.js": { "time": 3811, "weight": 9 },
-  "cypress/e2e/mission.cy.js": { "time": 3233, "weight": 8 },
-  "cypress/e2e/navigation.cy.js": { "time": 1542, "weight": 3 },
-  "cypress/e2e/onboarding.cy.js": { "time": 4819, "weight": 12 },
-  "cypress/e2e/player-detail.cy.js": { "time": 11391, "weight": 28 },
-  "cypress/e2e/portfolio.cy.js": { "time": 3469, "weight": 8 },
-  "cypress/e2e/timeline.cy.js": { "time": 5724, "weight": 14 },
-  "cypress/e2e/toasts.cy.js": { "time": 3089, "weight": 7 },
-  "cypress/e2e/watchlist.cy.js": { "time": 1646, "weight": 4 }
-}
+{"cypress/e2e/leaderboard.cy.js":{"time":488,"weight":1},"cypress/e2e/market.cy.js":{"time":3529,"weight":9},"cypress/e2e/mission.cy.js":{"time":3271,"weight":9},"cypress/e2e/navigation.cy.js":{"time":1513,"weight":4},"cypress/e2e/onboarding.cy.js":{"time":5004,"weight":13},"cypress/e2e/player-detail.cy.js":{"time":11417,"weight":31},"cypress/e2e/portfolio.cy.js":{"time":3386,"weight":9},"cypress/e2e/smoke.cy.js":{"time":1186,"weight":3},"cypress/e2e/timeline.cy.js":{"time":5346,"weight":14},"cypress/e2e/toasts.cy.js":{"time":3019,"weight":8},"cypress/e2e/watchlist.cy.js":{"time":1437,"weight":3}}

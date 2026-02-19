@@ -4,7 +4,7 @@
   "passes": 5,
   "pending": 0,
   "failures": 0,
-  "start": "2026-02-18T21:06:56.552Z",
-  "duration": 4819,
+  "start": "2026-02-19T11:19:43.009Z",
+  "duration": 5004,
   "file": "cypress/e2e/onboarding.cy.js"
 }

@@ -4,7 +4,7 @@
   "passes": 6,
   "pending": 0,
   "failures": 0,
-  "start": "2026-02-18T21:07:11.675Z",
-  "duration": 1542,
+  "start": "2026-02-19T11:19:57.454Z",
+  "duration": 1513,
   "file": "cypress/e2e/navigation.cy.js"
 }

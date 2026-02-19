@@ -4,7 +4,7 @@
   "passes": 3,
   "pending": 0,
   "failures": 0,
-  "start": "2026-02-18T21:07:08.898Z",
-  "duration": 3089,
+  "start": "2026-02-19T11:19:53.503Z",
+  "duration": 3019,
   "file": "cypress/e2e/toasts.cy.js"
 }
