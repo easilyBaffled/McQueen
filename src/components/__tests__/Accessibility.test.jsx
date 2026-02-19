@@ -6,6 +6,9 @@ import Toast, { ToastProvider, useToast } from '../Toast';
 import Layout from '../Layout';
 import Glossary from '../Glossary';
 import Onboarding from '../Onboarding';
+import AddEventModal from '../AddEventModal';
+import EventMarkerPopup from '../EventMarkerPopup';
+import FirstTradeGuide from '../FirstTradeGuide';
 
 vi.mock('../../context/GameContext', () => ({
   useGame: () => ({
@@ -44,6 +47,7 @@ vi.mock('react-router-dom', () => ({
   Outlet: () => <div data-testid="outlet" />,
   useLocation: () => ({ pathname: '/' }),
   Link: ({ children, ...props }) => <a {...props}>{children}</a>,
+  useNavigate: () => vi.fn(),
 }));
 
 vi.mock('framer-motion', () => ({
@@ -162,6 +166,70 @@ describe('ARIA attributes (mcq-o0b.2)', () => {
 
     const closeBtn = screen.getByLabelText(/dismiss/i);
     expect(closeBtn).toBeInTheDocument();
+  });
+
+  it('AddEventModal has role="dialog", aria-modal, and aria-labelledby', () => {
+    render(
+      <AddEventModal
+        isOpen={true}
+        onClose={() => {}}
+        onSubmit={() => {}}
+        players={[]}
+      />,
+    );
+
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(dialog).toHaveAttribute('aria-labelledby');
+  });
+
+  it('EventMarkerPopup close button has aria-label', () => {
+    const event = {
+      type: 'TD',
+      headline: 'Touchdown!',
+      source: 'ESPN',
+      price: 55.0,
+    };
+
+    render(
+      <EventMarkerPopup
+        event={event}
+        position={{ x: 100, y: 100 }}
+        onClose={() => {}}
+      />,
+    );
+
+    const closeBtn = screen.getByLabelText(/close/i);
+    expect(closeBtn).toBeInTheDocument();
+  });
+
+  it('FirstTradeGuide close button has aria-label', async () => {
+    localStorage.setItem('mcqueen-onboarding-just-completed', 'true');
+    localStorage.removeItem('mcqueen-first-trade-seen');
+
+    vi.useFakeTimers();
+    render(<FirstTradeGuide hasCompletedFirstTrade={false} />);
+    vi.advanceTimersByTime(600);
+    vi.useRealTimers();
+
+    const closeBtn = await screen.findByLabelText(/close/i);
+    expect(closeBtn).toBeInTheDocument();
+
+    localStorage.removeItem('mcqueen-onboarding-just-completed');
+  });
+
+  it('Layout nav has aria-label for main navigation', () => {
+    render(<Layout />);
+
+    const nav = screen.getByRole('navigation');
+    expect(nav).toHaveAttribute('aria-label');
+  });
+
+  it('Layout main has proper landmark role', () => {
+    render(<Layout />);
+
+    const main = screen.getByRole('main');
+    expect(main).toBeInTheDocument();
   });
 });
 

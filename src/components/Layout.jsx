@@ -68,7 +68,7 @@ export default function Layout() {
 
       {scenario === 'live' && <LiveTicker />}
 
-      <nav className="nav">
+      <nav className="nav" aria-label="Main navigation">
         <NavLink
           to="/"
           className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}

@@ -222,13 +222,16 @@ export default function AddEventModal({
       >
         <motion.div
           className="add-event-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="add-event-modal-title"
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           onClick={(e) => e.stopPropagation()}
         >
           <header className="modal-header">
-            <h2>Add Price Event</h2>
+            <h2 id="add-event-modal-title">Add Price Event</h2>
             <button
               className="close-btn"
               onClick={onClose}

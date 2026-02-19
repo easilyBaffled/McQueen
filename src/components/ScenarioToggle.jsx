@@ -81,6 +81,8 @@ export default function ScenarioToggle() {
         <button
           className={`mobile-dropdown-trigger ${currentScenario.isEspn ? 'espn' : ''}`}
           onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
+          aria-label={`Select scenario, current: ${currentScenario.label}`}
+          aria-expanded={mobileDropdownOpen}
         >
           <span className="mobile-dropdown-label">
             <span className="mobile-dropdown-badge">DEMO</span>
@@ -165,6 +167,7 @@ export default function ScenarioToggle() {
                       refreshEspnNews();
                     }}
                     disabled={espnLoading}
+                    aria-label="Refresh ESPN news"
                   >
                     <span className={espnLoading ? 'spinning' : ''}>⟳</span>
                     {espnLoading ? 'Refreshing...' : 'Refresh ESPN News'}
@@ -183,6 +186,7 @@ export default function ScenarioToggle() {
           onMouseEnter={() => setShowDemoTooltip(true)}
           onMouseLeave={() => setShowDemoTooltip(false)}
           onClick={() => setShowDemoTooltip(!showDemoTooltip)}
+          aria-label="Demo scenarios information"
         >
           <span className="demo-badge">DEMO</span>
           <svg
@@ -284,6 +288,7 @@ export default function ScenarioToggle() {
             onClick={refreshEspnNews}
             disabled={espnLoading}
             title="Refresh ESPN news"
+            aria-label="Refresh ESPN news"
           >
             <span className={espnLoading ? 'spinning' : ''}>⟳</span>
           </button>

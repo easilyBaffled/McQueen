@@ -174,7 +174,7 @@ export default function DailyMission({ collapsible = false }) {
                             exit={{ scale: 0 }}
                           >
                             <span>{player?.name || id}</span>
-                            <button onClick={() => clearMissionPick(id)}>
+                            <button onClick={() => clearMissionPick(id)} aria-label={`Remove ${player?.name || id} from risers`}>
                               ×
                             </button>
                           </motion.div>
@@ -210,7 +210,7 @@ export default function DailyMission({ collapsible = false }) {
                             exit={{ scale: 0 }}
                           >
                             <span>{player?.name || id}</span>
-                            <button onClick={() => clearMissionPick(id)}>
+                            <button onClick={() => clearMissionPick(id)} aria-label={`Remove ${player?.name || id} from fallers`}>
                               ×
                             </button>
                           </motion.div>
@@ -259,6 +259,7 @@ export default function DailyMission({ collapsible = false }) {
                               disabled={
                                 missionPicks.risers.length >= 3 && !isRiser
                               }
+                              aria-label={`Pick ${player.name} as riser`}
                             >
                               ▲
                             </button>
@@ -270,6 +271,7 @@ export default function DailyMission({ collapsible = false }) {
                               disabled={
                                 missionPicks.fallers.length >= 3 && !isFaller
                               }
+                              aria-label={`Pick ${player.name} as faller`}
                             >
                               ▼
                             </button>
