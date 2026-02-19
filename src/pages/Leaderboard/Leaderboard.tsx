@@ -74,7 +74,8 @@ export default function Leaderboard() {
           <motion.div
             key={trader.memberId}
             className={`${styles['table-row']} ${index < 3 ? styles['top-three'] : ''} ${trader.isUser ? styles['user-row'] : ''}`}
-            data-testid={trader.isUser ? 'user-row' : 'table-row'}
+            data-testid="table-row"
+            data-user={trader.isUser ? 'true' : undefined}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.05 }}

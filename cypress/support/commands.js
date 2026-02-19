@@ -18,5 +18,5 @@ Cypress.Commands.add('skipOnboarding', () => {
 });
 
 Cypress.Commands.add('getPlayerCards', () => {
-  return cy.get('.player-card');
+  return cy.get('[data-testid="player-card"]');
 });

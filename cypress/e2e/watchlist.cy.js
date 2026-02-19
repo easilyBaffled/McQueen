@@ -7,34 +7,34 @@ describe('Watchlist Page', () => {
   // TC-WL-001
   it('shows empty state when watchlist is empty', () => {
     cy.visit('/watchlist');
-    cy.get('.empty-state').should('be.visible');
+    cy.get('[data-testid="empty-state"]').should('be.visible');
     cy.contains('Track Your Favorites').should('be.visible');
   });
 
   // TC-WL-002
   it('adds a player via quick add button', () => {
     cy.visit('/watchlist');
-    cy.get('.quick-add-player').first().click();
-    cy.get('.toast').should('be.visible');
-    cy.get('.watchlist-grid').should('exist');
+    cy.get('[data-testid="quick-add-player"]').first().click();
+    cy.get('[data-testid="toast"]').should('be.visible');
+    cy.get('[data-testid="watchlist-grid"]').should('exist');
     cy.getPlayerCards().should('have.length', 1);
   });
 
   // TC-WL-003
   it('removes a player from the watchlist', () => {
     cy.visit('/watchlist');
-    cy.get('.quick-add-player').first().click();
-    cy.get('.watchlist-grid').should('exist');
-    cy.get('.remove-button').first().click();
-    cy.get('.toast').should('be.visible');
-    cy.get('.empty-state').should('be.visible');
+    cy.get('[data-testid="quick-add-player"]').first().click();
+    cy.get('[data-testid="watchlist-grid"]').should('exist');
+    cy.get('[data-testid="remove-button"]').first().click();
+    cy.get('[data-testid="toast"]').should('be.visible');
+    cy.get('[data-testid="empty-state"]').should('be.visible');
   });
 
   // TC-WL-004
   it('navigates to player detail from watchlist card', () => {
     cy.visit('/watchlist');
-    cy.get('.quick-add-player').first().click();
-    cy.get('.watchlist-card-wrapper a[href*="/player/"]').first().click();
+    cy.get('[data-testid="quick-add-player"]').first().click();
+    cy.get('[data-testid="watchlist-card-wrapper"] a[href*="/player/"]').first().click();
     cy.url().should('include', '/player/');
   });
 
@@ -49,14 +49,14 @@ describe('Watchlist Page', () => {
   it('persists watchlist across reload', () => {
     // Add first player via quick-add
     cy.visit('/watchlist');
-    cy.get('.quick-add-player').first().click();
-    cy.get('.watchlist-grid').should('exist');
+    cy.get('[data-testid="quick-add-player"]').first().click();
+    cy.get('[data-testid="watchlist-grid"]').should('exist');
     cy.getPlayerCards().should('have.length', 1);
 
     // Add second player from the player detail page
     cy.visit('/player/mahomes');
-    cy.get('.watchlist-button').click();
-    cy.get('.watchlist-button').should('contain.text', 'Watching');
+    cy.get('[data-testid="watchlist-button"]').click();
+    cy.get('[data-testid="watchlist-button"]').should('contain.text', 'Watching');
 
     // Verify both persist after reload
     cy.visit('/watchlist');

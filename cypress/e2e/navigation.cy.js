@@ -7,7 +7,7 @@ describe('Layout and Navigation', () => {
   // TC-NAV-001
   it('renders all 6 navigation links', () => {
     cy.visit('/');
-    cy.get('nav .nav-link').should('have.length', 6);
+    cy.get('nav [data-testid="nav-link"]').should('have.length', 6);
     cy.get('nav a[href="/"]').should('contain.text', 'Timeline');
     cy.get('nav a[href="/market"]').should('contain.text', 'Market');
     cy.get('nav a[href="/portfolio"]').should('contain.text', 'Portfolio');
@@ -30,20 +30,20 @@ describe('Layout and Navigation', () => {
   // TC-NAV-003
   it('displays portfolio value in header', () => {
     cy.visit('/');
-    cy.get('.balance-value').should('contain.text', '$');
-    cy.get('.balance-label').should('contain.text', 'Total Value');
+    cy.get('[data-testid="balance-value"]').should('contain.text', '$');
+    cy.get('[data-testid="balance-label"]').should('contain.text', 'Total Value');
   });
 
   // TC-NAV-004
   it('shows scenario toggle in header', () => {
     cy.visit('/');
-    cy.get('.header-center').should('exist');
+    cy.get('[data-testid="header-center"]').should('exist');
   });
 
   // TC-NAV-005
   it('opens and closes the glossary modal', () => {
     cy.visit('/');
-    cy.get('.help-button').click();
+    cy.get('[data-testid="help-button"]').click();
     cy.contains('Trading Terms').should('be.visible');
     cy.get('body').type('{esc}');
   });

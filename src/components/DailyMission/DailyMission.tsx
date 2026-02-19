@@ -188,6 +188,7 @@ export default function DailyMission({ collapsible = false }) {
                             key={`empty-riser-${i}`}
                             className={`${styles['pick-chip']} ${styles['empty']}`}
                             data-testid="pick-chip"
+                            data-empty="true"
                           >
                             Select a riser
                           </div>
@@ -226,6 +227,7 @@ export default function DailyMission({ collapsible = false }) {
                             key={`empty-faller-${i}`}
                             className={`${styles['pick-chip']} ${styles['empty']}`}
                             data-testid="pick-chip"
+                            data-empty="true"
                           >
                             Select a faller
                           </div>
