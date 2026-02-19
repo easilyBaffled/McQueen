@@ -105,6 +105,7 @@ export default function Watchlist() {
                     </div>
                     <div
                       className={`quick-add-change ${player.changePercent >= 0 ? 'up' : 'down'}`}
+                      aria-label={`${player.changePercent >= 0 ? 'Up' : 'Down'} ${Math.abs(player.changePercent).toFixed(1)} percent`}
                     >
                       {player.changePercent >= 0 ? '▲' : '▼'}{' '}
                       {Math.abs(player.changePercent).toFixed(1)}%
@@ -140,6 +141,7 @@ export default function Watchlist() {
                 className="remove-button"
                 onClick={(e) => handleRemove(e, player.id, player.name)}
                 title="Remove from watchlist"
+                aria-label={`Remove ${player.name} from watchlist`}
               >
                 <svg viewBox="0 0 24 24" fill="currentColor">
                   <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />

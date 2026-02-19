@@ -78,8 +78,9 @@ export default function Portfolio() {
           </span>
           <span
             className={`summary-value ${portfolioStats.gain >= 0 ? 'text-up' : 'text-down'}`}
+            aria-label={`${portfolioStats.gain >= 0 ? 'Gain' : 'Loss'} of $${Math.abs(portfolioStats.gain).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
           >
-            {portfolioStats.gain >= 0 ? '+' : ''}$
+            {portfolioStats.gain >= 0 ? '▲ +' : '▼ '}$
             {portfolioStats.gain.toLocaleString('en-US', {
               minimumFractionDigits: 2,
             })}
@@ -155,6 +156,7 @@ export default function Portfolio() {
                     <span className="suggested-name">{player.name}</span>
                     <span
                       className={`suggested-change ${player.changePercent >= 0 ? 'up' : 'down'}`}
+                      aria-label={`${player.changePercent >= 0 ? 'Up' : 'Down'} ${Math.abs(player.changePercent).toFixed(1)} percent`}
                     >
                       {player.changePercent >= 0 ? '▲' : '▼'}{' '}
                       {Math.abs(player.changePercent).toFixed(1)}%
@@ -211,8 +213,9 @@ export default function Portfolio() {
                 </span>
                 <span
                   className={`holding-gain ${holding.gain >= 0 ? 'text-up' : 'text-down'}`}
+                  aria-label={`${holding.gain >= 0 ? 'Gain' : 'Loss'} of $${Math.abs(holding.gain).toFixed(2)}, ${Math.abs(holding.gainPercent).toFixed(1)} percent`}
                 >
-                  {holding.gain >= 0 ? '+' : ''}${holding.gain.toFixed(2)}
+                  {holding.gain >= 0 ? '▲ +' : '▼ '}${holding.gain.toFixed(2)}
                   <span className="gain-percent">
                     ({holding.gain >= 0 ? '+' : ''}
                     {holding.gainPercent.toFixed(1)}%)

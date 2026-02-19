@@ -44,8 +44,9 @@ export default function Leaderboard() {
         </div>
         <div
           className={`rank-change ${userGain >= 0 ? 'positive' : 'negative'}`}
+          aria-label={`${userGain >= 0 ? 'Up' : 'Down'} ${Math.abs(userGain).toFixed(1)} percent`}
         >
-          {userGain >= 0 ? '+' : ''}
+          {userGain >= 0 ? '▲ +' : '▼ '}
           {userGain.toFixed(1)}%
         </div>
       </div>
@@ -103,8 +104,9 @@ export default function Leaderboard() {
             </span>
             <span
               className={`col-gain ${trader.weeklyGain >= 0 ? 'text-up' : 'text-down'}`}
+              aria-label={`${trader.weeklyGain >= 0 ? 'Up' : 'Down'} ${Math.abs(trader.weeklyGain).toFixed(1)} percent`}
             >
-              {trader.weeklyGain >= 0 ? '+' : ''}
+              {trader.weeklyGain >= 0 ? '▲ +' : '▼ '}
               {trader.weeklyGain.toFixed(1)}%
             </span>
           </motion.div>
@@ -136,8 +138,9 @@ export default function Leaderboard() {
               </span>
               <span
                 className={`col-gain ${userGain >= 0 ? 'text-up' : 'text-down'}`}
+                aria-label={`${userGain >= 0 ? 'Up' : 'Down'} ${Math.abs(userGain).toFixed(1)} percent`}
               >
-                {userGain >= 0 ? '+' : ''}
+                {userGain >= 0 ? '▲ +' : '▼ '}
                 {userGain.toFixed(1)}%
               </span>
             </motion.div>

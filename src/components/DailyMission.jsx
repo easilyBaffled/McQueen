@@ -41,9 +41,11 @@ export default function DailyMission({ collapsible = false }) {
   return (
     <div className={`daily-mission ${!collapsible ? 'standalone' : ''}`}>
       {collapsible && (
-        <div
+        <button
+          type="button"
           className="mission-header"
           onClick={() => setIsExpanded(!isExpanded)}
+          aria-expanded={isExpanded}
         >
           <div className="mission-title-section">
             <span className="mission-icon">🎯</span>
@@ -68,7 +70,7 @@ export default function DailyMission({ collapsible = false }) {
               <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
             </motion.svg>
           </div>
-        </div>
+        </button>
       )}
 
       <AnimatePresence>

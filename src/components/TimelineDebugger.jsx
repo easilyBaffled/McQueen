@@ -78,7 +78,8 @@ export default function TimelineDebugger() {
                 const isCurrent = index === history.length - 1;
 
                 return (
-                  <div
+                  <button
+                    type="button"
                     key={index}
                     className={`history-item ${isCurrent ? 'current' : ''}`}
                     onClick={() => goToHistoryPoint(index)}
@@ -88,7 +89,7 @@ export default function TimelineDebugger() {
                     {isCurrent && (
                       <span className="current-badge">Current</span>
                     )}
-                  </div>
+                  </button>
                 );
               })}
             </div>

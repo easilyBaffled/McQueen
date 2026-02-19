@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '../context/GameContext';
 import './PlayoffAnnouncementModal.css';
@@ -96,13 +96,21 @@ export default function PlayoffAnnouncementModal() {
     }
   };
 
-  const handleClose = () => {
-    // Apply dilution even if user closes early
+  const handleClose = useCallback(() => {
     if (!playoffDilutionApplied) {
       applyPlayoffDilution(DILUTION_PERCENT);
     }
     setIsVisible(false);
-  };
+  }, [playoffDilutionApplied, applyPlayoffDilution]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') handleClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isVisible, handleClose]);
 
   if (!isVisible) return null;
 
@@ -116,6 +124,9 @@ export default function PlayoffAnnouncementModal() {
       >
         <motion.div
           className="playoff-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="playoff-modal-title"
           initial={{ scale: 0.9, y: 20 }}
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.9, y: 20 }}
@@ -127,7 +138,11 @@ export default function PlayoffAnnouncementModal() {
               />
               <span className={`step-dot ${step === 1 ? 'active' : ''}`} />
             </div>
-            <button className="close-btn" onClick={handleClose}>
+            <button
+              className="close-btn"
+              onClick={handleClose}
+              aria-label="Close announcement"
+            >
               ×
             </button>
           </div>
@@ -143,7 +158,9 @@ export default function PlayoffAnnouncementModal() {
                 transition={{ duration: 0.2 }}
               >
                 <div className="modal-icon">💰</div>
-                <h2 className="modal-title">Season-End Buyback</h2>
+                <h2 id="playoff-modal-title" className="modal-title">
+                  Season-End Buyback
+                </h2>
                 <p className="modal-subtitle">
                   Eliminated Players Being Bought Back
                 </p>

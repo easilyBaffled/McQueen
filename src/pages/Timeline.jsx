@@ -289,8 +289,11 @@ export default function Timeline() {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">Type</label>
+            <label htmlFor="timeline-type-filter" className="filter-label">
+              Type
+            </label>
             <select
+              id="timeline-type-filter"
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               className="filter-select"
@@ -304,8 +307,11 @@ export default function Timeline() {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">Magnitude</label>
+            <label htmlFor="timeline-magnitude-filter" className="filter-label">
+              Magnitude
+            </label>
             <select
+              id="timeline-magnitude-filter"
               value={magnitudeFilter}
               onChange={(e) => setMagnitudeFilter(e.target.value)}
               className="filter-select"
@@ -319,8 +325,11 @@ export default function Timeline() {
           </div>
 
           <div className="filter-group">
-            <label className="filter-label">Time</label>
+            <label htmlFor="timeline-time-filter" className="filter-label">
+              Time
+            </label>
             <select
+              id="timeline-time-filter"
               value={timeFilter}
               onChange={(e) => setTimeFilter(e.target.value)}
               className="filter-select"

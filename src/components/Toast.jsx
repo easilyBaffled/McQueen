@@ -31,7 +31,7 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={{ addToast, removeToast }}>
       {children}
-      <div className="toast-container">
+      <div className="toast-container" role="status" aria-live="polite">
         <AnimatePresence>
           {toasts.map((toast) => (
             <motion.div
@@ -42,7 +42,7 @@ export function ToastProvider({ children }) {
               exit={{ opacity: 0, y: -20, scale: 0.9 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             >
-              <div className="toast-icon">
+              <div className="toast-icon" aria-hidden="true">
                 {toast.type === 'success' && (
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
@@ -63,8 +63,9 @@ export function ToastProvider({ children }) {
               <button
                 className="toast-close"
                 onClick={() => removeToast(toast.id)}
+                aria-label="Dismiss notification"
               >
-                <svg viewBox="0 0 24 24" fill="currentColor">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                 </svg>
               </button>

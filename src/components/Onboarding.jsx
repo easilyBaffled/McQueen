@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './Onboarding.css';
 
@@ -79,13 +79,21 @@ export default function Onboarding() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleComplete = () => {
+  const handleComplete = useCallback(() => {
     localStorage.setItem(ONBOARDING_KEY, 'true');
     localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
     setIsVisible(false);
-    // Dispatch custom event for other components to listen to
     window.dispatchEvent(new CustomEvent('mcqueen-onboarding-complete'));
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') handleComplete();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isVisible, handleComplete]);
 
   const handleNext = () => {
     if (step < steps.length - 1) {
@@ -165,6 +173,9 @@ export default function Onboarding() {
         >
           <motion.div
             className="onboarding-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="onboarding-title"
             initial={{ scale: 0.9, y: 20 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 20 }}
@@ -193,7 +204,9 @@ export default function Onboarding() {
                 transition={{ duration: 0.2 }}
               >
                 <span className="onboarding-icon">{currentStep.icon}</span>
-                <h2 className="onboarding-title">{currentStep.title}</h2>
+                <h2 id="onboarding-title" className="onboarding-title">
+                  {currentStep.title}
+                </h2>
                 <p className="onboarding-subtitle">{currentStep.subtitle}</p>
                 <p className="onboarding-text">{currentStep.content}</p>
 

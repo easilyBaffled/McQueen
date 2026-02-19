@@ -447,8 +447,9 @@ export default function ScenarioInspector() {
         <div className="inspector-controls">
           {/* Scenario Selector */}
           <div className="control-group">
-            <label>Scenario</label>
+            <label htmlFor="inspector-scenario">Scenario</label>
             <select
+              id="inspector-scenario"
               value={selectedScenario}
               onChange={(e) => setSelectedScenario(e.target.value)}
             >
@@ -460,8 +461,12 @@ export default function ScenarioInspector() {
 
           {/* View Mode Toggle */}
           <div className="control-group">
-            <label>View</label>
-            <div className="toggle-buttons">
+            <span id="inspector-view-label" className="control-label">View</span>
+            <div
+              className="toggle-buttons"
+              role="group"
+              aria-labelledby="inspector-view-label"
+            >
               <button
                 className={viewMode === 'full' ? 'active' : ''}
                 onClick={() => setViewMode('full')}
@@ -486,8 +491,9 @@ export default function ScenarioInspector() {
           {/* Player Selector (only in player mode) */}
           {viewMode === 'player' && (
             <div className="control-group">
-              <label>Player</label>
+              <label htmlFor="inspector-player">Player</label>
               <select
+                id="inspector-player"
                 value={selectedPlayerId || ''}
                 onChange={(e) => setSelectedPlayerId(e.target.value)}
               >
@@ -570,7 +576,15 @@ export default function ScenarioInspector() {
         </div>
 
         {/* Divider */}
-        <div className="panel-divider" onMouseDown={handleMouseDown}>
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+        <div
+          className="panel-divider"
+          role="separator"
+          aria-orientation="vertical"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+          tabIndex={0}
+          onMouseDown={handleMouseDown}
+        >
           <div className="divider-handle" />
         </div>
 
@@ -716,27 +730,30 @@ function FullScenarioView({
               exit={{ height: 0, opacity: 0 }}
             >
               <div className="metadata-grid">
-                <div
+                <button
+                  type="button"
                   className="metadata-item clickable"
                   onClick={() => scrollToMetadata('scenario')}
                 >
                   <span className="metadata-label">Scenario</span>
                   <span className="metadata-value">{data.scenario}</span>
-                </div>
-                <div
+                </button>
+                <button
+                  type="button"
                   className="metadata-item clickable"
                   onClick={() => scrollToMetadata('timestamp')}
                 >
                   <span className="metadata-label">Timestamp</span>
                   <span className="metadata-value">{data.timestamp}</span>
-                </div>
-                <div
+                </button>
+                <button
+                  type="button"
                   className="metadata-item full-width clickable"
                   onClick={() => scrollToMetadata('headline')}
                 >
                   <span className="metadata-label">Headline</span>
                   <span className="metadata-value">{data.headline}</span>
-                </div>
+                </button>
               </div>
             </motion.div>
           )}
@@ -838,7 +855,8 @@ function PlayerCard({
             {changePercent.toFixed(2)}%
           </span>
         </div>
-        <span
+        <button
+          type="button"
           className="locate-btn"
           onClick={(e) => {
             e.stopPropagation();
@@ -847,7 +865,7 @@ function PlayerCard({
           title="Locate in JSON"
         >
           ⎋
-        </span>
+        </button>
         <span className="expand-icon">{isExpanded ? '▼' : '▶'}</span>
       </button>
 
@@ -913,7 +931,8 @@ function PlayerCard({
                       : REASON_TYPE_COLORS[reasonType];
 
                     return (
-                      <div
+                      <button
+                        type="button"
                         key={idx}
                         className="price-entry-card clickable"
                         onClick={() => onScrollToPriceEntry(idx)}
@@ -963,7 +982,7 @@ function PlayerCard({
                             ? '✓'
                             : '📋'}
                         </button>
-                      </div>
+                      </button>
                     );
                   })}
                 </>
@@ -1092,7 +1111,8 @@ function PlayerDetailView({
               const isPositive = priceDiff >= 0;
 
               return (
-                <div
+                <button
+                  type="button"
                   key={idx}
                   className="price-entry-card-large clickable"
                   onClick={() => scrollToPriceEntry(player.id, actualIdx)}
@@ -1159,7 +1179,7 @@ function PlayerDetailView({
                       ? '✓ Copied!'
                       : '📋 Copy Entry'}
                   </button>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -1266,8 +1286,9 @@ function TimelineView({
         </div>
 
         <div className="timeline-filter">
-          <label>Filter by Player:</label>
+          <label htmlFor="timeline-filter-player">Filter by Player:</label>
           <select
+            id="timeline-filter-player"
             value={filterPlayer}
             onChange={(e) => setFilterPlayer(e.target.value)}
           >
@@ -1305,7 +1326,8 @@ function TimelineView({
           const isINT = eventType === 'INT';
 
           return (
-            <div
+            <button
+              type="button"
               key={idx}
               className={`timeline-event ${isSelected ? 'selected' : ''} ${isTD ? 'is-td' : ''} ${isINT ? 'is-int' : ''}`}
               onClick={() => {
@@ -1480,7 +1502,7 @@ function TimelineView({
                   </motion.div>
                 )}
               </div>
-            </div>
+            </button>
           );
         })}
       </div>

@@ -100,7 +100,10 @@ export default function PlayerCard({ player, showFirstTradeTip = false }) {
           <span className="current-price">
             ${player.currentPrice.toFixed(2)}
           </span>
-          <span className={`price-change ${isUp ? 'up' : 'down'}`}>
+          <span
+            className={`price-change ${isUp ? 'up' : 'down'}`}
+            aria-label={`${isUp ? 'Up' : 'Down'} ${Math.abs(player.changePercent).toFixed(2)} percent`}
+          >
             {isUp ? '▲' : '▼'} {Math.abs(player.changePercent).toFixed(2)}%
           </span>
         </div>
@@ -183,8 +186,9 @@ export default function PlayerCard({ player, showFirstTradeTip = false }) {
                 </span>
                 <span
                   className={`holder-gain ${holder.gainPercent >= 0 ? 'up' : 'down'}`}
+                  aria-label={`${holder.gainPercent >= 0 ? 'Gain' : 'Loss'} ${Math.abs(holder.gainPercent).toFixed(1)} percent`}
                 >
-                  {holder.gainPercent >= 0 ? '+' : ''}
+                  {holder.gainPercent >= 0 ? '▲ +' : '▼ '}
                   {holder.gainPercent.toFixed(1)}%
                 </span>
               </div>

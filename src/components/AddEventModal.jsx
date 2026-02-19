@@ -229,7 +229,11 @@ export default function AddEventModal({
         >
           <header className="modal-header">
             <h2>Add Price Event</h2>
-            <button className="close-btn" onClick={onClose}>
+            <button
+              className="close-btn"
+              onClick={onClose}
+              aria-label="Close modal"
+            >
               ×
             </button>
           </header>
@@ -237,8 +241,9 @@ export default function AddEventModal({
           <form onSubmit={handleSubmit} className="event-form">
             {/* Player Selection */}
             <div className="form-group">
-              <label>Player</label>
+              <label htmlFor="event-player">Player</label>
               <select
+                id="event-player"
                 value={formData.playerId}
                 onChange={(e) => handleChange('playerId', e.target.value)}
                 className={errors.playerId ? 'error' : ''}
@@ -265,8 +270,9 @@ export default function AddEventModal({
 
             {/* Timestamp */}
             <div className="form-group">
-              <label>Timestamp</label>
+              <label htmlFor="event-timestamp">Timestamp</label>
               <input
+                id="event-timestamp"
                 type="datetime-local"
                 value={formData.timestamp}
                 onChange={(e) => handleChange('timestamp', e.target.value)}
@@ -275,8 +281,14 @@ export default function AddEventModal({
 
             {/* Event Type Selection */}
             <div className="form-group">
-              <label>Event Type</label>
-              <div className="event-type-buttons">
+              <span id="event-type-label" className="form-group-label">
+                Event Type
+              </span>
+              <div
+                className="event-type-buttons"
+                role="group"
+                aria-labelledby="event-type-label"
+              >
                 {Object.entries(EVENT_TYPES).map(([key, { label, icon }]) => (
                   <button
                     key={key}
@@ -294,8 +306,14 @@ export default function AddEventModal({
             {/* Game Event Type */}
             {formData.reasonType === 'game_event' && (
               <div className="form-group">
-                <label>Game Event Type</label>
-                <div className="sub-type-buttons">
+                <span id="game-event-type-label" className="form-group-label">
+                  Game Event Type
+                </span>
+                <div
+                  className="sub-type-buttons"
+                  role="group"
+                  aria-labelledby="game-event-type-label"
+                >
                   {EVENT_TYPES.game_event.eventTypes.map((type) => (
                     <button
                       key={type}
@@ -315,8 +333,9 @@ export default function AddEventModal({
               <>
                 <div className="form-row">
                   <div className="form-group">
-                    <label>Member ID</label>
+                    <label htmlFor="event-member-id">Member ID</label>
                     <input
+                      id="event-member-id"
                       type="text"
                       value={formData.memberId}
                       onChange={(e) => handleChange('memberId', e.target.value)}
@@ -328,8 +347,14 @@ export default function AddEventModal({
                     )}
                   </div>
                   <div className="form-group">
-                    <label>Action</label>
-                    <div className="action-buttons">
+                    <span id="event-action-label" className="form-group-label">
+                      Action
+                    </span>
+                    <div
+                      className="action-buttons"
+                      role="group"
+                      aria-labelledby="event-action-label"
+                    >
                       <button
                         type="button"
                         className={`action-btn buy ${formData.action === 'buy' ? 'active' : ''}`}
@@ -347,8 +372,9 @@ export default function AddEventModal({
                     </div>
                   </div>
                   <div className="form-group">
-                    <label>Shares</label>
+                    <label htmlFor="event-shares">Shares</label>
                     <input
+                      id="event-shares"
                       type="number"
                       min="1"
                       value={formData.shares}
@@ -365,9 +391,10 @@ export default function AddEventModal({
 
             {/* Price */}
             <div className="form-group">
-              <label>New Price ($)</label>
+              <label htmlFor="event-price">New Price ($)</label>
               <div className="price-input-row">
                 <input
+                  id="event-price"
                   type="number"
                   step="0.01"
                   value={formData.price}
@@ -393,8 +420,9 @@ export default function AddEventModal({
 
             {/* Headline */}
             <div className="form-group">
-              <label>Headline</label>
+              <label htmlFor="event-headline">Headline</label>
               <input
+                id="event-headline"
                 type="text"
                 value={formData.headline}
                 onChange={(e) => handleChange('headline', e.target.value)}
@@ -414,8 +442,9 @@ export default function AddEventModal({
 
             {/* Source */}
             <div className="form-group">
-              <label>Source</label>
+              <label htmlFor="event-source">Source</label>
               <input
+                id="event-source"
                 type="text"
                 value={formData.source}
                 onChange={(e) => handleChange('source', e.target.value)}
@@ -429,8 +458,9 @@ export default function AddEventModal({
 
             {/* URL (optional) */}
             <div className="form-group">
-              <label>URL (optional)</label>
+              <label htmlFor="event-url">URL (optional)</label>
               <input
+                id="event-url"
                 type="text"
                 value={formData.url}
                 onChange={(e) => handleChange('url', e.target.value)}
@@ -457,8 +487,9 @@ export default function AddEventModal({
               <div className="content-fields">
                 <div className="form-row">
                   <div className="form-group">
-                    <label>Content Type</label>
+                    <label htmlFor="event-content-type">Content Type</label>
                     <select
+                      id="event-content-type"
                       value={formData.contentType}
                       onChange={(e) =>
                         handleChange('contentType', e.target.value)
@@ -471,8 +502,9 @@ export default function AddEventModal({
                     </select>
                   </div>
                   <div className="form-group flex-grow">
-                    <label>Content Title</label>
+                    <label htmlFor="event-content-title">Content Title</label>
                     <input
+                      id="event-content-title"
                       type="text"
                       value={formData.contentTitle}
                       onChange={(e) =>
@@ -484,8 +516,9 @@ export default function AddEventModal({
                 </div>
                 <div className="form-row">
                   <div className="form-group">
-                    <label>Content Source</label>
+                    <label htmlFor="event-content-source">Content Source</label>
                     <input
+                      id="event-content-source"
                       type="text"
                       value={formData.contentSource}
                       onChange={(e) =>
@@ -495,8 +528,9 @@ export default function AddEventModal({
                     />
                   </div>
                   <div className="form-group flex-grow">
-                    <label>Content URL</label>
+                    <label htmlFor="event-content-url">Content URL</label>
                     <input
+                      id="event-content-url"
                       type="text"
                       value={formData.contentUrl}
                       onChange={(e) =>

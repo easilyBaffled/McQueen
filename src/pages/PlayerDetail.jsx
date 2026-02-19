@@ -291,7 +291,10 @@ export default function PlayerDetail() {
             <span className="price-value">
               ${player.currentPrice.toFixed(2)}
             </span>
-            <span className={`price-change ${isUp ? 'text-up' : 'text-down'}`}>
+            <span
+              className={`price-change ${isUp ? 'text-up' : 'text-down'}`}
+              aria-label={`${isUp ? 'Up' : 'Down'} ${Math.abs(player.changePercent).toFixed(2)} percent`}
+            >
               {isUp ? '▲' : '▼'} {Math.abs(player.changePercent).toFixed(2)}%
             </span>
           </div>
@@ -731,10 +734,10 @@ export default function PlayerDetail() {
                   <span
                     className={`stat-value ${player.currentPrice - holding.avgCost >= 0 ? 'text-up' : 'text-down'}`}
                   >
-                    {player.currentPrice - holding.avgCost >= 0 ? '+' : ''}$
-                    {(
-                      (player.currentPrice - holding.avgCost) *
-                      holding.shares
+                    {player.currentPrice - holding.avgCost >= 0 ? '▲ +' : '▼ '}
+                    $
+                    {Math.abs(
+                      (player.currentPrice - holding.avgCost) * holding.shares,
                     ).toFixed(2)}
                   </span>
                 </div>
@@ -783,12 +786,13 @@ export default function PlayerDetail() {
                       <span className="owner-shares">
                         {holder.shares} shares
                       </span>
-                      <span
-                        className={`owner-gain ${holder.gainPercent >= 0 ? 'text-up' : 'text-down'}`}
-                      >
-                        {holder.gainPercent >= 0 ? '+' : ''}
-                        {holder.gainPercent.toFixed(1)}%
-                      </span>
+                    <span
+                      className={`owner-gain ${holder.gainPercent >= 0 ? 'text-up' : 'text-down'}`}
+                      aria-label={`${holder.gainPercent >= 0 ? 'Gain' : 'Loss'} ${Math.abs(holder.gainPercent).toFixed(1)} percent`}
+                    >
+                      {holder.gainPercent >= 0 ? '▲ +' : '▼ '}
+                      {holder.gainPercent.toFixed(1)}%
+                    </span>
                     </div>
                   </div>
                 ))}
