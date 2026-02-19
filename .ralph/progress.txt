@@ -32,3 +32,4 @@
 2026-02-19 13:50:27 | mcq-35g.2 | DONE | Move shared components to src/shared/
 2026-02-19 13:58:53 | mcq-35g.3 | DONE | Restructure feature components into co-located directories
 2026-02-19 14:02:29 | mcq-35g.4 | DONE | Restructure pages into co-located directories
+2026-02-19 14:11:27 | mcq-35g.6 | DONE | Fix Leaderboard to use real league data

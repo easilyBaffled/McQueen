@@ -84,6 +84,28 @@ case $PRIORITY_NUM in
     *) PRIORITY="P2" ;;
 esac
 
+echo ""
+echo "Bug Type:"
+echo "1) Functional - Business logic, feature behavior"
+echo "2) UI - Visual, layout, styling"
+echo "3) Performance - Speed, memory, resource usage"
+echo "4) Security - Vulnerability, access control"
+echo "5) Data - Corruption, loss, incorrect values"
+echo "6) Crash - App crash, unhandled error, white screen"
+echo ""
+
+prompt_input "Select bug type (1-6):" TYPE_NUM true
+
+case $TYPE_NUM in
+    1) BUG_TYPE="Functional" ;;
+    2) BUG_TYPE="UI" ;;
+    3) BUG_TYPE="Performance" ;;
+    4) BUG_TYPE="Security" ;;
+    5) BUG_TYPE="Data" ;;
+    6) BUG_TYPE="Crash" ;;
+    *) BUG_TYPE="Functional" ;;
+esac
+
 # Environment
 echo ""
 echo -e "${MAGENTA}━━━ Environment Details ━━━${NC}"
@@ -155,7 +177,7 @@ cat > "$OUTPUT_FILE" << EOF
 
 **Severity:** ${SEVERITY}
 **Priority:** ${PRIORITY}
-**Type:** ${TEST_TYPE:-Functional}
+**Type:** ${BUG_TYPE}
 **Status:** Open
 **Reported:** $(date +%Y-%m-%d)
 **Reporter:** [Your Name]
