@@ -763,6 +763,7 @@ export default function PlayerDetail() {
                   <span className="stat-label">P/L</span>
                   <span
                     className={`stat-value ${player.currentPrice - holding.avgCost >= 0 ? 'text-up' : 'text-down'}`}
+                    aria-label={`${player.currentPrice - holding.avgCost >= 0 ? 'Gain' : 'Loss'} of $${Math.abs((player.currentPrice - holding.avgCost) * holding.shares).toFixed(2)}`}
                   >
                     {player.currentPrice - holding.avgCost >= 0 ? '▲ +' : '▼ '}
                     $

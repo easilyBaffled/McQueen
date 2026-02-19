@@ -9,6 +9,8 @@ import Onboarding from '../Onboarding';
 import AddEventModal from '../AddEventModal';
 import EventMarkerPopup from '../EventMarkerPopup';
 import FirstTradeGuide from '../FirstTradeGuide';
+import Portfolio from '../../pages/Portfolio';
+import Leaderboard from '../../pages/Leaderboard';
 
 vi.mock('../../context/GameContext', () => ({
   useGame: () => ({
@@ -350,5 +352,35 @@ describe('Secondary indicators for color-coded values (mcq-o0b.4)', () => {
     expect(changeEl.textContent).toContain('▼');
     expect(changeEl).toHaveAttribute('aria-label');
     expect(changeEl.getAttribute('aria-label')).toMatch(/down|loss|decrease/i);
+  });
+
+  it('Portfolio total gain/loss shows arrow and aria-label', () => {
+    render(<Portfolio />);
+
+    const gainEl = document.querySelector('.summary-value.text-up, .summary-value.text-down');
+    expect(gainEl).toBeInTheDocument();
+    expect(gainEl.textContent).toMatch(/[▲▼]/);
+    expect(gainEl).toHaveAttribute('aria-label');
+    expect(gainEl.getAttribute('aria-label')).toMatch(/gain|loss/i);
+  });
+
+  it('Leaderboard user rank change shows arrow and aria-label', () => {
+    render(<Leaderboard />);
+
+    const rankChange = document.querySelector('.rank-change');
+    expect(rankChange).toBeInTheDocument();
+    expect(rankChange.textContent).toMatch(/[▲▼]/);
+    expect(rankChange).toHaveAttribute('aria-label');
+  });
+
+  it('Leaderboard trader weekly gains show arrows and aria-labels', () => {
+    render(<Leaderboard />);
+
+    const gains = document.querySelectorAll('.table-row .col-gain');
+    expect(gains.length).toBeGreaterThan(0);
+    gains.forEach((el) => {
+      expect(el.textContent).toMatch(/[▲▼]/);
+      expect(el).toHaveAttribute('aria-label');
+    });
   });
 });
