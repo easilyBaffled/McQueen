@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '../context/GameContext';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import './PlayoffAnnouncementModal.css';
 
 // Mock portfolio showing user holdings for buyback players (for demonstration)
@@ -23,6 +24,7 @@ export default function PlayoffAnnouncementModal() {
   } = useGame();
   const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState(0);
+  const focusTrapRef = useFocusTrap(isVisible);
 
   // Get players from current scenario data
   const players = currentData?.players || [];
@@ -127,6 +129,7 @@ export default function PlayoffAnnouncementModal() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="playoff-modal-title"
+          ref={focusTrapRef}
           initial={{ scale: 0.9, y: 20 }}
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.9, y: 20 }}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import './AddEventModal.css';
 
 const EVENT_TYPES = {
@@ -48,6 +49,16 @@ export default function AddEventModal({
   });
 
   const [errors, setErrors] = useState({});
+  const focusTrapRef = useFocusTrap(isOpen);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   // Update playerId when preselectedPlayerId changes
   useEffect(() => {
@@ -225,6 +236,7 @@ export default function AddEventModal({
           role="dialog"
           aria-modal="true"
           aria-labelledby="add-event-modal-title"
+          ref={focusTrapRef}
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -93,6 +93,24 @@ export default function PlayerDetail() {
   const holding = portfolio[playerId];
   const watching = isWatching(playerId);
   const leagueHoldings = getLeagueHoldings(playerId);
+
+  const handleTradeTabKeyDown = useCallback((e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const tabs = Array.from(
+      e.currentTarget.querySelectorAll('[role="tab"]:not([disabled])'),
+    );
+    const currentIndex = tabs.indexOf(document.activeElement);
+    if (currentIndex === -1) return;
+
+    e.preventDefault();
+    let nextIndex;
+    if (e.key === 'ArrowRight') {
+      nextIndex = (currentIndex + 1) % tabs.length;
+    } else {
+      nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    }
+    tabs[nextIndex].focus();
+  }, []);
 
   if (!player) {
     return (
@@ -627,15 +645,27 @@ export default function PlayerDetail() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <div className="trading-tabs">
+            {/* eslint-disable-next-line jsx-a11y/interactive-supports-focus */}
+            <div
+              className="trading-tabs"
+              role="tablist"
+              aria-label="Trade type"
+              onKeyDown={handleTradeTabKeyDown}
+            >
               <button
                 className={`trading-tab ${activeTab === 'buy' ? 'active' : ''}`}
+                role="tab"
+                aria-selected={activeTab === 'buy'}
+                tabIndex={activeTab === 'buy' ? 0 : -1}
                 onClick={() => setActiveTab('buy')}
               >
                 Buy
               </button>
               <button
                 className={`trading-tab ${activeTab === 'sell' ? 'active' : ''}`}
+                role="tab"
+                aria-selected={activeTab === 'sell'}
+                tabIndex={activeTab === 'sell' ? 0 : -1}
                 onClick={() => setActiveTab('sell')}
                 disabled={!holding}
               >

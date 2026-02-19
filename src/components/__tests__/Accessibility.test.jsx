@@ -50,37 +50,47 @@ vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),
 }));
 
-vi.mock('framer-motion', () => ({
-  motion: new Proxy(
-    {},
-    {
-      get: (_, tag) => {
-        const Component = ({ children, ...props }) => {
-          const domProps = {};
-          for (const [key, value] of Object.entries(props)) {
-            if (
-              typeof value !== 'object' &&
-              !key.startsWith('initial') &&
-              !key.startsWith('animate') &&
-              !key.startsWith('exit') &&
-              !key.startsWith('transition') &&
-              !key.startsWith('whileHover') &&
-              !key.startsWith('whileTap') &&
-              !key.startsWith('layout')
-            ) {
-              domProps[key] = value;
-            }
+vi.mock('framer-motion', () => {
+  const componentCache = {};
+  return {
+    motion: new Proxy(
+      {},
+      {
+        get: (_, tag) => {
+          if (!componentCache[tag]) {
+            const Component = ({ children, ref, ...props }) => {
+              const domProps = {};
+              for (const [key, value] of Object.entries(props)) {
+                if (
+                  typeof value !== 'object' &&
+                  !key.startsWith('initial') &&
+                  !key.startsWith('animate') &&
+                  !key.startsWith('exit') &&
+                  !key.startsWith('transition') &&
+                  !key.startsWith('whileHover') &&
+                  !key.startsWith('whileTap') &&
+                  !key.startsWith('layout')
+                ) {
+                  domProps[key] = value;
+                }
+              }
+              const El = tag;
+              return (
+                <El ref={ref} {...domProps}>
+                  {children}
+                </El>
+              );
+            };
+            Component.displayName = `motion.${tag}`;
+            componentCache[tag] = Component;
           }
-          const El = tag;
-          return <El {...domProps}>{children}</El>;
-        };
-        Component.displayName = `motion.${tag}`;
-        return Component;
+          return componentCache[tag];
+        },
       },
-    },
-  ),
-  AnimatePresence: ({ children }) => <>{children}</>,
-}));
+    ),
+    AnimatePresence: ({ children }) => <>{children}</>,
+  };
+});
 
 const basePlayer = {
   id: 'p1',
@@ -252,6 +262,72 @@ describe('Keyboard navigation (mcq-o0b.3)', () => {
     const skipLink = screen.getByText(/skip to main content/i);
     expect(skipLink).toBeInTheDocument();
     expect(skipLink).toHaveAttribute('href', '#main-content');
+  });
+
+  it('Escape key closes AddEventModal', async () => {
+    const onClose = vi.fn();
+    render(
+      <AddEventModal
+        isOpen={true}
+        onClose={onClose}
+        onSubmit={() => {}}
+        players={[]}
+      />,
+    );
+
+    const user = userEvent.setup();
+    await user.keyboard('{Escape}');
+
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('Glossary traps focus inside the dialog', async () => {
+    render(<Glossary isOpen={true} onClose={() => {}} />);
+
+    const dialog = screen.getByRole('dialog');
+    const focusableElements = dialog.querySelectorAll(
+      'button, input, [tabindex]:not([tabindex="-1"])',
+    );
+    expect(focusableElements.length).toBeGreaterThan(0);
+
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+
+    lastFocusable.focus();
+    expect(document.activeElement).toBe(lastFocusable);
+
+    const user = userEvent.setup();
+    await user.tab();
+
+    expect(dialog.contains(document.activeElement)).toBe(true);
+  });
+
+  it('AddEventModal moves initial focus to close button when opened', () => {
+    render(
+      <AddEventModal
+        isOpen={true}
+        onClose={() => {}}
+        onSubmit={() => {}}
+        players={[]}
+      />,
+    );
+
+    const closeBtn = screen.getByLabelText('Close modal');
+    expect(closeBtn).toHaveFocus();
+  });
+
+  it('ScenarioToggle desktop tabs support arrow key navigation', async () => {
+    render(<Layout />);
+
+    const tabs = screen.getAllByTitle(
+      /simulated midweek|watch prices|playoff scenario|live super bowl|real espn/i,
+    );
+    expect(tabs.length).toBeGreaterThan(1);
+
+    tabs[0].focus();
+    const user = userEvent.setup();
+    await user.keyboard('{ArrowRight}');
+
+    expect(document.activeElement).toBe(tabs[1]);
   });
 });
 

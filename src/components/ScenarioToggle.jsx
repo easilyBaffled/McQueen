@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
 import { useGame } from '../context/GameContext';
@@ -55,17 +55,23 @@ export default function ScenarioToggle() {
   const currentScenario =
     scenarios.find((s) => s.id === scenario) || scenarios[0];
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking outside or pressing Escape
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setMobileDropdownOpen(false);
       }
     }
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') setMobileDropdownOpen(false);
+    }
     if (mobileDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      return () =>
+      document.addEventListener('keydown', handleKeyDown);
+      return () => {
         document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleKeyDown);
+      };
     }
   }, [mobileDropdownOpen]);
 
@@ -73,6 +79,27 @@ export default function ScenarioToggle() {
     setScenario(id);
     setMobileDropdownOpen(false);
   };
+
+  const handleTabKeyDown = useCallback(
+    (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const tabs = Array.from(
+        e.currentTarget.querySelectorAll('.scenario-tab:not(.inspector-tab)'),
+      );
+      const currentIndex = tabs.indexOf(document.activeElement);
+      if (currentIndex === -1) return;
+
+      e.preventDefault();
+      let nextIndex;
+      if (e.key === 'ArrowRight') {
+        nextIndex = (currentIndex + 1) % tabs.length;
+      } else {
+        nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+      }
+      tabs[nextIndex].focus();
+    },
+    [],
+  );
 
   return (
     <div className="scenario-toggle">
@@ -241,11 +268,20 @@ export default function ScenarioToggle() {
       </div>
 
       {/* Desktop: Scenario Tabs */}
-      <div className="scenario-tabs desktop-only">
+      {/* eslint-disable-next-line jsx-a11y/interactive-supports-focus */}
+      <div
+        className="scenario-tabs desktop-only"
+        role="tablist"
+        aria-label="Demo scenarios"
+        onKeyDown={handleTabKeyDown}
+      >
         {scenarios.map((s) => (
           <button
             key={s.id}
             className={`scenario-tab ${scenario === s.id ? 'active' : ''} ${s.isEspn ? 'espn-tab' : ''}`}
+            role="tab"
+            aria-selected={scenario === s.id}
+            tabIndex={scenario === s.id ? 0 : -1}
             onClick={() => setScenario(s.id)}
             title={s.tooltip}
           >

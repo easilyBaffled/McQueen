@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import './Glossary.css';
 
 const glossaryTerms = [
@@ -70,7 +71,7 @@ const glossaryTerms = [
 
 export default function Glossary({ isOpen, onClose }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const panelRef = useRef(null);
+  const panelRef = useFocusTrap(isOpen);
 
   useEffect(() => {
     if (!isOpen) return;
