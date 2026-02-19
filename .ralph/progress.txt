@@ -37,3 +37,4 @@
 2026-02-19 16:59:30 | mcq-8hr.2 | DONE | Add Vitest tests for Market page (0% coverage)
 2026-02-19 17:04:34 | mcq-8hr.3 | DONE | Add Vitest tests for Watchlist page (0% coverage)
 2026-02-19 17:09:41 | mcq-8hr.4 | DONE | Add Vitest tests for Mission page (0% coverage)
+2026-02-19 17:17:04 | mcq-8hr.5 | DONE | Add Vitest tests for Onboarding component (0% coverage)
