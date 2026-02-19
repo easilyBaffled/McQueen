@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ScenarioProvider } from './context/ScenarioContext';
 import { SimulationProvider } from './context/SimulationContext';
@@ -6,17 +7,34 @@ import { SocialProvider } from './context/SocialContext';
 import { ToastProvider } from './components/Toast/Toast';
 import { OnboardingProvider } from './components/Onboarding/Onboarding';
 import Layout from './components/Layout/Layout';
-import Timeline from './pages/Timeline/Timeline';
-import Market from './pages/Market/Market';
-import Portfolio from './pages/Portfolio/Portfolio';
-import Watchlist from './pages/Watchlist/Watchlist';
-import Leaderboard from './pages/Leaderboard/Leaderboard';
-import Mission from './pages/Mission/Mission';
-import PlayerDetail from './pages/PlayerDetail/PlayerDetail';
-import ScenarioInspector from './pages/ScenarioInspector/ScenarioInspector';
 import Onboarding from './components/Onboarding/Onboarding';
 import PlayoffAnnouncementModal from './components/PlayoffAnnouncementModal/PlayoffAnnouncementModal';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+import { MarketSkeleton } from './shared';
 import './App.css';
+
+const Timeline = lazy(() => import('./pages/Timeline/Timeline'));
+const Market = lazy(() => import('./pages/Market/Market'));
+const Portfolio = lazy(() => import('./pages/Portfolio/Portfolio'));
+const Watchlist = lazy(() => import('./pages/Watchlist/Watchlist'));
+const Leaderboard = lazy(() => import('./pages/Leaderboard/Leaderboard'));
+const Mission = lazy(() => import('./pages/Mission/Mission'));
+const PlayerDetail = lazy(() => import('./pages/PlayerDetail/PlayerDetail'));
+const ScenarioInspector = lazy(
+  () => import('./pages/ScenarioInspector/ScenarioInspector'),
+);
+
+function PageFallback() {
+  return <MarketSkeleton count={3} />;
+}
+
+function LazyPage({ children }) {
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<PageFallback />}>{children}</Suspense>
+    </ErrorBoundary>
+  );
+}
 
 function App() {
   return (
@@ -31,15 +49,71 @@ function App() {
                   <PlayoffAnnouncementModal />
                   <Routes>
                     <Route path="/" element={<Layout />}>
-                      <Route index element={<Timeline />} />
-                      <Route path="market" element={<Market />} />
-                      <Route path="portfolio" element={<Portfolio />} />
-                      <Route path="watchlist" element={<Watchlist />} />
-                      <Route path="mission" element={<Mission />} />
-                      <Route path="leaderboard" element={<Leaderboard />} />
-                      <Route path="player/:playerId" element={<PlayerDetail />} />
+                      <Route
+                        index
+                        element={
+                          <LazyPage>
+                            <Timeline />
+                          </LazyPage>
+                        }
+                      />
+                      <Route
+                        path="market"
+                        element={
+                          <LazyPage>
+                            <Market />
+                          </LazyPage>
+                        }
+                      />
+                      <Route
+                        path="portfolio"
+                        element={
+                          <LazyPage>
+                            <Portfolio />
+                          </LazyPage>
+                        }
+                      />
+                      <Route
+                        path="watchlist"
+                        element={
+                          <LazyPage>
+                            <Watchlist />
+                          </LazyPage>
+                        }
+                      />
+                      <Route
+                        path="mission"
+                        element={
+                          <LazyPage>
+                            <Mission />
+                          </LazyPage>
+                        }
+                      />
+                      <Route
+                        path="leaderboard"
+                        element={
+                          <LazyPage>
+                            <Leaderboard />
+                          </LazyPage>
+                        }
+                      />
+                      <Route
+                        path="player/:playerId"
+                        element={
+                          <LazyPage>
+                            <PlayerDetail />
+                          </LazyPage>
+                        }
+                      />
                     </Route>
-                    <Route path="/inspector" element={<ScenarioInspector />} />
+                    <Route
+                      path="/inspector"
+                      element={
+                        <LazyPage>
+                          <ScenarioInspector />
+                        </LazyPage>
+                      }
+                    />
                   </Routes>
                 </BrowserRouter>
               </OnboardingProvider>
