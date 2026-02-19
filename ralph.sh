@@ -31,11 +31,108 @@ ts() { date '+%Y-%m-%d %H:%M:%S'; }
 
 log() {
   local msg="[$(ts)] $*"
-  echo "$msg"
   echo "$msg" >> "$EXECUTION_LOG"
 }
 
-die() { log "ERROR: $*"; exit 1; }
+say() { echo "$@"; }
+
+die() { say "ERROR: $*"; log "ERROR: $*"; exit 1; }
+
+format_duration() {
+  local secs=$1
+  if (( secs >= 3600 )); then
+    printf '%dh %dm' $((secs / 3600)) $(((secs % 3600) / 60))
+  elif (( secs >= 60 )); then
+    printf '%dm %ds' $((secs / 60)) $((secs % 60))
+  else
+    printf '%ds' "$secs"
+  fi
+}
+
+format_estimate() {
+  local mins=$1
+  if [[ -z "$mins" || "$mins" == "null" || "$mins" == "0" ]]; then
+    echo "—"
+  elif (( mins >= 60 )); then
+    local rem=$((mins % 60))
+    if (( rem > 0 )); then
+      printf '%dh %dm' $((mins / 60)) "$rem"
+    else
+      printf '%dh' $((mins / 60))
+    fi
+  else
+    printf '%dm' "$mins"
+  fi
+}
+
+BOX_W=54
+
+print_pickup() {
+  local idx=$1 total=$2 id=$3 title=$4 btype=$5 est_mins=$6
+  local est_str
+  est_str=$(format_estimate "$est_mins")
+  local header
+  header=$(printf '─ PICKING UP [%d/%d] ' "$idx" "$total")
+
+  say ""
+  say "  ┌${header}$(printf '─%.0s' $(seq 1 $((BOX_W - ${#header} - 1))))┐"
+  say "  │  ${id} · ${title}"
+  say "  │  type: ${btype}  ·  est: ${est_str}"
+  say "  └$(printf '─%.0s' $(seq 1 $BOX_W))┘"
+}
+
+print_done() {
+  local idx=$1 total=$2 id=$3 title=$4 duration_s=$5
+  local dur_str
+  dur_str=$(format_duration "$duration_s")
+  local header
+  header=$(printf '─ DONE [%d/%d] ' "$idx" "$total")
+
+  say ""
+  say "  ┌${header}$(printf '─%.0s' $(seq 1 $((BOX_W - ${#header} - 1))))┐"
+  say "  │  ${id} · ${title}"
+  say "  │  duration: ${dur_str}  ·  status: closed"
+  say "  └$(printf '─%.0s' $(seq 1 $BOX_W))┘"
+}
+
+print_fail() {
+  local idx=$1 total=$2 id=$3 title=$4 duration_s=$5 exit_code=$6
+  local dur_str
+  dur_str=$(format_duration "$duration_s")
+  local header
+  header=$(printf '─ FAILED [%d/%d] ' "$idx" "$total")
+
+  say ""
+  say "  ┌${header}$(printf '─%.0s' $(seq 1 $((BOX_W - ${#header} - 1))))┐"
+  say "  │  ${id} · ${title}"
+  say "  │  duration: ${dur_str}  ·  exit: ${exit_code}"
+  say "  └$(printf '─%.0s' $(seq 1 $BOX_W))┘"
+}
+
+print_summary() {
+  local total=$1 ok=$2 fail=$3 elapsed=$4
+  shift 4
+
+  local elapsed_str
+  elapsed_str=$(format_duration "$elapsed")
+
+  say ""
+  say "  ══════════════════════════════════════════════════════════"
+  say "   Ralph run complete · ${total} processed · ${ok} ok · ${fail} failed"
+  say "   Total time: ${elapsed_str}"
+  say "  ──────────────────────────────────────────────────────────"
+
+  while [[ $# -ge 4 ]]; do
+    local r_status=$1 r_id=$2 r_dur=$3 r_title=$4
+    shift 4
+    local r_dur_str
+    r_dur_str=$(format_duration "$r_dur")
+    printf '   %-4s  %-14s %8s   %s\n' "$r_status" "$r_id" "$r_dur_str" "$r_title"
+  done
+
+  say "  ══════════════════════════════════════════════════════════"
+  say ""
+}
 
 usage() {
   cat <<'EOF'
@@ -111,18 +208,20 @@ command -v jq   >/dev/null 2>&1 || die "jq is required. Install with: brew insta
 # Fetch ready beads
 # ---------------------------------------------------------------------------
 
+say "  Fetching ready beads..."
 log "Fetching ready beads..."
 
 BD_READY_JSON=$(bd ready --json 2>/dev/null) || die "bd ready --json failed"
 
-# bd ready --json returns an array of issue objects
 BEAD_COUNT=$(echo "$BD_READY_JSON" | jq 'length')
 
 if [[ "$BEAD_COUNT" -eq 0 ]]; then
-  log "No ready beads found. Nothing to do."
+  say "  No ready beads found. Nothing to do."
+  log "No ready beads found."
   exit 0
 fi
 
+say "  Found $BEAD_COUNT ready bead(s)."
 log "Found $BEAD_COUNT ready bead(s)."
 
 # ---------------------------------------------------------------------------
@@ -133,13 +232,16 @@ FILTERED="$BD_READY_JSON"
 
 if [[ -n "$FILTER_TYPE" ]]; then
   FILTERED=$(echo "$FILTERED" | jq --arg t "$FILTER_TYPE" '[.[] | select(.type == $t)]')
-  log "Filtered by type=$FILTER_TYPE: $(echo "$FILTERED" | jq 'length') bead(s)."
+  local_count=$(echo "$FILTERED" | jq 'length')
+  say "  Filtered by type=$FILTER_TYPE: ${local_count} bead(s)."
+  log "Filtered by type=$FILTER_TYPE: ${local_count} bead(s)."
 fi
 
 if [[ -n "$FILTER_EPIC" ]]; then
-  # Match beads whose id starts with the epic prefix (e.g., mcq-a1b2.*)
   FILTERED=$(echo "$FILTERED" | jq --arg e "$FILTER_EPIC" '[.[] | select(.id | startswith($e))]')
-  log "Filtered by epic=$FILTER_EPIC: $(echo "$FILTERED" | jq 'length') bead(s)."
+  local_count=$(echo "$FILTERED" | jq 'length')
+  say "  Filtered by epic=$FILTER_EPIC: ${local_count} bead(s)."
+  log "Filtered by epic=$FILTER_EPIC: ${local_count} bead(s)."
 fi
 
 # Apply --max limit
@@ -147,10 +249,12 @@ FILTERED=$(echo "$FILTERED" | jq --argjson m "$MAX_BEADS" '.[0:$m]')
 PROCESS_COUNT=$(echo "$FILTERED" | jq 'length')
 
 if [[ "$PROCESS_COUNT" -eq 0 ]]; then
-  log "No beads match the given filters. Nothing to do."
+  say "  No beads match the given filters. Nothing to do."
+  log "No beads match filters."
   exit 0
 fi
 
+say "  Will process $PROCESS_COUNT bead(s)."
 log "Will process $PROCESS_COUNT bead(s)."
 
 # ---------------------------------------------------------------------------
@@ -199,38 +303,49 @@ $(<"$AGENT_MD")"
 
 SUCCESSES=0
 FAILURES=0
+RUN_START=$(date +%s)
+
+# Accumulate results for the final summary table.
+# Each completed bead appends 4 tokens: status id duration title
+RESULTS=()
 
 for i in $(seq 0 $((PROCESS_COUNT - 1))); do
   BEAD_JSON=$(echo "$FILTERED" | jq ".[$i]")
   BEAD_ID=$(echo "$BEAD_JSON" | jq -r '.id')
   BEAD_TITLE=$(echo "$BEAD_JSON" | jq -r '.title')
-
-  log "────────────────────────────────────────"
-  log "Processing [$((i + 1))/$PROCESS_COUNT]: $BEAD_ID -- $BEAD_TITLE"
+  BEAD_TYPE=$(echo "$BEAD_JSON" | jq -r '.issue_type // .type // "task"')
+  BEAD_EST=$(echo "$BEAD_JSON" | jq -r '.estimated_minutes // 0')
+  IDX=$((i + 1))
 
   if $DRY_RUN; then
-    log "[DRY RUN] Would claim and process: $BEAD_ID"
-    echo ""
-    echo "--- Prompt preview for $BEAD_ID ---"
-    build_prompt "$BEAD_JSON" | head -30
-    echo "... (truncated) ..."
-    echo ""
+    print_pickup "$IDX" "$PROCESS_COUNT" "$BEAD_ID" "$BEAD_TITLE" "$BEAD_TYPE" "$BEAD_EST"
+    say "  [DRY RUN] Would claim and process: $BEAD_ID"
+    say ""
+    say "  --- Prompt preview (first 30 lines) ---"
+    DRY_PREVIEW=$(build_prompt "$BEAD_JSON")
+    echo "$DRY_PREVIEW" | head -30
+    say "  ... (truncated) ..."
     continue
   fi
 
   # Claim the bead
-  log "Claiming $BEAD_ID..."
-  if ! bd update "$BEAD_ID" --claim --json 2>/dev/null; then
+  log "Claiming $BEAD_ID"
+  if ! bd update "$BEAD_ID" --claim 2>/dev/null >> "$EXECUTION_LOG"; then
+    say ""
+    say "  WARNING: Failed to claim $BEAD_ID. Skipping."
     log "WARNING: Failed to claim $BEAD_ID. Skipping."
     FAILURES=$((FAILURES + 1))
+    RESULTS+=("SKIP" "$BEAD_ID" "0" "$BEAD_TITLE")
     continue
   fi
+
+  print_pickup "$IDX" "$PROCESS_COUNT" "$BEAD_ID" "$BEAD_TITLE" "$BEAD_TYPE" "$BEAD_EST"
 
   # Build the filled prompt
   FILLED_PROMPT=$(build_prompt "$BEAD_JSON")
 
-  # Invoke Cursor headless CLI
-  log "Invoking Cursor agent for $BEAD_ID..."
+  say "  Agent working on ${BEAD_ID}..."
+  log "Invoking Cursor agent for $BEAD_ID"
   AGENT_START=$(date +%s)
 
   AGENT_OUTPUT=""
@@ -240,46 +355,48 @@ for i in $(seq 0 $((PROCESS_COUNT - 1))); do
   AGENT_END=$(date +%s)
   AGENT_DURATION=$(( AGENT_END - AGENT_START ))
 
+  # Append agent output to execution log
+  echo "$AGENT_OUTPUT" | tail -20 >> "$EXECUTION_LOG"
+
   if [[ $AGENT_EXIT -eq 0 ]]; then
-    log "Agent completed $BEAD_ID successfully in ${AGENT_DURATION}s."
+    log "Agent completed $BEAD_ID in $(format_duration $AGENT_DURATION)"
 
-    # Close the bead
-    bd close "$BEAD_ID" --reason "Completed by Ralph" --json 2>/dev/null || true
+    bd close "$BEAD_ID" --reason "Completed by Ralph" 2>/dev/null >> "$EXECUTION_LOG" || true
 
-    # Append to progress log
     echo "$(ts) | $BEAD_ID | DONE | $BEAD_TITLE" >> "$PROGRESS_LOG"
 
+    print_done "$IDX" "$PROCESS_COUNT" "$BEAD_ID" "$BEAD_TITLE" "$AGENT_DURATION"
     SUCCESSES=$((SUCCESSES + 1))
+    RESULTS+=("ok" "$BEAD_ID" "$AGENT_DURATION" "$BEAD_TITLE")
   else
-    log "Agent FAILED on $BEAD_ID (exit=$AGENT_EXIT, ${AGENT_DURATION}s)."
+    log "Agent FAILED on $BEAD_ID (exit=$AGENT_EXIT, $(format_duration $AGENT_DURATION))"
 
-    # Reopen the bead with failure notes
-    FAIL_NOTE="Ralph failed (exit=$AGENT_EXIT) at $(ts). Duration: ${AGENT_DURATION}s."
-    bd update "$BEAD_ID" --status open --notes "$FAIL_NOTE" --json 2>/dev/null || true
+    FAIL_NOTE="Ralph failed (exit=$AGENT_EXIT) at $(ts). Duration: $(format_duration $AGENT_DURATION)."
+    bd update "$BEAD_ID" --status open --notes "$FAIL_NOTE" 2>/dev/null >> "$EXECUTION_LOG" || true
 
-    # Append to progress log
     echo "$(ts) | $BEAD_ID | FAIL | $BEAD_TITLE (exit=$AGENT_EXIT)" >> "$PROGRESS_LOG"
 
+    print_fail "$IDX" "$PROCESS_COUNT" "$BEAD_ID" "$BEAD_TITLE" "$AGENT_DURATION" "$AGENT_EXIT"
     FAILURES=$((FAILURES + 1))
+    RESULTS+=("FAIL" "$BEAD_ID" "$AGENT_DURATION" "$BEAD_TITLE")
   fi
-
-  # Log a snippet of the agent output
-  log "Agent output (last 10 lines):"
-  echo "$AGENT_OUTPUT" | tail -10 >> "$EXECUTION_LOG"
-
-  log ""
 done
 
 # ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
 
-log "════════════════════════════════════════"
-log "Ralph run complete."
-log "  Processed: $PROCESS_COUNT"
-log "  Succeeded: $SUCCESSES"
-log "  Failed:    $FAILURES"
-log "════════════════════════════════════════"
+RUN_END=$(date +%s)
+RUN_ELAPSED=$(( RUN_END - RUN_START ))
+
+log "Ralph run complete. Processed=$PROCESS_COUNT Succeeded=$SUCCESSES Failed=$FAILURES Elapsed=$(format_duration $RUN_ELAPSED)"
+
+# ${RESULTS[@]} on an empty array fails with set -u in bash < 4.4 (macOS default)
+if [[ ${#RESULTS[@]} -gt 0 ]]; then
+  print_summary "$PROCESS_COUNT" "$SUCCESSES" "$FAILURES" "$RUN_ELAPSED" "${RESULTS[@]}"
+else
+  print_summary "$PROCESS_COUNT" "$SUCCESSES" "$FAILURES" "$RUN_ELAPSED"
+fi
 
 if [[ $FAILURES -gt 0 ]]; then
   exit 1

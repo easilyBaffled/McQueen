@@ -23,6 +23,7 @@
     "tracker": "bash -c 'source ~/.nvm/nvm.sh && nvm exec 22 bdui start --open'"
   },
   "dependencies": {
+    "beads-ui": "^0.9.3",
     "framer-motion": "^12.23.25",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
