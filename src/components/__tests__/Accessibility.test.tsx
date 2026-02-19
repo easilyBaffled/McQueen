@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PlayerCard from '../PlayerCard/PlayerCard';
-import { ToastProvider, useToast } from '../Toast/Toast';
+import { ToastProvider, useToast } from '../Toast/ToastProvider';
 import Layout from '../Layout/Layout';
 import Onboarding from '../Onboarding/Onboarding';
 import AddEventModal from '../AddEventModal/AddEventModal';

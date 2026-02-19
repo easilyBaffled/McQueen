@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTrading } from '../../context/TradingContext';
 import { useSocial } from '../../context/SocialContext';
-import { useToast } from '../../components/Toast/Toast';
+import { useToast } from '../../components/Toast/ToastProvider';
 import PlayerCard from '../../components/PlayerCard/PlayerCard';
 import styles from './Watchlist.module.css';
 

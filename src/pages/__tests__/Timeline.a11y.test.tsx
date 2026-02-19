@@ -39,7 +39,7 @@ vi.mock('../../context/TradingContext', () => ({
   }),
 }));
 
-vi.mock('../../components/Toast/Toast', () => ({
+vi.mock('../../components/Toast/ToastProvider', () => ({
   useToast: () => ({ addToast: vi.fn() }),
 }));
 
