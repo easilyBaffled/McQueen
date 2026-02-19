@@ -4,7 +4,7 @@
   "passes": 8,
   "pending": 0,
   "failures": 0,
-  "start": "2026-02-19T11:19:48.951Z",
-  "duration": 3529,
+  "start": "2026-02-19T16:07:42.651Z",
+  "duration": 3581,
   "file": "cypress/e2e/market.cy.js"
 }

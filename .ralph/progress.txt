@@ -20,3 +20,4 @@
 2026-02-19 10:21:22 | mcq-qzq.1 | DONE | Convert sentimentEngine to TypeScript
 2026-02-19 10:26:53 | mcq-qzq.3 | DONE | Convert espnService to TypeScript
 2026-02-19 10:33:16 | mcq-qzq.4 | DONE | Extract priceResolver as pure module
+2026-02-19 10:43:03 | mcq-tj0.4 | DONE | Convert scenario data loading to dynamic import()
