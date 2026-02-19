@@ -1,4 +1,9 @@
-import type { Article, GameEvent } from '../types';
+import type {
+  Article,
+  ArticleImage,
+  ArticleCategory,
+  GameEvent,
+} from '../types';
 
 const ESPN_API_BASE = '/espn-api';
 const ESPN_DIRECT_BASE = 'https://site.api.espn.com';
@@ -7,6 +12,61 @@ const CACHE_TTL = 5 * 60 * 1000;
 interface CacheEntry {
   data: unknown;
   timestamp: number;
+}
+
+interface EspnRawArticle {
+  id?: string;
+  headline?: string;
+  description?: string;
+  published?: string;
+  links?: {
+    web?: { href?: string };
+    api?: { self?: { href?: string } };
+  };
+  images?: ArticleImage[];
+  type?: string;
+  premium?: boolean;
+  categories?: ArticleCategory[];
+}
+
+interface EspnRawCompetitor {
+  homeAway?: string;
+  team?: {
+    id?: string;
+    abbreviation?: string;
+    displayName?: string;
+    logo?: string;
+  };
+  score?: string;
+}
+
+interface EspnRawCompetition {
+  competitors?: EspnRawCompetitor[];
+  status?: {
+    type?: { name?: string; description?: string };
+    period?: number;
+    displayClock?: string;
+  };
+  venue?: { fullName?: string };
+  broadcasts?: Array<{ names?: string[] }>;
+}
+
+interface EspnRawEvent {
+  id: string;
+  name: string;
+  shortName: string;
+  date: string;
+  competitions?: EspnRawCompetition[];
+}
+
+interface EspnNewsResponse {
+  articles?: EspnRawArticle[];
+}
+
+interface EspnScoreboardResponse {
+  events?: EspnRawEvent[];
+  week?: unknown;
+  season?: unknown;
 }
 
 const cache = new Map<string, CacheEntry>();
@@ -59,12 +119,11 @@ function setCache(key: string, data: unknown): void {
   cache.set(key, { data, timestamp: Date.now() });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function fetchWithFallback(endpoint: string): Promise<any> {
+async function fetchWithFallback<T = unknown>(endpoint: string): Promise<T> {
   const cacheKey = endpoint;
   const cached = getFromCache(cacheKey);
   if (cached) {
-    return cached;
+    return cached as T;
   }
 
   try {
@@ -79,7 +138,7 @@ async function fetchWithFallback(endpoint: string): Promise<any> {
       throw new Error(`ESPN API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data: T = await response.json();
     setCache(cacheKey, data);
     return data;
   } catch (error) {
@@ -90,7 +149,7 @@ async function fetchWithFallback(endpoint: string): Promise<any> {
 
 export async function fetchNFLNews(limit: number = 20): Promise<Article[]> {
   try {
-    const data = await fetchWithFallback(
+    const data = await fetchWithFallback<EspnNewsResponse>(
       `/apis/site/v2/sports/football/nfl/news?limit=${limit}`,
     );
     return normalizeNewsArticles(data.articles || []);
@@ -111,7 +170,7 @@ export async function fetchTeamNews(
   }
 
   try {
-    const data = await fetchWithFallback(
+    const data = await fetchWithFallback<EspnNewsResponse>(
       `/apis/site/v2/sports/football/nfl/teams/${teamId}/news?limit=${limit}`,
     );
     return normalizeNewsArticles(data.articles || []);
@@ -127,7 +186,7 @@ export async function fetchScoreboard(): Promise<{
   season: unknown;
 }> {
   try {
-    const data = await fetchWithFallback(
+    const data = await fetchWithFallback<EspnScoreboardResponse>(
       '/apis/site/v2/sports/football/nfl/scoreboard',
     );
     return {
@@ -174,10 +233,8 @@ export async function fetchPlayerNews(
   return playerArticles;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function normalizeNewsArticles(articles: any[]): Article[] {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return articles.map((article: any) => ({
+function normalizeNewsArticles(articles: EspnRawArticle[]): Article[] {
+  return articles.map((article) => ({
     id: article.id || String(Date.now() + Math.random()),
     headline: article.headline || '',
     description: article.description || '',
@@ -189,20 +246,17 @@ function normalizeNewsArticles(articles: any[]): Article[] {
     type: article.type || 'news',
     premium: article.premium || false,
     categories: article.categories || [],
-    _raw: article,
+    _raw: article as unknown as Record<string, unknown>,
   }));
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function normalizeGameEvent(event: any): GameEvent {
-  const competition = event.competitions?.[0] || {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeGameEvent(event: EspnRawEvent): GameEvent {
+  const competition: EspnRawCompetition = event.competitions?.[0] || {};
   const homeTeam = competition.competitors?.find(
-    (c: any) => c.homeAway === 'home',
+    (c) => c.homeAway === 'home',
   );
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const awayTeam = competition.competitors?.find(
-    (c: any) => c.homeAway === 'away',
+    (c) => c.homeAway === 'away',
   );
 
   return {
@@ -218,20 +272,20 @@ function normalizeGameEvent(event: any): GameEvent {
     },
     homeTeam: homeTeam
       ? {
-          id: homeTeam.team?.id,
-          abbr: homeTeam.team?.abbreviation,
-          name: homeTeam.team?.displayName,
-          score: homeTeam.score,
-          logo: homeTeam.team?.logo,
+          id: homeTeam.team?.id || '',
+          abbr: homeTeam.team?.abbreviation || '',
+          name: homeTeam.team?.displayName || '',
+          score: homeTeam.score || '0',
+          logo: homeTeam.team?.logo || '',
         }
       : null,
     awayTeam: awayTeam
       ? {
-          id: awayTeam.team?.id,
-          abbr: awayTeam.team?.abbreviation,
-          name: awayTeam.team?.displayName,
-          score: awayTeam.score,
-          logo: awayTeam.team?.logo,
+          id: awayTeam.team?.id || '',
+          abbr: awayTeam.team?.abbreviation || '',
+          name: awayTeam.team?.displayName || '',
+          score: awayTeam.score || '0',
+          logo: awayTeam.team?.logo || '',
         }
       : null,
     venue: competition.venue?.fullName || '',
