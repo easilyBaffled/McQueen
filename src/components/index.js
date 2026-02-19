@@ -1,4 +1,3 @@
-// Export all components for cleaner imports
 export { default as Layout } from './Layout';
 export { default as ScenarioToggle } from './ScenarioToggle';
 export { default as PlayerCard } from './PlayerCard';
@@ -11,20 +10,9 @@ export {
   OnboardingProvider,
   useOnboarding,
 } from './Onboarding';
-export {
-  default as EventMarkerPopup,
-  getEventConfig,
-} from './EventMarkerPopup';
 export { default as AddEventModal } from './AddEventModal';
 export { default as PlayoffAnnouncementModal } from './PlayoffAnnouncementModal';
 export { default as MiniLeaderboard } from './MiniLeaderboard';
 export { ToastProvider, useToast } from './Toast';
-export {
-  PlayerCardSkeleton,
-  MarketSkeleton,
-  LeaderboardSkeleton,
-  MissionSkeleton,
-  TextSkeleton,
-} from './SkeletonLoader';
-export { default as FirstTradeGuide } from './FirstTradeGuide';
+export { default as LiveTicker } from './LiveTicker';
 export { default as ErrorBoundary } from './ErrorBoundary';

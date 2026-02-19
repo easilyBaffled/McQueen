@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTrading } from '../context/TradingContext';
-import InfoTooltip from '../components/InfoTooltip';
+import { InfoTooltip } from '../shared';
 import './Portfolio.css';
 
 export default function Portfolio() {

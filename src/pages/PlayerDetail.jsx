@@ -13,7 +13,8 @@ import {
 } from 'recharts';
 import { useTrading } from '../context/TradingContext';
 import { useSocial } from '../context/SocialContext';
-import { EventMarkerPopup, getEventConfig, useToast } from '../components';
+import { EventMarkerPopup, getEventConfig } from '../shared';
+import { useToast } from '../components';
 import { getPlayerNewsUrls, getTeamNewsUrl } from '../utils/espnUrls';
 import { getPlayerHeadshotUrl } from '../utils/playerImages';
 import './PlayerDetail.css';

@@ -4,11 +4,9 @@ import userEvent from '@testing-library/user-event';
 import PlayerCard from '../PlayerCard';
 import Toast, { ToastProvider, useToast } from '../Toast';
 import Layout from '../Layout';
-import Glossary from '../Glossary';
 import Onboarding from '../Onboarding';
 import AddEventModal from '../AddEventModal';
-import EventMarkerPopup from '../EventMarkerPopup';
-import FirstTradeGuide from '../FirstTradeGuide';
+import { Glossary, EventMarkerPopup, FirstTradeGuide } from '../../shared';
 import Portfolio from '../../pages/Portfolio';
 import Leaderboard from '../../pages/Leaderboard';
 

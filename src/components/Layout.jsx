@@ -6,7 +6,7 @@ import { useTrading } from '../context/TradingContext';
 import ScenarioToggle from './ScenarioToggle';
 import LiveTicker from './LiveTicker';
 import TimelineDebugger from './TimelineDebugger';
-import Glossary from './Glossary';
+import { Glossary } from '../shared';
 import './Layout.css';
 
 export default function Layout() {

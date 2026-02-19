@@ -5,11 +5,8 @@ import { useScenario } from '../context/ScenarioContext';
 import { useTrading } from '../context/TradingContext';
 import PlayerCard from '../components/PlayerCard';
 import MiniLeaderboard from '../components/MiniLeaderboard';
-import {
-  MarketSkeleton,
-  LeaderboardSkeleton,
-} from '../components/SkeletonLoader';
-import FirstTradeGuide from '../components/FirstTradeGuide';
+import { MarketSkeleton, LeaderboardSkeleton } from '../shared';
+import { FirstTradeGuide } from '../shared';
 import './Market.css';
 
 const WELCOME_DISMISSED_KEY = 'mcqueen-welcome-dismissed';
