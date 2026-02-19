@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTrading } from '../context/TradingContext';
 import { useSocial } from '../context/SocialContext';
-import { useToast } from '../components/Toast';
-import PlayerCard from '../components/PlayerCard';
+import { useToast } from '../components/Toast/Toast';
+import PlayerCard from '../components/PlayerCard/PlayerCard';
 import './Watchlist.css';
 
 export default function Watchlist() {

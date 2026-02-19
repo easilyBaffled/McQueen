@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
-import { useScenario } from '../context/ScenarioContext';
-import { useTrading } from '../context/TradingContext';
-import { useSocial } from '../context/SocialContext';
-import { getPlayerHeadshotUrl } from '../utils/playerImages';
+import { useScenario } from '../../context/ScenarioContext';
+import { useTrading } from '../../context/TradingContext';
+import { useSocial } from '../../context/SocialContext';
+import { getPlayerHeadshotUrl } from '../../utils/playerImages';
 import './PlayerCard.css';
 
 // Check if user has seen the league holders tooltip before

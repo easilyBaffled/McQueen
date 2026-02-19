@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSocial } from '../context/SocialContext';
+import { useSocial } from '../../context/SocialContext';
 import './MiniLeaderboard.css';
 
 export default function MiniLeaderboard() {

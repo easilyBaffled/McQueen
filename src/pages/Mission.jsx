@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import DailyMission from '../components/DailyMission';
+import DailyMission from '../components/DailyMission/DailyMission';
 import './Mission.css';
 
 const MISSION_HELP_SEEN_KEY = 'mcqueen-mission-help-seen';

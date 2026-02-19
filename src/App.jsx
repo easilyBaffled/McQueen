@@ -3,9 +3,9 @@ import { ScenarioProvider } from './context/ScenarioContext';
 import { SimulationProvider } from './context/SimulationContext';
 import { TradingProvider } from './context/TradingContext';
 import { SocialProvider } from './context/SocialContext';
-import { ToastProvider } from './components/Toast';
-import { OnboardingProvider } from './components/Onboarding';
-import Layout from './components/Layout';
+import { ToastProvider } from './components/Toast/Toast';
+import { OnboardingProvider } from './components/Onboarding/Onboarding';
+import Layout from './components/Layout/Layout';
 import Timeline from './pages/Timeline';
 import Market from './pages/Market';
 import Portfolio from './pages/Portfolio';
@@ -14,8 +14,8 @@ import Leaderboard from './pages/Leaderboard';
 import Mission from './pages/Mission';
 import PlayerDetail from './pages/PlayerDetail';
 import ScenarioInspector from './pages/ScenarioInspector';
-import Onboarding from './components/Onboarding';
-import PlayoffAnnouncementModal from './components/PlayoffAnnouncementModal';
+import Onboarding from './components/Onboarding/Onboarding';
+import PlayoffAnnouncementModal from './components/PlayoffAnnouncementModal/PlayoffAnnouncementModal';
 import './App.css';
 
 function App() {

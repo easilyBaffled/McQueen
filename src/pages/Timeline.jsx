@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTrading } from '../context/TradingContext';
-import { useToast } from '../components/Toast';
+import { useToast } from '../components/Toast/Toast';
 import './Timeline.css';
 
 // Color configuration (matches ScenarioInspector)

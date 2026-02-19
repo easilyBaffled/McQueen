@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useScenario } from '../context/ScenarioContext';
-import { useSimulation } from '../context/SimulationContext';
+import { useScenario } from '../../context/ScenarioContext';
+import { useSimulation } from '../../context/SimulationContext';
 import './LiveTicker.css';
 
 export default function LiveTicker() {

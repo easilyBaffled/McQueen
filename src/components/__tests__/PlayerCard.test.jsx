@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import PlayerCard from '../PlayerCard';
+import PlayerCard from '../PlayerCard/PlayerCard';
 
 vi.mock('../../context/ScenarioContext', () => ({
   useScenario: () => ({

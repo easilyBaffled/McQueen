@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useScenario } from '../context/ScenarioContext';
-import { useTrading } from '../context/TradingContext';
-import ScenarioToggle from './ScenarioToggle';
-import LiveTicker from './LiveTicker';
-import TimelineDebugger from './TimelineDebugger';
-import { Glossary } from '../shared';
+import { useScenario } from '../../context/ScenarioContext';
+import { useTrading } from '../../context/TradingContext';
+import ScenarioToggle from '../ScenarioToggle/ScenarioToggle';
+import LiveTicker from '../LiveTicker/LiveTicker';
+import TimelineDebugger from '../TimelineDebugger/TimelineDebugger';
+import { Glossary } from '../../shared';
 import './Layout.css';
 
 export default function Layout() {

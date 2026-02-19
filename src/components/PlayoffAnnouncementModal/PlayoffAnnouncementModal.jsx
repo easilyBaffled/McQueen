@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useScenario } from '../context/ScenarioContext';
-import { useSimulation } from '../context/SimulationContext';
-import { useFocusTrap } from '../hooks/useFocusTrap';
+import { useScenario } from '../../context/ScenarioContext';
+import { useSimulation } from '../../context/SimulationContext';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import './PlayoffAnnouncementModal.css';
 
 // Mock portfolio showing user holdings for buyback players (for demonstration)

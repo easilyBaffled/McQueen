@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
-import { useScenario } from '../context/ScenarioContext';
-import { useSimulation } from '../context/SimulationContext';
-import { isDevMode } from '../utils/devMode';
+import { useScenario } from '../../context/ScenarioContext';
+import { useSimulation } from '../../context/SimulationContext';
+import { isDevMode } from '../../utils/devMode';
 import './ScenarioToggle.css';
 
 const scenarios = [

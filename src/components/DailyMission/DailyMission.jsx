@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTrading } from '../context/TradingContext';
-import { useSocial } from '../context/SocialContext';
+import { useTrading } from '../../context/TradingContext';
+import { useSocial } from '../../context/SocialContext';
 import './DailyMission.css';
 
 export default function DailyMission({ collapsible = false }) {

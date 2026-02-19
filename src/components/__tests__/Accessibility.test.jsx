@@ -1,11 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import PlayerCard from '../PlayerCard';
-import Toast, { ToastProvider, useToast } from '../Toast';
-import Layout from '../Layout';
-import Onboarding from '../Onboarding';
-import AddEventModal from '../AddEventModal';
+import PlayerCard from '../PlayerCard/PlayerCard';
+import Toast, { ToastProvider, useToast } from '../Toast/Toast';
+import Layout from '../Layout/Layout';
+import Onboarding from '../Onboarding/Onboarding';
+import AddEventModal from '../AddEventModal/AddEventModal';
 import { Glossary, EventMarkerPopup, FirstTradeGuide } from '../../shared';
 import Portfolio from '../../pages/Portfolio';
 import Leaderboard from '../../pages/Leaderboard';

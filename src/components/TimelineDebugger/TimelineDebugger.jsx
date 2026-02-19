@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSimulation } from '../context/SimulationContext';
-import { isDevMode } from '../utils/devMode';
+import { useSimulation } from '../../context/SimulationContext';
+import { isDevMode } from '../../utils/devMode';
 import './TimelineDebugger.css';
 
 export default function TimelineDebugger() {
