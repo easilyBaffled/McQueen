@@ -260,6 +260,15 @@ describe('priceResolver', () => {
       });
       expect(getCurrentPriceFromHistory(player)).toBe(55);
     });
+
+    // TC-009
+    it('returns 0 for undefined', () => {
+      expect(getCurrentPriceFromHistory(undefined)).toBe(0);
+    });
+
+    it('returns 0 when basePrice is 0 and no history', () => {
+      expect(getCurrentPriceFromHistory(makePlayer({ basePrice: 0 }))).toBe(0);
+    });
   });
 
   describe('getChangePercentFromHistory', () => {
@@ -285,6 +294,53 @@ describe('priceResolver', () => {
       expect(getChangePercentFromHistory(makePlayer({ basePrice: 0 }))).toBe(
         0,
       );
+    });
+
+    // TC-010: negative percentage
+    it('returns negative percent for price decrease', () => {
+      const player = makePlayer({
+        basePrice: 50,
+        priceHistory: [
+          {
+            timestamp: 't',
+            price: 40,
+            reason: { type: 'news', headline: '' },
+          },
+        ],
+      });
+      expect(getChangePercentFromHistory(player)).toBe(-20);
+    });
+
+    it('returns 0 when current equals base', () => {
+      const player = makePlayer({
+        basePrice: 40,
+        priceHistory: [
+          {
+            timestamp: 't',
+            price: 40,
+            reason: { type: 'news', headline: '' },
+          },
+        ],
+      });
+      expect(getChangePercentFromHistory(player)).toBe(0);
+    });
+
+    it('returns 0 for undefined player', () => {
+      expect(getChangePercentFromHistory(undefined)).toBe(0);
+    });
+
+    it('returns 0 for basePrice 0 even with history', () => {
+      const player = makePlayer({
+        basePrice: 0,
+        priceHistory: [
+          {
+            timestamp: 't',
+            price: 10,
+            reason: { type: 'news', headline: '' },
+          },
+        ],
+      });
+      expect(getChangePercentFromHistory(player)).toBe(0);
     });
   });
 
@@ -322,6 +378,28 @@ describe('priceResolver', () => {
               | undefined
               ? NonNullable<E>['reason']
               : never,
+          },
+        ],
+      });
+      expect(getMoveReasonFromHistory(player)).toBe('');
+    });
+
+    // TC-013 edge cases
+    it('returns empty string for undefined player', () => {
+      expect(getMoveReasonFromHistory(undefined)).toBe('');
+    });
+
+    it('returns empty string when player has no priceHistory', () => {
+      expect(getMoveReasonFromHistory(makePlayer())).toBe('');
+    });
+
+    it('returns empty string when headline is empty string', () => {
+      const player = makePlayer({
+        priceHistory: [
+          {
+            timestamp: 't',
+            price: 42,
+            reason: { type: 'news', headline: '' },
           },
         ],
       });
@@ -366,6 +444,31 @@ describe('priceResolver', () => {
       });
       expect(getLatestContentFromHistory(player)).toEqual([]);
     });
+
+    // TC-015 edge cases
+    it('returns empty array for undefined player', () => {
+      expect(getLatestContentFromHistory(undefined)).toEqual([]);
+    });
+
+    it('returns empty array for empty priceHistory', () => {
+      expect(
+        getLatestContentFromHistory(makePlayer({ priceHistory: [] })),
+      ).toEqual([]);
+    });
+
+    it('returns empty array when content is empty array', () => {
+      const player = makePlayer({
+        priceHistory: [
+          {
+            timestamp: 't',
+            price: 42,
+            reason: { type: 'news', headline: 'A' },
+            content: [],
+          },
+        ],
+      });
+      expect(getLatestContentFromHistory(player)).toEqual([]);
+    });
   });
 
   describe('getAllContentFromHistory', () => {
@@ -404,6 +507,116 @@ describe('priceResolver', () => {
       expect(
         getAllContentFromHistory(makePlayer({ priceHistory: [] })),
       ).toEqual([]);
+    });
+
+    // TC-016 edge case: some entries have content, others don't
+    it('only aggregates from entries that have content', () => {
+      const player = makePlayer({
+        priceHistory: [
+          {
+            timestamp: 't1',
+            price: 42,
+            reason: { type: 'news', headline: '' },
+            content: [{ type: 'article' }],
+          },
+          {
+            timestamp: 't2',
+            price: 45,
+            reason: { type: 'news', headline: '' },
+          },
+          {
+            timestamp: 't3',
+            price: 48,
+            reason: { type: 'news', headline: '' },
+            content: [{ type: 'video' }, { type: 'tweet' }],
+          },
+        ],
+      });
+      expect(getAllContentFromHistory(player)).toEqual([
+        { type: 'article' },
+        { type: 'video' },
+        { type: 'tweet' },
+      ]);
+    });
+
+    it('returns empty array for undefined player', () => {
+      expect(getAllContentFromHistory(undefined)).toEqual([]);
+    });
+
+    it('returns empty when all entries have empty content arrays', () => {
+      const player = makePlayer({
+        priceHistory: [
+          {
+            timestamp: 't1',
+            price: 42,
+            reason: { type: 'news', headline: '' },
+            content: [],
+          },
+          {
+            timestamp: 't2',
+            price: 45,
+            reason: { type: 'news', headline: '' },
+            content: [],
+          },
+        ],
+      });
+      expect(getAllContentFromHistory(player)).toEqual([]);
+    });
+  });
+
+  // TC-018: all six functions are named exports
+  describe('module exports', () => {
+    it('exports all six functions', () => {
+      expect(typeof getEffectivePrice).toBe('function');
+      expect(typeof getCurrentPriceFromHistory).toBe('function');
+      expect(typeof getChangePercentFromHistory).toBe('function');
+      expect(typeof getMoveReasonFromHistory).toBe('function');
+      expect(typeof getLatestContentFromHistory).toBe('function');
+      expect(typeof getAllContentFromHistory).toBe('function');
+    });
+  });
+
+  // TC-022: priority chain (override > history > basePrice)
+  describe('getEffectivePrice priority chain', () => {
+    const player = makePlayer({
+      id: 'p',
+      basePrice: 30,
+      priceHistory: [
+        {
+          timestamp: 't',
+          price: 40,
+          reason: { type: 'news', headline: 'Update' },
+        },
+      ],
+    });
+
+    it('override wins over history and basePrice', () => {
+      expect(getEffectivePrice('p', { p: 50 }, {}, [player])).toBe(50);
+    });
+
+    it('history wins over basePrice when no override', () => {
+      expect(getEffectivePrice('p', {}, {}, [player])).toBe(40);
+    });
+
+    it('basePrice is final fallback', () => {
+      const noHistory = makePlayer({ id: 'p', basePrice: 30 });
+      expect(getEffectivePrice('p', {}, {}, [noHistory])).toBe(30);
+    });
+
+    it('override same value as history still uses override path', () => {
+      expect(getEffectivePrice('p', { p: 40 }, {}, [player])).toBe(40);
+    });
+
+    // TC-019: pure function with no closure
+    it('produces different results with different players arrays', () => {
+      const playersA = [makePlayer({ id: 'x', basePrice: 10 })];
+      const playersB = [makePlayer({ id: 'x', basePrice: 99 })];
+      expect(getEffectivePrice('x', {}, {}, playersA)).toBe(10);
+      expect(getEffectivePrice('x', {}, {}, playersB)).toBe(99);
+    });
+
+    it('returns empty string playerId as 0', () => {
+      expect(getEffectivePrice('', {}, {}, [player])).toBe(0);
     });
   });
 });
