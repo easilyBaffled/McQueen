@@ -1,4 +1,4 @@
-type ImageSize = 'small' | 'medium' | 'large';
+export type ImageSize = 'small' | 'medium' | 'large';
 
 const ESPN_IDS: Record<string, string> = {
   mahomes: '3139477',

@@ -12,3 +12,5 @@
 2026-02-19 07:30:02 | mcq-o0b.4 | DONE | Add secondary indicators for color-coded values
 2026-02-19 09:26:28 | mcq-tj0 | DONE | Data Layer: Types, Storage, and Dynamic Loading
 2026-02-19 09:32:22 | mcq-tj0.1 | DONE | Create TypeScript type definitions
+2026-02-19 10:01:26 | mcq-qzq | DONE | Service Layer Refactor
+2026-02-19 10:10:00 | mcq-tj0.2 | DONE | Convert constants and utils to TypeScript
