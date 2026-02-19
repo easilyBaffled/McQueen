@@ -116,8 +116,8 @@ export default function PlayerDetail() {
 
   if (!player) {
     return (
-      <div className={styles['player-detail-page']}>
-        <div className={styles['error-state']}>
+      <div className={styles['player-detail-page']} data-testid="player-detail-page">
+        <div className={styles['error-state']} data-testid="error-state">
           <h2>Player Not Found</h2>
           <p>This player doesn't exist in the current scenario.</p>
           <button onClick={() => navigate('/market')} className={styles['back-button']}>
@@ -278,15 +278,15 @@ export default function PlayerDetail() {
   };
 
   return (
-    <div className={styles['player-detail-page']}>
-      <button onClick={() => navigate(-1)} className={styles['back-link']}>
+    <div className={styles['player-detail-page']} data-testid="player-detail-page">
+      <button onClick={() => navigate(-1)} className={styles['back-link']} data-testid="back-link">
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
         </svg>
         Back
       </button>
 
-      <div className={styles['player-header']}>
+      <div className={styles['player-header']} data-testid="player-header">
         <div className={styles['player-header-left']}>
           <div className={styles['player-avatar']}>
             {getPlayerHeadshotUrl(id, 'large') && !imageError ? (
@@ -308,17 +308,18 @@ export default function PlayerDetail() {
               <span className={styles['player-team-badge']}>{player.team}</span>
               <span className={styles['player-position']}>{player.position}</span>
             </div>
-            <h1 className={styles['player-name']}>{player.name}</h1>
+            <h1 className={styles['player-name']} data-testid="player-name">{player.name}</h1>
           </div>
         </div>
 
         <div className={styles['player-price-section']}>
-          <div className={`${styles['player-price']} ${isUp ? styles['up'] : styles['down']}`}>
+          <div className={`${styles['player-price']} ${isUp ? styles['up'] : styles['down']}`} data-testid="player-price">
             <span className={styles['price-value']}>
               ${player.currentPrice.toFixed(2)}
             </span>
             <span
               className={`${styles['price-change']} ${isUp ? 'text-up' : 'text-down'}`}
+              data-testid="price-change"
               aria-label={`${isUp ? 'Up' : 'Down'} ${Math.abs(player.changePercent).toFixed(2)} percent`}
             >
               {isUp ? '▲' : '▼'} {Math.abs(player.changePercent).toFixed(2)}%
@@ -332,11 +333,12 @@ export default function PlayerDetail() {
           {/* Price Chart */}
           <motion.div
             className={styles['chart-card']}
+            data-testid="chart-card"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
             <h3>Price History</h3>
-            <div className={styles['chart-container']} ref={chartContainerRef}>
+            <div className={styles['chart-container']} data-testid="chart-container" ref={chartContainerRef}>
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart
                   data={chartData}
@@ -492,12 +494,13 @@ export default function PlayerDetail() {
           {/* Price History Timeline */}
           <motion.div
             className={styles['timeline-card']}
+            data-testid="timeline-card"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
             <h3>Price Changes</h3>
-            <div className={styles['price-timeline']}>
+            <div className={styles['price-timeline']} data-testid="price-timeline">
               {[...chartData].reverse().map((entry, i, arr) => {
                 const reasonType = entry.reason?.type || 'unknown';
                 const eventType = entry.reason?.eventType;
@@ -526,6 +529,7 @@ export default function PlayerDetail() {
                   <div
                     key={i}
                     className={`${styles['timeline-entry']} ${isTD ? styles['is-td'] : ''} ${isINT ? styles['is-int'] : ''}`}
+                    data-testid="timeline-entry"
                   >
                     {/* Connector line */}
                     {i < arr.length - 1 && (
@@ -653,6 +657,7 @@ export default function PlayerDetail() {
           {/* Trading Card */}
           <motion.div
             className={styles['trading-card']}
+            data-testid="trading-card"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
           >
@@ -665,6 +670,7 @@ export default function PlayerDetail() {
             >
               <button
                 className={`${styles['trading-tab']} ${activeTab === styles['buy'] ? styles['active'] : ''}`}
+                data-testid="trading-tab"
                 role="tab"
                 aria-selected={activeTab === 'buy'}
                 tabIndex={activeTab === 'buy' ? 0 : -1}
@@ -674,6 +680,7 @@ export default function PlayerDetail() {
               </button>
               <button
                 className={`${styles['trading-tab']} ${activeTab === styles['sell'] ? styles['active'] : ''}`}
+                data-testid="trading-tab"
                 role="tab"
                 aria-selected={activeTab === 'sell'}
                 tabIndex={activeTab === 'sell' ? 0 : -1}
@@ -696,15 +703,16 @@ export default function PlayerDetail() {
                       setBuyAmount(Math.max(1, parseInt(e.target.value) || 1))
                     }
                     className={styles['form-input']}
+                    data-testid="form-input"
                   />
                 </label>
                 <div className={styles['order-summary']}>
                   <span>Estimated Cost</span>
-                  <span className={styles['order-total']}>
+                  <span className={styles['order-total']} data-testid="order-total">
                     ${(player.currentPrice * buyAmount).toFixed(2)}
                   </span>
                 </div>
-                <button className={`${styles['trade-button']} ${styles['buy']}`} onClick={handleBuy}>
+                <button className={`${styles['trade-button']} ${styles['buy']}`} data-testid="trade-button" data-variant="buy" onClick={handleBuy}>
                   Buy {buyAmount} Share{buyAmount > 1 ? 's' : ''}
                 </button>
               </div>
@@ -729,15 +737,16 @@ export default function PlayerDetail() {
                       )
                     }
                     className={styles['form-input']}
+                    data-testid="form-input"
                   />
                 </label>
                 <div className={styles['order-summary']}>
                   <span>Estimated Proceeds</span>
-                  <span className={styles['order-total']}>
+                  <span className={styles['order-total']} data-testid="order-total">
                     ${(player.currentPrice * sellAmount).toFixed(2)}
                   </span>
                 </div>
-                <button className={`${styles['trade-button']} ${styles['sell']}`} onClick={handleSell}>
+                <button className={`${styles['trade-button']} ${styles['sell']}`} data-testid="trade-button" data-variant="sell" onClick={handleSell}>
                   Sell {sellAmount} Share{sellAmount > 1 ? 's' : ''}
                 </button>
               </div>
@@ -748,6 +757,7 @@ export default function PlayerDetail() {
           {holding && (
             <motion.div
               className={styles['holdings-card']}
+              data-testid="holdings-card"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 }}
@@ -790,6 +800,7 @@ export default function PlayerDetail() {
           {/* Watchlist Button */}
           <button
             className={`${styles['watchlist-button']} ${watching ? styles['watching'] : ''}`}
+            data-testid="watchlist-button"
             onClick={handleWatchlistToggle}
           >
             <svg
@@ -807,6 +818,7 @@ export default function PlayerDetail() {
           {leagueHoldings.length > 0 && (
             <motion.div
               className={styles['league-owners-card']}
+              data-testid="league-owners-card"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
@@ -817,6 +829,7 @@ export default function PlayerDetail() {
                   <div
                     key={holder.memberId}
                     className={`${styles['league-owner-row']} ${holder.isUser ? styles['is-user'] : ''}`}
+                    data-testid="league-owner-row"
                   >
                     <div className={styles['owner-info']}>
                       <span className={styles['owner-avatar']}>

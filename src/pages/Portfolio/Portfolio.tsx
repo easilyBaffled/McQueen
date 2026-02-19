@@ -42,28 +42,28 @@ export default function Portfolio() {
     <div className={styles['portfolio-page']}>
       <h1 className={styles['page-title']}>Your Portfolio</h1>
 
-      <div className={styles['portfolio-summary']}>
-        <div className={`${styles['summary-card']} ${styles['total']}`}>
-          <span className={styles['summary-label']}>
+      <div className={styles['portfolio-summary']} data-testid="portfolio-summary">
+        <div className={`${styles['summary-card']} ${styles['total']}`} data-testid="summary-card">
+          <span className={styles['summary-label']} data-testid="summary-label">
             <InfoTooltip term="totalValue">Total Value</InfoTooltip>
           </span>
-          <span className={styles['summary-value']}>
+          <span className={styles['summary-value']} data-testid="summary-value">
             ${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </span>
         </div>
-        <div className={styles['summary-card']}>
-          <span className={styles['summary-label']}>
+        <div className={styles['summary-card']} data-testid="summary-card">
+          <span className={styles['summary-label']} data-testid="summary-label">
             <InfoTooltip term="cash">Cash Available</InfoTooltip>
           </span>
-          <span className={styles['summary-value']}>
+          <span className={styles['summary-value']} data-testid="summary-value">
             ${cash.toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </span>
         </div>
-        <div className={styles['summary-card']}>
-          <span className={styles['summary-label']}>
+        <div className={styles['summary-card']} data-testid="summary-card">
+          <span className={styles['summary-label']} data-testid="summary-label">
             <InfoTooltip term="portfolio">Invested</InfoTooltip>
           </span>
-          <span className={styles['summary-value']}>
+          <span className={styles['summary-value']} data-testid="summary-value">
             $
             {portfolioStats.value.toLocaleString('en-US', {
               minimumFractionDigits: 2,
@@ -72,12 +72,14 @@ export default function Portfolio() {
         </div>
         <div
           className={`${styles['summary-card']} ${portfolioStats.gain >= 0 ? styles['positive'] : styles['negative']}`}
+          data-testid="summary-card"
         >
-          <span className={styles['summary-label']}>
+          <span className={styles['summary-label']} data-testid="summary-label">
             <InfoTooltip term="gainLoss">Total Gain/Loss</InfoTooltip>
           </span>
           <span
             className={`${styles['summary-value']} ${portfolioStats.gain >= 0 ? 'text-up' : 'text-down'}`}
+            data-testid="summary-value"
             aria-label={`${portfolioStats.gain >= 0 ? 'Gain' : 'Loss'} of $${Math.abs(portfolioStats.gain).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
           >
             {portfolioStats.gain >= 0 ? '▲ +' : '▼ '}$
@@ -175,7 +177,7 @@ export default function Portfolio() {
           </Link>
         </motion.div>
       ) : (
-        <div className={styles['holdings-list']}>
+        <div className={styles['holdings-list']} data-testid="holdings-list">
           <div className={styles['holdings-header']}>
             <span>Player</span>
             <span>Shares</span>
@@ -192,15 +194,15 @@ export default function Portfolio() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.05 }}
             >
-              <Link to={`/player/${holding.id}`} className={styles['holding-row']}>
+              <Link to={`/player/${holding.id}`} className={styles['holding-row']} data-testid="holding-row">
                 <div className={styles['holding-player']}>
-                  <span className={styles['player-name']}>{holding.name}</span>
+                  <span className={styles['player-name']} data-testid="player-name">{holding.name}</span>
                   <span className={styles['player-team']}>
                     {holding.team} • {holding.position}
                   </span>
                 </div>
-                <span className={styles['holding-shares']}>{holding.shares}</span>
-                <span className={styles['holding-cost']}>
+                <span className={styles['holding-shares']} data-testid="holding-shares">{holding.shares}</span>
+                <span className={styles['holding-cost']} data-testid="holding-cost">
                   ${holding.avgCost.toFixed(2)}
                 </span>
                 <span
@@ -208,11 +210,12 @@ export default function Portfolio() {
                 >
                   ${holding.currentPrice.toFixed(2)}
                 </span>
-                <span className={styles['holding-value']}>
+                <span className={styles['holding-value']} data-testid="holding-value">
                   ${holding.currentValue.toFixed(2)}
                 </span>
                 <span
                   className={`${styles['holding-gain']} ${holding.gain >= 0 ? 'text-up' : 'text-down'}`}
+                  data-testid="holding-gain"
                   aria-label={`${holding.gain >= 0 ? 'Gain' : 'Loss'} of $${Math.abs(holding.gain).toFixed(2)}, ${Math.abs(holding.gainPercent).toFixed(1)} percent`}
                 >
                   {holding.gain >= 0 ? '▲ +' : '▼ '}${holding.gain.toFixed(2)}

@@ -74,13 +74,14 @@ export default function Market() {
   }, [players, sortBy, searchQuery]);
 
   return (
-    <div className={styles['market-page']}>
+    <div className={styles['market-page']} data-testid="market-page">
       <FirstTradeGuide hasCompletedFirstTrade={!hasNoTrades} />
 
       <AnimatePresence>
         {showWelcome && (
           <motion.div
             className={styles['welcome-banner']}
+            data-testid="welcome-banner"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -99,6 +100,7 @@ export default function Market() {
             </div>
             <button
               className={styles['welcome-dismiss']}
+              data-testid="welcome-dismiss"
               onClick={dismissWelcome}
               title="Dismiss"
               aria-label="Dismiss welcome message"
@@ -131,6 +133,7 @@ export default function Market() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={styles['search-input']}
+            data-testid="search-input"
             aria-label="Search players"
           />
         </div>
@@ -140,6 +143,7 @@ export default function Market() {
             <button
               key={option.id}
               className={`${styles['sort-tab']} ${sortBy === option.id ? styles['active'] : ''}`}
+              data-testid="sort-tab"
               onClick={() => setSortBy(option.id)}
             >
               {option.label}
@@ -149,7 +153,7 @@ export default function Market() {
       </div>
 
       <div className={styles['market-layout']}>
-        <div className={styles['market-sidebar']}>
+        <div className={styles['market-sidebar']} data-testid="market-sidebar">
           {isLoading ? <LeaderboardSkeleton /> : <MiniLeaderboard />}
         </div>
 
@@ -157,7 +161,7 @@ export default function Market() {
           {isLoading ? (
             <MarketSkeleton count={6} />
           ) : (
-            <div className={styles['players-grid']}>
+            <div className={styles['players-grid']} data-testid="players-grid">
               <AnimatePresence mode="popLayout">
                 {sortedPlayers.map((player, index) => (
                   <motion.div

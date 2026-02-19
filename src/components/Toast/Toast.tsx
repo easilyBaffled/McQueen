@@ -15,6 +15,8 @@ export default function Toast({ toasts, removeToast }: ToastProps) {
           <motion.div
             key={toast.id}
             className={`${styles['toast']} ${styles['toast-']} ${toast.type}`}
+            data-testid="toast"
+            data-type={toast.type}
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.9 }}
@@ -40,6 +42,7 @@ export default function Toast({ toasts, removeToast }: ToastProps) {
             <span className={styles['toast-message']}>{toast.message}</span>
             <button
               className={styles['toast-close']}
+              data-testid="toast-close"
               onClick={() => removeToast(toast.id)}
               aria-label="Dismiss notification"
             >

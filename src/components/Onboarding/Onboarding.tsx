@@ -109,12 +109,14 @@ export default function Onboarding() {
       {isVisible && (
         <motion.div
           className={styles['onboarding-overlay']}
+          data-testid="onboarding-overlay"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           <motion.div
             className={styles['onboarding-modal']}
+            data-testid="onboarding-modal"
             role="dialog"
             aria-modal="true"
             aria-labelledby="onboarding-title"
@@ -128,10 +130,12 @@ export default function Onboarding() {
                   <span
                     key={i}
                     className={`${styles['step-dot']} ${i === step ? styles['active'] : ''} ${i < step ? styles['completed'] : ''}`}
+                    data-testid="step-dot"
+                    data-active={i === step ? 'true' : undefined}
                   />
                 ))}
               </div>
-              <button className={styles['skip-button']} onClick={handleComplete}>
+              <button className={styles['skip-button']} data-testid="skip-button" onClick={handleComplete}>
                 Skip
               </button>
             </div>
@@ -178,7 +182,7 @@ export default function Onboarding() {
 
             <div className={styles['onboarding-footer']}>
               {step > 0 && (
-                <button className={styles['back-button']} onClick={handleBack}>
+                <button className={styles['back-button']} data-testid="back-button" onClick={handleBack}>
                   <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
                   </svg>
@@ -187,6 +191,7 @@ export default function Onboarding() {
               )}
               <button
                 className={`${styles['next-button']} ${step === steps.length - 1 ? styles['final'] : ''}`}
+                data-testid="next-button"
                 onClick={handleNext}
               >
                 {step === steps.length - 1 ? 'Start Trading!' : 'Next'}

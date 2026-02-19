@@ -51,6 +51,7 @@ export default function PlayerCard({ player, showFirstTradeTip = false }: Player
   return (
     <motion.div
       className={`${styles['player-card']} ${isUp ? styles['up'] : styles['down']} ${isBuyback ? styles['buyback'] : ''}`}
+      data-testid="player-card"
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
     >

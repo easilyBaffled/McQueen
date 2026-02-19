@@ -40,7 +40,7 @@ export default function DailyMission({ collapsible = false }) {
   };
 
   return (
-    <div className={`${styles['daily-mission']} ${!collapsible ? styles['standalone'] : ''}`}>
+    <div className={`${styles['daily-mission']} ${!collapsible ? styles['standalone'] : ''}`} data-testid="daily-mission">
       {collapsible && (
         <button
           type="button"
@@ -84,7 +84,7 @@ export default function DailyMission({ collapsible = false }) {
             transition={{ duration: 0.2 }}
           >
             {missionRevealed ? (
-              <div className={styles['mission-results']}>
+              <div className={styles['mission-results']} data-testid="mission-results">
                 <div className={styles['results-header']}>
                   <div className={styles['results-score']}>
                     <span className={styles['score-number']}>{score?.correct}</span>
@@ -151,14 +151,14 @@ export default function DailyMission({ collapsible = false }) {
                   </div>
                 </div>
 
-                <button className={styles['reset-button']} onClick={resetMission}>
+                <button className={styles['reset-button']} data-testid="reset-button" onClick={resetMission}>
                   Play Again
                 </button>
               </div>
             ) : (
               <>
                 <div className={styles['picks-grid']}>
-                  <div className={`${styles['picks-column']} ${styles['risers']}`}>
+                  <div className={`${styles['picks-column']} ${styles['risers']}`} data-testid="picks-column" data-variant="risers">
                     <h4 className={styles['picks-column-title']}>
                       <span className={`${styles['pick-icon']} ${styles['up']}`}>▲</span>
                       Risers ({missionPicks.risers.length}/3)
@@ -170,6 +170,7 @@ export default function DailyMission({ collapsible = false }) {
                           <motion.div
                             key={id}
                             className={`${styles['pick-chip']} ${styles['riser']}`}
+                            data-testid="pick-chip"
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             exit={{ scale: 0 }}
@@ -186,6 +187,7 @@ export default function DailyMission({ collapsible = false }) {
                           <div
                             key={`empty-riser-${i}`}
                             className={`${styles['pick-chip']} ${styles['empty']}`}
+                            data-testid="pick-chip"
                           >
                             Select a riser
                           </div>
@@ -194,7 +196,7 @@ export default function DailyMission({ collapsible = false }) {
                     </div>
                   </div>
 
-                  <div className={`${styles['picks-column']} ${styles['fallers']}`}>
+                  <div className={`${styles['picks-column']} ${styles['fallers']}`} data-testid="picks-column" data-variant="fallers">
                     <h4 className={styles['picks-column-title']}>
                       <span className={`${styles['pick-icon']} ${styles['down']}`}>▼</span>
                       Fallers ({missionPicks.fallers.length}/3)
@@ -206,6 +208,7 @@ export default function DailyMission({ collapsible = false }) {
                           <motion.div
                             key={id}
                             className={`${styles['pick-chip']} ${styles['faller']}`}
+                            data-testid="pick-chip"
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             exit={{ scale: 0 }}
@@ -222,6 +225,7 @@ export default function DailyMission({ collapsible = false }) {
                           <div
                             key={`empty-faller-${i}`}
                             className={`${styles['pick-chip']} ${styles['empty']}`}
+                            data-testid="pick-chip"
                           >
                             Select a faller
                           </div>
@@ -231,7 +235,7 @@ export default function DailyMission({ collapsible = false }) {
                   </div>
                 </div>
 
-                <div className={styles['player-selector']}>
+                <div className={styles['player-selector']} data-testid="player-selector">
                   <p className={styles['selector-hint']}>
                     Click a player to add them to your picks:
                   </p>
@@ -256,6 +260,8 @@ export default function DailyMission({ collapsible = false }) {
                           <div className={styles['selector-actions']}>
                             <button
                               className={`${styles['selector-btn']} ${styles['up']} ${isRiser ? styles['active'] : ''}`}
+                              data-testid="selector-btn"
+                              data-variant="up"
                               onClick={() => setMissionPick(player.id, 'riser')}
                               disabled={
                                 missionPicks.risers.length >= 3 && !isRiser
@@ -266,6 +272,8 @@ export default function DailyMission({ collapsible = false }) {
                             </button>
                             <button
                               className={`${styles['selector-btn']} ${styles['down']} ${isFaller ? styles['active'] : ''}`}
+                              data-testid="selector-btn"
+                              data-variant="down"
                               onClick={() =>
                                 setMissionPick(player.id, 'faller')
                               }
@@ -285,6 +293,7 @@ export default function DailyMission({ collapsible = false }) {
 
                 <button
                   className={`${styles['reveal-button']} ${canReveal ? styles['ready'] : ''}`}
+                  data-testid="reveal-button"
                   disabled={!canReveal}
                   onClick={revealMission}
                 >

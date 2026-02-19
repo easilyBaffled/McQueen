@@ -299,6 +299,7 @@ export default function Timeline() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className={styles['search-input']}
+              data-testid="search-input"
               aria-label="Search players or headlines"
             />
           </div>
@@ -312,6 +313,7 @@ export default function Timeline() {
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               className={styles['filter-select']}
+              data-testid="filter-select"
             >
               {TYPE_FILTERS.map((f) => (
                 <option key={f.id} value={f.id}>
@@ -330,6 +332,7 @@ export default function Timeline() {
               value={magnitudeFilter}
               onChange={(e) => setMagnitudeFilter(e.target.value)}
               className={styles['filter-select']}
+              data-testid="filter-select"
             >
               {MAGNITUDE_FILTERS.map((f) => (
                 <option key={f.id} value={f.id}>
@@ -348,6 +351,7 @@ export default function Timeline() {
               value={timeFilter}
               onChange={(e) => setTimeFilter(e.target.value)}
               className={styles['filter-select']}
+              data-testid="filter-select"
             >
               {TIME_FILTERS.map((f) => (
                 <option key={f.id} value={f.id}>
@@ -360,7 +364,7 @@ export default function Timeline() {
       </div>
 
       {/* Timeline Track */}
-      <div className={styles['timeline-track']}>
+      <div className={styles['timeline-track']} data-testid="timeline-track">
         {filteredEvents.length === 0 ? (
           <div className={styles['empty-state']}>No events match your filters</div>
         ) : (
@@ -380,6 +384,7 @@ export default function Timeline() {
                 <motion.div
                   key={event.id}
                   className={`${styles['timeline-event']} ${isSelected ? styles['selected'] : ''} ${isTD ? styles['is-td'] : ''} ${isINT ? styles['is-int'] : ''}`}
+                  data-testid="timeline-event"
                   layout
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -460,7 +465,7 @@ export default function Timeline() {
                   </div>
 
                   {/* Event content card */}
-                  <div className={styles['timeline-event-content']}>
+                  <div className={styles['timeline-event-content']} data-testid="timeline-event-content">
                     <div className={styles['timeline-event-header']}>
                       <span className={styles['timeline-time']}>
                         {formatTime(event.timestamp)}
@@ -540,7 +545,7 @@ export default function Timeline() {
                           )}
 
                           {/* Inline trade widget */}
-                          <div className={styles['inline-trade-widget']}>
+                          <div className={styles['inline-trade-widget']} data-testid="inline-trade-widget">
                             <div className={styles['trade-quantity']}>
                               <button
                                 className={styles['qty-btn']}
@@ -580,6 +585,8 @@ export default function Timeline() {
                             <div className={styles['trade-buttons']}>
                               <button
                                 className={`${styles['trade-btn']} ${styles['buy']}`}
+                                data-testid="trade-btn"
+                                data-variant="buy"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleBuy(event);
@@ -596,6 +603,8 @@ export default function Timeline() {
                               </button>
                               <button
                                 className={`${styles['trade-btn']} ${styles['sell']}`}
+                                data-testid="trade-btn"
+                                data-variant="sell"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleSell(event);

@@ -25,11 +25,11 @@ export default function Leaderboard() {
       <h1 className={styles['page-title']}>Leaderboard</h1>
       <p className={styles['page-subtitle']}>Top traders in your league this week</p>
 
-      <div className={styles['user-rank-card']}>
-        <div className={styles['rank-badge']}>#{displayRank}</div>
+      <div className={styles['user-rank-card']} data-testid="user-rank-card">
+        <div className={styles['rank-badge']} data-testid="rank-badge">#{displayRank}</div>
         <div className={styles['rank-details']}>
           <span className={styles['rank-label']}>Your Current Rank</span>
-          <span className={styles['rank-value']}>
+          <span className={styles['rank-value']} data-testid="rank-value">
             ${userValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </span>
         </div>
@@ -62,7 +62,7 @@ export default function Leaderboard() {
         </motion.div>
       )}
 
-      <div className={styles['leaderboard-table']}>
+      <div className={styles['leaderboard-table']} data-testid="leaderboard-table">
         <div className={styles['table-header']}>
           <span className={styles['col-rank']}>Rank</span>
           <span className={styles['col-trader']}>Trader</span>
@@ -74,6 +74,7 @@ export default function Leaderboard() {
           <motion.div
             key={trader.memberId}
             className={`${styles['table-row']} ${index < 3 ? styles['top-three'] : ''} ${trader.isUser ? styles['user-row'] : ''}`}
+            data-testid={trader.isUser ? 'user-row' : 'table-row'}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.05 }}
@@ -84,13 +85,13 @@ export default function Leaderboard() {
               {index === 2 && <span className={`${styles['medal']} ${styles['bronze']}`}>🥉</span>}
               {index > 2 && <span className={styles['rank-number']}>{index + 1}</span>}
             </span>
-            <span className={styles['col-trader']}>
+            <span className={styles['col-trader']} data-testid="col-trader">
               <span className={styles['trader-avatar']}>{trader.avatar}</span>
               <span className={styles['trader-name']}>
                 {trader.isUser ? 'You' : trader.name}
               </span>
             </span>
-            <span className={styles['col-value']}>
+            <span className={styles['col-value']} data-testid="col-value">
               $
               {trader.totalValue.toLocaleString('en-US', {
                 minimumFractionDigits: 2,
@@ -98,6 +99,7 @@ export default function Leaderboard() {
             </span>
             <span
               className={`${styles['col-gain']} ${(trader.gainPercent ?? 0) >= 0 ? 'text-up' : 'text-down'}`}
+              data-testid="col-gain"
               aria-label={`${(trader.gainPercent ?? 0) >= 0 ? 'Up' : 'Down'} ${Math.abs(trader.gainPercent ?? 0).toFixed(1)} percent`}
             >
               {(trader.gainPercent ?? 0) >= 0 ? '▲ +' : '▼ '}

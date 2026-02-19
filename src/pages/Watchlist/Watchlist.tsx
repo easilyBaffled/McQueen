@@ -38,6 +38,7 @@ export default function Watchlist() {
       {watchedPlayers.length === 0 ? (
         <motion.div
           className={`${styles['empty-state']} ${styles['enhanced']}`}
+          data-testid="empty-state"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -93,6 +94,7 @@ export default function Watchlist() {
                   <button
                     key={player.id}
                     className={styles['quick-add-player']}
+                    data-testid="quick-add-player"
                     onClick={() => handleQuickAdd(player.id, player.name)}
                   >
                     <div className={styles['quick-add-info']}>
@@ -121,7 +123,7 @@ export default function Watchlist() {
           </Link>
         </motion.div>
       ) : (
-        <div className={styles['watchlist-grid']}>
+        <div className={styles['watchlist-grid']} data-testid="watchlist-grid">
           {watchedPlayers.map((player, index) => (
             <motion.div
               key={player.id}
@@ -129,12 +131,14 @@ export default function Watchlist() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.05 }}
               className={styles['watchlist-card-wrapper']}
+              data-testid="watchlist-card-wrapper"
             >
               <Link to={`/player/${player.id}`}>
                 <PlayerCard player={player} />
               </Link>
               <button
                 className={styles['remove-button']}
+                data-testid="remove-button"
                 onClick={(e) => handleRemove(e, player.id, player.name)}
                 title="Remove from watchlist"
                 aria-label={`Remove ${player.name} from watchlist`}
