@@ -11,7 +11,7 @@ import { STORAGE_KEYS } from '../constants';
 import { read, write } from '../services/storageService';
 import type { ChildrenProps, Player, ScenarioContextValue, ScenarioData } from '../types';
 
-const ScenarioContext = createContext<ScenarioContextValue | null>(null);
+export const ScenarioContext = createContext<ScenarioContextValue | null>(null);
 
 const scenarioLoaders: Record<string, () => Promise<ScenarioData>> = {
   midweek: () => import('../data/midweek.json').then((m) => m.default as unknown as ScenarioData),

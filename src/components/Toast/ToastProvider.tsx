@@ -13,12 +13,12 @@ export interface ToastData {
   type: string;
 }
 
-interface ToastContextValue {
+export interface ToastContextValue {
   addToast: (message: string, type?: string, duration?: number) => number;
   removeToast: (id: number) => void;
 }
 
-const ToastContext = createContext<ToastContextValue | null>(null);
+export const ToastContext = createContext<ToastContextValue | null>(null);
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastData[]>([]);

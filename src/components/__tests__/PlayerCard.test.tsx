@@ -1,26 +1,9 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import PlayerCard from '../PlayerCard/PlayerCard';
-
-vi.mock('../../context/ScenarioContext', () => ({
-  useScenario: () => ({
-    scenario: 'midweek',
-  }),
-}));
-
-vi.mock('../../context/TradingContext', () => ({
-  useTrading: () => ({
-    portfolio: {},
-  }),
-}));
-
-vi.mock('../../context/SocialContext', () => ({
-  useSocial: () => ({
-    isWatching: () => false,
-    getLeagueHoldings: () => [],
-  }),
-}));
+import { renderWithProviders } from '../../test/renderWithProviders';
+import { createMockEnrichedPlayer } from '../../test/mockData';
 
 vi.mock('../../utils/playerImages', () => ({
   getPlayerHeadshotUrl: () => null,
@@ -32,23 +15,18 @@ vi.mock('recharts', () => ({
   ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
-const basePlayer = {
-  id: 'p1',
-  name: 'Patrick Mahomes',
-  team: 'KC',
-  position: 'QB',
-  basePrice: 50,
+const basePlayer = createMockEnrichedPlayer({
   currentPrice: 54.25,
   changePercent: 2.5,
   priceChange: 1.25,
   moveReason: 'test reason',
-  contentTiles: [] as { type: string; title?: string; source?: string; url?: string }[],
-  priceHistory: [] as import('../../types').PriceHistoryEntry[],
-};
+  contentTiles: [],
+  priceHistory: [],
+});
 
 describe('PlayerCard', () => {
   it('renders the player name and team', () => {
-    render(<PlayerCard player={basePlayer} />);
+    renderWithProviders(<PlayerCard player={basePlayer} />);
 
     expect(screen.getByText('Patrick Mahomes')).toBeInTheDocument();
     expect(screen.getByText('KC')).toBeInTheDocument();
@@ -56,19 +34,19 @@ describe('PlayerCard', () => {
   });
 
   it('displays the formatted price', () => {
-    render(<PlayerCard player={basePlayer} />);
+    renderWithProviders(<PlayerCard player={basePlayer} />);
     expect(screen.getByText('$54.25')).toBeInTheDocument();
   });
 
   it('shows positive change indicator when price is up', () => {
-    render(<PlayerCard player={basePlayer} />);
+    renderWithProviders(<PlayerCard player={basePlayer} />);
     const change = screen.getByText(/2\.50%/);
     expect(change.className).toMatch(/up/);
   });
 
   it('shows negative change indicator when price is down', () => {
     const downPlayer = { ...basePlayer, changePercent: -3.1 };
-    render(<PlayerCard player={downPlayer} />);
+    renderWithProviders(<PlayerCard player={downPlayer} />);
     const change = screen.getByText(/3\.10%/);
     expect(change.className).toMatch(/down/);
   });
@@ -76,7 +54,7 @@ describe('PlayerCard', () => {
   it('truncates moveReason to 60 characters', () => {
     const longReason = 'A'.repeat(100);
     const player = { ...basePlayer, moveReason: longReason };
-    render(<PlayerCard player={player} />);
+    renderWithProviders(<PlayerCard player={player} />);
     expect(screen.getByText(`${'A'.repeat(60)}...`)).toBeInTheDocument();
   });
 });

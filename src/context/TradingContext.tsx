@@ -24,7 +24,7 @@ import { useScenario } from './ScenarioContext';
 import { useSimulation } from './SimulationContext';
 import type { ChildrenProps, Portfolio, TradingContextValue } from '../types';
 
-const TradingContext = createContext<TradingContextValue | null>(null);
+export const TradingContext = createContext<TradingContextValue | null>(null);
 
 export function TradingProvider({ children }: ChildrenProps) {
   const { players, scenarioVersion, currentData } = useScenario();

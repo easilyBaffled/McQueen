@@ -19,7 +19,7 @@ import { useScenario } from './ScenarioContext';
 import { useTrading } from './TradingContext';
 import type { ChildrenProps, LeagueMember, LeagueHolding, MissionPicks, SocialContextValue } from '../types';
 
-const SocialContext = createContext<SocialContextValue | null>(null);
+export const SocialContext = createContext<SocialContextValue | null>(null);
 
 const leagueLoader = () =>
   import('../data/leagueMembers.json').then((m) => m.default as unknown as { members: LeagueMember[]; holdings: Record<string, LeagueHolding[]> });
