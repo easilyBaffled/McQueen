@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -71,25 +72,26 @@ vi.mock('react-router-dom', () => ({
 }));
 
 vi.mock('recharts', () => ({
-  LineChart: ({ children }) => <div data-testid="line-chart">{children}</div>,
+  LineChart: ({ children }: { children: React.ReactNode }) => <div data-testid="line-chart">{children}</div>,
   Line: () => null,
   XAxis: () => null,
   YAxis: () => null,
   Tooltip: () => null,
-  ResponsiveContainer: ({ children }) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   ReferenceLine: () => null,
   Customized: () => null,
 }));
 
-const componentCache = {};
+const componentCache: Record<string, React.ComponentType<Record<string, unknown>>> = {};
 vi.mock('framer-motion', () => ({
   motion: new Proxy(
     {},
     {
-      get: (_, tag) => {
-        if (!componentCache[tag]) {
-          const Component = ({ children, ref, ...props }) => {
-            const domProps = {};
+      get: (_: unknown, tag: string | symbol) => {
+        const tagStr = String(tag);
+        if (!componentCache[tagStr]) {
+          const Component = ({ children, ref, ...props }: { children?: React.ReactNode; ref?: React.Ref<unknown>; [key: string]: unknown }) => {
+            const domProps: Record<string, unknown> = {};
             for (const [key, value] of Object.entries(props)) {
               if (
                 typeof value !== 'object' &&
@@ -104,21 +106,16 @@ vi.mock('framer-motion', () => ({
                 domProps[key] = value;
               }
             }
-            const El = tag;
-            return (
-              <El ref={ref} {...domProps}>
-                {children}
-              </El>
-            );
+            return React.createElement(tagStr, { ref, ...domProps }, children);
           };
-          Component.displayName = `motion.${tag}`;
-          componentCache[tag] = Component;
+          Component.displayName = `motion.${tagStr}`;
+          componentCache[tagStr] = Component;
         }
-        return componentCache[tag];
+        return componentCache[tagStr];
       },
     },
   ),
-  AnimatePresence: ({ children }) => <>{children}</>,
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 describe('PlayerDetail keyboard navigation (mcq-o0b.3)', () => {

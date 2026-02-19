@@ -58,8 +58,8 @@ export function SocialProvider({ children }: ChildrenProps) {
 
   useEffect(() => {
     getLeagueData().then(({ members, holdings }) => {
-      setLeagueMembers(members);
-      setLeagueHoldings(holdings);
+      setLeagueMembers(members ?? []);
+      setLeagueHoldings(holdings ?? {});
     });
   }, []);
 
@@ -198,7 +198,7 @@ export function SocialProvider({ children }: ChildrenProps) {
         memberPortfolios[member.id] = {
           memberId: member.id,
           name: member.name,
-          avatar: member.avatar,
+          avatar: member.avatar ?? '',
           isUser: false,
           cash: AI_BASE_CASH,
           holdingsValue: 0,
@@ -240,8 +240,8 @@ export function SocialProvider({ children }: ChildrenProps) {
       rank: index + 1,
       gapToNext:
         index > 0 ? allTraders[index - 1].totalValue - trader.totalValue : 0,
-      traderAhead: index > 0 ? allTraders[index - 1] : null,
-    }));
+      traderAhead: index > 0 ? { ...allTraders[index - 1], rank: index, gapToNext: 0 } : null,
+    })) as import('../types').LeaderboardEntry[];
   }, [
     cash,
     getEffectivePrice,

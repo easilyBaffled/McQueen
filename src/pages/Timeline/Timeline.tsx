@@ -3,16 +3,31 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTrading } from '../../context/TradingContext';
 import { useToast } from '../../components/Toast/Toast';
+import type { PriceReason, PriceHistoryEntry, ContentItem, Player } from '../../types';
 import styles from './Timeline.module.css';
 
+interface TimelineEvent {
+  id: string;
+  playerId: string;
+  playerName: string;
+  playerTeam: string;
+  playerPosition: string;
+  entryIndex: number;
+  timestamp: string;
+  price: number;
+  priceChange: number;
+  reason: PriceReason;
+  content?: ContentItem[];
+}
+
 // Color configuration (matches ScenarioInspector)
-const REASON_TYPE_COLORS = {
+const REASON_TYPE_COLORS: Record<string, string> = {
   game_event: '#00C853',
   news: '#2196F3',
   league_trade: '#9C27B0',
 };
 
-const EVENT_TYPE_COLORS = {
+const EVENT_TYPE_COLORS: Record<string, string> = {
   TD: '#00C853',
   INT: '#FF1744',
   stats: '#00BCD4',
@@ -40,7 +55,7 @@ const TIME_FILTERS = [
 ];
 
 // Get color for event type
-function getEventColor(reason) {
+function getEventColor(reason: PriceReason | null | undefined): string {
   const eventType = reason?.eventType;
   const reasonType = reason?.type || 'unknown';
   return eventType
@@ -49,12 +64,12 @@ function getEventColor(reason) {
 }
 
 // Get event type label
-function getEventTypeLabel(reason) {
+function getEventTypeLabel(reason: PriceReason | null | undefined): string {
   return reason?.eventType || reason?.type || 'event';
 }
 
 // Calculate price change percentage from previous entry
-function calculatePriceChange(entries, currentIndex, player) {
+function calculatePriceChange(entries: PriceHistoryEntry[], currentIndex: number, player: { basePrice: number }): number {
   if (currentIndex === 0) {
     const basePrice = player?.basePrice || entries[0].price;
     return ((entries[0].price - basePrice) / basePrice) * 100;
@@ -65,7 +80,7 @@ function calculatePriceChange(entries, currentIndex, player) {
 }
 
 // Format time for display
-function formatTime(timestamp) {
+function formatTime(timestamp: string): string {
   if (!timestamp) return '';
   const date = new Date(timestamp);
   return date.toLocaleString('en-US', {
@@ -83,20 +98,20 @@ export default function Timeline() {
   const [magnitudeFilter, setMagnitudeFilter] = useState('all');
   const [timeFilter, setTimeFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [tradeQuantities, setTradeQuantities] = useState({});
+  const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
+  const [tradeQuantities, setTradeQuantities] = useState<Record<string, number>>({});
 
   const players = getPlayers();
 
   // Build unified timeline from all players' priceHistory
   const allEvents = useMemo(() => {
-    const events = [];
+    const events: TimelineEvent[] = [];
 
     players.forEach((player) => {
       if (player.priceHistory) {
-        player.priceHistory.forEach((entry, index) => {
+        player.priceHistory.forEach((entry: PriceHistoryEntry, index: number) => {
           const priceChange = calculatePriceChange(
-            player.priceHistory,
+            player.priceHistory!,
             index,
             player,
           );
@@ -119,7 +134,7 @@ export default function Timeline() {
     });
 
     // Sort by timestamp (newest first)
-    events.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    events.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     return events;
   }, [players]);
@@ -186,17 +201,17 @@ export default function Timeline() {
   );
 
   // Get/set trade quantity for an event
-  const getTradeQuantity = (eventId) => tradeQuantities[eventId] || 1;
-  const setTradeQuantity = (eventId, qty) => {
+  const getTradeQuantity = (eventId: string) => tradeQuantities[eventId] || 1;
+  const setTradeQuantity = (eventId: string, qty: number) => {
     setTradeQuantities((prev) => ({ ...prev, [eventId]: Math.max(1, qty) }));
   };
 
   // Handle buy
-  const handleBuy = (event: React.SyntheticEvent) => {
-    const player = getPlayer(event.playerId);
+  const handleBuy = (evt: TimelineEvent) => {
+    const player = getPlayer(evt.playerId);
     if (!player) return;
 
-    const quantity = getTradeQuantity(event.id);
+    const quantity = getTradeQuantity(evt.id);
     const cost = player.currentPrice * quantity;
 
     if (cost > cash) {
@@ -204,37 +219,36 @@ export default function Timeline() {
       return;
     }
 
-    if (buyShares(event.playerId, quantity)) {
+    if (buyShares(evt.playerId, quantity)) {
       addToast(
-        `Bought ${quantity} share${quantity > 1 ? 's' : ''} of ${event.playerName} for $${cost.toFixed(2)}`,
+        `Bought ${quantity} share${quantity > 1 ? 's' : ''} of ${evt.playerName} for $${cost.toFixed(2)}`,
         'success',
       );
       setSelectedEvent(null);
-      setTradeQuantity(event.id, 1);
+      setTradeQuantity(evt.id, 1);
     }
   };
 
-  // Handle sell
-  const handleSell = (event: React.SyntheticEvent) => {
-    const player = getPlayer(event.playerId);
+  const handleSell = (evt: TimelineEvent) => {
+    const player = getPlayer(evt.playerId);
     if (!player) return;
 
-    const holding = portfolio[event.playerId];
+    const holding = portfolio[evt.playerId];
     if (!holding || holding.shares === 0) {
       addToast("You don't own any shares of this player", 'error');
       return;
     }
 
-    const quantity = Math.min(getTradeQuantity(event.id), holding.shares);
+    const quantity = Math.min(getTradeQuantity(evt.id), holding.shares);
     const proceeds = player.currentPrice * quantity;
 
-    if (sellShares(event.playerId, quantity)) {
+    if (sellShares(evt.playerId, quantity)) {
       addToast(
-        `Sold ${quantity} share${quantity > 1 ? 's' : ''} of ${event.playerName} for $${proceeds.toFixed(2)}`,
+        `Sold ${quantity} share${quantity > 1 ? 's' : ''} of ${evt.playerName} for $${proceeds.toFixed(2)}`,
         'success',
       );
       setSelectedEvent(null);
-      setTradeQuantity(event.id, 1);
+      setTradeQuantity(evt.id, 1);
     }
   };
 
@@ -507,10 +521,10 @@ export default function Timeline() {
                           )}
 
                           {/* Content links */}
-                          {event.content?.length > 0 && (
+                          {(event.content?.length ?? 0) > 0 && (
                             <div className={styles['timeline-content-list']}>
                               <span className={styles['content-label']}>Related:</span>
-                              {event.content.map((c, i: number) => (
+                              {event.content!.map((c: ContentItem, i: number) => (
                                 <a
                                   key={i}
                                   href={c.url}

@@ -500,9 +500,9 @@ describe('TC-016: version single source of truth', () => {
 // TC-017: Context providers use storageService exclusively — no direct localStorage calls
 describe('TC-017: Split context integration (static analysis)', () => {
   const contextFiles = [
-    { name: 'ScenarioContext', path: '../../context/ScenarioContext.jsx' },
-    { name: 'TradingContext', path: '../../context/TradingContext.jsx' },
-    { name: 'SocialContext', path: '../../context/SocialContext.jsx' },
+    { name: 'ScenarioContext', path: '../../context/ScenarioContext.tsx' },
+    { name: 'TradingContext', path: '../../context/TradingContext.tsx' },
+    { name: 'SocialContext', path: '../../context/SocialContext.tsx' },
   ];
 
   it('context files import read and/or write from storageService', async () => {
@@ -538,7 +538,7 @@ describe('TC-017: Split context integration (static analysis)', () => {
     const path = await import('node:path');
     const contextPath = path.resolve(
       import.meta.dirname,
-      '../../context/ScenarioContext.jsx',
+      '../../context/ScenarioContext.tsx',
     );
     const source = fs.readFileSync(contextPath, 'utf-8');
 
@@ -551,7 +551,7 @@ describe('TC-017: Split context integration (static analysis)', () => {
     const path = await import('node:path');
     const contextPath = path.resolve(
       import.meta.dirname,
-      '../../context/TradingContext.jsx',
+      '../../context/TradingContext.tsx',
     );
     const source = fs.readFileSync(contextPath, 'utf-8');
 
@@ -566,7 +566,7 @@ describe('TC-017: Split context integration (static analysis)', () => {
     const path = await import('node:path');
     const contextPath = path.resolve(
       import.meta.dirname,
-      '../../context/SocialContext.jsx',
+      '../../context/SocialContext.tsx',
     );
     const source = fs.readFileSync(contextPath, 'utf-8');
 

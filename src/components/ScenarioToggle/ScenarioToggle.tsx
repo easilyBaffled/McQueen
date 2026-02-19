@@ -51,19 +51,19 @@ export default function ScenarioToggle() {
   const { espnLoading, espnError, refreshEspnNews } = useSimulation();
   const [showDemoTooltip, setShowDemoTooltip] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const currentScenario =
     scenarios.find((s) => s.id === scenario) || scenarios[0];
 
   // Close dropdown when clicking outside or pressing Escape
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setMobileDropdownOpen(false);
       }
     }
-    function handleKeyDown(e) {
+    function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') setMobileDropdownOpen(false);
     }
     if (mobileDropdownOpen) {
@@ -82,16 +82,16 @@ export default function ScenarioToggle() {
   };
 
   const handleTabKeyDown = useCallback(
-    (e: React.SyntheticEvent) => {
+    (e: React.KeyboardEvent) => {
       if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
       const tabs = Array.from(
-        e.currentTarget.querySelectorAll('.scenario-tab:not(.inspector-tab)'),
+        e.currentTarget.querySelectorAll<HTMLElement>('[role="tab"]:not([data-inspector])'),
       );
-      const currentIndex = tabs.indexOf(document.activeElement);
+      const currentIndex = tabs.indexOf(document.activeElement as HTMLElement);
       if (currentIndex === -1) return;
 
       e.preventDefault();
-      let nextIndex;
+      let nextIndex: number;
       if (e.key === 'ArrowRight') {
         nextIndex = (currentIndex + 1) % tabs.length;
       } else {
@@ -336,8 +336,9 @@ export default function ScenarioToggle() {
             <div className={styles['scenario-divider']} />
             <NavLink
               to="/inspector"
+              data-inspector="true"
               className={({ isActive }) =>
-                `scenario-tab inspector-tab ${isActive ? 'active' : ''}`
+                `${styles['scenario-tab']} ${styles['inspector-tab']} ${isActive ? styles['active'] : ''}`
               }
             >
               <span className={styles['scenario-tab-content']}>

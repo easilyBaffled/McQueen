@@ -113,9 +113,9 @@ export default function DailyMission({ collapsible = false }) {
                             {player?.name || id}
                           </span>
                           <span
-                            className={`${styles['result-change']} ${player?.changePercent >= 0 ? styles['up'] : styles['down']}`}
+                            className={`${styles['result-change']} ${(player?.changePercent ?? 0) >= 0 ? styles['up'] : styles['down']}`}
                           >
-                            {player?.changePercent >= 0 ? '▲' : '▼'}{' '}
+                            {(player?.changePercent ?? 0) >= 0 ? '▲' : '▼'}{' '}
                             {Math.abs(player?.changePercent || 0).toFixed(1)}%
                           </span>
                           <span className={styles['result-status']}>
@@ -137,9 +137,9 @@ export default function DailyMission({ collapsible = false }) {
                             {player?.name || id}
                           </span>
                           <span
-                            className={`${styles['result-change']} ${player?.changePercent >= 0 ? styles['up'] : styles['down']}`}
+                            className={`${styles['result-change']} ${(player?.changePercent ?? 0) >= 0 ? styles['up'] : styles['down']}`}
                           >
-                            {player?.changePercent >= 0 ? '▲' : '▼'}{' '}
+                            {(player?.changePercent ?? 0) >= 0 ? '▲' : '▼'}{' '}
                             {Math.abs(player?.changePercent || 0).toFixed(1)}%
                           </span>
                           <span className={styles['result-status']}>

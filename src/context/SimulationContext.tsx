@@ -248,7 +248,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
               const newOverrides = { ...prev };
               newOverrides[timelineEntry.playerId] = timelineEntry.price;
 
-              const currentPrices = {};
+              const currentPrices: Record<string, number> = {};
               players.forEach((p) => {
                 currentPrices[p.id] =
                   newOverrides[p.id] || getCurrentPriceFromHistory(p);
@@ -273,7 +273,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
         });
       }, TICK_INTERVAL_MS);
 
-      return () => clearInterval(tickIntervalRef.current);
+      return () => { if (tickIntervalRef.current) clearInterval(tickIntervalRef.current); };
     }
   }, [scenario, isPlaying, unifiedTimeline, players]);
 

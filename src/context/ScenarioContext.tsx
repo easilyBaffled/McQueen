@@ -29,7 +29,7 @@ export function ScenarioProvider({ children }: ChildrenProps) {
   const [scenario, setScenarioState] = useState(() =>
     read(STORAGE_KEYS.scenario, 'midweek'),
   );
-  const [currentData, setCurrentData] = useState(null);
+  const [currentData, setCurrentData] = useState<ScenarioData | null>(null);
   const [scenarioLoading, setScenarioLoading] = useState(true);
   const scenarioVersionRef = useRef(0);
   const [scenarioVersion, setScenarioVersion] = useState(0);

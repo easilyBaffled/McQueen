@@ -36,7 +36,7 @@ export default function Portfolio() {
         gainPercent,
       };
     })
-    .filter(Boolean); // Remove null entries
+    .filter((h): h is NonNullable<typeof h> => h !== null);
 
   return (
     <div className={styles['portfolio-page']}>

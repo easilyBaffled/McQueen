@@ -15,12 +15,13 @@ import { useTrading } from '../../context/TradingContext';
 import { useSocial } from '../../context/SocialContext';
 import { EventMarkerPopup, getEventConfig } from '../../shared';
 import { useToast } from '../../components';
-import { getPlayerNewsUrls, getTeamNewsUrl } from '../../utils/espnUrls';
+import { getPlayerNewsUrls } from '../../utils/espnUrls';
 import { getPlayerHeadshotUrl } from '../../utils/playerImages';
+import type { PriceReason, EventData } from '../../types';
 import styles from './PlayerDetail.module.css';
 
 // Event type colors (matching ScenarioInspector)
-const EVENT_TYPE_COLORS = {
+const EVENT_TYPE_COLORS: Record<string, string> = {
   TD: '#00C853',
   INT: '#FF1744',
   stats: '#00BCD4',
@@ -31,7 +32,7 @@ const EVENT_TYPE_COLORS = {
   default: '#666666',
 };
 
-const REASON_TYPE_COLORS = {
+const REASON_TYPE_COLORS: Record<string, string> = {
   game_event: '#00BCD4',
   news: '#2196F3',
   league_trade: '#9C27B0',
@@ -39,7 +40,7 @@ const REASON_TYPE_COLORS = {
 };
 
 // Map reason types to event config types
-function getReasonEventType(reason) {
+function getReasonEventType(reason: PriceReason | null | undefined): string {
   if (!reason) return 'default';
 
   if (reason.type === 'game_event') {
@@ -54,7 +55,7 @@ function getReasonEventType(reason) {
 }
 
 // Get display label for event type
-function getEventTypeLabel(reason) {
+function getEventTypeLabel(reason: PriceReason | null | undefined): string {
   if (!reason) return 'Event';
 
   if (reason.type === 'game_event') {
@@ -79,31 +80,32 @@ export default function PlayerDetail() {
   const [buyAmount, setBuyAmount] = useState(1);
   const [sellAmount, setSellAmount] = useState(1);
   const [activeTab, setActiveTab] = useState('buy');
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [imageError, setImageError] = useState(false);
-  const [playerNewsUrls, setPlayerNewsUrls] = useState({});
-  const chartContainerRef = useRef(null);
+  const [playerNewsUrls, setPlayerNewsUrls] = useState<Record<string, string>>({});
+  const chartContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getPlayerNewsUrls().then(setPlayerNewsUrls);
   }, []);
 
-  const player = getPlayer(playerId);
-  const holding = portfolio[playerId];
-  const watching = isWatching(playerId);
-  const leagueHoldings = getLeagueHoldings(playerId);
+  const id = playerId ?? '';
+  const player = getPlayer(id);
+  const holding = portfolio[id];
+  const watching = isWatching(id);
+  const leagueHoldings = getLeagueHoldings(id);
 
-  const handleTradeTabKeyDown = useCallback((e: React.SyntheticEvent) => {
+  const handleTradeTabKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
     const tabs = Array.from(
-      e.currentTarget.querySelectorAll('[role="tab"]:not([disabled])'),
+      e.currentTarget.querySelectorAll<HTMLElement>('[role="tab"]:not([disabled])'),
     );
-    const currentIndex = tabs.indexOf(document.activeElement);
+    const currentIndex = tabs.indexOf(document.activeElement as HTMLElement);
     if (currentIndex === -1) return;
 
     e.preventDefault();
-    let nextIndex;
+    let nextIndex: number;
     if (e.key === 'ArrowRight') {
       nextIndex = (currentIndex + 1) % tabs.length;
     } else {
@@ -148,17 +150,23 @@ export default function PlayerDetail() {
   const xAxisInterval = Math.max(0, Math.floor((chartData.length - 1) / 4));
 
   // Handle event marker click - now using PriceChange format
-  const handleEventClick = (priceEntry, cx, cy) => {
+  interface ChartEntry {
+    time: number;
+    price: number;
+    timestamp: string;
+    reason: PriceReason;
+    content?: import('../../types').ContentItem[];
+  }
+
+  const handleEventClick = (priceEntry: ChartEntry, cx: number, cy: number) => {
     setPopupPosition({ x: cx, y: cy + 20 });
-    // Convert to event format expected by popup
-    const eventForPopup = {
+    const eventForPopup: EventData = {
       type: getReasonEventType(priceEntry.reason),
       headline: priceEntry.reason?.headline || '',
       source: priceEntry.reason?.source || '',
       url: priceEntry.reason?.url || '',
       price: priceEntry.price,
       timestamp: priceEntry.timestamp,
-      // Include trade info if available
       memberId: priceEntry.reason?.memberId,
       action: priceEntry.reason?.action,
       shares: priceEntry.reason?.shares,
@@ -171,7 +179,7 @@ export default function PlayerDetail() {
   };
 
   // SVG paths for chart markers (scaled for 10px radius marker)
-  const markerPaths = {
+  const markerPaths: Record<string, string> = {
     TD: 'M0 -5L1.5 -1.5L5.5 -0.8L2.5 2L3.1 6L0 4.2L-3.1 6L-2.5 2L-5.5 -0.8L-1.5 -1.5Z', // star
     INT: 'M-4 -4L4 4M4 -4L-4 4', // X
     injury: 'M-1.5 -5V5M-5 -1.5H5', // plus
@@ -185,7 +193,7 @@ export default function PlayerDetail() {
   };
 
   // Custom event marker shape component
-  const EventMarker = ({ cx, cy, priceEntry }) => {
+  const EventMarker = ({ cx, cy, priceEntry }: { cx: number; cy: number; priceEntry: ChartEntry }) => {
     const eventType = getReasonEventType(priceEntry.reason);
     const config = getEventConfig(eventType);
     const path = markerPaths[eventType] || markerPaths.default;
@@ -221,7 +229,7 @@ export default function PlayerDetail() {
 
   const handleBuy = () => {
     const cost = player.currentPrice * buyAmount;
-    if (buyShares(playerId, buyAmount)) {
+    if (buyShares(id, buyAmount)) {
       addToast(
         `Purchased ${buyAmount} share${buyAmount > 1 ? 's' : ''} of ${player.name} for $${cost.toFixed(2)}`,
         'success',
@@ -234,7 +242,7 @@ export default function PlayerDetail() {
 
   const handleSell = () => {
     const proceeds = player.currentPrice * sellAmount;
-    if (sellShares(playerId, sellAmount)) {
+    if (sellShares(id, sellAmount)) {
       addToast(
         `Sold ${sellAmount} share${sellAmount > 1 ? 's' : ''} of ${player.name} for $${proceeds.toFixed(2)}`,
         'success',
@@ -247,10 +255,10 @@ export default function PlayerDetail() {
 
   const handleWatchlistToggle = () => {
     if (watching) {
-      removeFromWatchlist(playerId);
+      removeFromWatchlist(id);
       addToast(`Removed ${player.name} from watchlist`, 'info');
     } else {
-      addToWatchlist(playerId);
+      addToWatchlist(id);
       addToast(`Added ${player.name} to watchlist`, 'success');
     }
   };
@@ -258,7 +266,7 @@ export default function PlayerDetail() {
   const isUp = player.changePercent >= 0;
 
   // Format timestamp for display
-  const formatTimestamp = (timestamp) => {
+  const formatTimestamp = (timestamp: string) => {
     if (!timestamp) return '';
     const date = new Date(timestamp);
     return date.toLocaleString('en-US', {
@@ -281,9 +289,9 @@ export default function PlayerDetail() {
       <div className={styles['player-header']}>
         <div className={styles['player-header-left']}>
           <div className={styles['player-avatar']}>
-            {getPlayerHeadshotUrl(playerId, 'large') && !imageError ? (
+            {getPlayerHeadshotUrl(id, 'large') && !imageError ? (
               <img
-                src={getPlayerHeadshotUrl(playerId, 'large')}
+                src={getPlayerHeadshotUrl(id, 'large') ?? undefined}
                 alt={player.name}
                 onError={() => setImageError(true)}
               />
@@ -357,10 +365,11 @@ export default function PlayerDetail() {
                       borderRadius: '8px',
                     }}
                     labelStyle={{ display: 'none' }}
-                    formatter={(value, name, props) => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    formatter={(value: any, _name: any, props: any) => {
                       const entry = props.payload;
                       return [
-                        `$${value.toFixed(2)}`,
+                        `$${Number(value).toFixed(2)}`,
                         entry.reason?.headline
                           ? entry.reason.headline.substring(0, 40) + '...'
                           : 'Price',
@@ -382,7 +391,8 @@ export default function PlayerDetail() {
                   />
                   {/* Event markers for significant price changes */}
                   <Customized
-                    component={({ xAxisMap, yAxisMap }) => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    component={(({ xAxisMap, yAxisMap }: any) => {
                       const xAxis = xAxisMap && Object.values(xAxisMap)[0];
                       const yAxis = yAxisMap && Object.values(yAxisMap)[0];
                       if (!xAxis?.scale || !yAxis?.scale) return null;
@@ -424,13 +434,14 @@ export default function PlayerDetail() {
                           })}
                         </g>
                       );
-                    }}
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    }) as any}
                   />
                 </LineChart>
               </ResponsiveContainer>
               {selectedEvent && (
                 <EventMarkerPopup
-                  event={selectedEvent}
+                  event={selectedEvent as EventData}
                   position={popupPosition}
                   onClose={closeEventPopup}
                 />

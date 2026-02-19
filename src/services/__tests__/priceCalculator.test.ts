@@ -92,7 +92,7 @@ describe('createPriceHistoryEntry', () => {
       10,
     );
     expect(entry.reason.source).toBe('ESPN NFL');
-    expect(entry.content[0].source).toBe('ESPN NFL');
+    expect(entry.content![0].source).toBe('ESPN NFL');
   });
 
   it('defaults published to current ISO timestamp when missing', () => {

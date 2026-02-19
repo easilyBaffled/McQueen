@@ -6,7 +6,7 @@ import { useFocusTrap } from '../../hooks/useFocusTrap';
 import styles from './PlayoffAnnouncementModal.module.css';
 
 // Mock portfolio showing user holdings for buyback players (for demonstration)
-const MOCK_BUYBACK_HOLDINGS = {
+const MOCK_BUYBACK_HOLDINGS: Record<string, { shares: number; avgCost: number }> = {
   'diggs-s': { shares: 5, avgCost: 85 },
   stroud: { shares: 8, avgCost: 130 },
   lamb: { shares: 3, avgCost: 112 },
@@ -104,7 +104,7 @@ export default function PlayoffAnnouncementModal() {
 
   useEffect(() => {
     if (!isVisible) return;
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') handleClose();
     };
     document.addEventListener('keydown', handleKeyDown);

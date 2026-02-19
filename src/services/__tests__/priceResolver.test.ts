@@ -261,11 +261,7 @@ describe('getMoveReasonFromHistory', () => {
         {
           timestamp: 't',
           price: 42,
-          reason: undefined as unknown as Player['priceHistory'] extends
-            | (infer E)[]
-            | undefined
-            ? NonNullable<E>['reason']
-            : never,
+          reason: undefined as unknown as import('../../types/scenario').PriceReason,
         },
       ],
     });

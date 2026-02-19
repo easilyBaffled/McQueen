@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 
 beforeEach(() => {
   vi.spyOn(console, 'error').mockImplementation(() => {});
 });
 
-function ThrowingChild({ error = new Error('render failure') }) {
+function ThrowingChild({ error = new Error('render failure') }): React.JSX.Element {
   throw error;
 }
 
@@ -52,7 +52,7 @@ describe('ErrorBoundary', () => {
     });
 
     it('catches a non-Error object (string) thrown during render', () => {
-      function ThrowsString() {
+      function ThrowsString(): React.JSX.Element {
         throw 'string error';
       }
       render(

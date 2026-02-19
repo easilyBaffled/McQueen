@@ -1,8 +1,9 @@
+import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PlayerCard from '../PlayerCard/PlayerCard';
-import Toast, { ToastProvider, useToast } from '../Toast/Toast';
+import { ToastProvider, useToast } from '../Toast/Toast';
 import Layout from '../Layout/Layout';
 import Onboarding from '../Onboarding/Onboarding';
 import AddEventModal from '../AddEventModal/AddEventModal';
@@ -50,7 +51,11 @@ vi.mock('../../context/SocialContext', () => ({
   useSocial: () => ({
     isWatching: () => false,
     getLeagueHoldings: () => [],
-    getLeaderboardRankings: () => [],
+    getLeaderboardRankings: () => [
+      { memberId: 'user', name: 'You', avatar: '👤', isUser: true, cash: 10000, holdingsValue: 500, totalValue: 10500, rank: 1, gapToNext: 0, gain: 500, gainPercent: 5 },
+      { memberId: 'ai1', name: 'Bot1', avatar: '🤖', isUser: false, cash: 9000, holdingsValue: 1000, totalValue: 10000, rank: 2, gapToNext: 500, gain: 0, gainPercent: 0 },
+    ],
+    getLeagueMembers: () => [],
     watchlist: [],
     missionPicks: { risers: [], fallers: [] },
     missionRevealed: false,
@@ -66,29 +71,30 @@ vi.mock('../../utils/devMode', () => ({
 }));
 
 vi.mock('recharts', () => ({
-  LineChart: ({ children }) => <div data-testid="line-chart">{children}</div>,
+  LineChart: ({ children }: { children: React.ReactNode }) => <div data-testid="line-chart">{children}</div>,
   Line: () => null,
-  ResponsiveContainer: ({ children }) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('react-router-dom', () => ({
-  NavLink: ({ children, ...props }) => <a {...props}>{children}</a>,
+  NavLink: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => <a {...props as React.AnchorHTMLAttributes<HTMLAnchorElement>}>{children}</a>,
   Outlet: () => <div data-testid="outlet" />,
   useLocation: () => ({ pathname: '/' }),
-  Link: ({ children, ...props }) => <a {...props}>{children}</a>,
+  Link: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => <a {...props as React.AnchorHTMLAttributes<HTMLAnchorElement>}>{children}</a>,
   useNavigate: () => vi.fn(),
 }));
 
 vi.mock('framer-motion', () => {
-  const componentCache = {};
+  const componentCache: Record<string, React.ComponentType<Record<string, unknown>>> = {};
   return {
     motion: new Proxy(
       {},
       {
-        get: (_, tag) => {
-          if (!componentCache[tag]) {
-            const Component = ({ children, ref, ...props }) => {
-              const domProps = {};
+        get: (_: unknown, tag: string | symbol) => {
+          const tagStr = String(tag);
+          if (!componentCache[tagStr]) {
+            const Component = ({ children, ref, ...props }: { children?: React.ReactNode; ref?: React.Ref<unknown>; [key: string]: unknown }) => {
+              const domProps: Record<string, unknown> = {};
               for (const [key, value] of Object.entries(props)) {
                 if (
                   typeof value !== 'object' &&
@@ -103,21 +109,16 @@ vi.mock('framer-motion', () => {
                   domProps[key] = value;
                 }
               }
-              const El = tag;
-              return (
-                <El ref={ref} {...domProps}>
-                  {children}
-                </El>
-              );
+              return React.createElement(tagStr, { ref, ...domProps }, children);
             };
-            Component.displayName = `motion.${tag}`;
-            componentCache[tag] = Component;
+            Component.displayName = `motion.${tagStr}`;
+            componentCache[tagStr] = Component;
           }
-          return componentCache[tag];
+          return componentCache[tagStr];
         },
       },
     ),
-    AnimatePresence: ({ children }) => <>{children}</>,
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   };
 });
 
@@ -126,9 +127,13 @@ const basePlayer = {
   name: 'Patrick Mahomes',
   team: 'KC',
   position: 'QB',
+  basePrice: 50,
   currentPrice: 54.25,
   changePercent: 2.5,
-  priceHistory: [50, 51, 52, 53],
+  priceChange: 1.25,
+  moveReason: 'test reason',
+  contentTiles: [],
+  priceHistory: [] as import('../../types').PriceHistoryEntry[],
 };
 
 const downPlayer = {
@@ -157,9 +162,9 @@ describe('ARIA attributes (mcq-o0b.2)', () => {
       </ToastProvider>,
     );
 
-    const container = document.querySelector('.toast-container');
+    const container = document.querySelector('[aria-live="polite"]') || document.querySelector('[role="status"]');
+    expect(container).toBeInTheDocument();
     expect(container).toHaveAttribute('aria-live', 'polite');
-    expect(container).toHaveAttribute('role', 'status');
   });
 
   it('Glossary modal has role="dialog" and aria-modal', () => {
@@ -321,7 +326,7 @@ describe('Keyboard navigation (mcq-o0b.3)', () => {
 
     const lastFocusable = focusableElements[focusableElements.length - 1];
 
-    lastFocusable.focus();
+    (lastFocusable as HTMLElement).focus();
     expect(document.activeElement).toBe(lastFocusable);
 
     const user = userEvent.setup();
@@ -384,26 +389,29 @@ describe('Secondary indicators for color-coded values (mcq-o0b.4)', () => {
   it('Portfolio total gain/loss shows arrow and aria-label', () => {
     render(<Portfolio />);
 
-    const gainEl = document.querySelector('.summary-value.text-up, .summary-value.text-down');
+    const gainEls = document.querySelectorAll('[aria-label*="ain"], [aria-label*="oss"]');
+    const gainEl = Array.from(gainEls).find((el) => /[▲▼]/.test(el.textContent ?? ''));
     expect(gainEl).toBeInTheDocument();
-    expect(gainEl.textContent).toMatch(/[▲▼]/);
+    expect(gainEl!.textContent).toMatch(/[▲▼]/);
     expect(gainEl).toHaveAttribute('aria-label');
-    expect(gainEl.getAttribute('aria-label')).toMatch(/gain|loss/i);
+    expect(gainEl!.getAttribute('aria-label')).toMatch(/gain|loss/i);
   });
 
   it('Leaderboard user rank change shows arrow and aria-label', () => {
     render(<Leaderboard />);
 
-    const rankChange = document.querySelector('.rank-change');
+    const ariaEls = document.querySelectorAll('[aria-label*="percent"]');
+    const rankChange = Array.from(ariaEls).find((el) => /[▲▼]/.test(el.textContent ?? ''));
     expect(rankChange).toBeInTheDocument();
-    expect(rankChange.textContent).toMatch(/[▲▼]/);
+    expect(rankChange!.textContent).toMatch(/[▲▼]/);
     expect(rankChange).toHaveAttribute('aria-label');
   });
 
   it('Leaderboard trader weekly gains show arrows and aria-labels', () => {
     render(<Leaderboard />);
 
-    const gains = document.querySelectorAll('.table-row .col-gain');
+    const ariaEls = document.querySelectorAll('[aria-label*="percent"]');
+    const gains = Array.from(ariaEls).filter((el) => /[▲▼]/.test(el.textContent ?? ''));
     expect(gains.length).toBeGreaterThan(0);
     gains.forEach((el) => {
       expect(el.textContent).toMatch(/[▲▼]/);

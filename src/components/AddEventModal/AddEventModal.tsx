@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
 import styles from './AddEventModal.module.css';
-import type { Player, PriceHistoryEntry } from '../../types';
+import type { Player, PriceHistoryEntry, PriceReason } from '../../types';
 
 interface AddEventModalProps {
   isOpen: boolean;
@@ -76,12 +76,12 @@ export default function AddEventModal({
     contentUrl: '#',
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const focusTrapRef = useFocusTrap(isOpen);
 
   useEffect(() => {
     if (!isOpen) return;
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', handleKeyDown);
@@ -108,22 +108,26 @@ export default function AddEventModal({
   }, [isOpen, preselectedPlayerId]);
 
   // Get the selected player's current price for reference
-  const selectedPlayer = players.find((p) => p.id === formData.playerId);
+  const selectedPlayer = players?.find((p: Player) => p.id === formData.playerId);
   const currentPrice =
-    selectedPlayer?.priceHistory?.length > 0
-      ? selectedPlayer.priceHistory[selectedPlayer.priceHistory.length - 1]
+    (selectedPlayer?.priceHistory?.length ?? 0) > 0
+      ? selectedPlayer!.priceHistory![selectedPlayer!.priceHistory!.length - 1]
           .price
       : selectedPlayer?.basePrice || 0;
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | boolean | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: null }));
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
     }
   };
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
 
     if (!formData.playerId) {
       newErrors.playerId = 'Please select a player';
@@ -156,13 +160,12 @@ export default function AddEventModal({
     if (!validateForm()) return;
 
     // Build the price history entry
-    const entry = {
+    const entry: PriceHistoryEntry = {
       timestamp: new Date(formData.timestamp).toISOString(),
       price: parseFloat(formData.price),
       reason: buildReason(),
     };
 
-    // Add content if enabled
     if (formData.contentEnabled && formData.contentTitle.trim()) {
       entry.content = [
         {
@@ -194,9 +197,9 @@ export default function AddEventModal({
     }));
   };
 
-  const buildReason = () => {
-    const base = {
-      type: formData.reasonType,
+  const buildReason = (): PriceReason => {
+    const base: PriceReason = {
+      type: formData.reasonType as PriceReason['type'],
       headline: formData.headline,
       source: formData.source,
     };
@@ -212,7 +215,7 @@ export default function AddEventModal({
     if (formData.reasonType === 'league_trade') {
       base.memberId = formData.memberId;
       base.action = formData.action;
-      base.shares = parseInt(formData.shares, 10);
+      base.shares = formData.shares;
     }
 
     return base;
@@ -222,7 +225,7 @@ export default function AddEventModal({
   const getSuggestedPrice = () => {
     if (!currentPrice) return '';
 
-    const changes = {
+    const changes: Record<string, number> = {
       TD: currentPrice * 1.025,
       INT: currentPrice * 0.97,
       stats: currentPrice * 1.01,
@@ -357,7 +360,7 @@ export default function AddEventModal({
                   role="group"
                   aria-labelledby="game-event-type-label"
                 >
-                  {EVENT_TYPES.game_event.eventTypes.map((type) => (
+                  {EVENT_TYPES.game_event.eventTypes!.map((type) => (
                     <button
                       key={type}
                       type="button"

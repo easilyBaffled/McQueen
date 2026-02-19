@@ -1439,7 +1439,7 @@ describe('EspnSimulationEngine — full TC coverage', () => {
     it('falls back to player.name when searchTerms is undefined', async () => {
       const onPriceUpdate = vi.fn();
       const player = espnPlayer({ name: 'Patrick Mahomes' });
-      delete (player as Record<string, unknown>).searchTerms;
+      delete (player as unknown as Record<string, unknown>).searchTerms;
 
       const engine = new EspnSimulationEngine({
         players: [player],

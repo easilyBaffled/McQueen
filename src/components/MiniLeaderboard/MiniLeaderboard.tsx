@@ -30,7 +30,7 @@ export default function MiniLeaderboard() {
     }
   };
 
-  const formatValue = (value: string) => {
+  const formatValue = (value: number) => {
     return (
       '$' +
       value.toLocaleString('en-US', {

@@ -7,7 +7,15 @@ const FIRST_TRADE_KEY = 'mcqueen-first-trade-seen';
 const ONBOARDING_COMPLETED_KEY = 'mcqueen-onboarding-just-completed';
 
 // Context for tracking onboarding state across the app
-const OnboardingContext = createContext({
+interface OnboardingContextValue {
+  hasCompletedOnboarding: boolean;
+  showFirstTradeGuide: boolean;
+  dismissFirstTradeGuide: () => void;
+  isNewUser: boolean;
+  markOnboardingComplete?: () => void;
+}
+
+const OnboardingContext = createContext<OnboardingContextValue>({
   hasCompletedOnboarding: true,
   showFirstTradeGuide: false,
   dismissFirstTradeGuide: () => {},
@@ -88,7 +96,7 @@ export default function Onboarding() {
 
   useEffect(() => {
     if (!isVisible) return;
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') handleComplete();
     };
     document.addEventListener('keydown', handleKeyDown);
@@ -261,7 +269,7 @@ export default function Onboarding() {
 }
 
 // Tooltip component for contextual hints
-export function Tooltip({ children, content, show }) {
+export function Tooltip({ children, content, show }: { children: React.ReactNode; content: string; show: boolean }) {
   return (
     <div className={styles['tooltip-wrapper']}>
       {children}

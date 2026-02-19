@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AddEventModal from '../../components/AddEventModal/AddEventModal';
 import styles from './ScenarioInspector.module.css';
-import type { ScenarioData, Player, PriceHistoryEntry, ContentTile, PriceReason } from '../../types';
+import type { ScenarioData, Player, PriceHistoryEntry, ContentItem, PriceReason } from '../../types';
 
 interface InspectorTimelineEntry {
   playerId: string;
@@ -13,7 +13,7 @@ interface InspectorTimelineEntry {
   timestamp: string;
   price: number;
   reason?: PriceReason & { eventType?: string };
-  content?: ContentTile[];
+  content?: ContentItem[];
 }
 
 interface SaveStatus {
@@ -652,7 +652,7 @@ export default function ScenarioInspector() {
               />
             ) : (
               <PlayerDetailView
-                player={viewData}
+                player={viewData as Player | null}
                 copyToClipboard={copyToClipboard}
                 copiedId={copiedId}
                 scrollToPriceEntry={scrollToPriceEntry}
@@ -966,9 +966,9 @@ function PlayerCard({
                   </button>
                 )}
               </div>
-              {player.priceHistory?.length > 0 && (
+              {(player.priceHistory?.length ?? 0) > 0 && (
                 <>
-                  {player.priceHistory.map((entry, idx) => {
+                  {player.priceHistory!.map((entry, idx) => {
                     const reasonType = entry.reason?.type || 'unknown';
                     const eventType = entry.reason?.eventType;
                     const typeColor = eventType
@@ -1004,9 +1004,9 @@ function PlayerCard({
                             {entry.reason?.headline}
                           </span>
                         </div>
-                        {entry.content?.length > 0 && (
+                        {(entry.content?.length ?? 0) > 0 && (
                           <div className={styles['entry-content-badges']}>
-                            {entry.content.map((c, i) => (
+                            {entry.content!.map((c, i) => (
                               <span key={i} className={styles['content-badge']}>
                                 {c.type}
                               </span>
@@ -1041,7 +1041,7 @@ function PlayerCard({
 }
 
 interface PlayerDetailViewProps {
-  player: Player | ScenarioData | null;
+  player: Player | null;
   copyToClipboard: (text: string, id: string) => void;
   copiedId: string | null;
   scrollToPriceEntry: (playerId: string, entryIdx: number) => void;
@@ -1112,17 +1112,17 @@ function PlayerDetailView({
 
         <div className={styles['detail-card']}>
           <h4>Latest Update</h4>
-          {player.priceHistory?.length > 0 ? (
+          {(player.priceHistory?.length ?? 0) > 0 ? (
             <>
               <p className={styles['move-reason']}>
                 {
-                  player.priceHistory[player.priceHistory.length - 1].reason
+                  player.priceHistory![player.priceHistory!.length - 1].reason
                     ?.headline
                 }
               </p>
               <span className={styles['update-time']}>
                 {formatTimestamp(
-                  player.priceHistory[player.priceHistory.length - 1].timestamp,
+                  player.priceHistory![player.priceHistory!.length - 1].timestamp,
                 )}
               </span>
             </>
@@ -1145,10 +1145,10 @@ function PlayerDetailView({
             </button>
           )}
         </div>
-        {player.priceHistory?.length > 0 ? (
+        {(player.priceHistory?.length ?? 0) > 0 ? (
           <div className={styles['price-history-list']}>
-            {[...player.priceHistory].reverse().map((entry, idx) => {
-              const actualIdx = player.priceHistory.length - 1 - idx;
+            {[...player.priceHistory!].reverse().map((entry, idx) => {
+              const actualIdx = player.priceHistory!.length - 1 - idx;
               const reasonType = entry.reason?.type || 'unknown';
               const eventType = entry.reason?.eventType;
               const typeColor = eventType
@@ -1156,7 +1156,7 @@ function PlayerDetailView({
                 : REASON_TYPE_COLORS[reasonType];
               const prevPrice =
                 actualIdx > 0
-                  ? player.priceHistory[actualIdx - 1].price
+                  ? player.priceHistory![actualIdx - 1].price
                   : player.basePrice;
               const priceDiff = entry.price - prevPrice;
               const isPositive = priceDiff >= 0;
@@ -1204,9 +1204,9 @@ function PlayerDetailView({
                       </span>
                     </div>
                   )}
-                  {entry.content?.length > 0 && (
+                  {(entry.content?.length ?? 0) > 0 && (
                     <div className={styles['entry-content-list']}>
-                      {entry.content.map((c, i: number) => (
+                      {entry.content!.map((c: ContentItem, i: number) => (
                         <div key={i} className={styles['content-item']}>
                           <span className={`${styles['content-type']} ${styles['type-']} ${c.type}`}>
                             {c.type}
@@ -1309,7 +1309,7 @@ function TimelineView({
   const uniquePlayers = [...new Set(timeline.map((e) => e.playerId))].map(
     (id) => {
       const event = timeline.find((e) => e.playerId === id);
-      return { id, name: event.playerName, team: event.playerTeam };
+      return { id, name: event?.playerName ?? '', team: event?.playerTeam ?? '' };
     },
   );
 
@@ -1525,10 +1525,10 @@ function TimelineView({
                         </span>
                       </div>
                     )}
-                    {event.content?.length > 0 && (
+                    {(event.content?.length ?? 0) > 0 && (
                       <div className={styles['timeline-content-list']}>
                         <span className={styles['content-label']}>Content:</span>
-                        {event.content.map((c, i) => (
+                        {event.content!.map((c: ContentItem, i: number) => (
                           <span
                             key={i}
                             className={`${styles['content-badge']} ${styles['type-']} ${c.type}`}

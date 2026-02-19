@@ -43,7 +43,7 @@ export default function PlayerCard({ player, showFirstTradeTip = false }: Player
 
   // Generate sparkline data
   const sparklineData =
-    player.priceHistory?.map((price, i) => ({ price })) || [];
+    player.priceHistory?.map((entry) => ({ price: entry.price })) || [];
   if (sparklineData.length > 0) {
     sparklineData.push({ price: player.currentPrice });
   }

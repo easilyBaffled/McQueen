@@ -11,7 +11,7 @@ export default function Watchlist() {
   const { watchlist, removeFromWatchlist, addToWatchlist } = useSocial();
   const { addToast } = useToast();
 
-  const watchedPlayers = watchlist.map((id) => getPlayer(id)).filter(Boolean);
+  const watchedPlayers = watchlist.map((id) => getPlayer(id)).filter((p): p is NonNullable<typeof p> => p !== null);
 
   // Get popular players that aren't already watched
   const popularPlayers = getPlayers()
@@ -24,7 +24,7 @@ export default function Watchlist() {
     addToast(`Added ${playerName} to watchlist`, 'success');
   };
 
-  const handleRemove = (e, playerId: string, playerName: string) => {
+  const handleRemove = (e: React.MouseEvent, playerId: string, playerName: string) => {
     e.preventDefault();
     removeFromWatchlist(playerId);
     addToast(`Removed ${playerName} from watchlist`, 'info');

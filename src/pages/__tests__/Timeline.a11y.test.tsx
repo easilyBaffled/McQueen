@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -38,21 +39,22 @@ vi.mock('../../context/TradingContext', () => ({
   }),
 }));
 
-vi.mock('../../components/Toast', () => ({
+vi.mock('../../components/Toast/Toast', () => ({
   useToast: () => ({ addToast: vi.fn() }),
 }));
 
 vi.mock('react-router-dom', () => ({
-  Link: ({ children, ...props }) => <a {...props}>{children}</a>,
+  Link: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => <a {...props as React.AnchorHTMLAttributes<HTMLAnchorElement>}>{children}</a>,
 }));
 
 vi.mock('framer-motion', () => ({
   motion: new Proxy(
     {},
     {
-      get: (_, tag) => {
-        const Component = ({ children, ...props }) => {
-          const domProps = {};
+      get: (_: unknown, tag: string | symbol) => {
+        const tagStr = String(tag);
+        const Component = ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => {
+          const domProps: Record<string, unknown> = {};
           for (const [key, value] of Object.entries(props)) {
             if (
               typeof value !== 'object' &&
@@ -67,15 +69,14 @@ vi.mock('framer-motion', () => ({
               domProps[key] = value;
             }
           }
-          const El = tag;
-          return <El {...domProps}>{children}</El>;
+          return React.createElement(tagStr, domProps, children);
         };
-        Component.displayName = `motion.${tag}`;
+        Component.displayName = `motion.${tagStr}`;
         return Component;
       },
     },
   ),
-  AnimatePresence: ({ children }) => <>{children}</>,
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 describe('Timeline a11y (mcq-o0b.1)', () => {
@@ -91,7 +92,7 @@ describe('Timeline a11y (mcq-o0b.1)', () => {
     render(<Timeline />);
 
     const user = userEvent.setup();
-    const eventCards = document.querySelectorAll('.timeline-event');
+    const eventCards = document.querySelectorAll('[class*="timeline-event"]');
     expect(eventCards.length).toBeGreaterThan(0);
 
     await user.click(eventCards[0]);
@@ -105,7 +106,7 @@ describe('Timeline a11y (mcq-o0b.1)', () => {
     render(<Timeline />);
 
     const user = userEvent.setup();
-    const eventCards = document.querySelectorAll('.timeline-event');
+    const eventCards = document.querySelectorAll('[class*="timeline-event"]');
     await user.click(eventCards[0]);
 
     const decrementBtn = screen.getByLabelText(/decrease/i);
@@ -116,7 +117,7 @@ describe('Timeline a11y (mcq-o0b.1)', () => {
     render(<Timeline />);
 
     const user = userEvent.setup();
-    const eventCards = document.querySelectorAll('.timeline-event');
+    const eventCards = document.querySelectorAll('[class*="timeline-event"]');
     await user.click(eventCards[0]);
 
     const incrementBtn = screen.getByLabelText(/increase/i);

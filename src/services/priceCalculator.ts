@@ -62,19 +62,20 @@ interface ArticleInput {
 interface PriceHistoryEntry {
   timestamp: string;
   price: number;
+  sentimentDescription?: string;
   reason: {
-    type: 'news';
-    headline: string | undefined;
+    type: 'news' | 'game_event' | 'league_trade';
+    headline: string;
     source: string;
-    url: string | undefined;
-    sentiment: SentimentType;
-    magnitude: number;
+    url?: string;
+    sentiment?: SentimentType;
+    magnitude?: number;
   };
-  content: Array<{
-    type: 'article';
-    title: string | undefined;
-    source: string;
-    url: string;
+  content?: Array<{
+    type: string;
+    title?: string;
+    source?: string;
+    url?: string;
   }>;
 }
 
@@ -235,7 +236,7 @@ export function createPriceHistoryEntry(
     price: newPrice,
     reason: {
       type: 'news',
-      headline: article.headline,
+      headline: article.headline ?? '',
       source: article.source || 'ESPN NFL',
       url: article.url,
       sentiment: sentimentResult.sentiment,

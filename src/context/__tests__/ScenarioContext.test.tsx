@@ -1,8 +1,9 @@
+import React from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { ScenarioProvider, useScenario } from '../ScenarioContext';
 
-function wrapper({ children }) {
+function wrapper({ children }: { children: React.ReactNode }) {
   return <ScenarioProvider>{children}</ScenarioProvider>;
 }
 
@@ -214,7 +215,7 @@ describe('ScenarioContext', () => {
   it('persists scenario to localStorage on change', async () => {
     const { result } = await renderScenarioAndWait();
 
-    const stored1 = JSON.parse(localStorage.getItem('mcqueen-scenario'));
+    const stored1 = JSON.parse(localStorage.getItem('mcqueen-scenario') ?? 'null');
     expect(stored1.data).toBe('midweek');
 
     act(() => {
@@ -225,14 +226,14 @@ describe('ScenarioContext', () => {
       expect(result.current.scenarioLoading).toBe(false);
     });
 
-    const stored2 = JSON.parse(localStorage.getItem('mcqueen-scenario'));
+    const stored2 = JSON.parse(localStorage.getItem('mcqueen-scenario') ?? 'null');
     expect(stored2.data).toBe('playoffs');
 
     act(() => {
       result.current.setScenario('superbowl');
     });
 
-    const stored3 = JSON.parse(localStorage.getItem('mcqueen-scenario'));
+    const stored3 = JSON.parse(localStorage.getItem('mcqueen-scenario') ?? 'null');
     expect(stored3.data).toBe('superbowl');
   });
 
@@ -319,6 +320,6 @@ describe('ScenarioContext', () => {
     const { result } = await renderScenarioAndWait();
     expect(Array.isArray(result.current.players)).toBe(true);
     expect(result.current.players.length).toBeGreaterThan(0);
-    expect(result.current.players).toEqual(result.current.currentData.players);
+    expect(result.current.players).toEqual(result.current.currentData?.players);
   });
 });

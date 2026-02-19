@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import PlayerCard from '../PlayerCard/PlayerCard';
@@ -26,9 +27,9 @@ vi.mock('../../utils/playerImages', () => ({
 }));
 
 vi.mock('recharts', () => ({
-  LineChart: ({ children }) => <div data-testid="line-chart">{children}</div>,
+  LineChart: ({ children }: { children: React.ReactNode }) => <div data-testid="line-chart">{children}</div>,
   Line: () => null,
-  ResponsiveContainer: ({ children }) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 const basePlayer = {
@@ -36,9 +37,13 @@ const basePlayer = {
   name: 'Patrick Mahomes',
   team: 'KC',
   position: 'QB',
+  basePrice: 50,
   currentPrice: 54.25,
   changePercent: 2.5,
-  priceHistory: [50, 51, 52, 53],
+  priceChange: 1.25,
+  moveReason: 'test reason',
+  contentTiles: [] as { type: string; title?: string; source?: string; url?: string }[],
+  priceHistory: [] as import('../../types').PriceHistoryEntry[],
 };
 
 describe('PlayerCard', () => {
@@ -58,14 +63,14 @@ describe('PlayerCard', () => {
   it('shows positive change indicator when price is up', () => {
     render(<PlayerCard player={basePlayer} />);
     const change = screen.getByText(/2\.50%/);
-    expect(change).toHaveClass('up');
+    expect(change.className).toMatch(/up/);
   });
 
   it('shows negative change indicator when price is down', () => {
     const downPlayer = { ...basePlayer, changePercent: -3.1 };
     render(<PlayerCard player={downPlayer} />);
     const change = screen.getByText(/3\.10%/);
-    expect(change).toHaveClass('down');
+    expect(change.className).toMatch(/down/);
   });
 
   it('truncates moveReason to 60 characters', () => {

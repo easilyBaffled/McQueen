@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { ScenarioProvider, useScenario } from '../ScenarioContext';
@@ -5,7 +6,7 @@ import { SimulationProvider, useSimulation } from '../SimulationContext';
 import { TradingProvider, useTrading } from '../TradingContext';
 import { SocialProvider, useSocial } from '../SocialContext';
 
-function FullProviders({ children }) {
+function FullProviders({ children }: { children: React.ReactNode }) {
   return (
     <ScenarioProvider>
       <SimulationProvider>
@@ -86,9 +87,9 @@ describe('Split Contexts – trading', () => {
     const { result } = await renderAllAndWait();
     const player = result.current.trading.getPlayer('mahomes');
     expect(player).not.toBeNull();
-    expect(player.name).toBe('Patrick Mahomes');
-    expect(typeof player.currentPrice).toBe('number');
-    expect(typeof player.changePercent).toBe('number');
+    expect(player!.name).toBe('Patrick Mahomes');
+    expect(typeof player!.currentPrice).toBe('number');
+    expect(typeof player!.changePercent).toBe('number');
     expect(player).toHaveProperty('priceHistory');
   });
 
@@ -388,7 +389,7 @@ describe('Split Contexts – leaderboard', () => {
 
     const user = rankings.find((r) => r.isUser);
     expect(user).toBeDefined();
-    expect(user.name).toBe('You');
+    expect(user!.name).toBe('You');
   });
 
   it('rankings are sorted by totalValue descending', async () => {
