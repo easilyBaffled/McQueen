@@ -6,6 +6,7 @@
 export * from './sentimentEngine';
 export * from './espnService';
 export * from './priceCalculator';
+export * from './storageService';
 
 // Default exports for convenience
 export { default as sentimentEngine } from './sentimentEngine';

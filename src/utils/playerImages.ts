@@ -1,23 +1,17 @@
-// ESPN Player ID mapping for headshots
-// Format: https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/{espnId}.png
+type ImageSize = 'small' | 'medium' | 'large';
 
-const ESPN_IDS = {
-  // QBs
+const ESPN_IDS: Record<string, string> = {
   mahomes: '3139477',
   allen: '3918298',
   jackson: '3916387',
   hurts: '4040715',
   stroud: '4432577',
-
-  // RBs
   mccaffrey: '3117251',
   barkley: '3929630',
   henry: '3043078',
   gibbs: '4429795',
   montgomery: '3116593',
   mixon: '3116385',
-
-  // WRs
   hill: '3116406',
   jefferson: '4262921',
   chase: '4360310',
@@ -26,11 +20,7 @@ const ESPN_IDS = {
   nabers: '4433553',
   'brown-aj': '3116164',
   waddle: '4360234',
-
-  // TEs
   kelce: '15847',
-
-  // Additional players from espnPlayers.json
   'diggs-s': '3116406',
   rice: '4429795',
   cook: '4241985',
@@ -58,30 +48,28 @@ const ESPN_IDS = {
   'moore-dj': '4361741',
 };
 
-// Generate ESPN headshot URL
-export function getPlayerHeadshotUrl(playerId, size = 'medium') {
+const DIMENSIONS: Record<ImageSize, { w: number; h: number }> = {
+  small: { w: 48, h: 35 },
+  medium: { w: 96, h: 70 },
+  large: { w: 200, h: 146 },
+};
+
+export function getPlayerHeadshotUrl(
+  playerId: string,
+  size: ImageSize = 'medium',
+): string | null {
   const espnId = ESPN_IDS[playerId];
+  if (!espnId) return null;
 
-  if (!espnId) {
-    // Return a placeholder silhouette
-    return null;
-  }
-
-  // Size options: small (48x35), medium (96x70), large (500x363)
-  const dimensions = {
-    small: { w: 48, h: 35 },
-    medium: { w: 96, h: 70 },
-    large: { w: 200, h: 146 },
-  };
-
-  const { w, h } = dimensions[size] || dimensions.medium;
-
+  const { w, h } = DIMENSIONS[size] || DIMENSIONS.medium;
   return `https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${espnId}.png&w=${w}&h=${h}&cb=1`;
 }
 
-// Get team logo URL
-export function getTeamLogoUrl(teamAbbr, size = 40) {
-  const teamIds = {
+export function getTeamLogoUrl(
+  teamAbbr: string,
+  size: number = 40,
+): string | null {
+  const teamIds: Record<string, string> = {
     KC: 'kan',
     BUF: 'buf',
     BAL: 'bal',

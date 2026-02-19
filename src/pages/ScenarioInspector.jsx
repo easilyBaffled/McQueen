@@ -1,15 +1,12 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import midweekData from '../data/midweek.json';
-import liveData from '../data/live.json';
-import playoffsData from '../data/playoffs.json';
 import AddEventModal from '../components/AddEventModal';
 import './ScenarioInspector.css';
 
-const scenarioSources = {
-  midweek: midweekData,
-  live: liveData,
-  playoffs: playoffsData,
+const scenarioLoaders = {
+  midweek: () => import('../data/midweek.json').then((m) => m.default),
+  live: () => import('../data/live.json').then((m) => m.default),
+  playoffs: () => import('../data/playoffs.json').then((m) => m.default),
 };
 
 const TEMPLATES = {
@@ -77,14 +74,24 @@ export default function ScenarioInspector() {
   const editorRef = useRef(null);
   const textareaRef = useRef(null);
 
-  // Load scenario data
+  // Load scenario data dynamically
   useEffect(() => {
-    const data = scenarioSources[selectedScenario];
-    const text = JSON.stringify(data, null, 2);
-    setJsonText(text);
-    setParsedData(data);
-    setJsonError(null);
-    setSelectedPlayerId(data.players?.[0]?.id || null);
+    let cancelled = false;
+    const loader = scenarioLoaders[selectedScenario];
+    if (!loader) return;
+
+    loader().then((data) => {
+      if (cancelled) return;
+      const text = JSON.stringify(data, null, 2);
+      setJsonText(text);
+      setParsedData(data);
+      setJsonError(null);
+      setSelectedPlayerId(data.players?.[0]?.id || null);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [selectedScenario]);
 
   // Parse JSON on text change

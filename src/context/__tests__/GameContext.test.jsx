@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { GameProvider, useGame } from '../GameContext';
 
 function wrapper({ children }) {
@@ -8,6 +8,14 @@ function wrapper({ children }) {
 
 function renderGame() {
   return renderHook(() => useGame(), { wrapper });
+}
+
+async function renderGameAndWait() {
+  const hook = renderGame();
+  await waitFor(() => {
+    expect(hook.result.current.scenarioLoading).toBe(false);
+  });
+  return hook;
 }
 
 describe('GameContext', () => {
@@ -28,8 +36,8 @@ describe('GameContext', () => {
     }).toThrow('useGame must be used within a GameProvider');
   });
 
-  it('getPlayers returns array of players with computed fields', () => {
-    const { result } = renderGame();
+  it('getPlayers returns array of players with computed fields', async () => {
+    const { result } = await renderGameAndWait();
     const players = result.current.getPlayers();
     expect(Array.isArray(players)).toBe(true);
     expect(players.length).toBeGreaterThan(0);
@@ -39,8 +47,8 @@ describe('GameContext', () => {
     expect(players[0]).toHaveProperty('name');
   });
 
-  it('getPlayer returns single player with computed fields', () => {
-    const { result } = renderGame();
+  it('getPlayer returns single player with computed fields', async () => {
+    const { result } = await renderGameAndWait();
     const player = result.current.getPlayer('mahomes');
     expect(player).not.toBeNull();
     expect(player.name).toBe('Patrick Mahomes');
@@ -49,13 +57,13 @@ describe('GameContext', () => {
     expect(player).toHaveProperty('priceHistory');
   });
 
-  it('getPlayer returns null for unknown player', () => {
-    const { result } = renderGame();
+  it('getPlayer returns null for unknown player', async () => {
+    const { result } = await renderGameAndWait();
     expect(result.current.getPlayer('nonexistent')).toBeNull();
   });
 
-  it('getEffectivePrice returns a number for known player', () => {
-    const { result } = renderGame();
+  it('getEffectivePrice returns a number for known player', async () => {
+    const { result } = await renderGameAndWait();
     const price = result.current.getEffectivePrice('mahomes');
     expect(typeof price).toBe('number');
     expect(price).toBeGreaterThan(0);
@@ -67,8 +75,8 @@ describe('GameContext – trading', () => {
     localStorage.clear();
   });
 
-  it('buyShares deducts cash and adds to portfolio', () => {
-    const { result } = renderGame();
+  it('buyShares deducts cash and adds to portfolio', async () => {
+    const { result } = await renderGameAndWait();
 
     act(() => {
       result.current.buyShares('mahomes', 1);
@@ -79,8 +87,8 @@ describe('GameContext – trading', () => {
     expect(result.current.portfolio['mahomes'].shares).toBeGreaterThan(0);
   });
 
-  it('buyShares returns false when insufficient cash', () => {
-    const { result } = renderGame();
+  it('buyShares returns false when insufficient cash', async () => {
+    const { result } = await renderGameAndWait();
 
     let success;
     act(() => {
@@ -90,8 +98,8 @@ describe('GameContext – trading', () => {
     expect(success).toBe(false);
   });
 
-  it('sellShares adds cash and removes from portfolio', () => {
-    const { result } = renderGame();
+  it('sellShares adds cash and removes from portfolio', async () => {
+    const { result } = await renderGameAndWait();
 
     act(() => {
       result.current.buyShares('mahomes', 5);
@@ -187,8 +195,8 @@ describe('GameContext – portfolio value', () => {
     expect(pv).toHaveProperty('gainPercent');
   });
 
-  it('portfolio value updates after buying', () => {
-    const { result } = renderGame();
+  it('portfolio value updates after buying', async () => {
+    const { result } = await renderGameAndWait();
     const valueBefore = result.current.getPortfolioValue().value;
 
     act(() => {
@@ -225,8 +233,8 @@ describe('GameContext – scenario switching', () => {
     expect(result.current.isPlaying).toBe(true);
   });
 
-  it('resets cash when changing scenario', () => {
-    const { result } = renderGame();
+  it('resets cash when changing scenario', async () => {
+    const { result } = await renderGameAndWait();
 
     act(() => {
       result.current.buyShares('mahomes', 5);
@@ -236,6 +244,10 @@ describe('GameContext – scenario switching', () => {
 
     act(() => {
       result.current.setScenario('playoffs');
+    });
+
+    await waitFor(() => {
+      expect(result.current.scenarioLoading).toBe(false);
     });
 
     expect(result.current.cash).toBe(10000);

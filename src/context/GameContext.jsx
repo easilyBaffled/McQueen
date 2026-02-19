@@ -7,12 +7,6 @@ import {
   useRef,
   useMemo,
 } from 'react';
-import midweekData from '../data/midweek.json';
-import liveData from '../data/live.json';
-import playoffsData from '../data/playoffs.json';
-import superbowlData from '../data/superbowl.json';
-import leagueData from '../data/leagueMembers.json';
-import espnPlayersData from '../data/espnPlayers.json';
 
 import {
   INITIAL_CASH,
@@ -24,6 +18,8 @@ import {
   MISSION_PICKS_PER_CATEGORY,
   STORAGE_KEYS,
 } from '../constants';
+
+import { read, write } from '../services/storageService';
 
 // ESPN Services
 import { fetchNFLNews, fetchPlayerNews } from '../services/espnService';
@@ -38,17 +34,36 @@ import {
 
 const GameContext = createContext(null);
 
-const scenarioData = {
-  midweek: midweekData,
-  live: liveData,
-  playoffs: playoffsData,
-  superbowl: superbowlData,
-  'espn-live': { scenario: 'espn-live', players: espnPlayersData.players }, // ESPN Live mode
+const scenarioLoaders = {
+  midweek: () => import('../data/midweek.json').then((m) => m.default),
+  live: () => import('../data/live.json').then((m) => m.default),
+  playoffs: () => import('../data/playoffs.json').then((m) => m.default),
+  superbowl: () => import('../data/superbowl.json').then((m) => m.default),
+  'espn-live': () =>
+    import('../data/espnPlayers.json').then((m) => ({
+      scenario: 'espn-live',
+      players: m.default.players,
+    })),
 };
 
-// League members data
-const leagueMembers = leagueData.members;
-const leagueHoldings = leagueData.holdings;
+const leagueLoader = () =>
+  import('../data/leagueMembers.json').then((m) => m.default);
+
+let leagueMembersCache = null;
+let leagueHoldingsCache = null;
+
+async function getLeagueData() {
+  if (leagueMembersCache) {
+    return {
+      members: leagueMembersCache,
+      holdings: leagueHoldingsCache,
+    };
+  }
+  const data = await leagueLoader();
+  leagueMembersCache = data.members;
+  leagueHoldingsCache = data.holdings;
+  return { members: leagueMembersCache, holdings: leagueHoldingsCache };
+}
 
 // ============================================================================
 // Helper functions for the new priceHistory-based data structure
@@ -133,57 +148,58 @@ function buildUnifiedTimeline(players) {
   return timeline;
 }
 
-// Helper to safely get from localStorage
-const getFromStorage = (key, defaultValue) => {
-  try {
-    const stored = localStorage.getItem(key);
-    return stored ? JSON.parse(stored) : defaultValue;
-  } catch {
-    return defaultValue;
-  }
-};
-
 export function GameProvider({ children }) {
   const [scenario, setScenarioState] = useState(() =>
-    getFromStorage(STORAGE_KEYS.scenario, 'midweek'),
+    read(STORAGE_KEYS.scenario, 'midweek'),
   );
   const [tick, setTick] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [priceOverrides, setPriceOverrides] = useState({}); // Override prices during simulation
-  const [userImpact, setUserImpact] = useState({}); // Track price impact from user trades
+  const [priceOverrides, setPriceOverrides] = useState({});
+  const [userImpact, setUserImpact] = useState({});
   const [portfolio, setPortfolio] = useState(() =>
-    getFromStorage(STORAGE_KEYS.portfolio, {}),
-  ); // { playerId: { shares: number, avgCost: number } }
+    read(STORAGE_KEYS.portfolio, {}),
+  );
   const [watchlist, setWatchlist] = useState(() =>
-    getFromStorage(STORAGE_KEYS.watchlist, []),
+    read(STORAGE_KEYS.watchlist, []),
   );
   const [cash, setCash] = useState(() =>
-    getFromStorage(STORAGE_KEYS.cash, INITIAL_CASH),
+    read(STORAGE_KEYS.cash, INITIAL_CASH),
   );
   const [missionPicks, setMissionPicks] = useState({ risers: [], fallers: [] });
   const [missionRevealed, setMissionRevealed] = useState(false);
-  const [history, setHistory] = useState([]); // For timeline debugger
-  const [playoffDilutionApplied, setPlayoffDilutionApplied] = useState(false); // Track if playoff dilution has been applied
+  const [history, setHistory] = useState([]);
+  const [playoffDilutionApplied, setPlayoffDilutionApplied] = useState(false);
   const tickIntervalRef = useRef(null);
 
-  // Persist scenario to localStorage
+  // Dynamic scenario data loading
+  const [currentData, setCurrentData] = useState(null);
+  const [scenarioLoading, setScenarioLoading] = useState(true);
+  const [leagueMembers, setLeagueMembers] = useState([]);
+  const [leagueHoldings, setLeagueHoldings] = useState({});
+
+  // Load league data on mount
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.scenario, JSON.stringify(scenario));
+    getLeagueData().then(({ members, holdings }) => {
+      setLeagueMembers(members);
+      setLeagueHoldings(holdings);
+    });
+  }, []);
+
+  // Persist to storage via storageService
+  useEffect(() => {
+    write(STORAGE_KEYS.scenario, scenario);
   }, [scenario]);
 
-  // Persist portfolio to localStorage
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.portfolio, JSON.stringify(portfolio));
+    write(STORAGE_KEYS.portfolio, portfolio);
   }, [portfolio]);
 
-  // Persist watchlist to localStorage
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.watchlist, JSON.stringify(watchlist));
+    write(STORAGE_KEYS.watchlist, watchlist);
   }, [watchlist]);
 
-  // Persist cash to localStorage
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.cash, JSON.stringify(cash));
+    write(STORAGE_KEYS.cash, cash);
   }, [cash]);
 
   // ESPN Live mode state
@@ -194,8 +210,6 @@ export function GameProvider({ children }) {
   const [processedArticleIds, setProcessedArticleIds] = useState(new Set()); // Track processed articles
   const espnRefreshRef = useRef(null);
 
-  // Get current scenario data
-  const currentData = scenarioData[scenario];
   const players = currentData?.players || [];
 
   // Build unified timeline for live simulation (live and superbowl scenarios)
@@ -339,40 +353,57 @@ export function GameProvider({ children }) {
     }
   }, [isEspnLiveMode, fetchAndProcessEspnNews]);
 
-  // Initialize when scenario changes
+  // Load scenario data dynamically when scenario changes
   useEffect(() => {
-    setPriceOverrides({});
-    setTick(0);
-    setUserImpact({});
-    setPlayoffDilutionApplied(false); // Reset dilution state when changing scenarios
+    let cancelled = false;
+    setScenarioLoading(true);
 
-    // Reset portfolio and cash to scenario's starting values
-    const startingPortfolio = currentData?.startingPortfolio || {};
-    setPortfolio(startingPortfolio);
-    setCash(INITIAL_CASH);
+    const loader = scenarioLoaders[scenario];
+    if (!loader) {
+      setScenarioLoading(false);
+      return;
+    }
 
-    // Reset ESPN state when switching scenarios
-    setEspnNews([]);
-    setEspnError(null);
-    setEspnPriceHistory({});
-    setProcessedArticleIds(new Set());
+    loader().then((data) => {
+      if (cancelled) return;
+      setCurrentData(data);
 
-    // Build initial prices from priceHistory (or basePrice for ESPN Live)
-    const initialPrices = {};
-    players.forEach((player) => {
-      if (scenario === 'espn-live') {
-        initialPrices[player.id] = player.basePrice;
-      } else {
-        initialPrices[player.id] = getCurrentPriceFromHistory(player);
-      }
+      setPriceOverrides({});
+      setTick(0);
+      setUserImpact({});
+      setPlayoffDilutionApplied(false);
+
+      const startingPortfolio = data?.startingPortfolio || {};
+      setPortfolio(startingPortfolio);
+      setCash(INITIAL_CASH);
+
+      setEspnNews([]);
+      setEspnError(null);
+      setEspnPriceHistory({});
+      setProcessedArticleIds(new Set());
+
+      const scenarioPlayers = data?.players || [];
+      const initialPrices = {};
+      scenarioPlayers.forEach((player) => {
+        if (scenario === 'espn-live') {
+          initialPrices[player.id] = player.basePrice;
+        } else {
+          initialPrices[player.id] = getCurrentPriceFromHistory(player);
+        }
+      });
+
+      const actionMessage =
+        scenario === 'espn-live'
+          ? 'ESPN Live mode activated - fetching real news...'
+          : 'Scenario loaded';
+
+      setHistory([{ tick: 0, prices: initialPrices, action: actionMessage }]);
+      setScenarioLoading(false);
     });
 
-    const actionMessage =
-      scenario === 'espn-live'
-        ? 'ESPN Live mode activated - fetching real news...'
-        : 'Scenario loaded';
-
-    setHistory([{ tick: 0, prices: initialPrices, action: actionMessage }]);
+    return () => {
+      cancelled = true;
+    };
   }, [scenario]);
 
   // Apply tick updates for live scenarios (live and superbowl) using unified timeline
@@ -761,13 +792,13 @@ export function GameProvider({ children }) {
         };
       });
     },
-    [portfolio, getEffectivePrice],
+    [portfolio, getEffectivePrice, leagueHoldings, leagueMembers],
   );
 
   // Get all league members
   const getLeagueMembers = useCallback(() => {
     return leagueMembers;
-  }, []);
+  }, [leagueMembers]);
 
   // Calculate leaderboard rankings with actual portfolio values
   const getLeaderboardRankings = useCallback(() => {
@@ -828,7 +859,7 @@ export function GameProvider({ children }) {
         index > 0 ? allTraders[index - 1].totalValue - trader.totalValue : 0,
       traderAhead: index > 0 ? allTraders[index - 1] : null,
     }));
-  }, [cash, getEffectivePrice, getPortfolioValue]);
+  }, [cash, getEffectivePrice, getPortfolioValue, leagueMembers, leagueHoldings]);
 
   // Timeline debugger - go to specific history point
   const goToHistoryPoint = useCallback(
@@ -908,6 +939,7 @@ export function GameProvider({ children }) {
     currentData,
     unifiedTimeline,
     playoffDilutionApplied,
+    scenarioLoading,
 
     // ESPN Live state
     isEspnLiveMode,
