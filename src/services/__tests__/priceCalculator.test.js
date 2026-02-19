@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { applyPriceImpact, createPriceHistoryEntry } from '../priceCalculator';
+import {
+  applyPriceImpact,
+  createPriceHistoryEntry,
+  calculatePriceImpact,
+  calculateNewPrice,
+  calculateCumulativeImpact,
+} from '../priceCalculator';
 
 describe('applyPriceImpact', () => {
   it('increases price with a positive multiplier', () => {
@@ -63,5 +69,129 @@ describe('createPriceHistoryEntry', () => {
 
     const entry = createPriceHistoryEntry(article, sentiment, 10);
     expect(entry.content).toEqual([]);
+  });
+});
+
+describe('calculatePriceImpact', () => {
+  it('returns positive impact for positive sentiment', () => {
+    const result = calculatePriceImpact({
+      sentiment: 'positive',
+      magnitude: 0.8,
+      confidence: 0.9,
+    });
+    expect(result.impactPercent).toBeGreaterThan(0);
+    expect(result.impactMultiplier).toBeGreaterThan(1);
+    expect(result.description).toBeTruthy();
+  });
+
+  it('returns negative impact for negative sentiment', () => {
+    const result = calculatePriceImpact({
+      sentiment: 'negative',
+      magnitude: 0.8,
+      confidence: 0.9,
+    });
+    expect(result.impactPercent).toBeLessThan(0);
+    expect(result.impactMultiplier).toBeLessThan(1);
+  });
+
+  it('returns near-zero impact for neutral sentiment', () => {
+    const result = calculatePriceImpact({
+      sentiment: 'neutral',
+      magnitude: 0.1,
+      confidence: 0.5,
+    });
+    expect(Math.abs(result.impactPercent)).toBeLessThan(1);
+  });
+
+  it('includes detail breakdown', () => {
+    const result = calculatePriceImpact({
+      sentiment: 'positive',
+      magnitude: 0.5,
+      confidence: 0.7,
+    });
+    expect(result.details).toHaveProperty('sentiment', 'positive');
+    expect(result.details).toHaveProperty('level');
+    expect(result.details).toHaveProperty('confidence', 0.7);
+  });
+});
+
+describe('calculateNewPrice', () => {
+  it('returns new price and change data', () => {
+    const result = calculateNewPrice(100, {
+      sentiment: 'positive',
+      magnitude: 0.8,
+      confidence: 0.9,
+    });
+    expect(result).toHaveProperty('newPrice');
+    expect(result).toHaveProperty('previousPrice', 100);
+    expect(result).toHaveProperty('change');
+    expect(result).toHaveProperty('changePercent');
+    expect(result).toHaveProperty('impact');
+    expect(typeof result.newPrice).toBe('number');
+  });
+
+  it('positive sentiment increases price', () => {
+    const result = calculateNewPrice(100, {
+      sentiment: 'positive',
+      magnitude: 0.8,
+      confidence: 0.9,
+    });
+    expect(result.newPrice).toBeGreaterThan(100);
+    expect(result.change).toBeGreaterThan(0);
+  });
+
+  it('negative sentiment decreases price', () => {
+    const result = calculateNewPrice(100, {
+      sentiment: 'negative',
+      magnitude: 0.8,
+      confidence: 0.9,
+    });
+    expect(result.newPrice).toBeLessThan(100);
+    expect(result.change).toBeLessThan(0);
+  });
+});
+
+describe('calculateCumulativeImpact', () => {
+  it('processes multiple sentiment results', () => {
+    const results = [
+      { sentiment: 'positive', magnitude: 0.5, confidence: 0.8 },
+      { sentiment: 'positive', magnitude: 0.3, confidence: 0.6 },
+    ];
+    const result = calculateCumulativeImpact(100, results);
+    expect(result).toHaveProperty('newPrice');
+    expect(result).toHaveProperty('previousPrice', 100);
+    expect(result).toHaveProperty('totalImpactPercent');
+    expect(result).toHaveProperty('impacts');
+    expect(result.newPrice).toBeGreaterThan(100);
+  });
+
+  it('applies decay factor to subsequent articles', () => {
+    const results = [
+      { sentiment: 'positive', magnitude: 0.5, confidence: 0.8 },
+      { sentiment: 'positive', magnitude: 0.5, confidence: 0.8 },
+    ];
+    const result = calculateCumulativeImpact(100, results);
+    if (result.impacts.length >= 2) {
+      expect(result.impacts[1].decay).toBeLessThan(1);
+    }
+  });
+
+  it('respects maxTotalImpact cap', () => {
+    const results = Array(20).fill({
+      sentiment: 'positive',
+      magnitude: 1.0,
+      confidence: 1.0,
+    });
+    const result = calculateCumulativeImpact(100, results, {
+      maxTotalImpact: 0.1,
+    });
+    expect(Math.abs(result.totalImpactPercent)).toBeLessThanOrEqual(10.5);
+  });
+
+  it('returns unchanged price for empty results', () => {
+    const result = calculateCumulativeImpact(100, []);
+    expect(result.newPrice).toBe(100);
+    expect(result.totalImpactPercent).toBe(0);
+    expect(result.impacts).toEqual([]);
   });
 });
