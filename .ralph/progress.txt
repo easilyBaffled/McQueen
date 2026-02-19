@@ -7,3 +7,5 @@
 2026-02-19 06:54:00 | mcq-o0b | DONE | Accessibility
 2026-02-19 06:55:11 | mcq-b6u.2 | DONE | Configure Vite vendor chunking
 2026-02-19 07:03:14 | mcq-o0b.1 | DONE | Add eslint-plugin-jsx-a11y and resolve warnings
+2026-02-19 07:08:50 | mcq-o0b.2 | DONE | Add ARIA attributes and focus indicators
+2026-02-19 07:21:36 | mcq-o0b.3 | DONE | Add keyboard navigation support
