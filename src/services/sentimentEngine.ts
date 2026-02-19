@@ -192,19 +192,21 @@ const FANTASY_KEYWORDS = {
   ],
 };
 
-interface FoundKeyword {
+export interface FoundKeyword {
   word: string;
   type: string;
   level: string;
 }
 
-interface AnalyzeSentimentResult {
+export interface AnalyzeSentimentResult {
   sentiment: SentimentType;
   magnitude: number;
   confidence: number;
   keywords: FoundKeyword[];
   scores?: { positive: number; negative: number; net: number };
 }
+
+export type SentimentResult = AnalyzeSentimentResult;
 
 export function analyzeSentiment(
   text: string | null | undefined,
