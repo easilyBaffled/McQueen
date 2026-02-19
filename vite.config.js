@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
+import { vendorChunks } from './src/build/vendorChunks.js';
 
 // Custom plugin to handle JSON file saves during development
 function jsonApiPlugin() {
@@ -72,6 +73,13 @@ export default defineConfig({
     environment: 'happy-dom',
     setupFiles: './src/test/setup.js',
     css: true,
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: vendorChunks,
+      },
+    },
   },
   preview: {
     port: 4173,
