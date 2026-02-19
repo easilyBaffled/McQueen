@@ -19,7 +19,9 @@ set -euo pipefail
 
 RALPH_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROMPT_TEMPLATE="${RALPH_DIR}/.ralph/PROMPT.md"
+QA_PROMPT_TEMPLATE="${RALPH_DIR}/.ralph/QA_PROMPT.md"
 AGENT_MD="${RALPH_DIR}/.ralph/AGENT.md"
+TEST_PLANS_DIR="${RALPH_DIR}/.ralph/test-plans"
 PROGRESS_LOG="${RALPH_DIR}/.ralph/progress.txt"
 EXECUTION_LOG="${RALPH_DIR}/.ralph/ralph.log"
 
@@ -199,10 +201,14 @@ command -v jq   >/dev/null 2>&1 || die "jq is required. Install with: brew insta
 
 [[ -n "${CURSOR_API_KEY:-}" ]] || die "CURSOR_API_KEY environment variable is not set."
 [[ -f "$PROMPT_TEMPLATE" ]]    || die "Prompt template not found: $PROMPT_TEMPLATE"
+[[ -f "$QA_PROMPT_TEMPLATE" ]] || die "QA prompt template not found: $QA_PROMPT_TEMPLATE"
 [[ -f "$AGENT_MD" ]]           || die "Agent conventions not found: $AGENT_MD"
 
 # Make sure beads is initialized
 [[ -d "${RALPH_DIR}/.beads" ]] || die ".beads/ directory not found. Run: bd init --quiet --prefix mcq"
+
+# Ensure test-plans output directory exists
+mkdir -p "$TEST_PLANS_DIR"
 
 # ---------------------------------------------------------------------------
 # Fetch ready beads
@@ -261,7 +267,24 @@ log "Will process $PROCESS_COUNT bead(s)."
 # Build prompt from template
 # ---------------------------------------------------------------------------
 
-build_prompt() {
+# Replace bead placeholders in a template string.
+fill_placeholders() {
+  local template="$1"
+  local id="$2" title="$3" type="$4" priority="$5"
+  local description="$6" acceptance="$7" design="$8"
+
+  template="${template//\{\{BEAD_ID\}\}/$id}"
+  template="${template//\{\{BEAD_TITLE\}\}/$title}"
+  template="${template//\{\{BEAD_TYPE\}\}/$type}"
+  template="${template//\{\{BEAD_PRIORITY\}\}/$priority}"
+  template="${template//\{\{BEAD_DESCRIPTION\}\}/$description}"
+  template="${template//\{\{BEAD_ACCEPTANCE\}\}/$acceptance}"
+  template="${template//\{\{BEAD_DESIGN\}\}/$design}"
+
+  echo "$template"
+}
+
+build_qa_prompt() {
   local bead_json="$1"
   local id title type priority description acceptance design
 
@@ -274,16 +297,31 @@ build_prompt() {
   design=$(echo "$bead_json" | jq -r '.design // "None."')
 
   local prompt
-  prompt=$(<"$PROMPT_TEMPLATE")
+  prompt=$(<"$QA_PROMPT_TEMPLATE")
+  prompt=$(fill_placeholders "$prompt" "$id" "$title" "$type" "$priority" "$description" "$acceptance" "$design")
 
-  # Replace placeholders
-  prompt="${prompt//\{\{BEAD_ID\}\}/$id}"
-  prompt="${prompt//\{\{BEAD_TITLE\}\}/$title}"
-  prompt="${prompt//\{\{BEAD_TYPE\}\}/$type}"
-  prompt="${prompt//\{\{BEAD_PRIORITY\}\}/$priority}"
-  prompt="${prompt//\{\{BEAD_DESCRIPTION\}\}/$description}"
-  prompt="${prompt//\{\{BEAD_ACCEPTANCE\}\}/$acceptance}"
-  prompt="${prompt//\{\{BEAD_DESIGN\}\}/$design}"
+  echo "$prompt"
+}
+
+build_prompt() {
+  local bead_json="$1"
+  local test_plan_content="${2:-No test plan was generated for this bead. Rely on the acceptance criteria directly.}"
+  local id title type priority description acceptance design
+
+  id=$(echo "$bead_json" | jq -r '.id // "unknown"')
+  title=$(echo "$bead_json" | jq -r '.title // "No title"')
+  type=$(echo "$bead_json" | jq -r '.type // "task"')
+  priority=$(echo "$bead_json" | jq -r '.priority // "unset"')
+  description=$(echo "$bead_json" | jq -r '.description // "No description provided."')
+  acceptance=$(echo "$bead_json" | jq -r '.acceptance // "Not specified."')
+  design=$(echo "$bead_json" | jq -r '.design // "None."')
+
+  local prompt
+  prompt=$(<"$PROMPT_TEMPLATE")
+  prompt=$(fill_placeholders "$prompt" "$id" "$title" "$type" "$priority" "$description" "$acceptance" "$design")
+
+  # Inject the pre-generated test plan
+  prompt="${prompt//\{\{TEST_PLAN\}\}/$test_plan_content}"
 
   # Append the agent conventions as context
   prompt="${prompt}
@@ -321,8 +359,13 @@ for i in $(seq 0 $((PROCESS_COUNT - 1))); do
     print_pickup "$IDX" "$PROCESS_COUNT" "$BEAD_ID" "$BEAD_TITLE" "$BEAD_TYPE" "$BEAD_EST"
     say "  [DRY RUN] Would claim and process: $BEAD_ID"
     say ""
-    say "  --- Prompt preview (first 30 lines) ---"
-    DRY_PREVIEW=$(build_prompt "$BEAD_JSON")
+    say "  --- QA prompt preview (first 20 lines) ---"
+    DRY_QA=$(build_qa_prompt "$BEAD_JSON")
+    echo "$DRY_QA" | head -20
+    say "  ... (truncated) ..."
+    say ""
+    say "  --- Implementation prompt preview (first 30 lines) ---"
+    DRY_PREVIEW=$(build_prompt "$BEAD_JSON" "(test plan would be injected here)")
     echo "$DRY_PREVIEW" | head -30
     say "  ... (truncated) ..."
     continue
@@ -341,11 +384,45 @@ for i in $(seq 0 $((PROCESS_COUNT - 1))); do
 
   print_pickup "$IDX" "$PROCESS_COUNT" "$BEAD_ID" "$BEAD_TITLE" "$BEAD_TYPE" "$BEAD_EST"
 
-  # Build the filled prompt
-  FILLED_PROMPT=$(build_prompt "$BEAD_JSON")
+  # ------------------------------------------------------------------
+  # Phase 1: QA Test Plan Generation
+  # ------------------------------------------------------------------
 
-  say "  Agent working on ${BEAD_ID}..."
-  log "Invoking Cursor agent for $BEAD_ID"
+  TEST_PLAN_FILE="${TEST_PLANS_DIR}/${BEAD_ID}.md"
+  TEST_PLAN_CONTENT=""
+
+  say "  [QA] Generating test plan for ${BEAD_ID}..."
+  log "Phase 1 (QA): Generating test plan for $BEAD_ID"
+
+  QA_FILLED=$(build_qa_prompt "$BEAD_JSON")
+  QA_START=$(date +%s)
+
+  QA_OUTPUT=""
+  QA_EXIT=0
+  QA_OUTPUT=$(agent -p --force "$QA_FILLED" 2>&1) || QA_EXIT=$?
+
+  QA_END=$(date +%s)
+  QA_DURATION=$(( QA_END - QA_START ))
+
+  echo "$QA_OUTPUT" | tail -20 >> "$EXECUTION_LOG"
+
+  if [[ $QA_EXIT -eq 0 ]] && [[ -f "$TEST_PLAN_FILE" ]]; then
+    TEST_PLAN_CONTENT=$(<"$TEST_PLAN_FILE")
+    log "QA plan generated for $BEAD_ID in $(format_duration $QA_DURATION) -> $TEST_PLAN_FILE"
+    say "  [QA] Test plan ready ($(format_duration $QA_DURATION))"
+  else
+    log "WARNING: QA agent failed or did not produce $TEST_PLAN_FILE (exit=$QA_EXIT, $(format_duration $QA_DURATION)). Proceeding without test plan."
+    say "  [QA] WARNING: Test plan generation failed (exit=$QA_EXIT). Proceeding without test plan."
+  fi
+
+  # ------------------------------------------------------------------
+  # Phase 2: Implementation (Red-Green-Refactor + Verify)
+  # ------------------------------------------------------------------
+
+  FILLED_PROMPT=$(build_prompt "$BEAD_JSON" "$TEST_PLAN_CONTENT")
+
+  say "  [IMPL] Agent working on ${BEAD_ID}..."
+  log "Phase 2 (IMPL): Invoking Cursor agent for $BEAD_ID"
   AGENT_START=$(date +%s)
 
   AGENT_OUTPUT=""
@@ -354,31 +431,31 @@ for i in $(seq 0 $((PROCESS_COUNT - 1))); do
 
   AGENT_END=$(date +%s)
   AGENT_DURATION=$(( AGENT_END - AGENT_START ))
+  TOTAL_DURATION=$(( QA_DURATION + AGENT_DURATION ))
 
-  # Append agent output to execution log
   echo "$AGENT_OUTPUT" | tail -20 >> "$EXECUTION_LOG"
 
   if [[ $AGENT_EXIT -eq 0 ]]; then
-    log "Agent completed $BEAD_ID in $(format_duration $AGENT_DURATION)"
+    log "Agent completed $BEAD_ID in $(format_duration $TOTAL_DURATION) (QA=$(format_duration $QA_DURATION) + IMPL=$(format_duration $AGENT_DURATION))"
 
     bd close "$BEAD_ID" --reason "Completed by Ralph" 2>/dev/null >> "$EXECUTION_LOG" || true
 
     echo "$(ts) | $BEAD_ID | DONE | $BEAD_TITLE" >> "$PROGRESS_LOG"
 
-    print_done "$IDX" "$PROCESS_COUNT" "$BEAD_ID" "$BEAD_TITLE" "$AGENT_DURATION"
+    print_done "$IDX" "$PROCESS_COUNT" "$BEAD_ID" "$BEAD_TITLE" "$TOTAL_DURATION"
     SUCCESSES=$((SUCCESSES + 1))
-    RESULTS+=("ok" "$BEAD_ID" "$AGENT_DURATION" "$BEAD_TITLE")
+    RESULTS+=("ok" "$BEAD_ID" "$TOTAL_DURATION" "$BEAD_TITLE")
   else
-    log "Agent FAILED on $BEAD_ID (exit=$AGENT_EXIT, $(format_duration $AGENT_DURATION))"
+    log "Agent FAILED on $BEAD_ID (exit=$AGENT_EXIT, QA=$(format_duration $QA_DURATION) + IMPL=$(format_duration $AGENT_DURATION))"
 
-    FAIL_NOTE="Ralph failed (exit=$AGENT_EXIT) at $(ts). Duration: $(format_duration $AGENT_DURATION)."
+    FAIL_NOTE="Ralph failed (exit=$AGENT_EXIT) at $(ts). Duration: $(format_duration $TOTAL_DURATION)."
     bd update "$BEAD_ID" --status open --notes "$FAIL_NOTE" 2>/dev/null >> "$EXECUTION_LOG" || true
 
     echo "$(ts) | $BEAD_ID | FAIL | $BEAD_TITLE (exit=$AGENT_EXIT)" >> "$PROGRESS_LOG"
 
-    print_fail "$IDX" "$PROCESS_COUNT" "$BEAD_ID" "$BEAD_TITLE" "$AGENT_DURATION" "$AGENT_EXIT"
+    print_fail "$IDX" "$PROCESS_COUNT" "$BEAD_ID" "$BEAD_TITLE" "$TOTAL_DURATION" "$AGENT_EXIT"
     FAILURES=$((FAILURES + 1))
-    RESULTS+=("FAIL" "$BEAD_ID" "$AGENT_DURATION" "$BEAD_TITLE")
+    RESULTS+=("FAIL" "$BEAD_ID" "$TOTAL_DURATION" "$BEAD_TITLE")
   fi
 done
 

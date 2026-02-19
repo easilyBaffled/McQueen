@@ -110,7 +110,7 @@ while true; do
     if [ -z "$line" ]; then
         break
     fi
-    PRECONDITIONS="${PRECONDITIONS}- ${line}\n"
+    PRECONDITIONS="${PRECONDITIONS}- ${line}"$'\n'
 done
 
 # Step 4: Test Steps
@@ -135,7 +135,7 @@ while true; do
     
     prompt_input "Expected result:" EXPECTED true
     
-    TEST_STEPS="${TEST_STEPS}${STEP_NUM}. ${ACTION}\n   **Expected:** ${EXPECTED}\n\n"
+    TEST_STEPS="${TEST_STEPS}${STEP_NUM}. ${ACTION}"$'\n'"   **Expected:** ${EXPECTED}"$'\n\n'
     ((STEP_NUM++))
 done
 
@@ -166,8 +166,8 @@ prompt_input "Related test cases (IDs):" RELATED_TCS false
 prompt_input "Notes or comments:" NOTES false
 
 # Generate filename
-FILENAME="${TC_ID}.md"
-FILENAME="${FILENAME//[^a-zA-Z0-9_-]/}"
+SAFE_ID="${TC_ID//[^a-zA-Z0-9_-]/}"
+FILENAME="${SAFE_ID}.md"
 
 OUTPUT_DIR="."
 if [ ! -z "$1" ]; then

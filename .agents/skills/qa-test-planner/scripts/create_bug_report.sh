@@ -115,7 +115,7 @@ while true; do
     if [ -z "$line" ]; then
         break
     fi
-    REPRO_STEPS="${REPRO_STEPS}${STEP_NUM}. ${line}\n"
+    REPRO_STEPS="${REPRO_STEPS}${STEP_NUM}. ${line}"$'\n'
     ((STEP_NUM++))
 done
 

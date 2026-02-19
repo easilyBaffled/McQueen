@@ -28,6 +28,14 @@ You have been assigned exactly **one** issue to complete. Do not work on anythin
 
 ---
 
+## Test Plan (Pre-generated)
+
+A QA agent has already analyzed this bead and produced the test plan below. Use it to guide your Red-Green-Refactor cycles: each test case maps to one or more slices of work. When you are finished, you must verify every test case and report pass/fail.
+
+{{TEST_PLAN}}
+
+---
+
 ## Development Workflow (Red-Green-Refactor)
 
 For every code change, follow the TDD cycle:
@@ -36,6 +44,7 @@ For every code change, follow the TDD cycle:
 2. **Green** -- Write the minimum production code to make the test pass. Run `npm run test:run` and confirm **all** tests pass.
 3. **Refactor** -- Clean up the code you just wrote (remove duplication, improve naming, simplify logic) while keeping all tests green. Run `npm run test:run` after each change.
 4. **Repeat** -- Pick the next slice of acceptance criteria and start another Red-Green-Refactor cycle until the issue is fully implemented.
+5. **Verify against Test Plan** -- Once all acceptance criteria are implemented, walk through every test case in the "Test Plan (Pre-generated)" section above. For each TC, confirm the expected behavior holds. Report a summary table with TC ID, title, and PASS/FAIL status. If any TC fails, fix it before finishing.
 
 Place unit/component tests in a `__tests__/` directory next to the source file, following the existing convention (e.g. `src/components/__tests__/PlayerCard.test.jsx`).
 

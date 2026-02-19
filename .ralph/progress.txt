@@ -10,3 +10,5 @@
 2026-02-19 07:08:50 | mcq-o0b.2 | DONE | Add ARIA attributes and focus indicators
 2026-02-19 07:21:36 | mcq-o0b.3 | DONE | Add keyboard navigation support
 2026-02-19 07:30:02 | mcq-o0b.4 | DONE | Add secondary indicators for color-coded values
+2026-02-19 09:26:28 | mcq-tj0 | DONE | Data Layer: Types, Storage, and Dynamic Loading
+2026-02-19 09:32:22 | mcq-tj0.1 | DONE | Create TypeScript type definitions
