@@ -1,3 +1,5 @@
 # Ralph Progress Log (append-only)
 # Format: YYYY-MM-DD HH:MM | BEAD_ID | STATUS | Summary
 # -----------------------------------------------------------
+2026-02-19 06:28:43 | mcq-b6u | DONE | Build Tooling Foundation
+2026-02-19 06:29:19 | mcq-b6u.1 | DONE | Add tsconfig.json with strict mode
