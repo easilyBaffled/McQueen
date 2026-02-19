@@ -497,67 +497,81 @@ describe('TC-016: version single source of truth', () => {
   });
 });
 
-// TC-017: GameContext uses storageService exclusively — no direct localStorage calls
-describe('TC-017: GameContext integration (static analysis)', () => {
-  it('GameContext.jsx imports read and write from storageService', async () => {
+// TC-017: Context providers use storageService exclusively — no direct localStorage calls
+describe('TC-017: Split context integration (static analysis)', () => {
+  const contextFiles = [
+    { name: 'ScenarioContext', path: '../../context/ScenarioContext.jsx' },
+    { name: 'TradingContext', path: '../../context/TradingContext.jsx' },
+    { name: 'SocialContext', path: '../../context/SocialContext.jsx' },
+  ];
+
+  it('context files import read and/or write from storageService', async () => {
     const fs = await import('node:fs');
     const path = await import('node:path');
-    const contextPath = path.resolve(
-      import.meta.dirname,
-      '../../context/GameContext.jsx',
-    );
-    const source = fs.readFileSync(contextPath, 'utf-8');
 
-    expect(source).toMatch(
-      /import\s*\{[^}]*\bread\b[^}]*\}\s*from\s*['"]\.\.\/services\/storageService['"]/,
-    );
-    expect(source).toMatch(
-      /import\s*\{[^}]*\bwrite\b[^}]*\}\s*from\s*['"]\.\.\/services\/storageService['"]/,
-    );
+    for (const ctx of contextFiles) {
+      const contextPath = path.resolve(import.meta.dirname, ctx.path);
+      const source = fs.readFileSync(contextPath, 'utf-8');
+
+      expect(source).toMatch(
+        /import\s*\{[^}]*\b(read|write)\b[^}]*\}\s*from\s*['"]\.\.\/services\/storageService['"]/,
+      );
+    }
   });
 
-  it('GameContext.jsx has zero direct localStorage calls', async () => {
+  it('context files have zero direct localStorage calls', async () => {
     const fs = await import('node:fs');
     const path = await import('node:path');
-    const contextPath = path.resolve(
-      import.meta.dirname,
-      '../../context/GameContext.jsx',
-    );
-    const source = fs.readFileSync(contextPath, 'utf-8');
 
-    expect(source).not.toMatch(/localStorage\.getItem/);
-    expect(source).not.toMatch(/localStorage\.setItem/);
-    expect(source).not.toMatch(/localStorage\.removeItem/);
+    for (const ctx of contextFiles) {
+      const contextPath = path.resolve(import.meta.dirname, ctx.path);
+      const source = fs.readFileSync(contextPath, 'utf-8');
+
+      expect(source).not.toMatch(/localStorage\.getItem/);
+      expect(source).not.toMatch(/localStorage\.setItem/);
+      expect(source).not.toMatch(/localStorage\.removeItem/);
+    }
   });
 
-  it('GameContext uses read() with STORAGE_KEYS for state initializers', async () => {
+  it('ScenarioContext uses read/write for scenario key', async () => {
     const fs = await import('node:fs');
     const path = await import('node:path');
     const contextPath = path.resolve(
       import.meta.dirname,
-      '../../context/GameContext.jsx',
+      '../../context/ScenarioContext.jsx',
     );
     const source = fs.readFileSync(contextPath, 'utf-8');
 
     expect(source).toMatch(/read\(STORAGE_KEYS\.scenario/);
-    expect(source).toMatch(/read\(STORAGE_KEYS\.portfolio/);
-    expect(source).toMatch(/read\(STORAGE_KEYS\.watchlist/);
-    expect(source).toMatch(/read\(STORAGE_KEYS\.cash/);
+    expect(source).toMatch(/write\(STORAGE_KEYS\.scenario/);
   });
 
-  it('GameContext uses write() with STORAGE_KEYS for persistence', async () => {
+  it('TradingContext uses read/write for portfolio and cash keys', async () => {
     const fs = await import('node:fs');
     const path = await import('node:path');
     const contextPath = path.resolve(
       import.meta.dirname,
-      '../../context/GameContext.jsx',
+      '../../context/TradingContext.jsx',
     );
     const source = fs.readFileSync(contextPath, 'utf-8');
 
-    expect(source).toMatch(/write\(STORAGE_KEYS\.scenario/);
+    expect(source).toMatch(/read\(STORAGE_KEYS\.portfolio/);
+    expect(source).toMatch(/read\(STORAGE_KEYS\.cash/);
     expect(source).toMatch(/write\(STORAGE_KEYS\.portfolio/);
-    expect(source).toMatch(/write\(STORAGE_KEYS\.watchlist/);
     expect(source).toMatch(/write\(STORAGE_KEYS\.cash/);
+  });
+
+  it('SocialContext uses read/write for watchlist key', async () => {
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    const contextPath = path.resolve(
+      import.meta.dirname,
+      '../../context/SocialContext.jsx',
+    );
+    const source = fs.readFileSync(contextPath, 'utf-8');
+
+    expect(source).toMatch(/read\(STORAGE_KEYS\.watchlist/);
+    expect(source).toMatch(/write\(STORAGE_KEYS\.watchlist/);
   });
 });
 

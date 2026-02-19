@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useGame } from '../context/GameContext';
+import { useTrading } from '../context/TradingContext';
 import './Leaderboard.css';
 
 // Fake leaderboard data
@@ -18,7 +18,7 @@ const fakeTraders = [
 ];
 
 export default function Leaderboard() {
-  const { cash, getPortfolioValue, portfolio } = useGame();
+  const { cash, getPortfolioValue, portfolio } = useTrading();
   const hasNoTrades = Object.keys(portfolio).length === 0;
   const portfolioStats = getPortfolioValue();
   const userValue = cash + portfolioStats.value;

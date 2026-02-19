@@ -12,21 +12,50 @@ import FirstTradeGuide from '../FirstTradeGuide';
 import Portfolio from '../../pages/Portfolio';
 import Leaderboard from '../../pages/Leaderboard';
 
-vi.mock('../../context/GameContext', () => ({
-  useGame: () => ({
+vi.mock('../../context/ScenarioContext', () => ({
+  useScenario: () => ({
     scenario: 'midweek',
-    portfolio: {},
-    cash: 10000,
-    isWatching: () => false,
-    getLeagueHoldings: () => [],
-    getPortfolioValue: () => ({ value: 0, gain: 0, gainPercent: 0 }),
     setScenario: vi.fn(),
+    currentData: { headline: 'Test' },
+    players: [],
+  }),
+}));
+
+vi.mock('../../context/SimulationContext', () => ({
+  useSimulation: () => ({
     espnLoading: false,
     espnError: null,
     refreshEspnNews: vi.fn(),
-    currentData: { headline: 'Test' },
+    history: [],
+    tick: 0,
+    unifiedTimeline: [],
+    isPlaying: false,
+    setIsPlaying: vi.fn(),
+    goToHistoryPoint: vi.fn(),
+  }),
+}));
+
+vi.mock('../../context/TradingContext', () => ({
+  useTrading: () => ({
+    portfolio: {},
+    cash: 10000,
+    getPortfolioValue: () => ({ value: 0, gain: 0, gainPercent: 0 }),
     getPlayers: () => [],
+    getPlayer: () => null,
+    buyShares: vi.fn(),
+    sellShares: vi.fn(),
+    getEffectivePrice: () => 0,
+  }),
+}));
+
+vi.mock('../../context/SocialContext', () => ({
+  useSocial: () => ({
+    isWatching: () => false,
+    getLeagueHoldings: () => [],
     getLeaderboardRankings: () => [],
+    watchlist: [],
+    missionPicks: { risers: [], fallers: [] },
+    missionRevealed: false,
   }),
 }));
 

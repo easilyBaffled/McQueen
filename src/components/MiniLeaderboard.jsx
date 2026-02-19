@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGame } from '../context/GameContext';
+import { useSocial } from '../context/SocialContext';
 import './MiniLeaderboard.css';
 
 export default function MiniLeaderboard() {
-  const { getLeaderboardRankings } = useGame();
+  const { getLeaderboardRankings } = useSocial();
 
   const rankings = useMemo(
     () => getLeaderboardRankings(),

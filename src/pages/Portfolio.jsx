@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useGame } from '../context/GameContext';
+import { useTrading } from '../context/TradingContext';
 import InfoTooltip from '../components/InfoTooltip';
 import './Portfolio.css';
 
 export default function Portfolio() {
   const { portfolio, getPlayer, getPlayers, getPortfolioValue, cash } =
-    useGame();
+    useTrading();
 
   // Get top 3 trending players for suggestions
   const trendingPlayers = getPlayers()

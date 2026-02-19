@@ -2,10 +2,20 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import PlayerCard from '../PlayerCard';
 
-vi.mock('../../context/GameContext', () => ({
-  useGame: () => ({
+vi.mock('../../context/ScenarioContext', () => ({
+  useScenario: () => ({
     scenario: 'midweek',
+  }),
+}));
+
+vi.mock('../../context/TradingContext', () => ({
+  useTrading: () => ({
     portfolio: {},
+  }),
+}));
+
+vi.mock('../../context/SocialContext', () => ({
+  useSocial: () => ({
     isWatching: () => false,
     getLeagueHoldings: () => [],
   }),

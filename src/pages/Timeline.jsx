@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGame } from '../context/GameContext';
+import { useTrading } from '../context/TradingContext';
 import { useToast } from '../components/Toast';
 import './Timeline.css';
 
@@ -76,7 +76,7 @@ function formatTime(timestamp) {
 
 export default function Timeline() {
   const { getPlayers, getPlayer, cash, buyShares, sellShares, portfolio } =
-    useGame();
+    useTrading();
   const { addToast } = useToast();
 
   const [typeFilter, setTypeFilter] = useState('all');

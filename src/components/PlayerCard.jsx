@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
-import { useGame } from '../context/GameContext';
+import { useScenario } from '../context/ScenarioContext';
+import { useTrading } from '../context/TradingContext';
+import { useSocial } from '../context/SocialContext';
 import { getPlayerHeadshotUrl } from '../utils/playerImages';
 import './PlayerCard.css';
 
@@ -9,7 +11,9 @@ import './PlayerCard.css';
 const LEAGUE_TOOLTIP_SEEN_KEY = 'mcqueen-league-tooltip-seen';
 
 export default function PlayerCard({ player, showFirstTradeTip = false }) {
-  const { scenario, portfolio, isWatching, getLeagueHoldings } = useGame();
+  const { scenario } = useScenario();
+  const { portfolio } = useTrading();
+  const { isWatching, getLeagueHoldings } = useSocial();
   const [imageError, setImageError] = useState(false);
   const [showLeagueTooltip, setShowLeagueTooltip] = useState(false);
   const [tooltipDismissed, setTooltipDismissed] = useState(() => {

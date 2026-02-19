@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PlayerDetail from '../PlayerDetail';
 
-vi.mock('../../context/GameContext', () => ({
-  useGame: () => ({
+vi.mock('../../context/TradingContext', () => ({
+  useTrading: () => ({
     getPlayer: () => ({
       id: 'mahomes',
       name: 'Patrick Mahomes',
@@ -34,6 +34,11 @@ vi.mock('../../context/GameContext', () => ({
     cash: 10000,
     buyShares: vi.fn(() => true),
     sellShares: vi.fn(() => true),
+  }),
+}));
+
+vi.mock('../../context/SocialContext', () => ({
+  useSocial: () => ({
     addToWatchlist: vi.fn(),
     removeFromWatchlist: vi.fn(),
     isWatching: () => false,

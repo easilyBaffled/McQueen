@@ -11,7 +11,8 @@ import {
   ReferenceLine,
   Customized,
 } from 'recharts';
-import { useGame } from '../context/GameContext';
+import { useTrading } from '../context/TradingContext';
+import { useSocial } from '../context/SocialContext';
 import { EventMarkerPopup, getEventConfig, useToast } from '../components';
 import { getPlayerNewsUrls, getTeamNewsUrl } from '../utils/espnUrls';
 import { getPlayerHeadshotUrl } from '../utils/playerImages';
@@ -69,16 +70,9 @@ function getEventTypeLabel(reason) {
 export default function PlayerDetail() {
   const { playerId } = useParams();
   const navigate = useNavigate();
-  const {
-    getPlayer,
-    portfolio,
-    buyShares,
-    sellShares,
-    addToWatchlist,
-    removeFromWatchlist,
-    isWatching,
-    getLeagueHoldings,
-  } = useGame();
+  const { getPlayer, portfolio, buyShares, sellShares } = useTrading();
+  const { addToWatchlist, removeFromWatchlist, isWatching, getLeagueHoldings } =
+    useSocial();
   const { addToast } = useToast();
 
   const [buyAmount, setBuyAmount] = useState(1);

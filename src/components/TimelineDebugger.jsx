@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGame } from '../context/GameContext';
+import { useSimulation } from '../context/SimulationContext';
 import { isDevMode } from '../utils/devMode';
 import './TimelineDebugger.css';
 
 export default function TimelineDebugger() {
   const { history, tick, goToHistoryPoint, isPlaying, setIsPlaying } =
-    useGame();
+    useSimulation();
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Only show in dev mode

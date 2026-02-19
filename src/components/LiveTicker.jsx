@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGame } from '../context/GameContext';
+import { useScenario } from '../context/ScenarioContext';
+import { useSimulation } from '../context/SimulationContext';
 import './LiveTicker.css';
 
 export default function LiveTicker() {
-  const { scenario, history, tick, currentData, unifiedTimeline } = useGame();
+  const { scenario } = useScenario();
+  const { history, tick, unifiedTimeline } = useSimulation();
 
   if (scenario !== 'live') return null;
 

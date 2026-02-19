@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
-import { useGame } from '../context/GameContext';
+import { useScenario } from '../context/ScenarioContext';
+import { useSimulation } from '../context/SimulationContext';
 import { isDevMode } from '../utils/devMode';
 import './ScenarioToggle.css';
 
@@ -46,8 +47,8 @@ const scenarios = [
 ];
 
 export default function ScenarioToggle() {
-  const { scenario, setScenario, espnLoading, espnError, refreshEspnNews } =
-    useGame();
+  const { scenario, setScenario } = useScenario();
+  const { espnLoading, espnError, refreshEspnNews } = useSimulation();
   const [showDemoTooltip, setShowDemoTooltip] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);

@@ -1,18 +1,14 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useGame } from '../context/GameContext';
+import { useTrading } from '../context/TradingContext';
+import { useSocial } from '../context/SocialContext';
 import { useToast } from '../components/Toast';
 import PlayerCard from '../components/PlayerCard';
 import './Watchlist.css';
 
 export default function Watchlist() {
-  const {
-    watchlist,
-    getPlayer,
-    getPlayers,
-    removeFromWatchlist,
-    addToWatchlist,
-  } = useGame();
+  const { getPlayer, getPlayers } = useTrading();
+  const { watchlist, removeFromWatchlist, addToWatchlist } = useSocial();
   const { addToast } = useToast();
 
   const watchedPlayers = watchlist.map((id) => getPlayer(id)).filter(Boolean);

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGame } from '../context/GameContext';
+import { useScenario } from '../context/ScenarioContext';
+import { useTrading } from '../context/TradingContext';
 import ScenarioToggle from './ScenarioToggle';
 import LiveTicker from './LiveTicker';
 import TimelineDebugger from './TimelineDebugger';
@@ -10,7 +11,8 @@ import './Layout.css';
 
 export default function Layout() {
   const location = useLocation();
-  const { cash, getPortfolioValue, scenario } = useGame();
+  const { scenario } = useScenario();
+  const { cash, getPortfolioValue } = useTrading();
   const portfolioStats = getPortfolioValue();
   const totalValue = cash + portfolioStats.value;
   const mainContentRef = useRef(null);

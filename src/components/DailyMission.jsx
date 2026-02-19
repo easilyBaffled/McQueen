@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGame } from '../context/GameContext';
+import { useTrading } from '../context/TradingContext';
+import { useSocial } from '../context/SocialContext';
 import './DailyMission.css';
 
 export default function DailyMission({ collapsible = false }) {
+  const { getPlayers } = useTrading();
   const {
-    getPlayers,
     missionPicks,
     missionRevealed,
     setMissionPick,
@@ -13,7 +14,7 @@ export default function DailyMission({ collapsible = false }) {
     revealMission,
     resetMission,
     getMissionScore,
-  } = useGame();
+  } = useSocial();
 
   const [isExpanded, setIsExpanded] = useState(true);
   const players = getPlayers();

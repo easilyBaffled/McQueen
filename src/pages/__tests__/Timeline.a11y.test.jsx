@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Timeline from '../Timeline';
 
-vi.mock('../../context/GameContext', () => ({
-  useGame: () => ({
+vi.mock('../../context/TradingContext', () => ({
+  useTrading: () => ({
     getPlayers: () => [
       {
         id: 'p1',

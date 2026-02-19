@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGame } from '../context/GameContext';
+import { useScenario } from '../context/ScenarioContext';
+import { useSimulation } from '../context/SimulationContext';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import './PlayoffAnnouncementModal.css';
 
@@ -16,12 +17,8 @@ const MOCK_BUYBACK_HOLDINGS = {
 const DILUTION_PERCENT = 15;
 
 export default function PlayoffAnnouncementModal() {
-  const {
-    scenario,
-    currentData,
-    applyPlayoffDilution,
-    playoffDilutionApplied,
-  } = useGame();
+  const { scenario, currentData } = useScenario();
+  const { applyPlayoffDilution, playoffDilutionApplied } = useSimulation();
   const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState(0);
   const focusTrapRef = useFocusTrap(isVisible);

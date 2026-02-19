@@ -1,7 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGame } from '../context/GameContext';
+import { useScenario } from '../context/ScenarioContext';
+import { useTrading } from '../context/TradingContext';
 import PlayerCard from '../components/PlayerCard';
 import MiniLeaderboard from '../components/MiniLeaderboard';
 import {
@@ -21,7 +22,8 @@ const sortOptions = [
 ];
 
 export default function Market() {
-  const { getPlayers, currentData, scenario, portfolio } = useGame();
+  const { currentData, scenario } = useScenario();
+  const { getPlayers, portfolio } = useTrading();
   const hasNoTrades = Object.keys(portfolio).length === 0;
   const [sortBy, setSortBy] = useState('risers');
   const [searchQuery, setSearchQuery] = useState('');
