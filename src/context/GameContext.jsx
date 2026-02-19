@@ -32,6 +32,16 @@ import {
   createPriceHistoryEntry,
 } from '../services/priceCalculator';
 
+// Pure service modules
+import {
+  getEffectivePrice as getEffectivePricePure,
+  getCurrentPriceFromHistory,
+  getMoveReasonFromHistory,
+  getLatestContentFromHistory,
+  getAllContentFromHistory,
+} from '../services/priceResolver';
+import { buildUnifiedTimeline } from '../services/simulationEngine';
+
 const GameContext = createContext(null);
 
 const scenarioLoaders = {
@@ -63,89 +73,6 @@ async function getLeagueData() {
   leagueMembersCache = data.members;
   leagueHoldingsCache = data.holdings;
   return { members: leagueMembersCache, holdings: leagueHoldingsCache };
-}
-
-// ============================================================================
-// Helper functions for the new priceHistory-based data structure
-// ============================================================================
-
-// Get the current price from a player's priceHistory (last entry) or basePrice
-function getCurrentPriceFromHistory(player) {
-  if (!player) return 0;
-  const history = player.priceHistory;
-  if (history && history.length > 0) {
-    return history[history.length - 1].price;
-  }
-  return player.basePrice;
-}
-
-// Calculate change percent from basePrice to current price
-function getChangePercentFromHistory(player) {
-  if (!player) return 0;
-  const currentPrice = getCurrentPriceFromHistory(player);
-  const basePrice = player.basePrice;
-  if (basePrice === 0) return 0;
-  return ((currentPrice - basePrice) / basePrice) * 100;
-}
-
-// Get the move reason (headline) from the most recent priceHistory entry
-function getMoveReasonFromHistory(player) {
-  if (!player) return '';
-  const history = player.priceHistory;
-  if (history && history.length > 0) {
-    const lastEntry = history[history.length - 1];
-    return lastEntry.reason?.headline || '';
-  }
-  return '';
-}
-
-// Get the content array from the most recent priceHistory entry
-function getLatestContentFromHistory(player) {
-  if (!player) return [];
-  const history = player.priceHistory;
-  if (history && history.length > 0) {
-    const lastEntry = history[history.length - 1];
-    return lastEntry.content || [];
-  }
-  return [];
-}
-
-// Get all content from a player's priceHistory (aggregated)
-function getAllContentFromHistory(player) {
-  if (!player || !player.priceHistory) return [];
-  const allContent = [];
-  player.priceHistory.forEach((entry) => {
-    if (entry.content && entry.content.length > 0) {
-      allContent.push(...entry.content);
-    }
-  });
-  return allContent;
-}
-
-// Build a unified timeline from all players' priceHistory entries
-function buildUnifiedTimeline(players) {
-  const timeline = [];
-
-  players.forEach((player) => {
-    if (player.priceHistory) {
-      player.priceHistory.forEach((entry, index) => {
-        timeline.push({
-          playerId: player.id,
-          playerName: player.name,
-          entryIndex: index,
-          timestamp: entry.timestamp,
-          price: entry.price,
-          reason: entry.reason,
-          content: entry.content,
-        });
-      });
-    }
-  });
-
-  // Sort by timestamp
-  timeline.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-
-  return timeline;
 }
 
 export function GameProvider({ children }) {
@@ -460,21 +387,8 @@ export function GameProvider({ children }) {
 
   // Get effective price (from priceHistory or overrides + user impact)
   const getEffectivePrice = useCallback(
-    (playerId) => {
-      const player = players.find((p) => p.id === playerId);
-
-      // Start with the price from priceHistory or override
-      let basePrice;
-      if (priceOverrides[playerId] !== undefined) {
-        basePrice = priceOverrides[playerId];
-      } else {
-        basePrice = getCurrentPriceFromHistory(player);
-      }
-
-      // Apply user impact
-      const impact = userImpact[playerId] || 0;
-      return +(basePrice * (1 + impact)).toFixed(2);
-    },
+    (playerId) =>
+      getEffectivePricePure(playerId, priceOverrides, userImpact, players),
     [players, priceOverrides, userImpact],
   );
 

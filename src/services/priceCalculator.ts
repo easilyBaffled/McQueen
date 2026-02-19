@@ -1,48 +1,43 @@
-/**
- * Price Calculator Service
- * Converts sentiment analysis results into price impacts for the McQueen market
- */
-
 import { getMagnitudeLevel } from './sentimentEngine';
 
-// Price impact ranges for moderate volatility (1-5%)
-const PRICE_IMPACT_RANGES = {
+interface SentimentInput {
+  sentiment: string;
+  magnitude: number;
+  confidence?: number;
+}
+
+const PRICE_IMPACT_RANGES: Record<
+  string,
+  Record<string, { min: number; max: number }>
+> = {
   positive: {
-    high: { min: 0.03, max: 0.05 }, // +3% to +5%
-    medium: { min: 0.015, max: 0.03 }, // +1.5% to +3%
-    low: { min: 0.005, max: 0.015 }, // +0.5% to +1.5%
+    high: { min: 0.03, max: 0.05 },
+    medium: { min: 0.015, max: 0.03 },
+    low: { min: 0.005, max: 0.015 },
   },
   negative: {
-    high: { min: -0.05, max: -0.03 }, // -5% to -3%
-    medium: { min: -0.03, max: -0.015 }, // -3% to -1.5%
-    low: { min: -0.015, max: -0.005 }, // -1.5% to -0.5%
+    high: { min: -0.05, max: -0.03 },
+    medium: { min: -0.03, max: -0.015 },
+    low: { min: -0.015, max: -0.005 },
   },
   neutral: {
-    high: { min: -0.005, max: 0.005 }, // -0.5% to +0.5%
+    high: { min: -0.005, max: 0.005 },
     medium: { min: -0.005, max: 0.005 },
     low: { min: -0.003, max: 0.003 },
   },
 };
 
-// Confidence multiplier - lower confidence = smaller impact
-const CONFIDENCE_WEIGHT = 0.7; // 70% of impact comes from base, 30% from confidence
+const CONFIDENCE_WEIGHT = 0.7;
 
-/**
- * Calculate price impact from sentiment analysis result
- * @param {{ sentiment: string, magnitude: number, confidence: number }} sentimentResult
- * @returns {{ impactPercent: number, impactMultiplier: number, description: string }}
- */
-export function calculatePriceImpact(sentimentResult) {
+export function calculatePriceImpact(sentimentResult: SentimentInput) {
   const { sentiment, magnitude, confidence = 0.5 } = sentimentResult;
   const level = getMagnitudeLevel(magnitude);
 
   const range =
     PRICE_IMPACT_RANGES[sentiment]?.[level] || PRICE_IMPACT_RANGES.neutral.low;
 
-  // Random value within the range
   const baseImpact = randomInRange(range.min, range.max);
 
-  // Apply confidence weighting - higher confidence = closer to full impact
   const confidenceMultiplier =
     CONFIDENCE_WEIGHT + (1 - CONFIDENCE_WEIGHT) * confidence;
   const finalImpact = baseImpact * confidenceMultiplier;
@@ -61,24 +56,18 @@ export function calculatePriceImpact(sentimentResult) {
   };
 }
 
-/**
- * Apply price impact to a current price
- * @param {number} currentPrice - Current player price
- * @param {{ impactMultiplier: number }} impact - Impact result from calculatePriceImpact
- * @returns {number} New price
- */
-export function applyPriceImpact(currentPrice, impact) {
+export function applyPriceImpact(
+  currentPrice: number,
+  impact: { impactMultiplier: number },
+): number {
   const newPrice = currentPrice * impact.impactMultiplier;
   return +newPrice.toFixed(2);
 }
 
-/**
- * Calculate new price from sentiment result in one step
- * @param {number} currentPrice - Current player price
- * @param {{ sentiment: string, magnitude: number, confidence: number }} sentimentResult
- * @returns {{ newPrice: number, impact: object }}
- */
-export function calculateNewPrice(currentPrice, sentimentResult) {
+export function calculateNewPrice(
+  currentPrice: number,
+  sentimentResult: SentimentInput,
+) {
   const impact = calculatePriceImpact(sentimentResult);
   const newPrice = applyPriceImpact(currentPrice, impact);
 
@@ -91,28 +80,17 @@ export function calculateNewPrice(currentPrice, sentimentResult) {
   };
 }
 
-/**
- * Process multiple news items and calculate cumulative impact
- * @param {number} currentPrice - Current player price
- * @param {Array<{ sentiment: string, magnitude: number, confidence: number }>} sentimentResults
- * @param {Object} options - Options for cumulative calculation
- * @returns {{ newPrice: number, totalImpact: number, impacts: Array }}
- */
 export function calculateCumulativeImpact(
-  currentPrice,
-  sentimentResults,
-  options = {},
+  currentPrice: number,
+  sentimentResults: SentimentInput[],
+  options: { maxTotalImpact?: number; decayFactor?: number } = {},
 ) {
-  const {
-    maxTotalImpact = 0.1, // Cap at 10% total movement
-    decayFactor = 0.7, // Each subsequent article has 70% the impact of the previous
-  } = options;
+  const { maxTotalImpact = 0.1, decayFactor = 0.7 } = options;
 
   let runningPrice = currentPrice;
   let totalImpactPercent = 0;
-  const impacts = [];
+  const impacts: Array<Record<string, unknown>> = [];
 
-  // Sort by confidence (most confident first) if desired
   const sortedResults = [...sentimentResults].sort(
     (a, b) => (b.confidence || 0.5) - (a.confidence || 0.5),
   );
@@ -121,19 +99,17 @@ export function calculateCumulativeImpact(
     const decay = Math.pow(decayFactor, index);
     const impact = calculatePriceImpact(result);
 
-    // Apply decay to the impact
     const decayedImpact = {
       ...impact,
       impactPercent: impact.impactPercent * decay,
       impactMultiplier: 1 + (impact.impactMultiplier - 1) * decay,
     };
 
-    // Check if we've hit the cap
     if (
       Math.abs(totalImpactPercent + decayedImpact.impactPercent) >
       maxTotalImpact * 100
     ) {
-      return; // Skip this impact
+      return;
     }
 
     runningPrice = applyPriceImpact(runningPrice, decayedImpact);
@@ -155,17 +131,11 @@ export function calculateCumulativeImpact(
   };
 }
 
-/**
- * Generate a random number within a range
- */
-function randomInRange(min, max) {
+function randomInRange(min: number, max: number): number {
   return Math.random() * (max - min) + min;
 }
 
-/**
- * Get human-readable description of price impact
- */
-function getImpactDescription(impact) {
+function getImpactDescription(impact: number): string {
   const percent = Math.abs(impact * 100);
 
   if (impact > 0) {
@@ -181,19 +151,21 @@ function getImpactDescription(impact) {
   return 'Holding Steady';
 }
 
-/**
- * Create a price history entry from news and sentiment
- * @param {Object} article - News article
- * @param {Object} sentimentResult - Sentiment analysis result
- * @param {number} newPrice - Calculated new price
- * @returns {Object} Price history entry compatible with McQueen data structure
- */
-export function createPriceHistoryEntry(article, sentimentResult, newPrice) {
+export function createPriceHistoryEntry(
+  article: {
+    headline?: string;
+    published?: string;
+    source?: string;
+    url?: string;
+  },
+  sentimentResult: { sentiment: string; magnitude: number },
+  newPrice: number,
+) {
   return {
     timestamp: article.published || new Date().toISOString(),
     price: newPrice,
     reason: {
-      type: 'news',
+      type: 'news' as const,
       headline: article.headline,
       source: article.source || 'ESPN NFL',
       url: article.url,

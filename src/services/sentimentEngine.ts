@@ -1,10 +1,13 @@
-/**
- * Sentiment Analysis Engine for NFL News
- * Uses keyword-based rules to determine if news is bullish or bearish for a player's price
- */
+type KeywordLevel = 'high' | 'medium' | 'low';
+type SentimentType = 'positive' | 'negative' | 'neutral';
 
-// Positive keywords categorized by impact magnitude
-const POSITIVE_KEYWORDS = {
+interface KeywordMap {
+  high: string[];
+  medium: string[];
+  low: string[];
+}
+
+const POSITIVE_KEYWORDS: KeywordMap = {
   high: [
     'touchdown',
     'td',
@@ -58,8 +61,7 @@ const POSITIVE_KEYWORDS = {
   ],
 };
 
-// Negative keywords categorized by impact magnitude
-const NEGATIVE_KEYWORDS = {
+const NEGATIVE_KEYWORDS: KeywordMap = {
   high: [
     'injury',
     'torn',
@@ -109,7 +111,6 @@ const NEGATIVE_KEYWORDS = {
   ],
 };
 
-// Special context keywords that modify sentiment
 const CONTEXT_MODIFIERS = {
   negation: [
     'not',
@@ -125,8 +126,10 @@ const CONTEXT_MODIFIERS = {
   diminishers: ['slightly', 'somewhat', 'possibly', 'might', 'could'],
 };
 
-// Position-specific keywords (some news matters more for certain positions)
-const POSITION_KEYWORDS = {
+const POSITION_KEYWORDS: Record<
+  string,
+  { positive: string[]; negative: string[] }
+> = {
   QB: {
     positive: [
       'passing yards',
@@ -138,7 +141,13 @@ const POSITION_KEYWORDS = {
     negative: ['interceptions', 'sacks taken', 'fumbles', 'pick six'],
   },
   RB: {
-    positive: ['rushing yards', 'carries', 'goal line', 'workhorse', 'bellcow'],
+    positive: [
+      'rushing yards',
+      'carries',
+      'goal line',
+      'workhorse',
+      'bellcow',
+    ],
     negative: ['fumbles', 'pass blocking', 'limited touches'],
   },
   WR: {
@@ -157,7 +166,6 @@ const POSITION_KEYWORDS = {
   },
 };
 
-// Fantasy-relevant keywords
 const FANTASY_KEYWORDS = {
   positive: [
     'target share',
@@ -184,62 +192,72 @@ const FANTASY_KEYWORDS = {
   ],
 };
 
-/**
- * Analyzes a headline/text for sentiment
- * @param {string} text - The news headline or article text
- * @param {string} playerName - The player's name to check context
- * @param {string} position - Player's position (QB, RB, WR, TE, etc.)
- * @returns {{ sentiment: 'positive'|'negative'|'neutral', magnitude: number, confidence: number, keywords: string[] }}
- */
-export function analyzeSentiment(text, playerName = '', position = '') {
+interface FoundKeyword {
+  word: string;
+  type: string;
+  level: string;
+}
+
+interface AnalyzeSentimentResult {
+  sentiment: SentimentType;
+  magnitude: number;
+  confidence: number;
+  keywords: FoundKeyword[];
+  scores?: { positive: number; negative: number; net: number };
+}
+
+export function analyzeSentiment(
+  text: string | null | undefined,
+  playerName: string = '',
+  position: string = '',
+): AnalyzeSentimentResult {
+  void playerName;
   if (!text) {
     return { sentiment: 'neutral', magnitude: 0, confidence: 0, keywords: [] };
   }
 
   const lowerText = text.toLowerCase();
-  const foundKeywords = [];
+  const foundKeywords: FoundKeyword[] = [];
   let positiveScore = 0;
   let negativeScore = 0;
 
-  // Check for negation in the text
   const hasNegation = CONTEXT_MODIFIERS.negation.some((word) => {
     const regex = new RegExp(`\\b${word}\\b`, 'i');
     return regex.test(lowerText);
   });
 
-  // Score positive keywords
-  Object.entries(POSITIVE_KEYWORDS).forEach(([level, keywords]) => {
-    const weight = level === 'high' ? 3 : level === 'medium' ? 2 : 1;
-    keywords.forEach((keyword) => {
-      if (lowerText.includes(keyword.toLowerCase())) {
-        foundKeywords.push({ word: keyword, type: 'positive', level });
-        // If negation is present near the keyword, flip the score
-        if (hasNegation && isNegationNearKeyword(lowerText, keyword)) {
-          negativeScore += weight;
-        } else {
-          positiveScore += weight;
+  (Object.entries(POSITIVE_KEYWORDS) as [KeywordLevel, string[]][]).forEach(
+    ([level, keywords]) => {
+      const weight = level === 'high' ? 3 : level === 'medium' ? 2 : 1;
+      keywords.forEach((keyword) => {
+        if (lowerText.includes(keyword.toLowerCase())) {
+          foundKeywords.push({ word: keyword, type: 'positive', level });
+          if (hasNegation && isNegationNearKeyword(lowerText, keyword)) {
+            negativeScore += weight;
+          } else {
+            positiveScore += weight;
+          }
         }
-      }
-    });
-  });
+      });
+    },
+  );
 
-  // Score negative keywords
-  Object.entries(NEGATIVE_KEYWORDS).forEach(([level, keywords]) => {
-    const weight = level === 'high' ? 3 : level === 'medium' ? 2 : 1;
-    keywords.forEach((keyword) => {
-      if (lowerText.includes(keyword.toLowerCase())) {
-        foundKeywords.push({ word: keyword, type: 'negative', level });
-        // If negation is present near the keyword, flip the score
-        if (hasNegation && isNegationNearKeyword(lowerText, keyword)) {
-          positiveScore += weight;
-        } else {
-          negativeScore += weight;
+  (Object.entries(NEGATIVE_KEYWORDS) as [KeywordLevel, string[]][]).forEach(
+    ([level, keywords]) => {
+      const weight = level === 'high' ? 3 : level === 'medium' ? 2 : 1;
+      keywords.forEach((keyword) => {
+        if (lowerText.includes(keyword.toLowerCase())) {
+          foundKeywords.push({ word: keyword, type: 'negative', level });
+          if (hasNegation && isNegationNearKeyword(lowerText, keyword)) {
+            positiveScore += weight;
+          } else {
+            negativeScore += weight;
+          }
         }
-      }
-    });
-  });
+      });
+    },
+  );
 
-  // Check position-specific keywords
   if (position && POSITION_KEYWORDS[position]) {
     POSITION_KEYWORDS[position].positive.forEach((keyword) => {
       if (lowerText.includes(keyword.toLowerCase())) {
@@ -263,7 +281,6 @@ export function analyzeSentiment(text, playerName = '', position = '') {
     });
   }
 
-  // Check fantasy-relevant keywords
   FANTASY_KEYWORDS.positive.forEach((keyword) => {
     if (lowerText.includes(keyword.toLowerCase())) {
       foundKeywords.push({ word: keyword, type: 'positive', level: 'low' });
@@ -277,26 +294,25 @@ export function analyzeSentiment(text, playerName = '', position = '') {
     }
   });
 
-  // Calculate final sentiment
   const totalScore = positiveScore + negativeScore;
   const netScore = positiveScore - negativeScore;
 
-  let sentiment = 'neutral';
+  let sentiment: SentimentType = 'neutral';
   let magnitude = 0;
   let confidence = 0;
 
   if (totalScore > 0) {
-    confidence = Math.min(totalScore / 10, 1); // Max confidence at 10 keyword matches
+    confidence = Math.min(totalScore / 10, 1);
 
     if (netScore > 0) {
       sentiment = 'positive';
-      magnitude = Math.min(positiveScore / 9, 1); // Normalize to 0-1, max at 9 points
+      magnitude = Math.min(positiveScore / 9, 1);
     } else if (netScore < 0) {
       sentiment = 'negative';
       magnitude = Math.min(negativeScore / 9, 1);
     } else {
       sentiment = 'neutral';
-      magnitude = 0.5; // Mixed signals
+      magnitude = 0.5;
     }
   }
 
@@ -309,10 +325,7 @@ export function analyzeSentiment(text, playerName = '', position = '') {
   };
 }
 
-/**
- * Check if a negation word appears near a keyword (within 5 words)
- */
-function isNegationNearKeyword(text, keyword) {
+function isNegationNearKeyword(text: string, keyword: string): boolean {
   const words = text.split(/\s+/);
   const keywordIndex = words.findIndex((w) =>
     w.includes(keyword.toLowerCase().split(' ')[0]),
@@ -320,7 +333,6 @@ function isNegationNearKeyword(text, keyword) {
 
   if (keywordIndex === -1) return false;
 
-  // Check 5 words before the keyword
   const startIndex = Math.max(0, keywordIndex - 5);
   const contextWords = words.slice(startIndex, keywordIndex);
 
@@ -329,27 +341,22 @@ function isNegationNearKeyword(text, keyword) {
   );
 }
 
-/**
- * Get the sentiment level label based on magnitude
- * @param {number} magnitude - 0 to 1
- * @returns {'high'|'medium'|'low'}
- */
-export function getMagnitudeLevel(magnitude) {
+export function getMagnitudeLevel(
+  magnitude: number,
+): 'high' | 'medium' | 'low' {
   if (magnitude >= 0.66) return 'high';
   if (magnitude >= 0.33) return 'medium';
   return 'low';
 }
 
-/**
- * Get a human-readable description of the sentiment
- * @param {{ sentiment: string, magnitude: number }} result
- * @returns {string}
- */
-export function getSentimentDescription(result) {
+export function getSentimentDescription(result: {
+  sentiment: string;
+  magnitude: number;
+}): string {
   const { sentiment, magnitude } = result;
   const level = getMagnitudeLevel(magnitude);
 
-  const descriptions = {
+  const descriptions: Record<string, Record<string, string>> = {
     positive: {
       high: 'Very Bullish 🚀',
       medium: 'Bullish 📈',

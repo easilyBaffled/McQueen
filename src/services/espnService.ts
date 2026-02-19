@@ -1,20 +1,17 @@
-/**
- * ESPN API Service
- * Fetches news and data from ESPN's public API endpoints
- */
+import type { Article, GameEvent } from '../types';
 
-// ESPN API base URL (proxied in development)
 const ESPN_API_BASE = '/espn-api';
-
-// Fallback to direct URL if proxy not available (may have CORS issues)
 const ESPN_DIRECT_BASE = 'https://site.api.espn.com';
+const CACHE_TTL = 5 * 60 * 1000;
 
-// Cache configuration
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-const cache = new Map();
+interface CacheEntry {
+  data: unknown;
+  timestamp: number;
+}
 
-// ESPN Team IDs for NFL
-export const NFL_TEAM_IDS = {
+const cache = new Map<string, CacheEntry>();
+
+export const NFL_TEAM_IDS: Record<string, number> = {
   ARI: 22,
   ATL: 1,
   BAL: 33,
@@ -49,10 +46,7 @@ export const NFL_TEAM_IDS = {
   WAS: 28,
 };
 
-/**
- * Get cached data or null if expired/missing
- */
-function getFromCache(key) {
+function getFromCache(key: string): unknown | null {
   const cached = cache.get(key);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
     return cached.data;
@@ -61,17 +55,12 @@ function getFromCache(key) {
   return null;
 }
 
-/**
- * Store data in cache
- */
-function setCache(key, data) {
+function setCache(key: string, data: unknown): void {
   cache.set(key, { data, timestamp: Date.now() });
 }
 
-/**
- * Make a fetch request with fallback handling
- */
-async function fetchWithFallback(endpoint) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function fetchWithFallback(endpoint: string): Promise<any> {
   const cacheKey = endpoint;
   const cached = getFromCache(cacheKey);
   if (cached) {
@@ -79,11 +68,9 @@ async function fetchWithFallback(endpoint) {
   }
 
   try {
-    // Try proxied endpoint first
     let response = await fetch(`${ESPN_API_BASE}${endpoint}`);
 
     if (!response.ok) {
-      // Fallback to direct (may fail due to CORS in browser)
       console.warn('Proxy failed, trying direct ESPN API...');
       response = await fetch(`${ESPN_DIRECT_BASE}${endpoint}`);
     }
@@ -101,12 +88,7 @@ async function fetchWithFallback(endpoint) {
   }
 }
 
-/**
- * Fetch general NFL news
- * @param {number} limit - Number of articles to fetch
- * @returns {Promise<Array>} Array of normalized news articles
- */
-export async function fetchNFLNews(limit = 20) {
+export async function fetchNFLNews(limit: number = 20): Promise<Article[]> {
   try {
     const data = await fetchWithFallback(
       `/apis/site/v2/sports/football/nfl/news?limit=${limit}`,
@@ -118,13 +100,10 @@ export async function fetchNFLNews(limit = 20) {
   }
 }
 
-/**
- * Fetch news for a specific team
- * @param {string} teamAbbr - Team abbreviation (e.g., 'KC', 'BUF')
- * @param {number} limit - Number of articles
- * @returns {Promise<Array>} Array of normalized news articles
- */
-export async function fetchTeamNews(teamAbbr, limit = 10) {
+export async function fetchTeamNews(
+  teamAbbr: string,
+  limit: number = 10,
+): Promise<Article[]> {
   const teamId = NFL_TEAM_IDS[teamAbbr.toUpperCase()];
   if (!teamId) {
     console.warn(`Unknown team abbreviation: ${teamAbbr}`);
@@ -142,11 +121,11 @@ export async function fetchTeamNews(teamAbbr, limit = 10) {
   }
 }
 
-/**
- * Fetch current NFL scoreboard (live games)
- * @returns {Promise<Object>} Scoreboard data
- */
-export async function fetchScoreboard() {
+export async function fetchScoreboard(): Promise<{
+  events: GameEvent[];
+  week: unknown;
+  season: unknown;
+}> {
   try {
     const data = await fetchWithFallback(
       '/apis/site/v2/sports/football/nfl/scoreboard',
@@ -162,34 +141,23 @@ export async function fetchScoreboard() {
   }
 }
 
-/**
- * Search for news related to a specific player
- * @param {string} playerName - Player's full name
- * @param {string[]} searchTerms - Additional search terms
- * @param {string} teamAbbr - Player's team
- * @returns {Promise<Array>} Filtered news articles
- */
 export async function fetchPlayerNews(
-  playerName,
-  searchTerms = [],
-  teamAbbr = '',
-) {
-  // Build search terms array
+  playerName: string,
+  searchTerms: string[] = [],
+  teamAbbr: string = '',
+): Promise<Article[]> {
   const terms = [
     playerName.toLowerCase(),
     ...searchTerms.map((t) => t.toLowerCase()),
   ];
 
-  // Fetch team news first (more relevant)
-  let articles = [];
+  let articles: Article[] = [];
   if (teamAbbr) {
     articles = await fetchTeamNews(teamAbbr, 20);
   }
 
-  // Also fetch general NFL news
   const generalNews = await fetchNFLNews(30);
 
-  // Combine and dedupe
   const allArticles = [...articles];
   generalNews.forEach((article) => {
     if (!allArticles.find((a) => a.id === article.id)) {
@@ -197,7 +165,6 @@ export async function fetchPlayerNews(
     }
   });
 
-  // Filter articles that mention the player
   const playerArticles = allArticles.filter((article) => {
     const searchText =
       `${article.headline} ${article.description}`.toLowerCase();
@@ -207,11 +174,10 @@ export async function fetchPlayerNews(
   return playerArticles;
 }
 
-/**
- * Normalize ESPN news article to our format
- */
-function normalizeNewsArticles(articles) {
-  return articles.map((article) => ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeNewsArticles(articles: any[]): Article[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return articles.map((article: any) => ({
     id: article.id || String(Date.now() + Math.random()),
     headline: article.headline || '',
     description: article.description || '',
@@ -223,18 +189,21 @@ function normalizeNewsArticles(articles) {
     type: article.type || 'news',
     premium: article.premium || false,
     categories: article.categories || [],
-    // Keep original for debugging
     _raw: article,
   }));
 }
 
-/**
- * Normalize game event data
- */
-function normalizeGameEvent(event) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeGameEvent(event: any): GameEvent {
   const competition = event.competitions?.[0] || {};
-  const homeTeam = competition.competitors?.find((c) => c.homeAway === 'home');
-  const awayTeam = competition.competitors?.find((c) => c.homeAway === 'away');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const homeTeam = competition.competitors?.find(
+    (c: any) => c.homeAway === 'home',
+  );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const awayTeam = competition.competitors?.find(
+    (c: any) => c.homeAway === 'away',
+  );
 
   return {
     id: event.id,
@@ -270,17 +239,15 @@ function normalizeGameEvent(event) {
   };
 }
 
-/**
- * Clear the cache (useful for testing or manual refresh)
- */
-export function clearCache() {
+export function clearCache(): void {
   cache.clear();
 }
 
-/**
- * Get cache stats for debugging
- */
-export function getCacheStats() {
+export function getCacheStats(): {
+  size: number;
+  keys: string[];
+  entries: Array<{ key: string; age: number; expired: boolean }>;
+} {
   return {
     size: cache.size,
     keys: Array.from(cache.keys()),
