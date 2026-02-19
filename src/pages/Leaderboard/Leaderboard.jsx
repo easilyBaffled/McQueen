@@ -1,33 +1,24 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTrading } from '../../context/TradingContext';
+import { useSocial } from '../../context/SocialContext';
 import './Leaderboard.css';
 
-// Fake leaderboard data
-const fakeTraders = [
-  { id: 1, name: 'GridironGuru', portfolioValue: 15420.5, weeklyGain: 18.4 },
-  { id: 2, name: 'TDKing2024', portfolioValue: 14890.25, weeklyGain: 15.2 },
-  { id: 3, name: 'FantasyMVP', portfolioValue: 14210.0, weeklyGain: 12.8 },
-  { id: 4, name: 'StockJock', portfolioValue: 13850.75, weeklyGain: 11.5 },
-  { id: 5, name: 'RookieTrader', portfolioValue: 13420.0, weeklyGain: 9.2 },
-  { id: 6, name: 'ChartChaser', portfolioValue: 12980.5, weeklyGain: 7.8 },
-  { id: 7, name: 'EndZoneElite', portfolioValue: 12540.25, weeklyGain: 6.1 },
-  { id: 8, name: 'PigSkinPro', portfolioValue: 12100.0, weeklyGain: 4.5 },
-  { id: 9, name: 'NFLNerd', portfolioValue: 11650.75, weeklyGain: 2.9 },
-  { id: 10, name: 'BullMarketBob', portfolioValue: 11200.0, weeklyGain: 1.2 },
-];
-
 export default function Leaderboard() {
-  const { cash, getPortfolioValue, portfolio } = useTrading();
+  const { portfolio } = useTrading();
+  const { getLeaderboardRankings } = useSocial();
   const hasNoTrades = Object.keys(portfolio).length === 0;
-  const portfolioStats = getPortfolioValue();
-  const userValue = cash + portfolioStats.value;
-  const userGain = portfolioStats.gainPercent;
 
-  // Find user's rank
-  const userRank =
-    fakeTraders.findIndex((t) => userValue > t.portfolioValue) + 1;
-  const displayRank = userRank === 0 ? fakeTraders.length + 1 : userRank;
+  const rankings = useMemo(
+    () => getLeaderboardRankings(),
+    [getLeaderboardRankings],
+  );
+
+  const userRanking = rankings.find((r) => r.isUser);
+  const userValue = userRanking?.totalValue ?? 0;
+  const userGain = userRanking?.gainPercent ?? 0;
+  const displayRank = userRanking?.rank ?? rankings.length + 1;
 
   return (
     <div className="leaderboard-page">
@@ -79,10 +70,10 @@ export default function Leaderboard() {
           <span className="col-gain">Weekly Gain</span>
         </div>
 
-        {fakeTraders.map((trader, index) => (
+        {rankings.map((trader, index) => (
           <motion.div
-            key={trader.id}
-            className={`table-row ${index < 3 ? 'top-three' : ''}`}
+            key={trader.memberId}
+            className={`table-row ${index < 3 ? 'top-three' : ''} ${trader.isUser ? 'user-row' : ''}`}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.05 }}
@@ -94,58 +85,26 @@ export default function Leaderboard() {
               {index > 2 && <span className="rank-number">{index + 1}</span>}
             </span>
             <span className="col-trader">
-              <span className="trader-name">{trader.name}</span>
+              <span className="trader-avatar">{trader.avatar}</span>
+              <span className="trader-name">
+                {trader.isUser ? 'You' : trader.name}
+              </span>
             </span>
             <span className="col-value">
               $
-              {trader.portfolioValue.toLocaleString('en-US', {
+              {trader.totalValue.toLocaleString('en-US', {
                 minimumFractionDigits: 2,
               })}
             </span>
             <span
-              className={`col-gain ${trader.weeklyGain >= 0 ? 'text-up' : 'text-down'}`}
-              aria-label={`${trader.weeklyGain >= 0 ? 'Up' : 'Down'} ${Math.abs(trader.weeklyGain).toFixed(1)} percent`}
+              className={`col-gain ${(trader.gainPercent ?? 0) >= 0 ? 'text-up' : 'text-down'}`}
+              aria-label={`${(trader.gainPercent ?? 0) >= 0 ? 'Up' : 'Down'} ${Math.abs(trader.gainPercent ?? 0).toFixed(1)} percent`}
             >
-              {trader.weeklyGain >= 0 ? '▲ +' : '▼ '}
-              {trader.weeklyGain.toFixed(1)}%
+              {(trader.gainPercent ?? 0) >= 0 ? '▲ +' : '▼ '}
+              {Math.abs(trader.gainPercent ?? 0).toFixed(1)}%
             </span>
           </motion.div>
         ))}
-
-        {/* User row if not in top 10 */}
-        {displayRank > 10 && (
-          <>
-            <div className="table-divider">
-              <span>•••</span>
-            </div>
-            <motion.div
-              className="table-row user-row"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              <span className="col-rank">
-                <span className="rank-number">{displayRank}</span>
-              </span>
-              <span className="col-trader">
-                <span className="trader-name">You</span>
-              </span>
-              <span className="col-value">
-                $
-                {userValue.toLocaleString('en-US', {
-                  minimumFractionDigits: 2,
-                })}
-              </span>
-              <span
-                className={`col-gain ${userGain >= 0 ? 'text-up' : 'text-down'}`}
-                aria-label={`${userGain >= 0 ? 'Up' : 'Down'} ${Math.abs(userGain).toFixed(1)} percent`}
-              >
-                {userGain >= 0 ? '▲ +' : '▼ '}
-                {userGain.toFixed(1)}%
-              </span>
-            </motion.div>
-          </>
-        )}
       </div>
     </div>
   );
