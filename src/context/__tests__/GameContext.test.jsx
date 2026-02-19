@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { GameProvider, useGame } from '../GameContext';
 
@@ -364,5 +364,147 @@ describe('GameContext – leaderboard', () => {
     const rankings = result.current.getLeaderboardRankings();
     expect(rankings[0].rank).toBe(1);
     expect(rankings[rankings.length - 1].rank).toBe(rankings.length);
+  });
+});
+
+describe('GameContext – scenarioLoading transitions (TC-009)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('scenarioLoading is initially true', () => {
+    const { result } = renderGame();
+    expect(result.current.scenarioLoading).toBe(true);
+  });
+
+  it('scenarioLoading becomes false after initial load', async () => {
+    const { result } = renderGame();
+
+    await waitFor(() => {
+      expect(result.current.scenarioLoading).toBe(false);
+    });
+    expect(result.current.currentData).not.toBeNull();
+  });
+
+  it('scenarioLoading resets to true when switching scenarios', async () => {
+    const { result } = await renderGameAndWait();
+    expect(result.current.scenarioLoading).toBe(false);
+
+    act(() => {
+      result.current.setScenario('live');
+    });
+
+    expect(result.current.scenarioLoading).toBe(true);
+
+    await waitFor(() => {
+      expect(result.current.scenarioLoading).toBe(false);
+    });
+    expect(result.current.currentData).not.toBeNull();
+  });
+
+  it('currentData updates to the new scenario after switch', async () => {
+    const { result } = await renderGameAndWait();
+    const midweekData = result.current.currentData;
+
+    act(() => {
+      result.current.setScenario('live');
+    });
+
+    await waitFor(() => {
+      expect(result.current.scenarioLoading).toBe(false);
+    });
+
+    expect(result.current.currentData).not.toBeNull();
+    expect(result.current.currentData).not.toBe(midweekData);
+  });
+});
+
+describe('GameContext – invalid scenario (TC-012)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('handles unknown scenario ID without crashing', async () => {
+    const { result } = await renderGameAndWait();
+
+    act(() => {
+      result.current.setScenario('nonexistent');
+    });
+
+    await waitFor(() => {
+      expect(result.current.scenarioLoading).toBe(false);
+    });
+  });
+
+  it('does not throw for empty string scenario ID', async () => {
+    const { result } = await renderGameAndWait();
+
+    act(() => {
+      result.current.setScenario('');
+    });
+
+    await waitFor(() => {
+      expect(result.current.scenarioLoading).toBe(false);
+    });
+  });
+});
+
+describe('GameContext – race conditions (TC-013)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('rapid scenario switching settles on the last scenario', async () => {
+    const { result } = await renderGameAndWait();
+
+    act(() => {
+      result.current.setScenario('live');
+      result.current.setScenario('playoffs');
+      result.current.setScenario('superbowl');
+    });
+
+    await waitFor(() => {
+      expect(result.current.scenarioLoading).toBe(false);
+    });
+
+    expect(result.current.scenario).toBe('superbowl');
+    expect(result.current.currentData).not.toBeNull();
+    expect(result.current.currentData.scenario).toBe('superbowl');
+  });
+});
+
+describe('GameContext – import failure (TC-014)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it('scenarioLoading does not stay true when loader is missing', async () => {
+    const { result } = renderGame();
+
+    act(() => {
+      result.current.setScenario('broken-scenario');
+    });
+
+    await waitFor(() => {
+      expect(result.current.scenarioLoading).toBe(false);
+    });
+  });
+
+  it('error in dynamic import is caught gracefully', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { result } = await renderGameAndWait();
+
+    const originalScenarioData = result.current.currentData;
+
+    act(() => {
+      result.current.setScenario('nonexistent');
+    });
+
+    await waitFor(() => {
+      expect(result.current.scenarioLoading).toBe(false);
+    });
+
+    expect(result.current.currentData).toBe(originalScenarioData);
+    consoleSpy.mockRestore();
   });
 });

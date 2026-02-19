@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -13,7 +13,7 @@ import {
 } from 'recharts';
 import { useGame } from '../context/GameContext';
 import { EventMarkerPopup, getEventConfig, useToast } from '../components';
-import { PLAYER_NEWS_URLS, getTeamNewsUrl } from '../utils/espnUrls';
+import { getPlayerNewsUrls, getTeamNewsUrl } from '../utils/espnUrls';
 import { getPlayerHeadshotUrl } from '../utils/playerImages';
 import './PlayerDetail.css';
 
@@ -87,7 +87,12 @@ export default function PlayerDetail() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [imageError, setImageError] = useState(false);
+  const [playerNewsUrls, setPlayerNewsUrls] = useState({});
   const chartContainerRef = useRef(null);
+
+  useEffect(() => {
+    getPlayerNewsUrls().then(setPlayerNewsUrls);
+  }, []);
 
   const player = getPlayer(playerId);
   const holding = portfolio[playerId];
@@ -508,7 +513,7 @@ export default function PlayerDetail() {
                     ? entry.reason.url
                     : entry.reason?.type === 'news' ||
                         entry.reason?.type === 'game_event'
-                      ? PLAYER_NEWS_URLS[player.id] || null
+                      ? playerNewsUrls[player.id] || null
                       : null;
 
                 return (

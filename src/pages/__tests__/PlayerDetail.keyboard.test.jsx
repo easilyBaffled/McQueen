@@ -52,7 +52,7 @@ vi.mock('../../components', () => ({
 }));
 
 vi.mock('../../utils/espnUrls', () => ({
-  PLAYER_NEWS_URLS: {},
+  getPlayerNewsUrls: () => Promise.resolve({}),
   getTeamNewsUrl: () => null,
 }));
 

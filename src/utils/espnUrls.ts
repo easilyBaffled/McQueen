@@ -1,7 +1,14 @@
-import espnPlayersData from '../data/espnPlayers.json';
 import type { EspnPlayersData } from '../types';
 
-const typedEspnPlayersData = espnPlayersData as unknown as EspnPlayersData;
+let cachedData: EspnPlayersData | null = null;
+
+async function ensureData(): Promise<EspnPlayersData> {
+  if (!cachedData) {
+    const m = await import('../data/espnPlayers.json');
+    cachedData = m.default as unknown as EspnPlayersData;
+  }
+  return cachedData;
+}
 
 const ESPN_BASE = 'https://www.espn.com/nfl';
 
@@ -35,31 +42,35 @@ export function getGameUrl(gameId: string): string {
   return `${ESPN_BASE}/game/_/gameId/${gameId}`;
 }
 
-export function getEspnIdFromPlayerId(playerId: string): string | null {
-  const player = typedEspnPlayersData.players.find((p) => p.id === playerId);
+export async function getEspnIdFromPlayerId(
+  playerId: string,
+): Promise<string | null> {
+  const data = await ensureData();
+  const player = data.players.find((p) => p.id === playerId);
   return player?.espnId || null;
 }
 
-export function getPlayerData(
+export async function getPlayerData(
   playerId: string,
-): EspnPlayersData['players'][number] | null {
-  return (
-    typedEspnPlayersData.players.find((p) => p.id === playerId) || null
-  );
+): Promise<EspnPlayersData['players'][number] | null> {
+  const data = await ensureData();
+  return data.players.find((p) => p.id === playerId) || null;
 }
 
-export function getPlayerNewsUrlById(playerId: string): string {
-  const player = getPlayerData(playerId);
+export async function getPlayerNewsUrlById(
+  playerId: string,
+): Promise<string> {
+  const player = await getPlayerData(playerId);
   if (!player) return '#';
   return getPlayerNewsUrl(player.espnId, player.name);
 }
 
-export const PLAYER_NEWS_URLS: Record<string, string> = Object.fromEntries(
-  typedEspnPlayersData.players.map((p) => [
-    p.id,
-    getPlayerNewsUrl(p.espnId, p.name),
-  ]),
-);
+export async function getPlayerNewsUrls(): Promise<Record<string, string>> {
+  const data = await ensureData();
+  return Object.fromEntries(
+    data.players.map((p) => [p.id, getPlayerNewsUrl(p.espnId, p.name)]),
+  );
+}
 
 export const TEAM_NEWS_URLS: Record<string, string> = {
   KC: getTeamNewsUrl('KC'),
@@ -86,6 +97,6 @@ export default {
   getEspnIdFromPlayerId,
   getPlayerData,
   getPlayerNewsUrlById,
-  PLAYER_NEWS_URLS,
+  getPlayerNewsUrls,
   TEAM_NEWS_URLS,
 };

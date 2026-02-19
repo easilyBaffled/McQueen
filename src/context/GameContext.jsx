@@ -291,42 +291,48 @@ export function GameProvider({ children }) {
       return;
     }
 
-    loader().then((data) => {
-      if (cancelled) return;
-      setCurrentData(data);
+    loader()
+      .then((data) => {
+        if (cancelled) return;
+        setCurrentData(data);
 
-      setPriceOverrides({});
-      setTick(0);
-      setUserImpact({});
-      setPlayoffDilutionApplied(false);
+        setPriceOverrides({});
+        setTick(0);
+        setUserImpact({});
+        setPlayoffDilutionApplied(false);
 
-      const startingPortfolio = data?.startingPortfolio || {};
-      setPortfolio(startingPortfolio);
-      setCash(INITIAL_CASH);
+        const startingPortfolio = data?.startingPortfolio || {};
+        setPortfolio(startingPortfolio);
+        setCash(INITIAL_CASH);
 
-      setEspnNews([]);
-      setEspnError(null);
-      setEspnPriceHistory({});
-      setProcessedArticleIds(new Set());
+        setEspnNews([]);
+        setEspnError(null);
+        setEspnPriceHistory({});
+        setProcessedArticleIds(new Set());
 
-      const scenarioPlayers = data?.players || [];
-      const initialPrices = {};
-      scenarioPlayers.forEach((player) => {
-        if (scenario === 'espn-live') {
-          initialPrices[player.id] = player.basePrice;
-        } else {
-          initialPrices[player.id] = getCurrentPriceFromHistory(player);
-        }
+        const scenarioPlayers = data?.players || [];
+        const initialPrices = {};
+        scenarioPlayers.forEach((player) => {
+          if (scenario === 'espn-live') {
+            initialPrices[player.id] = player.basePrice;
+          } else {
+            initialPrices[player.id] = getCurrentPriceFromHistory(player);
+          }
+        });
+
+        const actionMessage =
+          scenario === 'espn-live'
+            ? 'ESPN Live mode activated - fetching real news...'
+            : 'Scenario loaded';
+
+        setHistory([{ tick: 0, prices: initialPrices, action: actionMessage }]);
+        setScenarioLoading(false);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error('Failed to load scenario:', err);
+        setScenarioLoading(false);
       });
-
-      const actionMessage =
-        scenario === 'espn-live'
-          ? 'ESPN Live mode activated - fetching real news...'
-          : 'Scenario loaded';
-
-      setHistory([{ tick: 0, prices: initialPrices, action: actionMessage }]);
-      setScenarioLoading(false);
-    });
 
     return () => {
       cancelled = true;

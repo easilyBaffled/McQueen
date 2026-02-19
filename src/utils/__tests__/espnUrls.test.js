@@ -78,38 +78,38 @@ describe('getGameUrl', () => {
 });
 
 describe('getEspnIdFromPlayerId', () => {
-  it('returns ESPN ID for known player', () => {
-    const id = getEspnIdFromPlayerId('mahomes');
+  it('returns ESPN ID for known player', async () => {
+    const id = await getEspnIdFromPlayerId('mahomes');
     expect(id).toBeTruthy();
     expect(typeof id).toBe('string');
   });
 
-  it('returns null for unknown player', () => {
-    expect(getEspnIdFromPlayerId('nonexistent-player')).toBeNull();
+  it('returns null for unknown player', async () => {
+    expect(await getEspnIdFromPlayerId('nonexistent-player')).toBeNull();
   });
 });
 
 describe('getPlayerData', () => {
-  it('returns player object for known player', () => {
-    const data = getPlayerData('mahomes');
+  it('returns player object for known player', async () => {
+    const data = await getPlayerData('mahomes');
     expect(data).toBeTruthy();
     expect(data.name).toBeTruthy();
     expect(data.espnId).toBeTruthy();
   });
 
-  it('returns null for unknown player', () => {
-    expect(getPlayerData('nonexistent')).toBeNull();
+  it('returns null for unknown player', async () => {
+    expect(await getPlayerData('nonexistent')).toBeNull();
   });
 });
 
 describe('getPlayerNewsUrlById', () => {
-  it('returns ESPN URL for known player ID', () => {
-    const url = getPlayerNewsUrlById('mahomes');
+  it('returns ESPN URL for known player ID', async () => {
+    const url = await getPlayerNewsUrlById('mahomes');
     expect(url).toContain('https://www.espn.com/nfl/player/news/_/id/');
     expect(url).toContain('mahomes');
   });
 
-  it('returns "#" for unknown player ID', () => {
-    expect(getPlayerNewsUrlById('nonexistent')).toBe('#');
+  it('returns "#" for unknown player ID', async () => {
+    expect(await getPlayerNewsUrlById('nonexistent')).toBe('#');
   });
 });
