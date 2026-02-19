@@ -27,3 +27,4 @@ export {
   TextSkeleton,
 } from './SkeletonLoader';
 export { default as FirstTradeGuide } from './FirstTradeGuide';
+export { default as ErrorBoundary } from './ErrorBoundary';
