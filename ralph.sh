@@ -24,6 +24,7 @@ AGENT_MD="${RALPH_DIR}/.ralph/AGENT.md"
 TEST_PLANS_DIR="${RALPH_DIR}/.ralph/test-plans"
 PROGRESS_LOG="${RALPH_DIR}/.ralph/progress.txt"
 EXECUTION_LOG="${RALPH_DIR}/.ralph/ralph.log"
+AGENT_MODEL="${AGENT_MODEL:-opus-4.6-thinking}"
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -399,7 +400,7 @@ for i in $(seq 0 $((PROCESS_COUNT - 1))); do
 
   QA_OUTPUT=""
   QA_EXIT=0
-  QA_OUTPUT=$(agent -p --force "$QA_FILLED" 2>&1) || QA_EXIT=$?
+  QA_OUTPUT=$(agent -p --model "$AGENT_MODEL" --force "$QA_FILLED" 2>&1) || QA_EXIT=$?
 
   QA_END=$(date +%s)
   QA_DURATION=$(( QA_END - QA_START ))
@@ -427,7 +428,7 @@ for i in $(seq 0 $((PROCESS_COUNT - 1))); do
 
   AGENT_OUTPUT=""
   AGENT_EXIT=0
-  AGENT_OUTPUT=$(agent -p --force "$FILLED_PROMPT" 2>&1) || AGENT_EXIT=$?
+  AGENT_OUTPUT=$(agent -p --model "$AGENT_MODEL" --force "$FILLED_PROMPT" 2>&1) || AGENT_EXIT=$?
 
   AGENT_END=$(date +%s)
   AGENT_DURATION=$(( AGENT_END - AGENT_START ))

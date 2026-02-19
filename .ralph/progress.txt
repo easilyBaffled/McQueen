@@ -24,3 +24,4 @@
 2026-02-19 11:26:38 | mcq-vlu | DONE | State Management: Split GameContext
 2026-02-19 11:36:29 | mcq-qzq.2 | DONE | Convert priceCalculator to TypeScript
 2026-02-19 11:41:58 | mcq-qzq.5 | DONE | Create SimulationEngine interface and TimelineSimulationEngine
+2026-02-19 11:46:23 | mcq-vlu.1 | DONE | Create ScenarioContext
