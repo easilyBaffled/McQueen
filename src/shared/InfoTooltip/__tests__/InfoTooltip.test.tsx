@@ -86,4 +86,51 @@ describe('InfoTooltip', () => {
       unmount();
     });
   });
+
+  it('click on trigger button prevents event propagation (TC-040)', () => {
+    const parentClick = vi.fn();
+    render(
+      // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+      <div onClick={parentClick}>
+        <InfoTooltip term="shares">Shares Label</InfoTooltip>
+      </div>,
+    );
+    const btn = screen.getByRole('button', { name: /what is shares/i });
+    fireEvent.click(btn);
+    expect(parentClick).not.toHaveBeenCalled();
+  });
+
+  it('no trigger button rendered for unknown term with children (TC-041)', () => {
+    render(<InfoTooltip term="unknownXyz">Label</InfoTooltip>);
+    expect(screen.getByText('Label')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /what is unknownXyz/i })).not.toBeInTheDocument();
+  });
+
+  it('tooltip content matches the exact definition for each term (TC-042)', () => {
+    const definitions: Record<string, RegExp> = {
+      shares: /units of ownership in a player/i,
+      portfolio: /your collection of player investments/i,
+      risers: /players whose price has increased/i,
+      fallers: /players whose price has decreased/i,
+      watchlist: /players you want to track without buying/i,
+      price: /current value of one share/i,
+      gainLoss: /how much you've made or lost/i,
+      totalValue: /your cash plus the current value/i,
+      cash: /available virtual money/i,
+      buy: /purchase shares of a player/i,
+      sell: /trade your shares back/i,
+    };
+
+    Object.entries(definitions).forEach(([term, pattern]) => {
+      const { unmount } = render(
+        <InfoTooltip term={term}>Label</InfoTooltip>,
+      );
+      const wrapper = screen.getByText('Label').closest('span')!;
+      fireEvent.mouseEnter(wrapper);
+      expect(screen.getByText(pattern)).toBeInTheDocument();
+      fireEvent.mouseLeave(wrapper);
+      expect(screen.queryByText(pattern)).not.toBeInTheDocument();
+      unmount();
+    });
+  });
 });

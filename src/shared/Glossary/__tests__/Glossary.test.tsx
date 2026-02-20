@@ -114,6 +114,71 @@ describe('Glossary', () => {
     expect(onClose).toHaveBeenCalledOnce();
   });
 
+  it('search filters by definition text for "green" (TC-030)', () => {
+    render(<Glossary isOpen={true} onClose={vi.fn()} />);
+    const searchInput = screen.getByPlaceholderText('Search terms...');
+    fireEvent.change(searchInput, { target: { value: 'green' } });
+    expect(screen.getByText('Risers')).toBeInTheDocument();
+  });
+
+  it('search filters by definition text for "favorites" (TC-030)', () => {
+    render(<Glossary isOpen={true} onClose={vi.fn()} />);
+    const searchInput = screen.getByPlaceholderText('Search terms...');
+    fireEvent.change(searchInput, { target: { value: 'favorites' } });
+    expect(screen.getByText('Watchlist')).toBeInTheDocument();
+    expect(screen.queryByText('Risers')).not.toBeInTheDocument();
+  });
+
+  it('search is case-insensitive (TC-030 edge)', () => {
+    render(<Glossary isOpen={true} onClose={vi.fn()} />);
+    const searchInput = screen.getByPlaceholderText('Search terms...');
+    fireEvent.change(searchInput, { target: { value: 'GREEN' } });
+    expect(screen.getByText('Risers')).toBeInTheDocument();
+  });
+
+  it('clearing search restores all terms (TC-031)', () => {
+    const { unmount } = render(<Glossary isOpen={true} onClose={vi.fn()} />);
+    const searchInput = screen.getByPlaceholderText('Search terms...');
+    fireEvent.change(searchInput, { target: { value: 'portfolio' } });
+    expect(screen.getByText('Portfolio')).toBeInTheDocument();
+    unmount();
+
+    render(<Glossary isOpen={true} onClose={vi.fn()} />);
+    expect(screen.getByText('Portfolio')).toBeInTheDocument();
+    expect(screen.getByText('Risers')).toBeInTheDocument();
+    expect(screen.getByText('Shares')).toBeInTheDocument();
+    expect(screen.getByText('Buy')).toBeInTheDocument();
+  });
+
+  it('each glossary item shows term, definition, and example (TC-032)', () => {
+    render(<Glossary isOpen={true} onClose={vi.fn()} />);
+    expect(screen.getByText('Portfolio')).toBeInTheDocument();
+    expect(
+      screen.getByText(/collection of player investments/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Patrick Mahomes and Josh Allen/),
+    ).toBeInTheDocument();
+    const exampleLabels = screen.getAllByText('Example:');
+    expect(exampleLabels.length).toBeGreaterThan(0);
+  });
+
+  it('glossary dialog has correct ARIA attributes (TC-033)', () => {
+    render(<Glossary isOpen={true} onClose={vi.fn()} />);
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(dialog).toHaveAttribute('aria-labelledby', 'glossary-title');
+    const title = document.getElementById('glossary-title');
+    expect(title).toBeTruthy();
+    expect(title!.textContent).toContain('Trading Terms');
+  });
+
+  it('search input has correct aria-label (TC-034)', () => {
+    render(<Glossary isOpen={true} onClose={vi.fn()} />);
+    const input = screen.getByLabelText('Search trading terms');
+    expect(input).toBeInTheDocument();
+  });
+
   it('restart tutorial button clears localStorage and reloads', () => {
     const reloadMock = vi.fn();
     Object.defineProperty(window, 'location', {

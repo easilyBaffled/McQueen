@@ -236,4 +236,57 @@ describe('ScenarioToggle', () => {
     const liveDot = trigger.querySelector('[class*="mobile-live-dot"]');
     expect(liveDot).toBeTruthy();
   });
+
+  it('non-active tabs have tabIndex -1 for roving tabindex (TC-028)', () => {
+    renderToggle('midweek');
+    const tabs = screen.getAllByRole('tab');
+    const midweekTab = tabs.find((t) => t.textContent?.includes('Midweek'));
+    expect(midweekTab).toHaveAttribute('tabindex', '0');
+    tabs
+      .filter((t) => !t.textContent?.includes('Midweek'))
+      .forEach((t) => expect(t).toHaveAttribute('tabindex', '-1'));
+  });
+
+  it('switching scenario updates active tab aria-selected (TC-026)', () => {
+    const { setScenario } = renderToggle('midweek');
+    const tabs = screen.getAllByRole('tab');
+    const midweekTab = tabs.find((t) => t.textContent?.includes('Midweek'));
+    expect(midweekTab).toHaveAttribute('aria-selected', 'true');
+    tabs
+      .filter((t) => !t.textContent?.includes('Midweek'))
+      .forEach((t) => expect(t).toHaveAttribute('aria-selected', 'false'));
+
+    const playoffsTab = tabs.find((t) => t.textContent?.includes('Playoffs'))!;
+    fireEvent.click(playoffsTab);
+    expect(setScenario).toHaveBeenCalledWith('playoffs');
+  });
+
+  it('mobile dropdown selection calls setScenario and closes dropdown (TC-027)', () => {
+    const { setScenario } = renderToggle('midweek');
+    const trigger = document.querySelector('[class*="mobile-dropdown-trigger"]') as HTMLElement;
+    fireEvent.click(trigger);
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+
+    const menu = document.querySelector('[class*="mobile-dropdown-menu"]')!;
+    const buttons = menu.querySelectorAll('button[type="button"]');
+    const playoffsBtn = Array.from(buttons).find((b) =>
+      b.textContent?.includes('Playoffs'),
+    )!;
+    fireEvent.click(playoffsBtn);
+
+    expect(setScenario).toHaveBeenCalledWith('playoffs');
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('mobile dropdown trigger shows current scenario label (TC-029)', () => {
+    renderToggle('playoffs');
+    const trigger = document.querySelector('[class*="mobile-dropdown-trigger"]') as HTMLElement;
+    expect(trigger.textContent).toContain('Playoffs');
+  });
+
+  it('mobile dropdown trigger shows Super Bowl for superbowl scenario (TC-029 edge)', () => {
+    renderToggle('superbowl');
+    const trigger = document.querySelector('[class*="mobile-dropdown-trigger"]') as HTMLElement;
+    expect(trigger.textContent).toContain('Super Bowl');
+  });
 });
