@@ -479,6 +479,23 @@ describe('TimelineSimulationEngine', () => {
     vi.useRealTimers();
   });
 
+  it('defaults to TICK_INTERVAL_MS (3000) when tickIntervalMs omitted', () => {
+    vi.useFakeTimers();
+    const onPriceUpdate = vi.fn();
+    const timeline = makeTimeline(10);
+    const engine = new TimelineSimulationEngine({ timeline, onPriceUpdate });
+
+    engine.start();
+    vi.advanceTimersByTime(2999);
+    expect(onPriceUpdate).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(1);
+    expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+
+    engine.stop();
+    vi.useRealTimers();
+  });
+
   it('getPrice updates when same player appears multiple times', () => {
     const onPriceUpdate = vi.fn();
     const timeline: TimelineEntry[] = [
@@ -1131,23 +1148,29 @@ describe('EspnSimulationEngine — full TC coverage', () => {
     });
 
     it('default analyzeSentiment returns neutral with zero magnitude', async () => {
-      const analyzeSentiment = vi.fn().mockReturnValue({
-        sentiment: 'neutral',
-        magnitude: 0,
-        confidence: 0,
-      });
-      const calculateNewPrice = vi
-        .fn()
-        .mockReturnValue({ newPrice: 50, changePercent: 0 });
+      const onPriceUpdate = vi.fn();
       const engine = new EspnSimulationEngine({
-        players: [espnPlayer()],
-        onPriceUpdate: vi.fn(),
+        players: [espnPlayer({ basePrice: 50 })],
+        onPriceUpdate,
         fetchNews: vi.fn().mockResolvedValue([makeArticle()]),
-        analyzeSentiment,
-        calculateNewPrice,
       });
       await engine.tick();
-      expect(analyzeSentiment).toHaveBeenCalled();
+      expect(onPriceUpdate).toHaveBeenCalledTimes(1);
+      const reason = onPriceUpdate.mock.calls[0][2];
+      expect(reason.sentiment).toBe('neutral');
+      expect(reason.magnitude).toBe(0);
+    });
+
+    it('default calculateNewPrice returns unchanged price', async () => {
+      const onPriceUpdate = vi.fn();
+      const engine = new EspnSimulationEngine({
+        players: [espnPlayer({ basePrice: 50 })],
+        onPriceUpdate,
+        fetchNews: vi.fn().mockResolvedValue([makeArticle()]),
+      });
+      await engine.tick();
+      expect(onPriceUpdate).toHaveBeenCalledWith('mahomes', 50, expect.any(Object));
+      expect(engine.getPrice('mahomes')).toBe(50);
     });
 
     it('default refreshIntervalMs is 60000', () => {

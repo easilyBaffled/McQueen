@@ -44,3 +44,5 @@
 2026-02-19 17:56:49 | mcq-8hr.10 | DONE | Fix all Cypress E2E tests -- migrate selectors from CSS classes to data-testid
 2026-02-20 08:29:16 | mcq-vlu.2 | DONE | Create SimulationContext
 2026-02-20 09:17:07 | mcq-qbm.4 | DONE | Verify Cypress E2E suite passes end-to-end
+2026-02-20 09:40:46 | mcq-8hr.11 | DONE | Verify coverage targets met
+2026-02-20 09:47:00 | mcq-qbm.2 | DONE | Add unit tests for simulation engines
