@@ -46,3 +46,5 @@
 2026-02-20 09:17:07 | mcq-qbm.4 | DONE | Verify Cypress E2E suite passes end-to-end
 2026-02-20 09:40:46 | mcq-8hr.11 | DONE | Verify coverage targets met
 2026-02-20 09:47:00 | mcq-qbm.2 | DONE | Add unit tests for simulation engines
+2026-02-20 09:48:27 | mcq-qbm.2 | DONE | Add unit tests for simulation engines
+2026-02-20 09:58:58 | mcq-8hr.7 | DONE | Add Vitest tests for remaining 0% components (PlayoffModal, MiniLeaderboard, LiveTicker)
