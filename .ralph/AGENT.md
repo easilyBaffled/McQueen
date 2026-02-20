@@ -115,6 +115,24 @@ unless the bead description explicitly requires it.
 | `npm run lint`    | ESLint check                |
 | `npm run preview` | Preview production build    |
 
+## Testing & Coverage
+
+| Command                    | Purpose                                      |
+| -------------------------- | -------------------------------------------- |
+| `npm run test:run`         | Run all Vitest unit/component tests          |
+| `npm run test:coverage`    | Run Vitest with coverage (fails if below threshold) |
+| `npm run cy:run`           | Run Cypress E2E tests                        |
+| `npm run cy:coverage`      | Run Cypress with coverage instrumentation    |
+| `npm run cy:check-coverage`| Verify Cypress coverage meets thresholds     |
+
+**Coverage thresholds are enforced.** The project has hard minimums configured in
+`vite.config.js` (Vitest) and `.nycrc.json` (Cypress/nyc). If `npm run test:coverage`
+or `npm run cy:check-coverage` fails, you have dropped below the floor.
+
+**Rule:** Never lower threshold numbers. If you add new source files, add tests to
+maintain or improve coverage. If you refactor code that reduces coverage, add tests
+to compensate. Always run `npm run test:coverage` as a final check before finishing.
+
 ## Proxy / API
 
 - In development, ESPN API requests are proxied via Vite (`/espn-api` -> `site.api.espn.com`).

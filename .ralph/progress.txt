@@ -40,3 +40,7 @@
 2026-02-19 17:17:04 | mcq-8hr.5 | DONE | Add Vitest tests for Onboarding component (0% coverage)
 2026-02-19 17:22:57 | mcq-8hr.6 | DONE | Add Vitest tests for DailyMission component (0% coverage)
 2026-02-19 17:45:00 | mcq-8hr.9 | DONE | Add data-testid attributes to 12 source components for 59 Cypress selectors
+2026-02-19 17:43:45 | mcq-8hr.9 | DONE | Add data-testid attributes to source components for Cypress selectors
+2026-02-19 17:56:49 | mcq-8hr.10 | DONE | Fix all Cypress E2E tests -- migrate selectors from CSS classes to data-testid
+2026-02-20 08:29:16 | mcq-vlu.2 | DONE | Create SimulationContext
+2026-02-20 09:17:07 | mcq-qbm.4 | DONE | Verify Cypress E2E suite passes end-to-end

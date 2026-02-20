@@ -1,5 +1,7 @@
+/* global process */
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import istanbul from 'vite-plugin-istanbul';
 import fs from 'fs';
 import path from 'path';
 import { vendorChunks } from './src/build/vendorChunks.js';
@@ -67,12 +69,48 @@ function jsonApiPlugin() {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), jsonApiPlugin()],
+  plugins: [
+    react(),
+    jsonApiPlugin(),
+    ...(process.env.CYPRESS_COVERAGE === 'true'
+      ? [
+          istanbul({
+            include: 'src/*',
+            exclude: ['node_modules', 'src/test', 'src/**/__tests__/**'],
+            cypress: true,
+            forceBuildInstrument: true,
+          }),
+        ]
+      : []),
+  ],
   test: {
     globals: true,
     environment: 'happy-dom',
     setupFiles: './src/test/setup.js',
     css: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      reportsDirectory: './coverage/vitest',
+      include: ['src/**/*.{ts,tsx,js,jsx}'],
+      exclude: [
+        'src/test/**',
+        'src/**/__tests__/**',
+        'src/**/*.test.*',
+        'src/build/**',
+        'src/data/**',
+        'src/types/**',
+        'src/pages/ScenarioInspector/**',
+        'src/**/*.d.ts',
+        'src/main.tsx',
+      ],
+      thresholds: {
+        statements: 79,
+        branches: 66,
+        functions: 74,
+        lines: 80,
+      },
+    },
   },
   build: {
     rollupOptions: {

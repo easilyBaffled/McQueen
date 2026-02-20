@@ -75,3 +75,5 @@ Place unit/component tests in a `__tests__/` directory next to the source file, 
 9. **Do not modify scenario data** (`src/data/*.json`) unless the bead explicitly requires it.
 
 10. **When done**, report what you changed and confirm all acceptance criteria are met.
+
+11. **Never drop test coverage.** Before finishing, run `npm run test:coverage` and confirm all thresholds pass (the command exits non-zero if coverage drops). If you added new source files without tests, or modified code in a way that reduces coverage, you MUST add or update tests to restore coverage before completing the bead. Coverage gates are configured in `vite.config.js` (thresholds block) and `.nycrc.json` -- do not lower these numbers.
