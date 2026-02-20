@@ -61,11 +61,15 @@ describe('Split Contexts – trading', () => {
     localStorage.clear();
   });
 
-  it('provides default state', async () => {
+  it('provides default state with startingPortfolio from scenario', async () => {
     const { result } = await renderAllAndWait();
 
     expect(result.current.trading.cash).toBe(10000);
-    expect(result.current.trading.portfolio).toEqual({});
+    expect(result.current.trading.portfolio).toEqual({
+      mahomes: { shares: 3, avgCost: 138 },
+      mccaffrey: { shares: 2, avgCost: 148 },
+      jefferson: { shares: 2, avgCost: 130 },
+    });
   });
 
   it('throws when useTrading is called outside provider', () => {

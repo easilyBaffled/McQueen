@@ -4,6 +4,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useRef,
 } from 'react';
 
 import {
@@ -38,6 +39,7 @@ export function TradingProvider({ children }: ChildrenProps) {
     read(STORAGE_KEYS.cash, INITIAL_CASH),
   );
   const [userImpact, setUserImpact] = useState<Record<string, number>>({});
+  const didApplyStarting = useRef(false);
 
   useEffect(() => {
     write(STORAGE_KEYS.portfolio, portfolio);
@@ -46,6 +48,17 @@ export function TradingProvider({ children }: ChildrenProps) {
   useEffect(() => {
     write(STORAGE_KEYS.cash, cash);
   }, [cash]);
+
+  // Apply startingPortfolio on initial data load when localStorage is empty
+  useEffect(() => {
+    if (didApplyStarting.current || !currentData?.startingPortfolio) return;
+    didApplyStarting.current = true;
+
+    const stored = read(STORAGE_KEYS.portfolio, {});
+    if (Object.keys(stored).length === 0) {
+      setPortfolio(currentData.startingPortfolio);
+    }
+  }, [currentData]);
 
   // Reset on scenario change
   useEffect(() => {
