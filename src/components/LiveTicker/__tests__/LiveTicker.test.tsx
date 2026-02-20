@@ -45,33 +45,30 @@ import { useSimulation } from '../../../context/SimulationContext';
 const mockUseSimulation = vi.mocked(useSimulation);
 
 describe('LiveTicker', () => {
-  it('returns null when scenario is not live', () => {
+  it('returns null when scenario is midweek', () => {
     const { container } = renderWithProviders(<LiveTicker />, {
       scenarioOverrides: { scenario: 'midweek' },
     });
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders ticker when scenario is live', () => {
+  it('returns null when scenario is playoffs', () => {
+    const { container } = renderWithProviders(<LiveTicker />, {
+      scenarioOverrides: { scenario: 'playoffs' },
+    });
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('renders LIVE label and ticker dot when scenario is live', () => {
     renderWithProviders(<LiveTicker />, {
       scenarioOverrides: { scenario: 'live' },
     });
     expect(screen.getByText('LIVE')).toBeInTheDocument();
+    const dot = document.querySelector('[class*="ticker-dot"]');
+    expect(dot).toBeTruthy();
   });
 
-  it('shows fallback text when no events available', () => {
-    mockUseSimulation.mockReturnValue({
-      history: [],
-      tick: 0,
-      unifiedTimeline: [],
-    } as ReturnType<typeof useSimulation>);
-    renderWithProviders(<LiveTicker />, {
-      scenarioOverrides: { scenario: 'live' },
-    });
-    expect(screen.getByText(/MNF: Chiefs vs Bills/)).toBeInTheDocument();
-  });
-
-  it('shows current event headline from unified timeline', () => {
+  it('shows current event headline from unified timeline at current tick', () => {
     mockUseSimulation.mockReturnValue({
       history: [],
       tick: 1,
@@ -86,7 +83,54 @@ describe('LiveTicker', () => {
     expect(screen.getByText('Allen interception')).toBeInTheDocument();
   });
 
-  it('falls back to history events when timeline is empty', () => {
+  it('shows first event headline when tick is 0', () => {
+    mockUseSimulation.mockReturnValue({
+      history: [],
+      tick: 0,
+      unifiedTimeline: [
+        { reason: { headline: 'Game start' } },
+        { reason: { headline: 'First play' } },
+      ],
+    } as unknown as ReturnType<typeof useSimulation>);
+    renderWithProviders(<LiveTicker />, {
+      scenarioOverrides: { scenario: 'live' },
+    });
+    expect(screen.getByText('Game start')).toBeInTheDocument();
+  });
+
+  it('falls back to recent events headline when tick exceeds timeline length', () => {
+    mockUseSimulation.mockReturnValue({
+      history: [],
+      tick: 5,
+      unifiedTimeline: [
+        { reason: { headline: 'Event A' } },
+        { reason: { headline: 'Event B' } },
+        { reason: { headline: 'Event C' } },
+      ],
+    } as unknown as ReturnType<typeof useSimulation>);
+    renderWithProviders(<LiveTicker />, {
+      scenarioOverrides: { scenario: 'live' },
+    });
+    expect(screen.getByText('Event C')).toBeInTheDocument();
+  });
+
+  it('falls back to static text when current tick entry has no headline and recentEvents[0] also lacks headline', () => {
+    mockUseSimulation.mockReturnValue({
+      history: [],
+      tick: 1,
+      unifiedTimeline: [
+        { reason: { headline: 'Good event' } },
+        { reason: {} },
+      ],
+    } as unknown as ReturnType<typeof useSimulation>);
+    renderWithProviders(<LiveTicker />, {
+      scenarioOverrides: { scenario: 'live' },
+    });
+    // recentEvents reversed puts { reason: {} } first, so no headline fallback either → static text
+    expect(screen.getByText(/MNF: Chiefs vs Bills/)).toBeInTheDocument();
+  });
+
+  it('falls back to history events when unified timeline is empty', () => {
     mockUseSimulation.mockReturnValue({
       history: [
         { action: 'Scenario loaded', tick: 0 },
@@ -99,6 +143,32 @@ describe('LiveTicker', () => {
       scenarioOverrides: { scenario: 'live' },
     });
     expect(screen.getByText('Player price updated')).toBeInTheDocument();
+  });
+
+  it('shows static fallback text when no events of any kind exist', () => {
+    mockUseSimulation.mockReturnValue({
+      history: [],
+      tick: 0,
+      unifiedTimeline: [],
+    } as ReturnType<typeof useSimulation>);
+    renderWithProviders(<LiveTicker />, {
+      scenarioOverrides: { scenario: 'live' },
+    });
+    expect(screen.getByText(/MNF: Chiefs vs Bills - Live updates as they happen/)).toBeInTheDocument();
+  });
+
+  it('shows static fallback when history only has Scenario loaded entries', () => {
+    mockUseSimulation.mockReturnValue({
+      history: [
+        { action: 'Scenario loaded', tick: 0 },
+      ],
+      tick: 0,
+      unifiedTimeline: [],
+    } as unknown as ReturnType<typeof useSimulation>);
+    renderWithProviders(<LiveTicker />, {
+      scenarioOverrides: { scenario: 'live' },
+    });
+    expect(screen.getByText(/MNF: Chiefs vs Bills/)).toBeInTheDocument();
   });
 
   it('shows recent events from unified timeline up to current tick', () => {
