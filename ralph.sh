@@ -9,6 +9,7 @@
 #   ./ralph.sh --type bug          # Only beads of a given type
 #   ./ralph.sh --max 5             # Process up to 5 beads
 #   ./ralph.sh --dry-run           # Show what would run without executing
+#   ./ralph.sh --spec <file> --name <name>  # Generate spec from research
 #   ./ralph.sh --help              # Show this help message
 
 set -euo pipefail
@@ -20,8 +21,10 @@ set -euo pipefail
 RALPH_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROMPT_TEMPLATE="${RALPH_DIR}/.ralph/PROMPT.md"
 QA_PROMPT_TEMPLATE="${RALPH_DIR}/.ralph/QA_PROMPT.md"
+SPEC_PROMPT_TEMPLATE="${RALPH_DIR}/.ralph/SPEC_PROMPT.md"
 AGENT_MD="${RALPH_DIR}/.ralph/AGENT.md"
 TEST_PLANS_DIR="${RALPH_DIR}/.ralph/test-plans"
+SPECS_DIR="${RALPH_DIR}/.ralph/specs"
 PROGRESS_LOG="${RALPH_DIR}/.ralph/progress.txt"
 EXECUTION_LOG="${RALPH_DIR}/.ralph/ralph.log"
 AGENT_MODEL="${AGENT_MODEL:-opus-4.6-thinking}"
@@ -144,23 +147,34 @@ ralph.sh -- AI agent loop runner for McQueen
 Usage:
   ./ralph.sh [OPTIONS]
 
-Options:
+Modes:
+  (default)                         Process ready beads (QA + IMPL pipeline)
+  --spec <file> --name <name>       Generate spec from research findings
+
+Bead Processing Options:
   --all             Process all ready beads (up to --max)
   --epic <id>       Only process beads under the given epic
   --type <type>     Only process beads of the given type (task, bug, feature, ...)
   --max  <n>        Maximum beads to process (default: 1, or unlimited with --all)
   --dry-run         Print what would be done, but don't execute
+
+Spec Options:
+  --spec <file>     Research file to generate spec from (e.g., .ralph/research/ui-audit.md)
+  --name <name>     Name for the spec (used in output filenames)
+
+General:
   --help            Show this help message
 
 Environment:
   CURSOR_API_KEY    Required. Your Cursor API key for headless CLI access.
 
 Examples:
-  ./ralph.sh                         # Process next ready bead
-  ./ralph.sh --all --max 3           # Process up to 3 ready beads
-  ./ralph.sh --type bug              # Process the next ready bug
-  ./ralph.sh --epic mcq-a1b2 --all   # Process all tasks in an epic
-  ./ralph.sh --dry-run               # Preview without executing
+  ./ralph.sh                                           # Process next ready bead
+  ./ralph.sh --all --max 3                             # Process up to 3 ready beads
+  ./ralph.sh --type bug                                # Process the next ready bug
+  ./ralph.sh --epic mcq-a1b2 --all                     # Process all tasks in an epic
+  ./ralph.sh --dry-run                                 # Preview without executing
+  ./ralph.sh --spec .ralph/research/ui-audit.md --name ui-fixes  # Generate spec
 EOF
   exit 0
 }
@@ -174,6 +188,8 @@ FILTER_EPIC=""
 FILTER_TYPE=""
 MAX_BEADS=1
 DRY_RUN=false
+SPEC_FILE=""
+SPEC_NAME=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -182,6 +198,8 @@ while [[ $# -gt 0 ]]; do
     --type)     FILTER_TYPE="$2"; shift 2 ;;
     --max)      MAX_BEADS="$2"; shift 2 ;;
     --dry-run)  DRY_RUN=true; shift ;;
+    --spec)     SPEC_FILE="$2"; shift 2 ;;
+    --name)     SPEC_NAME="$2"; shift 2 ;;
     --help|-h)  usage ;;
     *)          die "Unknown option: $1 (try --help)" ;;
   esac
@@ -201,15 +219,102 @@ command -v agent >/dev/null 2>&1 || die "Cursor CLI (agent) is not installed. In
 command -v jq   >/dev/null 2>&1 || die "jq is required. Install with: brew install jq"
 
 [[ -n "${CURSOR_API_KEY:-}" ]] || die "CURSOR_API_KEY environment variable is not set."
-[[ -f "$PROMPT_TEMPLATE" ]]    || die "Prompt template not found: $PROMPT_TEMPLATE"
-[[ -f "$QA_PROMPT_TEMPLATE" ]] || die "QA prompt template not found: $QA_PROMPT_TEMPLATE"
 [[ -f "$AGENT_MD" ]]           || die "Agent conventions not found: $AGENT_MD"
 
 # Make sure beads is initialized
 [[ -d "${RALPH_DIR}/.beads" ]] || die ".beads/ directory not found. Run: bd init --quiet --prefix mcq"
 
-# Ensure test-plans output directory exists
+# Ensure output directories exist
 mkdir -p "$TEST_PLANS_DIR"
+mkdir -p "$SPECS_DIR"
+
+# ---------------------------------------------------------------------------
+# Spec mode (early exit)
+# ---------------------------------------------------------------------------
+
+if [[ -n "$SPEC_FILE" ]]; then
+  [[ -n "$SPEC_NAME" ]]             || die "--spec requires --name <name>"
+  [[ -f "$SPEC_FILE" ]]             || die "Research file not found: $SPEC_FILE"
+  [[ -f "$SPEC_PROMPT_TEMPLATE" ]]  || die "Spec prompt template not found: $SPEC_PROMPT_TEMPLATE"
+
+  SPEC_DOC="${SPECS_DIR}/${SPEC_NAME}.md"
+  SPEC_BEADS="${SPECS_DIR}/${SPEC_NAME}-beads.sh"
+  RESEARCH_CONTENT=$(<"$SPEC_FILE")
+
+  SPEC_PROMPT=$(<"$SPEC_PROMPT_TEMPLATE")
+  SPEC_PROMPT="${SPEC_PROMPT//\{\{RESEARCH_CONTENT\}\}/$RESEARCH_CONTENT}"
+  SPEC_PROMPT="${SPEC_PROMPT//\{\{SPEC_NAME\}\}/$SPEC_NAME}"
+
+  SPEC_PROMPT="${SPEC_PROMPT}
+
+---
+
+## Project Conventions (from .ralph/AGENT.md)
+
+$(<"$AGENT_MD")"
+
+  say ""
+  say "  ┌─ SPEC MODE ──────────────────────────────────────────┐"
+  say "  │  research: ${SPEC_FILE}"
+  say "  │  spec:     ${SPEC_DOC}"
+  say "  │  beads:    ${SPEC_BEADS}"
+  say "  └──────────────────────────────────────────────────────┘"
+  say ""
+
+  log "Spec mode: research=${SPEC_FILE} name=${SPEC_NAME}"
+
+  SPEC_START=$(date +%s)
+
+  SPEC_OUTPUT=""
+  SPEC_EXIT=0
+  SPEC_OUTPUT=$(agent -p --model "$AGENT_MODEL" --force "$SPEC_PROMPT" 2>&1) || SPEC_EXIT=$?
+
+  SPEC_END=$(date +%s)
+  SPEC_DURATION=$(( SPEC_END - SPEC_START ))
+
+  echo "$SPEC_OUTPUT" | tail -30 >> "$EXECUTION_LOG"
+
+  if [[ $SPEC_EXIT -eq 0 ]]; then
+    log "Spec generated for ${SPEC_NAME} in $(format_duration $SPEC_DURATION)"
+    say "  [SPEC] Done ($(format_duration $SPEC_DURATION))"
+    say ""
+
+    if [[ -f "$SPEC_DOC" ]]; then
+      say "  Spec document:      ${SPEC_DOC}"
+    else
+      say "  WARNING: Spec document not found at ${SPEC_DOC}"
+    fi
+
+    if [[ -f "$SPEC_BEADS" ]]; then
+      BEAD_COUNT=$(grep -c '^[[:space:]]*bd create' "$SPEC_BEADS" 2>/dev/null || echo "0")
+      say "  Bead creation script: ${SPEC_BEADS} (${BEAD_COUNT} bd create commands)"
+      say ""
+      say "  Next steps:"
+      say "    1. Review the spec:   less ${SPEC_DOC}"
+      say "    2. Review the beads:  less ${SPEC_BEADS}"
+      say "    3. Create the beads:  bash ${SPEC_BEADS}"
+      say "    4. Run Ralph:         ./ralph.sh --all"
+    else
+      say "  WARNING: Bead script not found at ${SPEC_BEADS}"
+    fi
+
+    say ""
+  else
+    log "Spec FAILED for ${SPEC_NAME} (exit=${SPEC_EXIT}, $(format_duration $SPEC_DURATION))"
+    say "  [SPEC] FAILED (exit=${SPEC_EXIT}, $(format_duration $SPEC_DURATION))"
+    say ""
+    exit 1
+  fi
+
+  exit 0
+fi
+
+# ---------------------------------------------------------------------------
+# Bead processing mode -- preflight checks for templates
+# ---------------------------------------------------------------------------
+
+[[ -f "$PROMPT_TEMPLATE" ]]    || die "Prompt template not found: $PROMPT_TEMPLATE"
+[[ -f "$QA_PROMPT_TEMPLATE" ]] || die "QA prompt template not found: $QA_PROMPT_TEMPLATE"
 
 # ---------------------------------------------------------------------------
 # Fetch ready beads
