@@ -581,6 +581,31 @@ else
   print_summary "$PROCESS_COUNT" "$SUCCESSES" "$FAILURES" "$RUN_ELAPSED"
 fi
 
+# ---------------------------------------------------------------------------
+# Auto-commit & push
+# ---------------------------------------------------------------------------
+
+if ! $DRY_RUN; then
+  log "Starting auto-commit & push..."
+
+  if [[ -n $(git -C "$RALPH_DIR" status --porcelain 2>/dev/null) ]]; then
+    log "Uncommitted changes detected -- committing."
+    git -C "$RALPH_DIR" add -A >> "$EXECUTION_LOG" 2>&1
+    git -C "$RALPH_DIR" commit -m "ralph: auto-commit after run ($SUCCESSES succeeded, $FAILURES failed)" \
+      >> "$EXECUTION_LOG" 2>&1 || true
+  fi
+
+  log "Syncing and pushing..."
+  git -C "$RALPH_DIR" pull --rebase >> "$EXECUTION_LOG" 2>&1 || log "WARN: git pull --rebase failed"
+  bd sync >> "$EXECUTION_LOG" 2>&1 || true
+  if git -C "$RALPH_DIR" push >> "$EXECUTION_LOG" 2>&1; then
+    log "Push succeeded."
+  else
+    log "WARN: git push failed -- changes are committed locally but not pushed."
+    say "  WARNING: git push failed. Changes are committed locally."
+  fi
+fi
+
 if [[ $FAILURES -gt 0 ]]; then
   exit 1
 fi
