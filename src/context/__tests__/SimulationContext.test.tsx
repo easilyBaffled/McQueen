@@ -438,6 +438,9 @@ describe('SimulationContext', () => {
         result.current.sc.setScenario(scenario);
         await vi.advanceTimersByTimeAsync(200);
       });
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(0);
+      });
     }
 
     // TC-015
