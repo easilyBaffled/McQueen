@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act, waitFor, render, screen } from '@testing-library/react';
 import { ScenarioProvider, useScenario } from '../ScenarioContext';
-import { SimulationProvider } from '../SimulationContext';
+import { SimulationProvider, useSimulation } from '../SimulationContext';
 import { TradingProvider, useTrading } from '../TradingContext';
 import { INITIAL_CASH, USER_IMPACT_FACTOR, STORAGE_KEYS } from '../../constants';
 import { write, read } from '../../services/storageService';
@@ -15,6 +15,10 @@ vi.mock('../../services/espnService', async (importOriginal) => {
   };
 });
 
+import { fetchNFLNews } from '../../services/espnService';
+
+const mockFetchNFLNews = vi.mocked(fetchNFLNews);
+
 function Wrapper({ children }: { children: React.ReactNode }) {
   return (
     <ScenarioProvider>
@@ -26,7 +30,7 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 }
 
 function useTradingAndScenario() {
-  return { trading: useTrading(), scenario: useScenario() };
+  return { trading: useTrading(), scenario: useScenario(), simulation: useSimulation() };
 }
 
 function renderTrading() {
@@ -493,6 +497,64 @@ describe('TradingContext', () => {
     });
   });
 
+  describe('getPlayer', () => {
+    // TC-042
+    it('returns enriched player data with all computed fields', async () => {
+      const { result } = await renderAndWait();
+      const player = result.current.trading.getPlayer('mahomes');
+
+      expect(player).not.toBeNull();
+      expect(typeof player!.currentPrice).toBe('number');
+      expect(typeof player!.changePercent).toBe('number');
+      expect(typeof player!.priceChange).toBe('number');
+      expect(typeof player!.moveReason).toBe('string');
+      expect(Array.isArray(player!.contentTiles)).toBe(true);
+      expect(Array.isArray(player!.allContent)).toBe(true);
+      expect(player!.priceHistory).toBeDefined();
+    });
+
+    it('currentPrice matches getEffectivePrice', async () => {
+      const { result } = await renderAndWait();
+      const player = result.current.trading.getPlayer('mahomes');
+      const effectivePrice = result.current.trading.getEffectivePrice('mahomes');
+
+      expect(player!.currentPrice).toBe(effectivePrice);
+    });
+
+    it('changePercent is computed from basePrice', async () => {
+      const { result } = await renderAndWait();
+      const player = result.current.trading.getPlayer('mahomes');
+      const effectivePrice = result.current.trading.getEffectivePrice('mahomes');
+      const expected = +((effectivePrice - player!.basePrice) / player!.basePrice * 100).toFixed(2);
+
+      expect(player!.changePercent).toBe(expected);
+    });
+
+    it('returns null for unknown player ID', async () => {
+      const { result } = await renderAndWait();
+      expect(result.current.trading.getPlayer('nonexistent_id')).toBeNull();
+    });
+  });
+
+  describe('getPlayers', () => {
+    // TC-043
+    it('returns all players with enriched data', async () => {
+      const { result } = await renderAndWait();
+      const players = result.current.trading.getPlayers();
+      const scenarioPlayers = result.current.scenario.players;
+
+      expect(players.length).toBe(scenarioPlayers.length);
+
+      players.forEach((p) => {
+        expect(typeof p.currentPrice).toBe('number');
+        expect(typeof p.changePercent).toBe('number');
+        expect(typeof p.priceChange).toBe('number');
+        expect(typeof p.moveReason).toBe('string');
+        expect(Array.isArray(p.contentTiles)).toBe(true);
+      });
+    });
+  });
+
   describe('getPortfolioValue', () => {
     // TC-025
     it('returns correct value, cost, gain, and gainPercent', async () => {
@@ -555,6 +617,87 @@ describe('TradingContext', () => {
       rerender();
       const ref2 = result.current.trading.getPortfolioValue;
       expect(ref2).toBe(ref1);
+    });
+  });
+
+  describe('ESPN live mode enrichment', () => {
+    const espnArticle = {
+      id: 'art-mahomes-espn',
+      headline: 'Patrick Mahomes throws 4 touchdowns in dominant win',
+      description: 'Mahomes leads team to a dominant victory',
+      published: new Date().toISOString(),
+      url: 'https://example.com',
+      images: [],
+      thumbnail: null,
+      source: 'ESPN NFL',
+      type: 'news',
+      premium: false,
+      categories: [],
+    };
+
+    it('getPlayer uses ESPN price history when in espn-live mode', async () => {
+      mockFetchNFLNews.mockResolvedValue([espnArticle]);
+
+      const { result } = await renderAndWait();
+
+      act(() => {
+        result.current.scenario.setScenario('espn-live');
+      });
+
+      await waitFor(() => {
+        expect(result.current.scenario.scenarioLoading).toBe(false);
+      });
+
+      await waitFor(() => {
+        expect(result.current.simulation.espnLoading).toBe(false);
+      });
+
+      await waitFor(() => {
+        expect(Object.keys(result.current.simulation.espnPriceHistory).length).toBeGreaterThan(0);
+      });
+
+      const player = result.current.trading.getPlayer('mahomes');
+      expect(player).not.toBeNull();
+      expect(typeof player!.currentPrice).toBe('number');
+      expect(typeof player!.moveReason).toBe('string');
+      expect(Array.isArray(player!.contentTiles)).toBe(true);
+      expect(Array.isArray(player!.allContent)).toBe(true);
+      expect(Array.isArray(player!.priceHistory)).toBe(true);
+      expect(player!.priceHistory!.length).toBeGreaterThan(0);
+    });
+
+    it('getPlayers uses ESPN price history when in espn-live mode', async () => {
+      mockFetchNFLNews.mockResolvedValue([
+        { ...espnArticle, id: 'art-mahomes-espn-2' },
+      ]);
+
+      const { result } = await renderAndWait();
+
+      act(() => {
+        result.current.scenario.setScenario('espn-live');
+      });
+
+      await waitFor(() => {
+        expect(result.current.scenario.scenarioLoading).toBe(false);
+      });
+
+      await waitFor(() => {
+        expect(result.current.simulation.espnLoading).toBe(false);
+      });
+
+      await waitFor(() => {
+        expect(Object.keys(result.current.simulation.espnPriceHistory).length).toBeGreaterThan(0);
+      });
+
+      const players = result.current.trading.getPlayers();
+      expect(players.length).toBeGreaterThan(0);
+
+      const mahomes = players.find((p) => p.id === 'mahomes');
+      expect(mahomes).toBeDefined();
+      expect(typeof mahomes!.currentPrice).toBe('number');
+      expect(typeof mahomes!.changePercent).toBe('number');
+      expect(typeof mahomes!.moveReason).toBe('string');
+      expect(Array.isArray(mahomes!.contentTiles)).toBe(true);
     });
   });
 });

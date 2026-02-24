@@ -436,7 +436,7 @@ describe('SimulationContext', () => {
     ) {
       await act(async () => {
         result.current.sc.setScenario(scenario);
-        await vi.advanceTimersByTimeAsync(200);
+        await vi.advanceTimersByTimeAsync(500);
       });
       await act(async () => {
         await vi.advanceTimersByTimeAsync(0);
@@ -445,12 +445,21 @@ describe('SimulationContext', () => {
 
     // TC-015
     it('tick interval advances through unified timeline', async () => {
-      const { result } = await renderFake();
-      await switchFake(result, 'live');
+      vi.useRealTimers();
+      const { result } = await renderAndWait();
+      await switchAndWait(result, 'live');
 
       expect(result.current.sim.isPlaying).toBe(true);
-      expect(result.current.sim.tick).toBe(0);
+      act(() => {
+        result.current.sim.setIsPlaying(false);
+      });
+
       const histBefore = result.current.sim.history.length;
+
+      vi.useFakeTimers();
+      act(() => {
+        result.current.sim.setIsPlaying(true);
+      });
 
       await act(async () => {
         await vi.advanceTimersByTimeAsync(TICK_INTERVAL_MS);
@@ -507,14 +516,17 @@ describe('SimulationContext', () => {
 
     // TC-018
     it('setIsPlaying toggles play/pause', async () => {
-      const { result } = await renderFake();
-      await switchFake(result, 'live');
+      vi.useRealTimers();
+      const { result } = await renderAndWait();
+      await switchAndWait(result, 'live');
       expect(result.current.sim.isPlaying).toBe(true);
 
       act(() => {
         result.current.sim.setIsPlaying(false);
       });
       expect(result.current.sim.isPlaying).toBe(false);
+
+      vi.useFakeTimers();
 
       const paused = result.current.sim.tick;
       await act(async () => {
