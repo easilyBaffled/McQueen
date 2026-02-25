@@ -84,3 +84,5 @@
 2026-02-25 08:27:13 | mcq-dvn.4 | DONE | Replace hardcoded LiveTicker fallback text
 2026-02-25 08:33:35 | mcq-dvn.5 | DONE | Map raw event type strings to display labels in Timeline
 2026-02-25 08:38:20 | mcq-c51.2 | DONE | Fix Leaderboard trader column alignment
+2026-02-25 08:49:06 | mcq-x8o | DONE | Minor Polish
+2026-02-25 08:53:05 | mcq-x8o.1 | DONE | Fix PlayerDetail chart tooltip truncation and add date context
