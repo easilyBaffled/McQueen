@@ -67,6 +67,10 @@
   text-align: center;
 }
 
+.highlight-virtual {}
+.highlight-colors {}
+.highlight-cta {}
+
 .onboarding-icon {
   display: block;
   font-size: 64px;

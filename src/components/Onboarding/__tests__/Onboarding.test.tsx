@@ -485,4 +485,53 @@ describe('Onboarding', () => {
       );
     });
   });
+
+  // ── mcq-63p.1: CSS module highlight class references ────────────────
+  describe('Content wrapper CSS module classes (mcq-63p.1)', () => {
+    function getContentWrapper() {
+      const title = document.getElementById('onboarding-title');
+      return title!.parentElement!;
+    }
+
+    it('applies highlight-virtual class on step with highlight "virtual"', () => {
+      renderAndShow();
+      clickNext();
+      const wrapper = getContentWrapper();
+      expect(wrapper.className).toMatch(/highlight-virtual/);
+      expect(wrapper.className).not.toContain('undefined');
+    });
+
+    it('applies highlight-colors class on step with highlight "colors"', () => {
+      renderAndShow();
+      clickNext(2);
+      const wrapper = getContentWrapper();
+      expect(wrapper.className).toMatch(/highlight-colors/);
+      expect(wrapper.className).not.toContain('undefined');
+    });
+
+    it('applies highlight-cta class on step with highlight "cta"', () => {
+      renderAndShow();
+      clickNext(5);
+      const wrapper = getContentWrapper();
+      expect(wrapper.className).toMatch(/highlight-cta/);
+      expect(wrapper.className).not.toContain('undefined');
+    });
+
+    it('does not inject spurious highlight classes when highlight is null', () => {
+      renderAndShow();
+      const wrapper = getContentWrapper();
+      expect(wrapper.className).not.toMatch(/highlight-/);
+      expect(wrapper.className).not.toContain('undefined');
+      expect(wrapper.className).not.toContain('null');
+    });
+
+    it('contains onboarding-content class on all steps', () => {
+      renderAndShow();
+      for (let i = 0; i < 6; i++) {
+        const wrapper = getContentWrapper();
+        expect(wrapper.className).toMatch(/onboarding-content/);
+        if (i < 5) clickNext();
+      }
+    });
+  });
 });

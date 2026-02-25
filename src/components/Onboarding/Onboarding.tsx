@@ -143,7 +143,7 @@ export default function Onboarding() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={step}
-                className={styles['onboarding-content']}
+                className={[styles['onboarding-content'], currentStep.highlight ? styles[`highlight-${currentStep.highlight}`] : ''].filter(Boolean).join(' ')}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
