@@ -3,6 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DailyMission from '../DailyMission';
+import styles from '../DailyMission.module.css';
 import { renderWithProviders, type RenderWithProvidersOptions } from '../../../test/renderWithProviders';
 import { createMockEnrichedPlayer } from '../../../test/mockData';
 import type { EnrichedPlayer, SocialContextValue, TradingContextValue } from '../../../types';
@@ -551,5 +552,153 @@ describe('DailyMission', () => {
 
     expect(risersColumn.textContent).toContain('unknown-id');
     expect(risersColumn.textContent).toContain('0.0%');
+  });
+
+  // ── CSS Module result-chip status classes (mcq-63p.4) ──────────
+
+  describe('result-chip CSS module classes', () => {
+    function getResultChips(columnTitle: string) {
+      const heading = screen.getByText(columnTitle);
+      return heading.parentElement!.querySelectorAll('[class*="result-chip"]');
+    }
+
+    it('TC-023: correct riser prediction has module-scoped correct class', () => {
+      // p1 changePercent = 2.5 (> 0) → correct riser
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(6)) },
+        {
+          missionRevealed: true,
+          missionPicks: { risers: ['p1'], fallers: [] },
+          getMissionScore: vi.fn(() => ({ correct: 1, total: 1, percentile: 90 })),
+        },
+      );
+
+      const chips = getResultChips('Your Risers');
+      expect(chips[0]).toHaveClass(styles['result-chip']);
+      expect(chips[0]).toHaveClass(styles['correct']);
+    });
+
+    it('TC-024: incorrect riser prediction has module-scoped incorrect class', () => {
+      // p2 changePercent = -1.3 (< 0) → incorrect riser
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(6)) },
+        {
+          missionRevealed: true,
+          missionPicks: { risers: ['p2'], fallers: [] },
+          getMissionScore: vi.fn(() => ({ correct: 0, total: 1, percentile: 10 })),
+        },
+      );
+
+      const chips = getResultChips('Your Risers');
+      expect(chips[0]).toHaveClass(styles['result-chip']);
+      expect(chips[0]).toHaveClass(styles['incorrect']);
+    });
+
+    it('TC-025: correct faller prediction has module-scoped correct class', () => {
+      // p4 changePercent = -3.1 (< 0) → correct faller
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(6)) },
+        {
+          missionRevealed: true,
+          missionPicks: { risers: [], fallers: ['p4'] },
+          getMissionScore: vi.fn(() => ({ correct: 1, total: 1, percentile: 90 })),
+        },
+      );
+
+      const chips = getResultChips('Your Fallers');
+      expect(chips[0]).toHaveClass(styles['result-chip']);
+      expect(chips[0]).toHaveClass(styles['correct']);
+    });
+
+    it('TC-026: incorrect faller prediction has module-scoped incorrect class', () => {
+      // p5 changePercent = 0.5 (> 0) → incorrect faller
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(6)) },
+        {
+          missionRevealed: true,
+          missionPicks: { risers: [], fallers: ['p5'] },
+          getMissionScore: vi.fn(() => ({ correct: 0, total: 1, percentile: 10 })),
+        },
+      );
+
+      const chips = getResultChips('Your Fallers');
+      expect(chips[0]).toHaveClass(styles['result-chip']);
+      expect(chips[0]).toHaveClass(styles['incorrect']);
+    });
+
+    it('TC-027: no raw "correct" or "incorrect" strings in result-chip classList', () => {
+      // Mix of correct and incorrect predictions
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(6)) },
+        {
+          missionRevealed: true,
+          missionPicks: { risers: ['p1', 'p2', 'p3'], fallers: ['p4', 'p5', 'p6'] },
+          getMissionScore: vi.fn(() => ({ correct: 4, total: 6, percentile: 83 })),
+        },
+      );
+
+      const results = screen.getByTestId('mission-results');
+      const allChips = results.querySelectorAll('[class*="result-chip"]');
+      expect(allChips.length).toBe(6);
+
+      allChips.forEach((chip) => {
+        expect(chip.classList.contains('correct')).toBe(false);
+        expect(chip.classList.contains('incorrect')).toBe(false);
+      });
+    });
+
+    it('TC-028: unknown player result-chip has no status class', () => {
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(6)) },
+        {
+          missionRevealed: true,
+          missionPicks: { risers: ['unknown-player'], fallers: [] },
+          getMissionScore: vi.fn(() => ({ correct: 0, total: 1, percentile: 50 })),
+        },
+      );
+
+      const chips = getResultChips('Your Risers');
+      expect(chips[0]).toHaveClass(styles['result-chip']);
+      expect(chips[0]).not.toHaveClass(styles['correct']);
+      expect(chips[0]).not.toHaveClass(styles['incorrect']);
+    });
+
+    it('TC-029: CSS module exports correct and incorrect class names', () => {
+      expect(styles['correct']).toBeTruthy();
+      expect(styles['incorrect']).toBeTruthy();
+      expect(typeof styles['correct']).toBe('string');
+      expect(typeof styles['incorrect']).toBe('string');
+    });
+
+    it('TC-030: full 6-pick mission applies correct class per chip independently', () => {
+      // p1: +2.5 (correct riser), p2: -1.3 (incorrect riser), p3: +0.8 (correct riser)
+      // p4: -3.1 (correct faller), p5: +0.5 (incorrect faller), p6: -2.0 (correct faller)
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(6)) },
+        {
+          missionRevealed: true,
+          missionPicks: { risers: ['p1', 'p2', 'p3'], fallers: ['p4', 'p5', 'p6'] },
+          getMissionScore: vi.fn(() => ({ correct: 4, total: 6, percentile: 83 })),
+        },
+      );
+
+      const riserChips = getResultChips('Your Risers');
+      expect(riserChips[0]).toHaveClass(styles['correct']);   // p1 +2.5
+      expect(riserChips[1]).toHaveClass(styles['incorrect']); // p2 -1.3
+      expect(riserChips[2]).toHaveClass(styles['correct']);   // p3 +0.8
+
+      const fallerChips = getResultChips('Your Fallers');
+      expect(fallerChips[0]).toHaveClass(styles['correct']);   // p4 -3.1
+      expect(fallerChips[1]).toHaveClass(styles['incorrect']); // p5 +0.5
+      expect(fallerChips[2]).toHaveClass(styles['correct']);   // p6 -2.0
+
+      // Verify icons match status
+      expect(riserChips[0].textContent).toContain('✓');
+      expect(riserChips[1].textContent).toContain('✗');
+      expect(riserChips[2].textContent).toContain('✓');
+      expect(fallerChips[0].textContent).toContain('✓');
+      expect(fallerChips[1].textContent).toContain('✗');
+      expect(fallerChips[2].textContent).toContain('✓');
+    });
   });
 });
