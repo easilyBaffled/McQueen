@@ -69,3 +69,4 @@
 2026-02-24 21:55:19 | mcq-36s.1 | DONE | Add confirmation dialog before portfolio reset on scenario switch
 2026-02-25 05:42:57 | mcq-vqz.1 | DONE | Fix Market sidebar sticky positioning to account for header
 2026-02-25 05:47:56 | mcq-vqz.2 | DONE | Fix header Total Value clipping on scenarios with badges
+2026-02-25 05:56:26 | mcq-2dq.1 | DONE | Sync Onboarding completion with OnboardingProvider state
