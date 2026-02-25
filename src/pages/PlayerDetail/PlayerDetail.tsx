@@ -480,7 +480,7 @@ export default function PlayerDetail() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <span className={`${styles['tile-type']} ${tile.type}`}>
+                    <span className={`${styles['tile-type']} ${styles[tile.type] || ''}`}>
                       {tile.type}
                     </span>
                     <span className={styles['tile-title']}>{tile.title}</span>

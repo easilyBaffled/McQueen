@@ -108,7 +108,7 @@ export default function DailyMission({ collapsible = false }) {
                       const player = getPlayerById(id);
                       const status = getPredictionStatus(id, 'riser');
                       return (
-                        <div key={id} className={`${styles['result-chip']} ${status}`}>
+                        <div key={id} className={`${styles['result-chip']} ${status ? styles[status] : ''}`}>
                           <span className={styles['result-name']}>
                             {player?.name || id}
                           </span>
@@ -132,7 +132,7 @@ export default function DailyMission({ collapsible = false }) {
                       const player = getPlayerById(id);
                       const status = getPredictionStatus(id, 'faller');
                       return (
-                        <div key={id} className={`${styles['result-chip']} ${status}`}>
+                        <div key={id} className={`${styles['result-chip']} ${status ? styles[status] : ''}`}>
                           <span className={styles['result-name']}>
                             {player?.name || id}
                           </span>

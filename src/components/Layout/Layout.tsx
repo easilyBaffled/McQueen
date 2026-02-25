@@ -75,7 +75,7 @@ export default function Layout() {
       <nav className={styles['nav']} aria-label="Main navigation">
         <NavLink
           to="/"
-          className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          className={({ isActive }) => `${styles['nav-link']} ${isActive ? styles['active'] : ''}`}
           data-testid="nav-link"
           end
         >
@@ -86,7 +86,7 @@ export default function Layout() {
         </NavLink>
         <NavLink
           to="/market"
-          className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          className={({ isActive }) => `${styles['nav-link']} ${isActive ? styles['active'] : ''}`}
           data-testid="nav-link"
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className={styles['nav-icon']}>
@@ -96,7 +96,7 @@ export default function Layout() {
         </NavLink>
         <NavLink
           to="/portfolio"
-          className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          className={({ isActive }) => `${styles['nav-link']} ${isActive ? styles['active'] : ''}`}
           data-testid="nav-link"
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className={styles['nav-icon']}>
@@ -106,7 +106,7 @@ export default function Layout() {
         </NavLink>
         <NavLink
           to="/watchlist"
-          className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          className={({ isActive }) => `${styles['nav-link']} ${isActive ? styles['active'] : ''}`}
           data-testid="nav-link"
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className={styles['nav-icon']}>
@@ -116,7 +116,7 @@ export default function Layout() {
         </NavLink>
         <NavLink
           to="/mission"
-          className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          className={({ isActive }) => `${styles['nav-link']} ${isActive ? styles['active'] : ''}`}
           data-testid="nav-link"
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className={styles['nav-icon']}>
@@ -126,7 +126,7 @@ export default function Layout() {
         </NavLink>
         <NavLink
           to="/leaderboard"
-          className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          className={({ isActive }) => `${styles['nav-link']} ${isActive ? styles['active'] : ''}`}
           data-testid="nav-link"
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className={styles['nav-icon']}>
