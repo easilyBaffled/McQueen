@@ -629,6 +629,120 @@ describe('PlayerDetail page', () => {
     });
   });
 
+  describe('future-dated event filtering (TC-019 to TC-021)', () => {
+    it('TC-019: price history chart excludes entries after scenario date', () => {
+      const playerWithFuture = createMockEnrichedPlayer({
+        id: 'mahomes',
+        name: 'Patrick Mahomes',
+        currentPrice: 130,
+        changePercent: 5.2,
+        basePrice: 100,
+        priceHistory: [
+          {
+            price: 100,
+            timestamp: '2024-12-01T12:00:00Z',
+            reason: { type: 'news', headline: 'Week start' },
+          },
+          {
+            price: 110,
+            timestamp: '2024-12-04T14:00:00Z',
+            reason: { type: 'game_event', eventType: 'TD', headline: 'TD pass' },
+          },
+          {
+            price: 130,
+            timestamp: '2024-12-06T10:00:00Z',
+            reason: { type: 'news', headline: 'Future news' },
+          },
+        ],
+      });
+      const otherPlayer = createMockEnrichedPlayer({
+        id: 'allen',
+        name: 'Josh Allen',
+        currentPrice: 50,
+        changePercent: 0,
+        basePrice: 50,
+        priceHistory: [
+          {
+            price: 50,
+            timestamp: '2024-12-04T16:00:00Z',
+            reason: { type: 'news', headline: 'Allen baseline' },
+          },
+        ],
+      });
+      renderPlayerDetail({
+        tradingOverrides: {
+          getPlayer: vi.fn((id: string) =>
+            id === 'mahomes' ? playerWithFuture : null,
+          ),
+          getPlayers: vi.fn(() => [playerWithFuture, otherPlayer]),
+          portfolio: {},
+        },
+      });
+
+      const entries = screen.getAllByTestId('timeline-entry');
+      const futureEntry = entries.find((e) => e.textContent?.includes('Future news'));
+      expect(futureEntry).toBeFalsy();
+
+      const pastEntry = entries.find((e) => e.textContent?.includes('TD pass'));
+      expect(pastEntry).toBeTruthy();
+    });
+
+    it('TC-020: scenario date derived from latest event across all players', () => {
+      const player1 = createMockEnrichedPlayer({
+        id: 'mahomes',
+        name: 'Patrick Mahomes',
+        currentPrice: 110,
+        changePercent: 2,
+        basePrice: 100,
+        priceHistory: [
+          {
+            price: 100,
+            timestamp: '2024-12-01T10:00:00Z',
+            reason: { type: 'news', headline: 'Early entry' },
+          },
+          {
+            price: 110,
+            timestamp: '2024-12-04T14:00:00Z',
+            reason: { type: 'news', headline: 'Mid entry' },
+          },
+          {
+            price: 120,
+            timestamp: '2024-12-08T10:00:00Z',
+            reason: { type: 'news', headline: 'Future entry' },
+          },
+        ],
+      });
+      const player2 = createMockEnrichedPlayer({
+        id: 'allen',
+        name: 'Josh Allen',
+        currentPrice: 50,
+        changePercent: 0,
+        basePrice: 50,
+        priceHistory: [
+          {
+            price: 50,
+            timestamp: '2024-12-04T16:00:00Z',
+            reason: { type: 'news', headline: 'Allen latest' },
+          },
+        ],
+      });
+      renderPlayerDetail({
+        tradingOverrides: {
+          getPlayer: vi.fn((id: string) =>
+            id === 'mahomes' ? player1 : null,
+          ),
+          getPlayers: vi.fn(() => [player1, player2]),
+          portfolio: {},
+        },
+      });
+
+      const entries = screen.getAllByTestId('timeline-entry');
+      expect(entries.find((e) => e.textContent?.includes('Mid entry'))).toBeTruthy();
+      expect(entries.find((e) => e.textContent?.includes('Early entry'))).toBeTruthy();
+      expect(entries.find((e) => e.textContent?.includes('Future entry'))).toBeFalsy();
+    });
+  });
+
   it('renders league owners when holdings exist', () => {
     renderPlayerDetail({
       tradingOverrides: {

@@ -4,33 +4,36 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PlayerDetail from '../PlayerDetail/PlayerDetail';
 
+const mockPlayer = {
+  id: 'mahomes',
+  name: 'Patrick Mahomes',
+  team: 'KC',
+  position: 'QB',
+  currentPrice: 120.5,
+  basePrice: 100,
+  changePercent: 5.2,
+  priceHistory: [
+    {
+      price: 100,
+      timestamp: '2025-01-01T12:00:00Z',
+      reason: { type: 'news', headline: 'Baseline' },
+    },
+    {
+      price: 120.5,
+      timestamp: '2025-01-02T14:00:00Z',
+      reason: {
+        type: 'game_event',
+        eventType: 'TD',
+        headline: 'Throws 3 TDs',
+      },
+    },
+  ],
+};
+
 vi.mock('../../context/TradingContext', () => ({
   useTrading: () => ({
-    getPlayer: () => ({
-      id: 'mahomes',
-      name: 'Patrick Mahomes',
-      team: 'KC',
-      position: 'QB',
-      currentPrice: 120.5,
-      basePrice: 100,
-      changePercent: 5.2,
-      priceHistory: [
-        {
-          price: 100,
-          timestamp: '2025-01-01T12:00:00Z',
-          reason: { type: 'news', headline: 'Baseline' },
-        },
-        {
-          price: 120.5,
-          timestamp: '2025-01-02T14:00:00Z',
-          reason: {
-            type: 'game_event',
-            eventType: 'TD',
-            headline: 'Throws 3 TDs',
-          },
-        },
-      ],
-    }),
+    getPlayer: () => mockPlayer,
+    getPlayers: () => [mockPlayer],
     portfolio: { mahomes: { shares: 5, avgCost: 110 } },
     cash: 10000,
     buyShares: vi.fn(() => true),

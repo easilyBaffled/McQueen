@@ -63,6 +63,13 @@ describe('LiveTicker', () => {
     expect(container.firstChild).toBeNull();
   });
 
+  it('renders when scenario is superbowl', () => {
+    renderWithProviders(<LiveTicker />, {
+      scenarioOverrides: { scenario: 'superbowl' },
+    });
+    expect(screen.getByText('LIVE')).toBeInTheDocument();
+  });
+
   it('renders LIVE label and ticker dot when scenario is live', () => {
     renderWithProviders(<LiveTicker />, {
       scenarioOverrides: { scenario: 'live' },
@@ -118,7 +125,7 @@ describe('LiveTicker', () => {
     expect(screen.getByText('Event C')).toBeInTheDocument();
   });
 
-  it('falls back to static text when current tick entry has no headline and recentEvents[0] also lacks headline', () => {
+  it('falls back to generic text when current tick entry has no headline and recentEvents[0] also lacks headline', () => {
     mockUseSimulation.mockReturnValue({
       history: [],
       tick: 1,
@@ -130,8 +137,10 @@ describe('LiveTicker', () => {
     renderWithProviders(<LiveTicker />, {
       scenarioOverrides: { scenario: 'live' },
     });
-    // recentEvents reversed puts { reason: {} } first, so no headline fallback either → static text
-    expect(screen.getByText(/MNF: Chiefs vs Bills/)).toBeInTheDocument();
+    expect(screen.getByText(/Live game updates/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Chiefs/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Bills/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/MNF/)).not.toBeInTheDocument();
   });
 
   it('falls back to history events when unified timeline is empty', () => {
@@ -149,7 +158,7 @@ describe('LiveTicker', () => {
     expect(screen.getByText('Player price updated')).toBeInTheDocument();
   });
 
-  it('shows static fallback text when no events of any kind exist', () => {
+  it('shows generic fallback text when no events of any kind exist (TC-013)', () => {
     mockUseSimulation.mockReturnValue({
       history: [],
       tick: 0,
@@ -158,10 +167,13 @@ describe('LiveTicker', () => {
     renderWithProviders(<LiveTicker />, {
       scenarioOverrides: { scenario: 'live' },
     });
-    expect(screen.getByText(/MNF: Chiefs vs Bills - Live updates as they happen/)).toBeInTheDocument();
+    expect(screen.getByText(/Live game updates as they happen/)).toBeInTheDocument();
+    expect(screen.queryByText(/Chiefs/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Bills/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/MNF/)).not.toBeInTheDocument();
   });
 
-  it('shows static fallback when history only has Scenario loaded entries', () => {
+  it('shows generic fallback when history only has Scenario loaded entries (TC-013)', () => {
     mockUseSimulation.mockReturnValue({
       history: [
         { action: 'Scenario loaded', tick: 0 },
@@ -172,7 +184,8 @@ describe('LiveTicker', () => {
     renderWithProviders(<LiveTicker />, {
       scenarioOverrides: { scenario: 'live' },
     });
-    expect(screen.getByText(/MNF: Chiefs vs Bills/)).toBeInTheDocument();
+    expect(screen.getByText(/Live game updates as they happen/)).toBeInTheDocument();
+    expect(screen.queryByText(/Chiefs/)).not.toBeInTheDocument();
   });
 
   it('shows recent events from unified timeline up to current tick', () => {

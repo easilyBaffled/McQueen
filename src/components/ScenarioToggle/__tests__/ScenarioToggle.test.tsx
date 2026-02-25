@@ -300,6 +300,36 @@ describe('ScenarioToggle', () => {
     expect(trigger.textContent).toContain('Super Bowl');
   });
 
+  describe('scenario loading state (TC-010 to TC-012)', () => {
+    it('TC-010: active tab shows loading class when scenarioLoading is true', () => {
+      renderToggle('live');
+      // Re-render with loading state
+      const { container } = renderWithProviders(
+        <MemoryRouter><ScenarioToggle /></MemoryRouter>,
+        {
+          scenarioOverrides: { scenario: 'live', scenarioLoading: true },
+          tradingOverrides: { portfolio: {} },
+        },
+      );
+      const activeTab = container.querySelector('[class*="scenario-tab"][class*="active"]');
+      expect(activeTab).toBeTruthy();
+      expect(activeTab!.className).toMatch(/loading/);
+    });
+
+    it('TC-011: loading class removed when scenarioLoading becomes false', () => {
+      const { container } = renderWithProviders(
+        <MemoryRouter><ScenarioToggle /></MemoryRouter>,
+        {
+          scenarioOverrides: { scenario: 'live', scenarioLoading: false },
+          tradingOverrides: { portfolio: {} },
+        },
+      );
+      const activeTab = container.querySelector('[class*="scenario-tab"][class*="active"]');
+      expect(activeTab).toBeTruthy();
+      expect(activeTab!.className).not.toMatch(/loading/);
+    });
+  });
+
   describe('scenario switch confirmation dialog', () => {
     it('shows confirmation dialog when switching with non-empty portfolio', () => {
       renderToggle('midweek', { mahomes: { shares: 5, avgCost: 100 } });

@@ -8,7 +8,8 @@ export default function LiveTicker() {
   const { scenario } = useScenario();
   const { history, tick, unifiedTimeline } = useSimulation();
 
-  if (scenario !== 'live') return null;
+  const isLiveScenario = scenario === 'live' || scenario === 'superbowl';
+  if (!isLiveScenario) return null;
 
   // Get recent events from the unified timeline (up to current tick)
   const recentEvents = useMemo(() => {
@@ -59,7 +60,7 @@ export default function LiveTicker() {
             </motion.span>
           ) : (
             <span className={styles['ticker-event']}>
-              MNF: Chiefs vs Bills - Live updates as they happen
+              Live game updates as they happen
             </span>
           )}
         </AnimatePresence>

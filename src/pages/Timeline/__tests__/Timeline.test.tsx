@@ -1,0 +1,305 @@
+import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import Timeline from '../Timeline';
+import { renderWithProviders } from '../../../test/renderWithProviders';
+import type { EnrichedPlayer } from '../../../types';
+
+vi.mock('framer-motion', () => ({
+  motion: new Proxy(
+    {},
+    {
+      get: (_: unknown, tag: string | symbol) => {
+        const Component = ({
+          children,
+          ref,
+          ...props
+        }: {
+          children?: React.ReactNode;
+          ref?: React.Ref<unknown>;
+          [key: string]: unknown;
+        }) => {
+          const domProps: Record<string, unknown> = {};
+          for (const [key, value] of Object.entries(props)) {
+            if (
+              typeof value !== 'object' &&
+              typeof value !== 'function' &&
+              !['initial', 'animate', 'exit', 'transition', 'layout', 'layoutId'].includes(key)
+            ) {
+              domProps[key] = value;
+            }
+            if (key === 'style' && typeof value === 'object') domProps[key] = value;
+            if (typeof value === 'function' && key.startsWith('on')) domProps[key] = value;
+          }
+          return React.createElement(String(tag), { ref, ...domProps }, children);
+        };
+        return Component;
+      },
+    },
+  ),
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
+vi.mock('react-router-dom', () => ({
+  Link: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => {
+    const safeProps: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(props)) {
+      if (typeof value !== 'object' && typeof value !== 'function') safeProps[key] = value;
+      if (key === 'style') safeProps[key] = value;
+      if (typeof value === 'function' && key.startsWith('on')) safeProps[key] = value;
+    }
+    return <a {...(safeProps as React.AnchorHTMLAttributes<HTMLAnchorElement>)}>{children}</a>;
+  },
+}));
+
+function makePlayers(): EnrichedPlayer[] {
+  return [
+    {
+      id: 'p1',
+      name: 'Patrick Mahomes',
+      team: 'KC',
+      position: 'QB',
+      basePrice: 50,
+      totalSharesAvailable: 1000,
+      currentPrice: 54.25,
+      changePercent: 2.5,
+      priceChange: 2.5,
+      moveReason: 'Strong performance',
+      contentTiles: [],
+      priceHistory: [
+        {
+          price: 50,
+          timestamp: '2024-11-25T10:00:00Z',
+          reason: { type: 'news', headline: 'Week start baseline' },
+        },
+        {
+          price: 51,
+          timestamp: '2024-12-01T12:00:00Z',
+          reason: { type: 'news', headline: 'Midweek news update' },
+        },
+        {
+          price: 52,
+          timestamp: '2024-12-03T14:00:00Z',
+          reason: { type: 'league_trade', headline: 'Traded in fantasy league', memberId: 'user1', action: 'buy', shares: 5 },
+        },
+        {
+          price: 54.25,
+          timestamp: '2024-12-04T16:00:00Z',
+          reason: { type: 'game_event', eventType: 'TD', headline: 'Mahomes throws 40-yard TD' },
+        },
+      ],
+    },
+    {
+      id: 'p2',
+      name: 'Josh Allen',
+      team: 'BUF',
+      position: 'QB',
+      basePrice: 48,
+      totalSharesAvailable: 1000,
+      currentPrice: 45,
+      changePercent: -3,
+      priceChange: -3,
+      moveReason: 'Interception in Q2',
+      contentTiles: [],
+      priceHistory: [
+        {
+          price: 48,
+          timestamp: '2024-12-04T15:00:00Z',
+          reason: { type: 'game_event', eventType: 'INT', headline: 'Allen interception' },
+        },
+        {
+          price: 45,
+          timestamp: '2024-12-04T16:30:00Z',
+          reason: { type: 'game_event', headline: 'General game stats update' },
+        },
+      ],
+    },
+  ];
+}
+
+function renderTimeline(players?: EnrichedPlayer[]) {
+  const p = players ?? makePlayers();
+  return renderWithProviders(<Timeline />, {
+    tradingOverrides: {
+      getPlayers: vi.fn(() => p),
+      getPlayer: vi.fn((id: string) => p.find((pl) => pl.id === id) ?? null),
+      portfolio: {},
+      cash: 10000,
+    },
+  });
+}
+
+describe('Timeline – event type labels (TC-015 to TC-018)', () => {
+  it('TC-015: league_trade displays as "Trade"', () => {
+    renderTimeline();
+    const badges = screen.getAllByTestId('timeline-event-content');
+    const tradeBadge = badges.find((b) => b.textContent?.includes('Trade'));
+    expect(tradeBadge).toBeTruthy();
+    const rawBadge = badges.find((b) => b.textContent?.includes('league_trade'));
+    expect(rawBadge).toBeFalsy();
+  });
+
+  it('TC-016: game_event with eventType "TD" displays as "TD"', () => {
+    renderTimeline();
+    const badges = screen.getAllByTestId('timeline-event-content');
+    const tdBadge = badges.find((b) => b.textContent?.includes('TD'));
+    expect(tdBadge).toBeTruthy();
+  });
+
+  it('TC-016: game_event with eventType "INT" displays as "INT"', () => {
+    renderTimeline();
+    const badges = screen.getAllByTestId('timeline-event-content');
+    const intBadge = badges.find((b) => b.textContent?.includes('INT'));
+    expect(intBadge).toBeTruthy();
+  });
+
+  it('TC-016: game_event without eventType displays as "Game Update"', () => {
+    renderTimeline();
+    const badges = screen.getAllByTestId('timeline-event-content');
+    const gameUpdateBadge = badges.find((b) => b.textContent?.includes('Game Update'));
+    expect(gameUpdateBadge).toBeTruthy();
+  });
+
+  it('TC-017: News events display as "News"', () => {
+    renderTimeline();
+    const badges = screen.getAllByTestId('timeline-event-content');
+    const newsBadge = badges.find((b) => b.textContent?.includes('News'));
+    expect(newsBadge).toBeTruthy();
+  });
+
+  it('TC-018: unknown reason.type displays fallback "Event"', () => {
+    const players = [{
+      id: 'p3',
+      name: 'Test Player',
+      team: 'TST',
+      position: 'QB',
+      basePrice: 50,
+      totalSharesAvailable: 1000,
+      currentPrice: 52,
+      changePercent: 2,
+      priceChange: 2,
+      moveReason: 'Test',
+      contentTiles: [],
+      priceHistory: [{
+        price: 52,
+        timestamp: '2024-12-04T10:00:00Z',
+        reason: { type: 'unknown_type', headline: 'Unknown event happened' },
+      }],
+    }] as EnrichedPlayer[];
+    renderTimeline(players);
+    const badges = screen.getAllByTestId('timeline-event-content');
+    const fallbackBadge = badges.find((b) => b.textContent?.includes('Event'));
+    expect(fallbackBadge).toBeTruthy();
+    const rawBadge = badges.find((b) => b.textContent?.includes('unknown_type'));
+    expect(rawBadge).toBeFalsy();
+  });
+
+  it('TC-018: null reason displays fallback "Event"', () => {
+    const players = [{
+      id: 'p3',
+      name: 'Test Player',
+      team: 'TST',
+      position: 'QB',
+      basePrice: 50,
+      totalSharesAvailable: 1000,
+      currentPrice: 52,
+      changePercent: 2,
+      priceChange: 2,
+      moveReason: 'Test',
+      contentTiles: [],
+      priceHistory: [{
+        price: 52,
+        timestamp: '2024-12-04T10:00:00Z',
+        reason: null as unknown as import('../../../types').PriceReason,
+      }],
+    }] as EnrichedPlayer[];
+    renderTimeline(players);
+    const badges = screen.getAllByTestId('timeline-event-content');
+    const fallbackBadge = badges.find((b) => b.textContent?.includes('Event'));
+    expect(fallbackBadge).toBeTruthy();
+  });
+});
+
+describe('Timeline – scenario-relative time filters (TC-001 to TC-005, TC-022)', () => {
+  it('TC-001: "Today" filter shows only events from the latest event day', async () => {
+    const user = userEvent.setup();
+    renderTimeline();
+    const timeFilter = screen.getAllByTestId('filter-select')[2];
+    await user.selectOptions(timeFilter, 'today');
+    const events = screen.getAllByTestId('timeline-event');
+    events.forEach((event) => {
+      expect(event.textContent).not.toContain('Week start baseline');
+      expect(event.textContent).not.toContain('Midweek news update');
+    });
+    const dec4Events = events.filter(
+      (e) => e.textContent?.includes('Mahomes throws') || e.textContent?.includes('Allen interception') || e.textContent?.includes('General game'),
+    );
+    expect(dec4Events.length).toBeGreaterThan(0);
+  });
+
+  it('TC-002: "This Week" filters events within 7 days of latest timestamp', async () => {
+    const user = userEvent.setup();
+    renderTimeline();
+    const timeFilter = screen.getAllByTestId('filter-select')[2];
+    await user.selectOptions(timeFilter, 'week');
+    const events = screen.getAllByTestId('timeline-event');
+    const oldEvent = events.find((e) => e.textContent?.includes('Week start baseline'));
+    expect(oldEvent).toBeFalsy();
+    const recentEvent = events.find((e) => e.textContent?.includes('Midweek news update'));
+    expect(recentEvent).toBeTruthy();
+  });
+
+  it('TC-003: "All Time" shows all events', async () => {
+    const user = userEvent.setup();
+    renderTimeline();
+    const allEventsInitial = screen.getAllByTestId('timeline-event');
+    const initialCount = allEventsInitial.length;
+
+    const timeFilter = screen.getAllByTestId('filter-select')[2];
+    await user.selectOptions(timeFilter, 'today');
+    const filteredEvents = screen.getAllByTestId('timeline-event');
+    expect(filteredEvents.length).toBeLessThan(initialCount);
+
+    await user.selectOptions(timeFilter, 'all');
+    const allEvents = screen.getAllByTestId('timeline-event');
+    expect(allEvents.length).toBe(initialCount);
+  });
+
+  it('TC-005: "Today" combined with type filter yields empty state', async () => {
+    const user = userEvent.setup();
+    renderTimeline();
+    const timeFilter = screen.getAllByTestId('filter-select')[2];
+    await user.selectOptions(timeFilter, 'today');
+    const typeFilter = screen.getAllByTestId('filter-select')[0];
+    await user.selectOptions(typeFilter, 'news');
+    expect(screen.getByText('No events match your filters')).toBeInTheDocument();
+  });
+
+  it('TC-022: empty event list shows empty state without errors', async () => {
+    const user = userEvent.setup();
+    const emptyPlayers = [{
+      id: 'p3',
+      name: 'Test',
+      team: 'TST',
+      position: 'QB',
+      basePrice: 50,
+      totalSharesAvailable: 1000,
+      currentPrice: 50,
+      changePercent: 0,
+      priceChange: 0,
+      moveReason: '',
+      contentTiles: [],
+      priceHistory: [],
+    }] as EnrichedPlayer[];
+    renderTimeline(emptyPlayers);
+    expect(screen.getByText('No events match your filters')).toBeInTheDocument();
+
+    const timeFilter = screen.getAllByTestId('filter-select')[2];
+    await user.selectOptions(timeFilter, 'today');
+    expect(screen.getByText('No events match your filters')).toBeInTheDocument();
+
+    await user.selectOptions(timeFilter, 'week');
+    expect(screen.getByText('No events match your filters')).toBeInTheDocument();
+  });
+});

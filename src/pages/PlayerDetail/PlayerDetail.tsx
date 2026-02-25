@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -72,7 +72,7 @@ function getEventTypeLabel(reason: PriceReason | null | undefined): string {
 export default function PlayerDetail() {
   const { playerId } = useParams();
   const navigate = useNavigate();
-  const { getPlayer, portfolio, buyShares, sellShares } = useTrading();
+  const { getPlayer, getPlayers, portfolio, buyShares, sellShares } = useTrading();
   const { addToWatchlist, removeFromWatchlist, isWatching, getLeagueHoldings } =
     useSocial();
   const { addToast } = useToast();
@@ -134,15 +134,34 @@ export default function PlayerDetail() {
     );
   }
 
-  // Generate chart data from new priceHistory format
-  const chartData =
-    player.priceHistory?.map((entry, i) => ({
-      time: i,
-      price: entry.price,
-      timestamp: entry.timestamp,
-      reason: entry.reason,
-      content: entry.content,
-    })) || [];
+  const allPlayers = getPlayers();
+  const scenarioNow = useMemo(() => {
+    const perPlayerMax: number[] = [];
+    allPlayers.forEach((p) => {
+      let maxTs = 0;
+      p.priceHistory?.forEach((entry) => {
+        const ts = new Date(entry.timestamp).getTime();
+        if (ts > maxTs) maxTs = ts;
+      });
+      if (maxTs > 0) perPlayerMax.push(maxTs);
+    });
+    if (perPlayerMax.length === 0) return Date.now();
+    perPlayerMax.sort((a, b) => a - b);
+    return perPlayerMax[Math.floor((perPlayerMax.length - 1) / 2)];
+  }, [allPlayers]);
+
+  const chartData = useMemo(() => {
+    if (!player.priceHistory) return [];
+    return player.priceHistory
+      .filter((entry) => new Date(entry.timestamp).getTime() <= scenarioNow)
+      .map((entry, i) => ({
+        time: i,
+        price: entry.price,
+        timestamp: entry.timestamp,
+        reason: entry.reason,
+        content: entry.content,
+      }));
+  }, [player.priceHistory, scenarioNow]);
 
   // Format date for x-axis labels (e.g., "Nov 5")
   const formatDateLabel = (index: number) => {

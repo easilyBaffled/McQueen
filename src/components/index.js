@@ -11,3 +11,4 @@ export { default as MiniLeaderboard } from './MiniLeaderboard/MiniLeaderboard';
 export { ToastProvider, useToast } from './Toast/ToastProvider';
 export { default as LiveTicker } from './LiveTicker/LiveTicker';
 export { default as ErrorBoundary } from './ErrorBoundary/ErrorBoundary';
+export { default as SimulationIndicator } from './SimulationIndicator/SimulationIndicator';

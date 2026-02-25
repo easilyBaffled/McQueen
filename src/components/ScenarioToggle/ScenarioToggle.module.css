@@ -135,6 +135,15 @@
   color: white;
 }
 
+.scenario-tab.loading .scenario-tab-bg {
+  animation: tab-pulse 1s ease-in-out infinite;
+}
+
+@keyframes tab-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
 .scenario-tab-bg {
   position: absolute;
   inset: 0;

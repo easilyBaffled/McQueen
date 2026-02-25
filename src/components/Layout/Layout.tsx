@@ -6,6 +6,7 @@ import { useTrading } from '../../context/TradingContext';
 import ScenarioToggle from '../ScenarioToggle/ScenarioToggle';
 import LiveTicker from '../LiveTicker/LiveTicker';
 import TimelineDebugger from '../TimelineDebugger/TimelineDebugger';
+import SimulationIndicator from '../SimulationIndicator/SimulationIndicator';
 import { Glossary } from '../../shared';
 import styles from './Layout.module.css';
 
@@ -70,7 +71,7 @@ export default function Layout() {
         </div>
       </header>
 
-      {scenario === 'live' && <LiveTicker />}
+      {(scenario === 'live' || scenario === 'superbowl') && <LiveTicker />}
 
       <nav className={styles['nav']} aria-label="Main navigation">
         <NavLink
@@ -151,6 +152,7 @@ export default function Layout() {
         </AnimatePresence>
       </main>
 
+      <SimulationIndicator />
       <TimelineDebugger />
       <Glossary
         isOpen={isGlossaryOpen}

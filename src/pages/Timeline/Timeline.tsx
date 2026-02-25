@@ -63,9 +63,19 @@ function getEventColor(reason: PriceReason | null | undefined): string {
     : REASON_TYPE_COLORS[reasonType] || '#666';
 }
 
-// Get event type label
+// Get event type label - maps raw reason types to display labels
 function getEventTypeLabel(reason: PriceReason | null | undefined): string {
-  return reason?.eventType || reason?.type || 'event';
+  if (!reason) return 'Event';
+
+  if (reason.type === 'game_event') {
+    return reason.eventType || 'Game Update';
+  } else if (reason.type === 'news') {
+    return 'News';
+  } else if (reason.type === 'league_trade') {
+    return 'Trade';
+  }
+
+  return 'Event';
 }
 
 // Calculate price change percentage from previous entry
@@ -155,16 +165,18 @@ export default function Timeline() {
         if (magnitudeFilter === 'significant' && absChange < 2) return false;
       }
 
-      // Time filter
+      // Time filter - uses scenario-relative dates (latest event = "now")
       if (timeFilter !== 'all') {
         const eventDate = new Date(event.timestamp);
-        const now = new Date();
+        const scenarioNow = allEvents.length > 0
+          ? new Date(allEvents[0].timestamp)
+          : new Date();
 
         if (timeFilter === 'today') {
-          const isToday = eventDate.toDateString() === now.toDateString();
+          const isToday = eventDate.toDateString() === scenarioNow.toDateString();
           if (!isToday) return false;
         } else if (timeFilter === 'week') {
-          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          const weekAgo = new Date(scenarioNow.getTime() - 7 * 24 * 60 * 60 * 1000);
           if (eventDate < weekAgo) return false;
         }
       }

@@ -48,7 +48,7 @@ const scenarios = [
 ];
 
 export default function ScenarioToggle() {
-  const { scenario, setScenario } = useScenario();
+  const { scenario, setScenario, scenarioLoading } = useScenario();
   const { portfolio } = useTrading();
   const { espnLoading, espnError, refreshEspnNews } = useSimulation();
   const [showDemoTooltip, setShowDemoTooltip] = useState(false);
@@ -304,7 +304,7 @@ export default function ScenarioToggle() {
         {scenarios.map((s) => (
           <button
             key={s.id}
-            className={`${styles['scenario-tab']} ${scenario === s.id ? styles['active'] : ''} ${s.isEspn ? styles['espn-tab'] : ''}`}
+            className={`${styles['scenario-tab']} ${scenario === s.id ? styles['active'] : ''} ${scenario === s.id && scenarioLoading ? styles['loading'] : ''} ${s.isEspn ? styles['espn-tab'] : ''}`}
             role="tab"
             aria-selected={scenario === s.id}
             tabIndex={scenario === s.id ? 0 : -1}
