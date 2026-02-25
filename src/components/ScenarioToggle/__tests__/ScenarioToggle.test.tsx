@@ -359,5 +359,98 @@ describe('ScenarioToggle', () => {
       expect(screen.queryByText(/Switching scenarios will reset/)).not.toBeInTheDocument();
       expect(setScenario).not.toHaveBeenCalled();
     });
+
+    it('mobile dropdown skips dialog with empty portfolio (TC-007)', () => {
+      const { setScenario } = renderToggle('midweek', {});
+      const trigger = document.querySelector('[class*="mobile-dropdown-trigger"]') as HTMLElement;
+      fireEvent.click(trigger);
+      const menu = document.querySelector('[class*="mobile-dropdown-menu"]')!;
+      const buttons = menu.querySelectorAll('button[type="button"]');
+      const playoffsBtn = Array.from(buttons).find((b) => b.textContent?.includes('Playoffs'))!;
+      fireEvent.click(playoffsBtn);
+      expect(screen.queryByText(/Switching scenarios will reset/)).not.toBeInTheDocument();
+      expect(setScenario).toHaveBeenCalledWith('playoffs');
+    });
+
+    it('confirm from mobile selection proceeds with switch (TC-008)', () => {
+      const { setScenario } = renderToggle('midweek', { mahomes: { shares: 5, avgCost: 100 } });
+      const trigger = document.querySelector('[class*="mobile-dropdown-trigger"]') as HTMLElement;
+      fireEvent.click(trigger);
+      const menu = document.querySelector('[class*="mobile-dropdown-menu"]')!;
+      const buttons = menu.querySelectorAll('button[type="button"]');
+      const sbBtn = Array.from(buttons).find((b) => b.textContent?.includes('Super Bowl'))!;
+      fireEvent.click(sbBtn);
+      expect(screen.getByText(/Switching scenarios will reset/)).toBeInTheDocument();
+      const confirmBtn = screen.getByRole('button', { name: /switch & reset/i });
+      fireEvent.click(confirmBtn);
+      expect(screen.queryByText(/Switching scenarios will reset/)).not.toBeInTheDocument();
+      expect(setScenario).toHaveBeenCalledWith('superbowl');
+    });
+
+    it('cancel from mobile selection preserves state (TC-009)', () => {
+      const { setScenario } = renderToggle('midweek', { mahomes: { shares: 5, avgCost: 100 } });
+      const trigger = document.querySelector('[class*="mobile-dropdown-trigger"]') as HTMLElement;
+      fireEvent.click(trigger);
+      const menu = document.querySelector('[class*="mobile-dropdown-menu"]')!;
+      const buttons = menu.querySelectorAll('button[type="button"]');
+      const playoffsBtn = Array.from(buttons).find((b) => b.textContent?.includes('Playoffs'))!;
+      fireEvent.click(playoffsBtn);
+      expect(screen.getByText(/Switching scenarios will reset/)).toBeInTheDocument();
+      const cancelBtn = screen.getByRole('button', { name: /cancel/i });
+      fireEvent.click(cancelBtn);
+      expect(screen.queryByText(/Switching scenarios will reset/)).not.toBeInTheDocument();
+      expect(setScenario).not.toHaveBeenCalled();
+    });
+
+    it('dialog displays correct warning text and buttons (TC-010)', () => {
+      renderToggle('midweek', { mahomes: { shares: 5, avgCost: 100 } });
+      const tabs = screen.getAllByRole('tab');
+      fireEvent.click(tabs.find((t) => t.textContent?.includes('Live Game'))!);
+      expect(screen.getByText('Switching scenarios will reset your portfolio and cash to defaults.')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /switch & reset/i })).toBeInTheDocument();
+    });
+
+    it('dialog overlay has data-testid attribute (TC-012)', () => {
+      renderToggle('midweek', { mahomes: { shares: 5, avgCost: 100 } });
+      const tabs = screen.getAllByRole('tab');
+      fireEvent.click(tabs.find((t) => t.textContent?.includes('Live Game'))!);
+      expect(screen.getByTestId('scenario-confirm-dialog')).toBeInTheDocument();
+    });
+
+    it('data-testid not present when dialog is hidden (TC-012 edge)', () => {
+      renderToggle('midweek', { mahomes: { shares: 5, avgCost: 100 } });
+      expect(screen.queryByTestId('scenario-confirm-dialog')).not.toBeInTheDocument();
+    });
+
+    it('dialog appears with multiple holdings (TC-013)', () => {
+      renderToggle('midweek', {
+        mahomes: { shares: 5, avgCost: 100 },
+        kelce: { shares: 3, avgCost: 80 },
+        allen: { shares: 10, avgCost: 50 },
+      });
+      const tabs = screen.getAllByRole('tab');
+      fireEvent.click(tabs.find((t) => t.textContent?.includes('Playoffs'))!);
+      expect(screen.getByText(/Switching scenarios will reset/)).toBeInTheDocument();
+    });
+
+    it('dialog appears with single share holding (TC-013 edge)', () => {
+      renderToggle('midweek', { mahomes: { shares: 1, avgCost: 100 } });
+      const tabs = screen.getAllByRole('tab');
+      fireEvent.click(tabs.find((t) => t.textContent?.includes('Live Game'))!);
+      expect(screen.getByText(/Switching scenarios will reset/)).toBeInTheDocument();
+    });
+
+    it('no duplicate dialogs on rapid sequential clicks (TC-014)', () => {
+      renderToggle('midweek', { mahomes: { shares: 5, avgCost: 100 } });
+      const tabs = screen.getAllByRole('tab');
+      fireEvent.click(tabs.find((t) => t.textContent?.includes('Live Game'))!);
+      fireEvent.click(tabs.find((t) => t.textContent?.includes('Playoffs'))!);
+      const dialogs = screen.getAllByText(/Switching scenarios will reset/);
+      expect(dialogs).toHaveLength(1);
+      const confirmBtn = screen.getByRole('button', { name: /switch & reset/i });
+      fireEvent.click(confirmBtn);
+      expect(screen.queryByText(/Switching scenarios will reset/)).not.toBeInTheDocument();
+    });
   });
 });
