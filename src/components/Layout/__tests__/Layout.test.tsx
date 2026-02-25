@@ -267,6 +267,25 @@ describe('Layout', () => {
     });
   });
 
+  describe('Reduced header/nav vertical footprint (mcq-vqz.3)', () => {
+    let indexCssContent: string;
+
+    beforeEach(async () => {
+      const fs = await import('node:fs');
+      const path = await import('node:path');
+      const indexCssPath = path.resolve(__dirname, '..', '..', '..', 'index.css');
+      indexCssContent = fs.readFileSync(indexCssPath, 'utf-8');
+    });
+
+    it('--header-height is 52px (reduced from 64px)', () => {
+      expect(indexCssContent).toMatch(/--header-height:\s*52px/);
+    });
+
+    it('--header-height is no longer 64px', () => {
+      expect(indexCssContent).not.toMatch(/--header-height:\s*64px/);
+    });
+  });
+
   describe('Header Total Value clipping fix (mcq-vqz.2)', () => {
     let cssContent: string;
 
