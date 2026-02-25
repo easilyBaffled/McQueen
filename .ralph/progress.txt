@@ -77,3 +77,4 @@
 2026-02-25 06:25:41 | mcq-dvn.1 | DONE | Fix Timeline time filters to use scenario-relative dates
 2026-02-25 06:32:30 | mcq-c51 | DONE | Mission and Leaderboard Improvements
 2026-02-25 06:38:36 | mcq-c51.1 | DONE | Add search/filter and expand player selector in DailyMission
+2026-02-25 06:46:57 | mcq-x02 | DONE | Accessibility Improvements
