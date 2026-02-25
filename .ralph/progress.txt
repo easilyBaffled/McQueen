@@ -64,3 +64,4 @@
 2026-02-24 21:24:04 | mcq-vqz | DONE | Layout and Header Repair
 2026-02-24 21:36:52 | mcq-2dq | DONE | Onboarding and First-Run Experience
 2026-02-24 21:45:00 | mcq-2dq.2 | DONE | Change default scenario from ESPN Live to Midweek and add ESPN empty-state fallback
+2026-02-24 21:42:27 | mcq-2dq.2 | DONE | Change default scenario from ESPN Live to Midweek and add ESPN empty-state fallback
