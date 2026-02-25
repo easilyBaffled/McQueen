@@ -235,4 +235,51 @@ describe('Leaderboard – real data integration (mcq-35g.6)', () => {
     expect(avatar).toBeInTheDocument();
     expect(name).toBeInTheDocument();
   });
+
+  // ── mcq-c51.2: Trader column flex alignment ────────────────────
+
+  it('mcq-c51.2: every trader column contains avatar and name children', () => {
+    render(<Leaderboard />);
+
+    const traderCols = document.querySelectorAll('[data-testid="col-trader"]');
+    expect(traderCols.length).toBe(11);
+
+    traderCols.forEach((col) => {
+      expect(col.querySelector('[class*="trader-avatar"]')).toBeInTheDocument();
+      expect(col.querySelector('[class*="trader-name"]')).toBeInTheDocument();
+    });
+  });
+
+  it('mcq-c51.2: user row trader column has same structure as other rows', () => {
+    render(<Leaderboard />);
+
+    const userRow = document.querySelector('[data-user="true"]') as HTMLElement;
+    expect(userRow).toBeInTheDocument();
+
+    const userTrader = userRow.querySelector('[data-testid="col-trader"]') as HTMLElement;
+    expect(userTrader).toBeInTheDocument();
+    expect(userTrader.querySelector('[class*="trader-avatar"]')).toBeInTheDocument();
+    expect(userTrader.querySelector('[class*="trader-name"]')).toBeInTheDocument();
+    expect(within(userTrader).getByText('You')).toBeInTheDocument();
+  });
+
+  it('mcq-c51.2: CSS module contains flex layout for col-trader', async () => {
+    const fs = await import('fs');
+    const path = await import('path');
+    const cssPath = path.resolve(__dirname, '../Leaderboard.module.css');
+    const css = fs.readFileSync(cssPath, 'utf-8');
+
+    expect(css).toMatch(/\.col-trader\s*\{[^}]*display:\s*flex/);
+    expect(css).toMatch(/\.col-trader\s*\{[^}]*align-items:\s*center/);
+    expect(css).toMatch(/\.col-trader\s*\{[^}]*gap:\s*8px/);
+  });
+
+  it('mcq-c51.2: CSS module sets flex-shrink: 0 on trader-avatar', async () => {
+    const fs = await import('fs');
+    const path = await import('path');
+    const cssPath = path.resolve(__dirname, '../Leaderboard.module.css');
+    const css = fs.readFileSync(cssPath, 'utf-8');
+
+    expect(css).toMatch(/\.trader-avatar\s*\{[^}]*flex-shrink:\s*0/);
+  });
 });
