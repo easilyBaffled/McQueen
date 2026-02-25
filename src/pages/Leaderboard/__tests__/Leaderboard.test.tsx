@@ -236,6 +236,30 @@ describe('Leaderboard – real data integration (mcq-35g.6)', () => {
     expect(name).toBeInTheDocument();
   });
 
+  // ── mcq-c51.3: Rename Weekly Gain column header to Gain ────────
+
+  it('mcq-c51.3: all four column headers are Rank, Trader, Portfolio Value, Gain', () => {
+    render(<Leaderboard />);
+
+    const header = document.querySelector('[class*="table-header"]') as HTMLElement;
+    const cols = header.querySelectorAll('span');
+    expect(cols.length).toBe(4);
+    expect(cols[0].textContent).toBe('Rank');
+    expect(cols[1].textContent).toBe('Trader');
+    expect(cols[2].textContent).toBe('Portfolio Value');
+    expect(cols[3].textContent).toBe('Gain');
+  });
+
+  it('mcq-c51.3: no aria attribute in the leaderboard references "Weekly Gain"', () => {
+    render(<Leaderboard />);
+
+    const page = document.querySelector('[class*="leaderboard-page"]') as HTMLElement;
+    const allElements = page.querySelectorAll('[aria-label]');
+    allElements.forEach((el) => {
+      expect(el.getAttribute('aria-label')).not.toContain('Weekly');
+    });
+  });
+
   // ── mcq-c51.2: Trader column flex alignment ────────────────────
 
   it('mcq-c51.2: every trader column contains avatar and name children', () => {

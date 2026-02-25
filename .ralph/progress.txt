@@ -86,3 +86,4 @@
 2026-02-25 08:38:20 | mcq-c51.2 | DONE | Fix Leaderboard trader column alignment
 2026-02-25 08:49:06 | mcq-x8o | DONE | Minor Polish
 2026-02-25 08:53:05 | mcq-x8o.1 | DONE | Fix PlayerDetail chart tooltip truncation and add date context
+2026-02-25 08:59:55 | mcq-dvn.6 | DONE | Filter out future-dated events relative to scenario date
