@@ -221,7 +221,7 @@ describe('Timeline – event type labels (TC-015 to TC-018)', () => {
   });
 });
 
-describe('Timeline – scenario-relative time filters (TC-001 to TC-005, TC-022)', () => {
+describe('Timeline – scenario-relative time filters (TC-001 to TC-012)', () => {
   it('TC-001: "Today" filter shows only events from the latest event day', async () => {
     const user = userEvent.setup();
     renderTimeline();
@@ -250,7 +250,7 @@ describe('Timeline – scenario-relative time filters (TC-001 to TC-005, TC-022)
     expect(recentEvent).toBeTruthy();
   });
 
-  it('TC-003: "All Time" shows all events', async () => {
+  it('TC-003: "All Time" shows all events after toggling filters', async () => {
     const user = userEvent.setup();
     renderTimeline();
     const allEventsInitial = screen.getAllByTestId('timeline-event');
@@ -266,17 +266,52 @@ describe('Timeline – scenario-relative time filters (TC-001 to TC-005, TC-022)
     expect(allEvents.length).toBe(initialCount);
   });
 
-  it('TC-005: "Today" combined with type filter yields empty state', async () => {
+  it('TC-004: scenarioNow tracks the global newest event across all players', async () => {
     const user = userEvent.setup();
-    renderTimeline();
+    const players: EnrichedPlayer[] = [
+      {
+        id: 'pA',
+        name: 'Player A',
+        team: 'AAA',
+        position: 'QB',
+        basePrice: 40,
+        totalSharesAvailable: 1000,
+        currentPrice: 42,
+        changePercent: 5,
+        priceChange: 5,
+        moveReason: '',
+        contentTiles: [],
+        priceHistory: [
+          { price: 42, timestamp: '2025-03-10T12:00:00Z', reason: { type: 'news', headline: 'A March 10 event' } },
+        ],
+      },
+      {
+        id: 'pB',
+        name: 'Player B',
+        team: 'BBB',
+        position: 'WR',
+        basePrice: 30,
+        totalSharesAvailable: 1000,
+        currentPrice: 31,
+        changePercent: 3,
+        priceChange: 3,
+        moveReason: '',
+        contentTiles: [],
+        priceHistory: [
+          { price: 30, timestamp: '2025-03-09T08:00:00Z', reason: { type: 'news', headline: 'B March 9 event' } },
+          { price: 31, timestamp: '2025-03-11T09:00:00Z', reason: { type: 'news', headline: 'B March 11 event' } },
+        ],
+      },
+    ];
+    renderTimeline(players);
     const timeFilter = screen.getAllByTestId('filter-select')[2];
     await user.selectOptions(timeFilter, 'today');
-    const typeFilter = screen.getAllByTestId('filter-select')[0];
-    await user.selectOptions(typeFilter, 'news');
-    expect(screen.getByText('No events match your filters')).toBeInTheDocument();
+    const events = screen.getAllByTestId('timeline-event');
+    expect(events.length).toBe(1);
+    expect(events[0].textContent).toContain('B March 11 event');
   });
 
-  it('TC-022: empty event list shows empty state without errors', async () => {
+  it('TC-005: empty event list shows empty state without errors', async () => {
     const user = userEvent.setup();
     const emptyPlayers = [{
       id: 'p3',
@@ -301,5 +336,85 @@ describe('Timeline – scenario-relative time filters (TC-001 to TC-005, TC-022)
 
     await user.selectOptions(timeFilter, 'week');
     expect(screen.getByText('No events match your filters')).toBeInTheDocument();
+  });
+
+  it('TC-006: "Today" combined with type filter yields correct intersection', async () => {
+    const user = userEvent.setup();
+    renderTimeline();
+    const timeFilter = screen.getAllByTestId('filter-select')[2];
+    await user.selectOptions(timeFilter, 'today');
+    const typeFilter = screen.getAllByTestId('filter-select')[0];
+    await user.selectOptions(typeFilter, 'news');
+    expect(screen.getByText('No events match your filters')).toBeInTheDocument();
+
+    await user.selectOptions(typeFilter, 'all');
+    expect(screen.getAllByTestId('timeline-event').length).toBeGreaterThan(0);
+  });
+
+  it('TC-007: "This Week" combined with magnitude filter yields correct intersection', async () => {
+    const user = userEvent.setup();
+    renderTimeline();
+    const timeFilter = screen.getAllByTestId('filter-select')[2];
+    const magnitudeFilter = screen.getAllByTestId('filter-select')[1];
+
+    await user.selectOptions(timeFilter, 'week');
+    const weekEvents = screen.getAllByTestId('timeline-event');
+    const weekCount = weekEvents.length;
+    expect(weekCount).toBeGreaterThan(0);
+
+    await user.selectOptions(magnitudeFilter, 'major');
+    const majorEvents = screen.queryAllByTestId('timeline-event');
+    expect(majorEvents.length).toBeLessThanOrEqual(weekCount);
+  });
+
+  it('TC-009: "Today" includes events at different times on the same calendar day', async () => {
+    const user = userEvent.setup();
+    renderTimeline();
+    const timeFilter = screen.getAllByTestId('filter-select')[2];
+    await user.selectOptions(timeFilter, 'today');
+    const events = screen.getAllByTestId('timeline-event');
+    const dec4Events = events.filter(
+      (e) =>
+        e.textContent?.includes('Mahomes throws') ||
+        e.textContent?.includes('Allen interception') ||
+        e.textContent?.includes('General game'),
+    );
+    expect(dec4Events.length).toBe(3);
+  });
+
+  it('TC-010: Time filter dropdown has all three options', () => {
+    renderTimeline();
+    const timeFilter = screen.getAllByTestId('filter-select')[2] as HTMLSelectElement;
+    const options = Array.from(timeFilter.options).map((o) => o.textContent);
+    expect(options).toEqual(['All Time', 'Today', 'This Week']);
+  });
+
+  it('TC-011: filters use scenario dates, not browser real date', async () => {
+    const user = userEvent.setup();
+    renderTimeline();
+    const timeFilter = screen.getAllByTestId('filter-select')[2];
+
+    await user.selectOptions(timeFilter, 'today');
+    const todayEvents = screen.getAllByTestId('timeline-event');
+    expect(todayEvents.length).toBeGreaterThan(0);
+
+    await user.selectOptions(timeFilter, 'week');
+    const weekEvents = screen.getAllByTestId('timeline-event');
+    expect(weekEvents.length).toBeGreaterThan(0);
+  });
+
+  it('TC-012: empty state displays when all events are filtered out', async () => {
+    const user = userEvent.setup();
+    renderTimeline();
+    const timeFilter = screen.getAllByTestId('filter-select')[2];
+    await user.selectOptions(timeFilter, 'today');
+    expect(screen.getAllByTestId('timeline-event').length).toBeGreaterThan(0);
+
+    const typeFilter = screen.getAllByTestId('filter-select')[0];
+    await user.selectOptions(typeFilter, 'news');
+    expect(screen.getByText('No events match your filters')).toBeInTheDocument();
+
+    await user.selectOptions(typeFilter, 'all');
+    expect(screen.getAllByTestId('timeline-event').length).toBeGreaterThan(0);
   });
 });

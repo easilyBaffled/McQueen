@@ -73,3 +73,4 @@
 2026-02-25 05:59:25 | mcq-36s.2 | DONE | Add tooltip explanation to disabled Sell tab
 2026-02-25 06:06:00 | mcq-36s.3 | DONE | Fix PlayerCard moveReason truncation to respect word boundaries
 2026-02-25 06:18:00 | mcq-dvn | DONE | Timeline and Scenario Improvements
+2026-02-25 06:19:27 | mcq-dvn | DONE | Timeline and Scenario Improvements
