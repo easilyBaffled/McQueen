@@ -62,11 +62,13 @@ function makePlayers(count: number): EnrichedPlayer[] {
     'Trevor Lawrence', 'Brock Purdy', 'CJ Stroud', 'Kyler Murray',
     'Kirk Cousins', 'Geno Smith', 'Anthony Richardson',
   ];
+  const teams = ['KC', 'BUF', 'BAL', 'PHI', 'CIN', 'DAL', 'MIA', 'LAC', 'JAX', 'SF', 'HOU', 'ARI', 'ATL', 'SEA', 'IND'];
   const changes = [2.5, -1.3, 0.8, -3.1, 0.5, -2.0, 1.1, -0.7, 3.2, -1.9, 0.3, -0.4, 1.5, -2.3, 0.0];
   return Array.from({ length: count }, (_, i) =>
     createMockEnrichedPlayer({
       id: `p${i + 1}`,
       name: names[i] || `Player ${i + 1}`,
+      team: teams[i % teams.length],
       changePercent: changes[i % changes.length],
     }),
   );
@@ -753,10 +755,9 @@ describe('DailyMission', () => {
       await user.type(searchInput, 'KC');
 
       const selectorBtns = screen.getAllByLabelText(/Pick .+ as riser/);
-      selectorBtns.forEach((btn) => {
-        const chip = btn.closest('[class*="selector-chip"]')!;
-        expect(chip).toBeInTheDocument();
-      });
+      expect(selectorBtns).toHaveLength(1);
+      expect(screen.getByText('Patrick Mahomes')).toBeInTheDocument();
+      expect(screen.queryByText('Josh Allen')).not.toBeInTheDocument();
     });
 
     it('shows all players when search is cleared', async () => {
@@ -814,6 +815,92 @@ describe('DailyMission', () => {
       await user.type(searchInput, 'Anthony');
       await user.click(screen.getByLabelText('Pick Anthony Richardson as riser'));
       expect(setMissionPick).toHaveBeenCalledWith('p15', 'riser');
+    });
+
+    it('partial substring matches filter correctly', async () => {
+      const user = userEvent.setup();
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(15)) },
+        { missionRevealed: false, missionPicks: { risers: [], fallers: [] } },
+      );
+
+      const searchInput = screen.getByPlaceholderText(/search/i);
+      await user.type(searchInput, 'Pat');
+
+      const selectorBtns = screen.getAllByLabelText(/Pick .+ as riser/);
+      expect(selectorBtns).toHaveLength(1);
+      expect(screen.getByText('Patrick Mahomes')).toBeInTheDocument();
+    });
+
+    it('whitespace-only query shows all players', async () => {
+      const user = userEvent.setup();
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(15)) },
+        { missionRevealed: false, missionPicks: { risers: [], fallers: [] } },
+      );
+
+      const searchInput = screen.getByPlaceholderText(/search/i);
+      await user.type(searchInput, '   ');
+
+      const selectorBtns = screen.getAllByLabelText(/Pick .+ as riser/);
+      expect(selectorBtns).toHaveLength(15);
+    });
+
+    it('special characters in search do not crash the component', async () => {
+      const user = userEvent.setup();
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(15)) },
+        { missionRevealed: false, missionPicks: { risers: [], fallers: [] } },
+      );
+
+      const searchInput = screen.getByPlaceholderText(/search/i);
+
+      await user.type(searchInput, "@#$");
+      expect(screen.queryAllByLabelText(/Pick .+ as riser/)).toHaveLength(0);
+      expect(screen.getByText(/no players found/i)).toBeInTheDocument();
+
+      await user.clear(searchInput);
+      await user.type(searchInput, "O'Brien");
+      expect(screen.getByText(/no players found/i)).toBeInTheDocument();
+    });
+
+    it('search input appears before selector chips in DOM', () => {
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(15)) },
+        { missionRevealed: false, missionPicks: { risers: [], fallers: [] } },
+      );
+
+      const selector = screen.getByTestId('player-selector');
+      const searchInput = selector.querySelector('input[type="text"]')!;
+      const chipsContainer = selector.querySelector('[class*="selector-chips"]')!;
+
+      expect(searchInput).toBeTruthy();
+      expect(chipsContainer).toBeTruthy();
+
+      const children = Array.from(selector.children);
+      expect(children.indexOf(searchInput.closest(selector.tagName) === selector ? searchInput : searchInput.parentElement!))
+        .toBeLessThan(children.indexOf(chipsContainer));
+    });
+
+    it('existing picks persist when search query changes', async () => {
+      const user = userEvent.setup();
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(15)) },
+        { missionRevealed: false, missionPicks: { risers: ['p1'], fallers: [] } },
+      );
+
+      expect(screen.getByText(/Risers \(1\/3\)/)).toBeInTheDocument();
+
+      const searchInput = screen.getByPlaceholderText(/search/i);
+      await user.type(searchInput, 'Lamar');
+
+      expect(screen.getByText(/Risers \(1\/3\)/)).toBeInTheDocument();
+      expect(screen.queryByLabelText('Pick Patrick Mahomes as riser')).not.toBeInTheDocument();
+
+      await user.clear(searchInput);
+
+      const p1Chip = screen.getByLabelText('Pick Patrick Mahomes as riser').closest('[class*="selector-chip"]')!;
+      expect(p1Chip.className).toMatch(/picked/);
     });
   });
 });
