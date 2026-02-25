@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import PlayerCard from '../PlayerCard/PlayerCard';
+import { truncateAtWord } from '../PlayerCard/PlayerCard';
 import { renderWithProviders } from '../../test/renderWithProviders';
 import { createMockEnrichedPlayer } from '../../test/mockData';
 
@@ -92,5 +93,47 @@ describe('PlayerCard', () => {
     renderWithProviders(<PlayerCard player={player} />);
     const cardReason = document.querySelector('[class*="card-reason"]');
     expect(cardReason).toBeNull();
+  });
+});
+
+describe('truncateAtWord', () => {
+  it('returns short text unchanged', () => {
+    expect(truncateAtWord('Traded to the Chiefs', 60)).toBe('Traded to the Chiefs');
+  });
+
+  it('returns exactly maxLen text unchanged', () => {
+    const text = 'Promoted to starter after strong preseason camp performance';
+    expect(text.length).toBe(59);
+    const exact60 = text + 'X';
+    expect(truncateAtWord(exact60, 60)).toBe(exact60);
+  });
+
+  it('truncates at last space before maxLen', () => {
+    const input = 'Breakout performance in Week 3 elevated his stock significantly among fantasy managers';
+    const result = truncateAtWord(input, 60);
+    expect(result).toBe('Breakout performance in Week 3 elevated his stock...');
+    expect(result.endsWith('...')).toBe(true);
+  });
+
+  it('returns empty string unchanged', () => {
+    expect(truncateAtWord('', 60)).toBe('');
+  });
+
+  it('falls back to hard cut when no spaces exist', () => {
+    const input = 'a'.repeat(69);
+    expect(truncateAtWord(input, 60)).toBe('a'.repeat(60) + '...');
+  });
+
+  it('falls back to hard cut when only space is at position 0 (TC-007)', () => {
+    const input = ' ' + 'a'.repeat(65);
+    const result = truncateAtWord(input, 60);
+    expect(result).toBe(input.slice(0, 60) + '...');
+  });
+
+  it('trims trailing whitespace before appending ellipsis (TC-008)', () => {
+    const input = 'Hello     ' + 'X'.repeat(55);
+    const result = truncateAtWord(input, 60);
+    expect(result).toBe('Hello...');
+    expect(result).not.toMatch(/\s\.\.\./);
   });
 });

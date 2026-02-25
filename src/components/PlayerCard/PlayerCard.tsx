@@ -7,7 +7,7 @@ import { useSocial } from '../../context/SocialContext';
 import { getPlayerHeadshotUrl } from '../../utils/playerImages';
 import styles from './PlayerCard.module.css';
 
-function truncateAtWord(text: string, maxLen: number): string {
+export function truncateAtWord(text: string, maxLen: number): string {
   if (text.length <= maxLen) return text;
   const truncated = text.slice(0, maxLen);
   const lastSpace = truncated.lastIndexOf(' ');
