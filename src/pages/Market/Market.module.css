@@ -131,7 +131,7 @@
 
 .market-sidebar {
   position: sticky;
-  top: 16px;
+  top: calc(var(--header-height) + 16px);
 }
 
 .market-main {

@@ -218,4 +218,52 @@ describe('Layout', () => {
       expect(timelineLink).not.toHaveClass(styles['active']);
     });
   });
+
+  describe('Header layout (mcq-vqz)', () => {
+    it('renders header-left, header-center, and header-right sections', () => {
+      renderLayout();
+      const header = screen.getByRole('banner');
+      expect(header).toBeInTheDocument();
+      expect(screen.getByTestId('header-center')).toBeInTheDocument();
+      expect(screen.getByTestId('balance-label')).toBeInTheDocument();
+      expect(screen.getByTestId('balance-value')).toBeInTheDocument();
+    });
+
+    it('header-right contains both help button and balance display', () => {
+      renderLayout();
+      const helpButton = screen.getByTestId('help-button');
+      const balanceValue = screen.getByTestId('balance-value');
+      const headerRight = helpButton.closest(`.${styles['header-right']}`);
+      expect(headerRight).toContainElement(balanceValue);
+    });
+
+    it('balance label reads TOTAL VALUE in uppercase', () => {
+      renderLayout();
+      const label = screen.getByTestId('balance-label');
+      expect(label).toHaveTextContent('Total Value');
+    });
+
+    it('balance value shows formatted dollar amount with gain/loss class', () => {
+      renderLayout({
+        tradingOverrides: {
+          cash: 5000,
+          getPortfolioValue: vi.fn(() => ({ value: 3000, cost: 2500, gain: 500, gainPercent: 20 })),
+        },
+      });
+      const balanceValue = screen.getByTestId('balance-value');
+      expect(balanceValue).toHaveClass(styles['up']);
+      expect(balanceValue.textContent).toContain('$');
+    });
+
+    it('balance value shows down class when portfolio has losses', () => {
+      renderLayout({
+        tradingOverrides: {
+          cash: 5000,
+          getPortfolioValue: vi.fn(() => ({ value: 2000, cost: 2500, gain: -500, gainPercent: -20 })),
+        },
+      });
+      const balanceValue = screen.getByTestId('balance-value');
+      expect(balanceValue).toHaveClass(styles['down']);
+    });
+  });
 });
