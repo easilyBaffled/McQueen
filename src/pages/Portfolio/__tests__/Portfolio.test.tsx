@@ -1,8 +1,11 @@
 import React from 'react';
+import fs from 'fs';
+import path from 'path';
 import { describe, it, expect, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Portfolio from '../Portfolio';
+import portfolioStyles from '../Portfolio.module.css';
 import { renderWithProviders } from '../../../test/renderWithProviders';
 import { createMockEnrichedPlayer } from '../../../test/mockData';
 import type { EnrichedPlayer } from '../../../types';
@@ -372,5 +375,34 @@ describe('Portfolio page', () => {
     const negativeEl = screen.getByText('PlayerB').closest('a')!.querySelector('[aria-label]')!;
     expect(negativeEl).toHaveAttribute('aria-label', 'Down 3.0 percent');
     expect(negativeEl.textContent).toContain('▼');
+  });
+
+  describe('responsive column hiding uses class-based selectors (TC-007)', () => {
+    it('header spans have descriptive class names', () => {
+      renderPortfolio({
+        tradingOverrides: {
+          portfolio: { p1: { shares: 10, avgCost: 100 } },
+          getPlayer: vi.fn(() => mahomes),
+          getPlayers: vi.fn(() => [mahomes]),
+          getPortfolioValue: vi.fn(() => ({ value: 1200, cost: 1000, gain: 200, gainPercent: 20 })),
+          cash: 5000,
+        },
+      });
+      const header = screen.getByText('Shares').closest('span');
+      expect(header?.className).toContain(portfolioStyles['col-shares']);
+      const avgCostHeader = screen.getByText('Avg Cost').closest('span');
+      expect(avgCostHeader?.className).toContain(portfolioStyles['col-avg-cost']);
+      const valueHeader = screen.getByText('Value').closest('span');
+      expect(valueHeader?.className).toContain(portfolioStyles['col-value']);
+    });
+
+    it('CSS uses class-based selectors instead of nth-child for responsive hiding', () => {
+      const cssPath = path.resolve(__dirname, '../Portfolio.module.css');
+      const css = fs.readFileSync(cssPath, 'utf-8');
+      expect(css).not.toMatch(/nth-child/);
+      expect(css).toMatch(/\.col-avg-cost/);
+      expect(css).toMatch(/\.col-value/);
+      expect(css).toMatch(/\.col-shares/);
+    });
   });
 });

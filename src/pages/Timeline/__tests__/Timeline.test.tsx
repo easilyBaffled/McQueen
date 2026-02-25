@@ -279,6 +279,25 @@ describe('Timeline – event type labels (TC-015 to TC-018)', () => {
   });
 });
 
+describe('Timeline – search input type (TC-011)', () => {
+  it('search input uses type="search" for consistency with Market page', () => {
+    renderTimeline();
+    const input = screen.getByTestId('search-input');
+    expect(input).toHaveAttribute('type', 'search');
+  });
+
+  it('search filtering still works after type change', async () => {
+    const user = userEvent.setup();
+    renderTimeline();
+    const input = screen.getByTestId('search-input');
+    await user.type(input, 'Mahomes');
+    const events = screen.getAllByTestId('timeline-event');
+    events.forEach((event) => {
+      expect(event.textContent).toContain('Mahomes');
+    });
+  });
+});
+
 describe('Timeline – scenario-relative time filters (TC-001 to TC-012)', () => {
   it('TC-001: "Today" filter shows only events from the latest event day', async () => {
     const user = userEvent.setup();

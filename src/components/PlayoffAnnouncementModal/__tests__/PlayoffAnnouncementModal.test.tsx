@@ -3,7 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import PlayoffAnnouncementModal from '../PlayoffAnnouncementModal';
 import { ScenarioContext } from '../../../context/ScenarioContext';
-import type { ScenarioContextValue } from '../../../types';
+import { TradingContext } from '../../../context/TradingContext';
+import type { ScenarioContextValue, TradingContextValue, Portfolio } from '../../../types';
 
 const animationProps = new Set([
   'initial', 'animate', 'exit', 'transition', 'whileHover', 'whileTap',
@@ -54,7 +55,20 @@ vi.mock('../../../context/SimulationContext', () => ({
 import { useSimulation } from '../../../context/SimulationContext';
 const mockUseSimulation = vi.mocked(useSimulation);
 
-function renderModal(scenario = 'playoffs', dilutionApplied = false) {
+function createTradingValue(portfolio: Portfolio = {}): TradingContextValue {
+  return {
+    portfolio,
+    cash: 10000,
+    buyShares: vi.fn(() => false),
+    sellShares: vi.fn(() => false),
+    getEffectivePrice: vi.fn(() => 0),
+    getPlayer: vi.fn(() => null),
+    getPlayers: vi.fn(() => []),
+    getPortfolioValue: vi.fn(() => ({ value: 0, cost: 0, gain: 0, gainPercent: 0 })),
+  };
+}
+
+function renderModal(scenario = 'playoffs', dilutionApplied = false, portfolio: Portfolio = { 'diggs-s': { shares: 5, avgCost: 85 } }) {
   mockUseSimulation.mockReturnValue({
     applyPlayoffDilution: mockApplyPlayoffDilution,
     playoffDilutionApplied: dilutionApplied,
@@ -77,7 +91,9 @@ function renderModal(scenario = 'playoffs', dilutionApplied = false) {
 
   return render(
     <ScenarioContext.Provider value={scenarioValue}>
-      <PlayoffAnnouncementModal />
+      <TradingContext.Provider value={createTradingValue(portfolio)}>
+        <PlayoffAnnouncementModal />
+      </TradingContext.Provider>
     </ScenarioContext.Provider>,
   );
 }
@@ -113,7 +129,6 @@ describe('PlayoffAnnouncementModal', () => {
     renderModal('playoffs');
     expect(screen.getByText('Diggs')).toBeInTheDocument();
     expect(screen.getByText('$70.00')).toBeInTheDocument();
-    // 5 shares from MOCK_BUYBACK_HOLDINGS
     expect(screen.getByText('5')).toBeInTheDocument();
     // proceeds = 70 * 5 = 350 (appears in row + summary)
     const proceedsElements = screen.getAllByText('+$350.00');
@@ -142,7 +157,9 @@ describe('PlayoffAnnouncementModal', () => {
 
     render(
       <ScenarioContext.Provider value={scenarioValue}>
-        <PlayoffAnnouncementModal />
+        <TradingContext.Provider value={createTradingValue({})}>
+          <PlayoffAnnouncementModal />
+        </TradingContext.Provider>
       </ScenarioContext.Provider>,
     );
 
@@ -227,13 +244,16 @@ describe('PlayoffAnnouncementModal', () => {
       scenarioVersion: 0,
     };
 
+    const tradingValue = createTradingValue({});
+
     const { rerender } = render(
       <ScenarioContext.Provider value={scenarioValue}>
-        <PlayoffAnnouncementModal />
+        <TradingContext.Provider value={tradingValue}>
+          <PlayoffAnnouncementModal />
+        </TradingContext.Provider>
       </ScenarioContext.Provider>,
     );
 
-    // Now simulate that dilution got applied (e.g., via Got It button)
     mockUseSimulation.mockReturnValue({
       applyPlayoffDilution: mockApplyPlayoffDilution,
       playoffDilutionApplied: true,
@@ -241,12 +261,13 @@ describe('PlayoffAnnouncementModal', () => {
 
     rerender(
       <ScenarioContext.Provider value={scenarioValue}>
-        <PlayoffAnnouncementModal />
+        <TradingContext.Provider value={tradingValue}>
+          <PlayoffAnnouncementModal />
+        </TradingContext.Provider>
       </ScenarioContext.Provider>,
     );
 
     mockApplyPlayoffDilution.mockClear();
-    // Modal should be hidden now, close should be a no-op
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(mockApplyPlayoffDilution).not.toHaveBeenCalled();
   });
@@ -282,7 +303,36 @@ describe('PlayoffAnnouncementModal', () => {
   it('shows correct playoff player count in dilution note', () => {
     renderModal('playoffs');
     fireEvent.click(screen.getByText('Continue'));
-    // 2 non-buyback players (Mahomes, Allen)
     expect(screen.getByText(/all 2 playoff-bound players/)).toBeInTheDocument();
+  });
+
+  it('uses actual portfolio data for buyback shares (TC-014)', () => {
+    renderModal('playoffs', false, { 'diggs-s': { shares: 10, avgCost: 90 } });
+    expect(screen.getByText('10')).toBeInTheDocument();
+    // proceeds = 70 * 10 = 700
+    const proceedsElements = screen.getAllByText('+$700.00');
+    expect(proceedsElements.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('shows empty state when user has no buyback holdings (TC-015)', () => {
+    renderModal('playoffs', false, {});
+    const dashes = screen.getAllByText('—');
+    expect(dashes.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('MOCK_BUYBACK_HOLDINGS is removed from codebase (TC-017)', async () => {
+    const fs = await import('fs');
+    const path = await import('path');
+    const filePath = path.resolve(__dirname, '../PlayoffAnnouncementModal.tsx');
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    expect(fileContent).not.toContain('MOCK_BUYBACK_HOLDINGS');
+  });
+
+  it('imports useTrading for real portfolio data (TC-017)', async () => {
+    const fs = await import('fs');
+    const path = await import('path');
+    const filePath = path.resolve(__dirname, '../PlayoffAnnouncementModal.tsx');
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    expect(fileContent).toContain('useTrading');
   });
 });

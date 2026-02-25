@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import PlayerDetail from '../PlayerDetail';
+import PlayerDetail, { truncateHeadline } from '../PlayerDetail';
 import styles from '../PlayerDetail.module.css';
 import { renderWithProviders } from '../../../test/renderWithProviders';
 import { createMockEnrichedPlayer } from '../../../test/mockData';
@@ -881,5 +881,43 @@ describe('PlayerDetail page', () => {
       expect.stringContaining('1 share of'),
       'success',
     );
+  });
+});
+
+describe('truncateHeadline (TC-001 / TC-002)', () => {
+  it('returns full headline when ≤40 characters', () => {
+    expect(truncateHeadline('Mahomes throws 3 TDs')).toBe('Mahomes throws 3 TDs');
+  });
+
+  it('returns full headline at exactly 40 characters', () => {
+    const headline = 'Player scores touchdown in fourth period';
+    expect(headline.length).toBe(40);
+    expect(truncateHeadline(headline)).toBe(headline);
+  });
+
+  it('truncates at word boundary when >40 characters', () => {
+    const headline = 'Mahomes throws incredible game-winning touchdown pass in overtime';
+    const result = truncateHeadline(headline);
+    expect(result.endsWith('...')).toBe(true);
+    expect(result.length).toBeLessThanOrEqual(44);
+    expect(result).not.toContain('touchdown pass');
+  });
+
+  it('truncates at exactly 40 chars if no space found', () => {
+    const headline = 'A'.repeat(50);
+    const result = truncateHeadline(headline);
+    expect(result).toBe('A'.repeat(40) + '...');
+  });
+
+  it('returns "Price" for null/undefined/empty headline', () => {
+    expect(truncateHeadline(null)).toBe('Price');
+    expect(truncateHeadline(undefined)).toBe('Price');
+    expect(truncateHeadline('')).toBe('Price');
+  });
+
+  it('truncates at 41 characters (boundary)', () => {
+    const headline = 'x'.repeat(41);
+    const result = truncateHeadline(headline);
+    expect(result.endsWith('...')).toBe(true);
   });
 });

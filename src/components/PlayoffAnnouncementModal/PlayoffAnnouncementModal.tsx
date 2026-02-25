@@ -2,37 +2,27 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useScenario } from '../../context/ScenarioContext';
 import { useSimulation } from '../../context/SimulationContext';
+import { useTrading } from '../../context/TradingContext';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
 import styles from './PlayoffAnnouncementModal.module.css';
 
-// Mock portfolio showing user holdings for buyback players (for demonstration)
-const MOCK_BUYBACK_HOLDINGS: Record<string, { shares: number; avgCost: number }> = {
-  'diggs-s': { shares: 5, avgCost: 85 },
-  stroud: { shares: 8, avgCost: 130 },
-  lamb: { shares: 3, avgCost: 112 },
-  hill: { shares: 6, avgCost: 118 },
-};
-
-// Dilution percentage for playoff players
 const DILUTION_PERCENT = 15;
 
 export default function PlayoffAnnouncementModal() {
   const { scenario, currentData } = useScenario();
   const { applyPlayoffDilution, playoffDilutionApplied } = useSimulation();
+  const { portfolio } = useTrading();
   const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState(0);
   const focusTrapRef = useFocusTrap(isVisible);
 
-  // Get players from current scenario data
   const players = currentData?.players || [];
 
-  // Separate buyback players from playoff players
   const buybackPlayers = players.filter((p) => p.isBuyback);
   const playoffPlayers = players.filter((p) => !p.isBuyback);
 
-  // Calculate buyback amounts for mock portfolio
   const buybackDetails = buybackPlayers.map((player) => {
-    const holding = MOCK_BUYBACK_HOLDINGS[player.id];
+    const holding = portfolio[player.id];
     const currentPrice =
       player.priceHistory?.[player.priceHistory.length - 1]?.price ||
       player.basePrice;

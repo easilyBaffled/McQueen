@@ -69,6 +69,14 @@ function getEventTypeLabel(reason: PriceReason | null | undefined): string {
   return 'EVENT';
 }
 
+export function truncateHeadline(headline: string | undefined | null, maxLen = 40): string {
+  if (!headline) return 'Price';
+  if (headline.length <= maxLen) return headline;
+  const truncated = headline.substring(0, maxLen);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return (lastSpace > 0 ? truncated.substring(0, lastSpace) : truncated) + '...';
+}
+
 export default function PlayerDetail() {
   const { playerId } = useParams();
   const navigate = useNavigate();
@@ -391,15 +399,23 @@ export default function PlayerDetail() {
                       border: '1px solid #333',
                       borderRadius: '8px',
                     }}
-                    labelStyle={{ display: 'none' }}
+                    labelFormatter={(label: number) => {
+                      const entry = chartData[label];
+                      if (!entry?.timestamp) return '';
+                      const date = new Date(entry.timestamp);
+                      return date.toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      });
+                    }}
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     formatter={(value: any, _name: any, props: any) => {
                       const entry = props.payload;
                       return [
                         `$${Number(value).toFixed(2)}`,
-                        entry.reason?.headline
-                          ? entry.reason.headline.substring(0, 40) + '...'
-                          : 'Price',
+                        truncateHeadline(entry.reason?.headline),
                       ];
                     }}
                   />
@@ -471,6 +487,7 @@ export default function PlayerDetail() {
                   event={selectedEvent as EventData}
                   position={popupPosition}
                   onClose={closeEventPopup}
+                  containerRef={chartContainerRef}
                 />
               )}
             </div>

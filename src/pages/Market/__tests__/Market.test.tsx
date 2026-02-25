@@ -616,6 +616,24 @@ describe('Market page', () => {
   });
 });
 
+describe('Welcome banner border styling (TC-018)', () => {
+  const cssPath = path.resolve(__dirname, '../Market.module.css');
+  const css = fs.readFileSync(cssPath, 'utf-8');
+
+  it('welcome banner border uses subtle color not primary red', () => {
+    const bannerBlock = css.match(/\.welcome-banner\s*\{([^}]*)\}/);
+    expect(bannerBlock).toBeTruthy();
+    expect(bannerBlock![1]).toContain('var(--color-border)');
+    expect(bannerBlock![1]).not.toMatch(/border:\s*1px solid var\(--color-primary\)/);
+  });
+
+  it('welcome banner has a subtle left accent border', () => {
+    const bannerBlock = css.match(/\.welcome-banner\s*\{([^}]*)\}/);
+    expect(bannerBlock).toBeTruthy();
+    expect(bannerBlock![1]).toMatch(/border-left.*var\(--color-primary\)/);
+  });
+});
+
 describe('Market sidebar sticky positioning (CSS)', () => {
   const cssPath = path.resolve(__dirname, '../Market.module.css');
   const css = fs.readFileSync(cssPath, 'utf-8');

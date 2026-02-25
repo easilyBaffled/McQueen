@@ -7,6 +7,7 @@ interface EventMarkerPopupProps {
   event: EventData | null;
   position: { x: number; y: number };
   onClose: () => void;
+  containerRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 // SVG Icon Components
@@ -87,10 +88,9 @@ export function getEventConfig(type: string) {
   return EVENT_TYPE_CONFIG[type as keyof typeof EVENT_TYPE_CONFIG] || EVENT_TYPE_CONFIG.default;
 }
 
-export default function EventMarkerPopup({ event, position, onClose }: EventMarkerPopupProps) {
+export default function EventMarkerPopup({ event, position, onClose, containerRef }: EventMarkerPopupProps) {
   const popupRef = useRef<HTMLDivElement>(null);
 
-  // Handle both old event format and new PriceChange format
   const eventType = event?.type || 'default';
   const config = getEventConfig(eventType);
 
@@ -118,10 +118,8 @@ export default function EventMarkerPopup({ event, position, onClose }: EventMark
 
   if (!event) return null;
 
-  // Format price if available
   const priceDisplay = event.price ? `$${event.price.toFixed(2)}` : null;
 
-  // Format timestamp if available
   const formatTimestamp = (timestamp: string) => {
     if (!timestamp) return null;
     const date = new Date(timestamp);
@@ -133,14 +131,35 @@ export default function EventMarkerPopup({ event, position, onClose }: EventMark
     });
   };
 
+  const adjustedPosition = { ...position };
+  const POPUP_MIN_WIDTH = 260;
+  const POPUP_EST_HEIGHT = 150;
+
+  if (containerRef?.current) {
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const containerWidth = containerRect.width;
+    const containerHeight = containerRect.height;
+
+    if (position.x + POPUP_MIN_WIDTH / 2 > containerWidth) {
+      adjustedPosition.x = containerWidth - POPUP_MIN_WIDTH / 2;
+    }
+    if (position.x - POPUP_MIN_WIDTH / 2 < 0) {
+      adjustedPosition.x = POPUP_MIN_WIDTH / 2;
+    }
+
+    if (position.y + POPUP_EST_HEIGHT > containerHeight) {
+      adjustedPosition.y = position.y - POPUP_EST_HEIGHT - 40;
+    }
+  }
+
   return (
     <AnimatePresence>
       <motion.div
         ref={popupRef}
         className={styles['event-popup']}
         style={{
-          left: position.x,
-          top: position.y,
+          left: adjustedPosition.x,
+          top: adjustedPosition.y,
         }}
         initial={{ opacity: 0, y: 10, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}

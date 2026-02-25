@@ -160,7 +160,8 @@
     rgba(212, 48, 32, 0.1) 0%,
     rgba(0, 200, 83, 0.05) 100%
   );
-  border: 1px solid var(--color-primary);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-primary);
   border-radius: var(--radius-lg);
   margin-bottom: 8px;
 }

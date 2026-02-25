@@ -179,12 +179,12 @@ export default function Portfolio() {
       ) : (
         <div className={styles['holdings-list']} data-testid="holdings-list">
           <div className={styles['holdings-header']}>
-            <span>Player</span>
-            <span>Shares</span>
-            <span>Avg Cost</span>
-            <span>Current</span>
-            <span>Value</span>
-            <span>Gain/Loss</span>
+            <span className={styles['col-player']}>Player</span>
+            <span className={styles['col-shares']}>Shares</span>
+            <span className={styles['col-avg-cost']}>Avg Cost</span>
+            <span className={styles['col-current']}>Current</span>
+            <span className={styles['col-value']}>Value</span>
+            <span className={styles['col-gain']}>Gain/Loss</span>
           </div>
 
           {holdings.map((holding, index) => (
