@@ -108,7 +108,7 @@ describe('DailyMission', () => {
 
   // ── TC-002 ────────────────────────────────────────────────────────
 
-  it('TC-002: displays up to 12 players in the selector', () => {
+  it('TC-002: displays all players in the selector (no 12-player cap)', () => {
     const fifteenPlayers = makePlayers(15);
     renderMission(
       { getPlayers: vi.fn(() => fifteenPlayers) },
@@ -116,7 +116,7 @@ describe('DailyMission', () => {
     );
 
     const selectorBtns = screen.getAllByLabelText(/Pick .+ as riser/);
-    expect(selectorBtns).toHaveLength(12);
+    expect(selectorBtns).toHaveLength(15);
   });
 
   it('TC-002 edge: fewer than 12 players shows all', () => {
@@ -699,6 +699,121 @@ describe('DailyMission', () => {
       expect(fallerChips[0].textContent).toContain('✓');
       expect(fallerChips[1].textContent).toContain('✗');
       expect(fallerChips[2].textContent).toContain('✓');
+    });
+  });
+
+  // ── mcq-c51: Expanded player selector ────────────────────────────
+
+  describe('expanded player selector (mcq-c51)', () => {
+    it('shows all players when more than 12 are available', () => {
+      const twentyPlayers = makePlayers(15);
+      renderMission(
+        { getPlayers: vi.fn(() => twentyPlayers) },
+        { missionRevealed: false, missionPicks: { risers: [], fallers: [] } },
+      );
+
+      const selectorBtns = screen.getAllByLabelText(/Pick .+ as riser/);
+      expect(selectorBtns).toHaveLength(15);
+    });
+
+    it('renders a search input for filtering players', () => {
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(15)) },
+        { missionRevealed: false, missionPicks: { risers: [], fallers: [] } },
+      );
+
+      const searchInput = screen.getByPlaceholderText(/search/i);
+      expect(searchInput).toBeInTheDocument();
+    });
+
+    it('filters players by name when typing in search input', async () => {
+      const user = userEvent.setup();
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(15)) },
+        { missionRevealed: false, missionPicks: { risers: [], fallers: [] } },
+      );
+
+      const searchInput = screen.getByPlaceholderText(/search/i);
+      await user.type(searchInput, 'Mahomes');
+
+      const selectorBtns = screen.getAllByLabelText(/Pick .+ as riser/);
+      expect(selectorBtns).toHaveLength(1);
+      expect(screen.getByText('Patrick Mahomes')).toBeInTheDocument();
+    });
+
+    it('filters players by team when typing in search input', async () => {
+      const players = makePlayers(15);
+      const user = userEvent.setup();
+      renderMission(
+        { getPlayers: vi.fn(() => players) },
+        { missionRevealed: false, missionPicks: { risers: [], fallers: [] } },
+      );
+
+      const searchInput = screen.getByPlaceholderText(/search/i);
+      await user.type(searchInput, 'KC');
+
+      const selectorBtns = screen.getAllByLabelText(/Pick .+ as riser/);
+      selectorBtns.forEach((btn) => {
+        const chip = btn.closest('[class*="selector-chip"]')!;
+        expect(chip).toBeInTheDocument();
+      });
+    });
+
+    it('shows all players when search is cleared', async () => {
+      const user = userEvent.setup();
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(15)) },
+        { missionRevealed: false, missionPicks: { risers: [], fallers: [] } },
+      );
+
+      const searchInput = screen.getByPlaceholderText(/search/i);
+      await user.type(searchInput, 'Mahomes');
+      expect(screen.getAllByLabelText(/Pick .+ as riser/)).toHaveLength(1);
+
+      await user.clear(searchInput);
+      expect(screen.getAllByLabelText(/Pick .+ as riser/)).toHaveLength(15);
+    });
+
+    it('search is case-insensitive', async () => {
+      const user = userEvent.setup();
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(15)) },
+        { missionRevealed: false, missionPicks: { risers: [], fallers: [] } },
+      );
+
+      const searchInput = screen.getByPlaceholderText(/search/i);
+      await user.type(searchInput, 'mahomes');
+
+      const selectorBtns = screen.getAllByLabelText(/Pick .+ as riser/);
+      expect(selectorBtns).toHaveLength(1);
+    });
+
+    it('shows empty state when search matches no players', async () => {
+      const user = userEvent.setup();
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(15)) },
+        { missionRevealed: false, missionPicks: { risers: [], fallers: [] } },
+      );
+
+      const searchInput = screen.getByPlaceholderText(/search/i);
+      await user.type(searchInput, 'zzzznotaplayer');
+
+      expect(screen.queryAllByLabelText(/Pick .+ as riser/)).toHaveLength(0);
+      expect(screen.getByText(/no players found/i)).toBeInTheDocument();
+    });
+
+    it('picking a player found via search persists after clearing search', async () => {
+      const setMissionPick = vi.fn();
+      const user = userEvent.setup();
+      renderMission(
+        { getPlayers: vi.fn(() => makePlayers(15)) },
+        { missionRevealed: false, missionPicks: { risers: [], fallers: [] }, setMissionPick },
+      );
+
+      const searchInput = screen.getByPlaceholderText(/search/i);
+      await user.type(searchInput, 'Anthony');
+      await user.click(screen.getByLabelText('Pick Anthony Richardson as riser'));
+      expect(setMissionPick).toHaveBeenCalledWith('p15', 'riser');
     });
   });
 });

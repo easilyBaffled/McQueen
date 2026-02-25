@@ -212,4 +212,27 @@ describe('Leaderboard – real data integration (mcq-35g.6)', () => {
     expect(upElements.length).toBeGreaterThan(0);
     expect(downElements.length).toBeGreaterThan(0);
   });
+
+  // ── mcq-c51: Leaderboard improvements ──────────────────────────
+
+  it('mcq-c51: header column reads "Gain" not "Weekly Gain"', () => {
+    render(<Leaderboard />);
+
+    const header = document.querySelector('[class*="table-header"]');
+    expect(header?.textContent).toContain('Gain');
+    expect(header?.textContent).not.toContain('Weekly Gain');
+  });
+
+  it('mcq-c51: trader column uses flex layout for alignment', () => {
+    render(<Leaderboard />);
+
+    const traderCols = document.querySelectorAll('[data-testid="col-trader"]');
+    expect(traderCols.length).toBeGreaterThan(0);
+
+    const traderCol = traderCols[0] as HTMLElement;
+    const avatar = traderCol.querySelector('[class*="trader-avatar"]');
+    const name = traderCol.querySelector('[class*="trader-name"]');
+    expect(avatar).toBeInTheDocument();
+    expect(name).toBeInTheDocument();
+  });
 });

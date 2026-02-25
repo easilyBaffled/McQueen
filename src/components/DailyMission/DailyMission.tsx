@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTrading } from '../../context/TradingContext';
 import { useSocial } from '../../context/SocialContext';
@@ -17,7 +17,16 @@ export default function DailyMission({ collapsible = false }) {
   } = useSocial();
 
   const [isExpanded, setIsExpanded] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const players = getPlayers();
+
+  const filteredPlayers = useMemo(() => {
+    if (!searchQuery.trim()) return players;
+    const q = searchQuery.toLowerCase();
+    return players.filter(
+      (p) => p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q),
+    );
+  }, [players, searchQuery]);
   const score = getMissionScore();
 
   // If not collapsible, always show expanded
@@ -241,8 +250,18 @@ export default function DailyMission({ collapsible = false }) {
                   <p className={styles['selector-hint']}>
                     Click a player to add them to your picks:
                   </p>
+                  <input
+                    type="text"
+                    className={styles['selector-search']}
+                    placeholder="Search by name or team..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
                   <div className={styles['selector-chips']}>
-                    {players.slice(0, 12).map((player) => {
+                    {filteredPlayers.length === 0 && (
+                      <p className={styles['selector-empty']}>No players found</p>
+                    )}
+                    {filteredPlayers.map((player) => {
                       const isRiser = missionPicks.risers.includes(player.id);
                       const isFaller = missionPicks.fallers.includes(player.id);
                       const isPicked = isRiser || isFaller;

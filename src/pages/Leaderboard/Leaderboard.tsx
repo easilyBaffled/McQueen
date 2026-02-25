@@ -67,7 +67,7 @@ export default function Leaderboard() {
           <span className={styles['col-rank']}>Rank</span>
           <span className={styles['col-trader']}>Trader</span>
           <span className={styles['col-value']}>Portfolio Value</span>
-          <span className={styles['col-gain']}>Weekly Gain</span>
+          <span className={styles['col-gain']}>Gain</span>
         </div>
 
         {rankings.map((trader, index) => (

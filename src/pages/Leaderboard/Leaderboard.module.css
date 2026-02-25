@@ -143,6 +143,18 @@
   font-size: 14px;
 }
 
+.col-trader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trader-avatar {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
 .trader-name {
   font-weight: 600;
   font-size: 15px;
