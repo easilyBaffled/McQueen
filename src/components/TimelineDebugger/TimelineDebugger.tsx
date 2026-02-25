@@ -1,17 +1,41 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSimulation } from '../../context/SimulationContext';
+import { useScenario } from '../../context/ScenarioContext';
 import { isDevMode } from '../../utils/devMode';
 import styles from './TimelineDebugger.module.css';
 
 export default function TimelineDebugger() {
   const { history, tick, goToHistoryPoint, isPlaying, setIsPlaying } =
     useSimulation();
+  const { scenario } = useScenario();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Only show in dev mode
   if (!isDevMode()) {
-    return null;
+    const isLiveScenario = scenario === 'live' || scenario === 'superbowl';
+    if (!isLiveScenario) return null;
+
+    return (
+      <div className={styles['simplified-container']}>
+        <span className={styles['simplified-dot']} />
+        <span className={styles['simplified-label']}>Live simulation</span>
+        <button
+          className={styles['simplified-toggle']}
+          onClick={() => setIsPlaying(!isPlaying)}
+          aria-label={isPlaying ? 'Pause simulation' : 'Play simulation'}
+        >
+          {isPlaying ? (
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          )}
+        </button>
+      </div>
+    );
   }
 
   return (

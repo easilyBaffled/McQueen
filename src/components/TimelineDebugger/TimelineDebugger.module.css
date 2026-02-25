@@ -211,6 +211,72 @@
   text-align: center;
 }
 
+/* Simplified indicator for non-dev users */
+.simplified-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.simplified-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-up);
+  border-radius: 50%;
+  animation: simplified-pulse 1.5s infinite;
+}
+
+@keyframes simplified-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+.simplified-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.3px;
+}
+
+.simplified-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.simplified-toggle:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+.simplified-toggle svg {
+  width: 14px;
+  height: 14px;
+}
+
 @media (max-width: 500px) {
   .timeline-debugger {
     left: 16px;
@@ -220,5 +286,11 @@
   .debugger-panel {
     width: auto;
     left: 0;
+  }
+
+  .simplified-container {
+    left: 16px;
+    right: 16px;
+    justify-content: center;
   }
 }
