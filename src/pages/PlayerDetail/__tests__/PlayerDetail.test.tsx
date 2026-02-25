@@ -306,6 +306,32 @@ describe('PlayerDetail page', () => {
     expect(tabs[0]).not.toBeDisabled();
   });
 
+  it('disabled sell tab shows tooltip explaining why (TC-007)', () => {
+    renderPlayerDetail({
+      tradingOverrides: {
+        getPlayer: vi.fn(() => mahomes),
+        portfolio: {},
+      },
+    });
+
+    const tabs = screen.getAllByTestId('trading-tab');
+    const sellTab = tabs[1];
+    expect(sellTab).toHaveAttribute('title', 'You need to own shares to sell');
+  });
+
+  it('enabled sell tab does not show tooltip (TC-008)', () => {
+    renderPlayerDetail({
+      tradingOverrides: {
+        getPlayer: vi.fn(() => mahomes),
+        portfolio: { mahomes: { shares: 5, avgCost: 110 } },
+      },
+    });
+
+    const tabs = screen.getAllByTestId('trading-tab');
+    const sellTab = tabs[1];
+    expect(sellTab).not.toHaveAttribute('title');
+  });
+
   it('watchlist toggle — add to watchlist (TC-020)', () => {
     const addToWatchlist = vi.fn();
     const addToast = vi.fn();

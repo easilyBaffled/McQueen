@@ -608,3 +608,64 @@
     display: none;
   }
 }
+
+/* Confirmation dialog */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-dialog {
+  background: var(--color-surface, #1a1a2e);
+  border: 1px solid var(--color-border, #333);
+  border-radius: var(--radius-lg, 12px);
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+}
+
+.confirm-message {
+  color: var(--color-text, #e0e0e0);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.confirm-cancel,
+.confirm-switch {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm, 6px);
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.confirm-cancel {
+  background: var(--color-surface-alt, #2a2a4a);
+  color: var(--color-text, #e0e0e0);
+}
+
+.confirm-cancel:hover {
+  background: var(--color-border, #333);
+}
+
+.confirm-switch {
+  background: var(--color-accent, #d00);
+  color: #fff;
+}
+
+.confirm-switch:hover {
+  opacity: 0.9;
+}

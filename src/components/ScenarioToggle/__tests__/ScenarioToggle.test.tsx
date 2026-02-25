@@ -62,13 +62,19 @@ vi.mock('../../../utils/devMode', () => ({
 import { isDevMode } from '../../../utils/devMode';
 const mockIsDevMode = vi.mocked(isDevMode);
 
-function renderToggle(scenario = 'midweek') {
+function renderToggle(scenario = 'midweek', portfolio?: Record<string, { shares: number; avgCost: number }>) {
   const setScenario = vi.fn();
+  const overrides: Parameters<typeof renderWithProviders>[1] = {
+    scenarioOverrides: { scenario, setScenario },
+  };
+  if (portfolio !== undefined) {
+    overrides.tradingOverrides = { portfolio };
+  }
   const result = renderWithProviders(
     <MemoryRouter>
       <ScenarioToggle />
     </MemoryRouter>,
-    { scenarioOverrides: { scenario, setScenario } },
+    overrides,
   );
   return { ...result, setScenario };
 }
@@ -292,5 +298,66 @@ describe('ScenarioToggle', () => {
     renderToggle('superbowl');
     const trigger = document.querySelector('[class*="mobile-dropdown-trigger"]') as HTMLElement;
     expect(trigger.textContent).toContain('Super Bowl');
+  });
+
+  describe('scenario switch confirmation dialog', () => {
+    it('shows confirmation dialog when switching with non-empty portfolio', () => {
+      renderToggle('midweek', { mahomes: { shares: 5, avgCost: 100 } });
+      const tabs = screen.getAllByRole('tab');
+      const liveTab = tabs.find((t) => t.textContent?.includes('Live Game'))!;
+      fireEvent.click(liveTab);
+      expect(screen.getByText(/Switching scenarios will reset/)).toBeInTheDocument();
+    });
+
+    it('does not show dialog when portfolio is empty', () => {
+      const { setScenario } = renderToggle('midweek', {});
+      const tabs = screen.getAllByRole('tab');
+      const liveTab = tabs.find((t) => t.textContent?.includes('Live Game'))!;
+      fireEvent.click(liveTab);
+      expect(screen.queryByText(/Switching scenarios will reset/)).not.toBeInTheDocument();
+      expect(setScenario).toHaveBeenCalledWith('live');
+    });
+
+    it('cancel on dialog preserves scenario and portfolio', () => {
+      const { setScenario } = renderToggle('midweek', { mahomes: { shares: 5, avgCost: 100 } });
+      const tabs = screen.getAllByRole('tab');
+      const liveTab = tabs.find((t) => t.textContent?.includes('Live Game'))!;
+      fireEvent.click(liveTab);
+      const cancelBtn = screen.getByRole('button', { name: /cancel/i });
+      fireEvent.click(cancelBtn);
+      expect(screen.queryByText(/Switching scenarios will reset/)).not.toBeInTheDocument();
+      expect(setScenario).not.toHaveBeenCalled();
+    });
+
+    it('"Switch & Reset" proceeds with scenario change', () => {
+      const { setScenario } = renderToggle('midweek', { mahomes: { shares: 5, avgCost: 100 } });
+      const tabs = screen.getAllByRole('tab');
+      const liveTab = tabs.find((t) => t.textContent?.includes('Live Game'))!;
+      fireEvent.click(liveTab);
+      const confirmBtn = screen.getByRole('button', { name: /switch & reset/i });
+      fireEvent.click(confirmBtn);
+      expect(screen.queryByText(/Switching scenarios will reset/)).not.toBeInTheDocument();
+      expect(setScenario).toHaveBeenCalledWith('live');
+    });
+
+    it('shows confirmation dialog on mobile dropdown switch with non-empty portfolio', () => {
+      renderToggle('midweek', { mahomes: { shares: 5, avgCost: 100 } });
+      const trigger = document.querySelector('[class*="mobile-dropdown-trigger"]') as HTMLElement;
+      fireEvent.click(trigger);
+      const menu = document.querySelector('[class*="mobile-dropdown-menu"]')!;
+      const buttons = menu.querySelectorAll('button[type="button"]');
+      const liveBtn = Array.from(buttons).find((b) => b.textContent?.includes('Live Game'))!;
+      fireEvent.click(liveBtn);
+      expect(screen.getByText(/Switching scenarios will reset/)).toBeInTheDocument();
+    });
+
+    it('no dialog when clicking current scenario tab', () => {
+      const { setScenario } = renderToggle('midweek', { mahomes: { shares: 5, avgCost: 100 } });
+      const tabs = screen.getAllByRole('tab');
+      const midweekTab = tabs.find((t) => t.textContent?.includes('Midweek'))!;
+      fireEvent.click(midweekTab);
+      expect(screen.queryByText(/Switching scenarios will reset/)).not.toBeInTheDocument();
+      expect(setScenario).not.toHaveBeenCalled();
+    });
   });
 });

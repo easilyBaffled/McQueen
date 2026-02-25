@@ -7,7 +7,14 @@ import { useSocial } from '../../context/SocialContext';
 import { getPlayerHeadshotUrl } from '../../utils/playerImages';
 import styles from './PlayerCard.module.css';
 
-// Check if user has seen the league holders tooltip before
+function truncateAtWord(text: string, maxLen: number): string {
+  if (text.length <= maxLen) return text;
+  const truncated = text.slice(0, maxLen);
+  const lastSpace = truncated.lastIndexOf(' ');
+  const cutoff = lastSpace > 0 ? lastSpace : maxLen;
+  return text.slice(0, cutoff).trimEnd() + '...';
+}
+
 const LEAGUE_TOOLTIP_SEEN_KEY = 'mcqueen-league-tooltip-seen';
 
 import type { EnrichedPlayer } from '../../types';
@@ -137,7 +144,7 @@ export default function PlayerCard({ player, showFirstTradeTip = false }: Player
       </div>
 
       {player.moveReason && (
-        <p className={styles['card-reason']}>{player.moveReason.substring(0, 60)}...</p>
+        <p className={styles['card-reason']}>{truncateAtWord(player.moveReason, 60)}</p>
       )}
 
       {leagueHoldings.length > 0 && (

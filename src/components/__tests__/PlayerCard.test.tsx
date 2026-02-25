@@ -51,10 +51,46 @@ describe('PlayerCard', () => {
     expect(change.className).toMatch(/down/);
   });
 
-  it('truncates moveReason to 60 characters', () => {
-    const longReason = 'A'.repeat(100);
+  it('truncates long moveReason at word boundary before 60 chars', () => {
+    const longReason = 'Patrick Mahomes threw his third touchdown pass of the game to seal the victory';
     const player = { ...basePlayer, moveReason: longReason };
     renderWithProviders(<PlayerCard player={player} />);
-    expect(screen.getByText(`${'A'.repeat(60)}...`)).toBeInTheDocument();
+    expect(screen.getByText('Patrick Mahomes threw his third touchdown pass of the game...')).toBeInTheDocument();
+  });
+
+  it('displays short moveReason without ellipsis', () => {
+    const shortReason = 'Quick trade update';
+    const player = { ...basePlayer, moveReason: shortReason };
+    renderWithProviders(<PlayerCard player={player} />);
+    expect(screen.getByText('Quick trade update')).toBeInTheDocument();
+    expect(screen.queryByText(/\.\.\./)).not.toBeInTheDocument();
+  });
+
+  it('displays moveReason of exactly 60 chars without ellipsis', () => {
+    const exactReason = 'A'.repeat(60);
+    const player = { ...basePlayer, moveReason: exactReason };
+    renderWithProviders(<PlayerCard player={player} />);
+    expect(screen.getByText(exactReason)).toBeInTheDocument();
+  });
+
+  it('truncates moveReason of 61 chars at word boundary with ellipsis', () => {
+    const reason = 'abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij abcde fg';
+    const player = { ...basePlayer, moveReason: reason };
+    renderWithProviders(<PlayerCard player={player} />);
+    expect(screen.getByText('abcdefghij abcdefghij abcdefghij abcdefghij abcdefghij...')).toBeInTheDocument();
+  });
+
+  it('truncates single long word at 60 chars when no word boundary found', () => {
+    const longWord = 'A'.repeat(100);
+    const player = { ...basePlayer, moveReason: longWord };
+    renderWithProviders(<PlayerCard player={player} />);
+    expect(screen.getByText('A'.repeat(60) + '...')).toBeInTheDocument();
+  });
+
+  it('does not render moveReason paragraph when moveReason is falsy', () => {
+    const player = { ...basePlayer, moveReason: '' };
+    renderWithProviders(<PlayerCard player={player} />);
+    const cardReason = document.querySelector('[class*="card-reason"]');
+    expect(cardReason).toBeNull();
   });
 });

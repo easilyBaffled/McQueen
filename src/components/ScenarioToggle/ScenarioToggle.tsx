@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NavLink } from 'react-router-dom';
 import { useScenario } from '../../context/ScenarioContext';
+import { useTrading } from '../../context/TradingContext';
 import { useSimulation } from '../../context/SimulationContext';
 import { isDevMode } from '../../utils/devMode';
 import styles from './ScenarioToggle.module.css';
@@ -48,13 +49,37 @@ const scenarios = [
 
 export default function ScenarioToggle() {
   const { scenario, setScenario } = useScenario();
+  const { portfolio } = useTrading();
   const { espnLoading, espnError, refreshEspnNews } = useSimulation();
   const [showDemoTooltip, setShowDemoTooltip] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const [pendingScenario, setPendingScenario] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const currentScenario =
     scenarios.find((s) => s.id === scenario) || scenarios[0];
+
+  const hasPortfolio = Object.keys(portfolio).length > 0;
+
+  const requestScenarioSwitch = useCallback((id: string) => {
+    if (id === scenario) return;
+    if (hasPortfolio) {
+      setPendingScenario(id);
+    } else {
+      setScenario(id);
+    }
+  }, [scenario, hasPortfolio, setScenario]);
+
+  const confirmSwitch = useCallback(() => {
+    if (pendingScenario) {
+      setScenario(pendingScenario);
+      setPendingScenario(null);
+    }
+  }, [pendingScenario, setScenario]);
+
+  const cancelSwitch = useCallback(() => {
+    setPendingScenario(null);
+  }, []);
 
   // Close dropdown when clicking outside or pressing Escape
   useEffect(() => {
@@ -77,8 +102,8 @@ export default function ScenarioToggle() {
   }, [mobileDropdownOpen]);
 
   const handleMobileSelect = (id: string) => {
-    setScenario(id);
     setMobileDropdownOpen(false);
+    requestScenarioSwitch(id);
   };
 
   const handleTabKeyDown = useCallback(
@@ -283,7 +308,7 @@ export default function ScenarioToggle() {
             role="tab"
             aria-selected={scenario === s.id}
             tabIndex={scenario === s.id ? 0 : -1}
-            onClick={() => setScenario(s.id)}
+            onClick={() => requestScenarioSwitch(s.id)}
             title={s.tooltip}
           >
             {scenario === s.id && (
@@ -353,6 +378,31 @@ export default function ScenarioToggle() {
       {/* ESPN error message */}
       {scenario === 'espn-live' && espnError && (
         <div className={styles['espn-error-banner']}>ESPN Error: {espnError}</div>
+      )}
+
+      {/* Confirmation dialog for scenario switch with non-empty portfolio */}
+      {pendingScenario && (
+        <div className={styles['confirm-overlay']} data-testid="scenario-confirm-dialog">
+          <div className={styles['confirm-dialog']}>
+            <p className={styles['confirm-message']}>
+              Switching scenarios will reset your portfolio and cash to defaults.
+            </p>
+            <div className={styles['confirm-actions']}>
+              <button
+                className={styles['confirm-cancel']}
+                onClick={cancelSwitch}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles['confirm-switch']}
+                onClick={confirmSwitch}
+              >
+                Switch &amp; Reset
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -96,6 +96,12 @@ export default function PlayerDetail() {
   const watching = isWatching(id);
   const leagueHoldings = getLeagueHoldings(id);
 
+  useEffect(() => {
+    if (!holding && activeTab === 'sell') {
+      setActiveTab('buy');
+    }
+  }, [holding, activeTab]);
+
   const handleTradeTabKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
     const tabs = Array.from(
@@ -686,6 +692,7 @@ export default function PlayerDetail() {
                 tabIndex={activeTab === 'sell' ? 0 : -1}
                 onClick={() => setActiveTab('sell')}
                 disabled={!holding}
+                title={!holding ? 'You need to own shares to sell' : undefined}
               >
                 Sell
               </button>
