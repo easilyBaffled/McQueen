@@ -63,19 +63,17 @@ function getEventColor(reason: PriceReason | null | undefined): string {
     : REASON_TYPE_COLORS[reasonType] || '#666';
 }
 
-// Get event type label - maps raw reason types to display labels
+const TYPE_DISPLAY_LABELS: Record<string, string> = {
+  league_trade: 'Trade',
+  game_event: 'Game Update',
+  news: 'News',
+};
+
 function getEventTypeLabel(reason: PriceReason | null | undefined): string {
-  if (!reason) return 'Event';
-
-  if (reason.type === 'game_event') {
-    return reason.eventType || 'Game Update';
-  } else if (reason.type === 'news') {
-    return 'News';
-  } else if (reason.type === 'league_trade') {
-    return 'Trade';
+  if (reason?.type === 'game_event' && reason.eventType) {
+    return reason.eventType;
   }
-
-  return 'Event';
+  return TYPE_DISPLAY_LABELS[reason?.type as string] || 'Event';
 }
 
 // Calculate price change percentage from previous entry
@@ -492,6 +490,7 @@ export default function Timeline() {
                       </Link>
                       <span
                         className={styles['timeline-type-badge']}
+                        data-testid="timeline-type-badge"
                         style={{
                           backgroundColor: `${typeColor}25`,
                           color: typeColor,

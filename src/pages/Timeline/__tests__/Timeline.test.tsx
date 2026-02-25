@@ -131,7 +131,7 @@ function renderTimeline(players?: EnrichedPlayer[]) {
 }
 
 describe('Timeline – event type labels (TC-015 to TC-018)', () => {
-  it('TC-015: league_trade displays as "Trade"', () => {
+  it('TC-015 / TC-001: league_trade displays as "Trade"', () => {
     renderTimeline();
     const badges = screen.getAllByTestId('timeline-event-content');
     const tradeBadge = badges.find((b) => b.textContent?.includes('Trade'));
@@ -140,35 +140,60 @@ describe('Timeline – event type labels (TC-015 to TC-018)', () => {
     expect(rawBadge).toBeFalsy();
   });
 
-  it('TC-016: game_event with eventType "TD" displays as "TD"', () => {
+  it('TC-016 / TC-003: game_event with eventType "TD" displays as "TD"', () => {
     renderTimeline();
     const badges = screen.getAllByTestId('timeline-event-content');
     const tdBadge = badges.find((b) => b.textContent?.includes('TD'));
     expect(tdBadge).toBeTruthy();
   });
 
-  it('TC-016: game_event with eventType "INT" displays as "INT"', () => {
+  it('TC-016 / TC-003: game_event with eventType "INT" displays as "INT"', () => {
     renderTimeline();
     const badges = screen.getAllByTestId('timeline-event-content');
     const intBadge = badges.find((b) => b.textContent?.includes('INT'));
     expect(intBadge).toBeTruthy();
   });
 
-  it('TC-016: game_event without eventType displays as "Game Update"', () => {
+  it('TC-016 / TC-002: game_event without eventType displays as "Game Update"', () => {
     renderTimeline();
     const badges = screen.getAllByTestId('timeline-event-content');
     const gameUpdateBadge = badges.find((b) => b.textContent?.includes('Game Update'));
     expect(gameUpdateBadge).toBeTruthy();
   });
 
-  it('TC-017: News events display as "News"', () => {
+  it('TC-002 edge: game_event with empty string eventType falls back to "Game Update"', () => {
+    const players = [{
+      id: 'p3',
+      name: 'Test Player',
+      team: 'TST',
+      position: 'QB',
+      basePrice: 50,
+      totalSharesAvailable: 1000,
+      currentPrice: 52,
+      changePercent: 2,
+      priceChange: 2,
+      moveReason: 'Test',
+      contentTiles: [],
+      priceHistory: [{
+        price: 52,
+        timestamp: '2024-12-04T10:00:00Z',
+        reason: { type: 'game_event', eventType: '', headline: 'Empty eventType' },
+      }],
+    }] as EnrichedPlayer[];
+    renderTimeline(players);
+    const badges = screen.getAllByTestId('timeline-event-content');
+    const gameUpdateBadge = badges.find((b) => b.textContent?.includes('Game Update'));
+    expect(gameUpdateBadge).toBeTruthy();
+  });
+
+  it('TC-017 / TC-004: News events display as "News"', () => {
     renderTimeline();
     const badges = screen.getAllByTestId('timeline-event-content');
     const newsBadge = badges.find((b) => b.textContent?.includes('News'));
     expect(newsBadge).toBeTruthy();
   });
 
-  it('TC-018: unknown reason.type displays fallback "Event"', () => {
+  it('TC-018 / TC-006: unknown reason.type displays fallback "Event"', () => {
     const players = [{
       id: 'p3',
       name: 'Test Player',
@@ -195,7 +220,7 @@ describe('Timeline – event type labels (TC-015 to TC-018)', () => {
     expect(rawBadge).toBeFalsy();
   });
 
-  it('TC-018: null reason displays fallback "Event"', () => {
+  it('TC-018 / TC-005: null reason displays fallback "Event"', () => {
     const players = [{
       id: 'p3',
       name: 'Test Player',
@@ -218,6 +243,39 @@ describe('Timeline – event type labels (TC-015 to TC-018)', () => {
     const badges = screen.getAllByTestId('timeline-event-content');
     const fallbackBadge = badges.find((b) => b.textContent?.includes('Event'));
     expect(fallbackBadge).toBeTruthy();
+  });
+
+  it('TC-005 edge: empty reason object displays fallback "Event"', () => {
+    const players = [{
+      id: 'p3',
+      name: 'Test Player',
+      team: 'TST',
+      position: 'QB',
+      basePrice: 50,
+      totalSharesAvailable: 1000,
+      currentPrice: 52,
+      changePercent: 2,
+      priceChange: 2,
+      moveReason: 'Test',
+      contentTiles: [],
+      priceHistory: [{
+        price: 52,
+        timestamp: '2024-12-04T10:00:00Z',
+        reason: {} as import('../../../types').PriceReason,
+      }],
+    }] as EnrichedPlayer[];
+    renderTimeline(players);
+    const badges = screen.getAllByTestId('timeline-event-content');
+    const fallbackBadge = badges.find((b) => b.textContent?.includes('Event'));
+    expect(fallbackBadge).toBeTruthy();
+  });
+
+  it('TC-007: no badge displays raw strings with underscores', () => {
+    renderTimeline();
+    const badges = screen.getAllByTestId('timeline-type-badge');
+    badges.forEach((badge) => {
+      expect(badge.textContent).not.toContain('_');
+    });
   });
 });
 
