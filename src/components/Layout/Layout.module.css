@@ -50,6 +50,7 @@
 
 .header-right {
   flex: 0 0 auto;
+  min-width: fit-content;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -96,6 +97,7 @@
 .header-center {
   flex: 1 1 auto;
   min-width: 0;
+  overflow: hidden;
   display: flex;
   justify-content: center;
 }

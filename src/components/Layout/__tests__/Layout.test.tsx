@@ -266,4 +266,40 @@ describe('Layout', () => {
       expect(balanceValue).toHaveClass(styles['down']);
     });
   });
+
+  describe('Header Total Value clipping fix (mcq-vqz.2)', () => {
+    let cssContent: string;
+
+    beforeEach(async () => {
+      const fs = await import('node:fs');
+      const path = await import('node:path');
+      const cssPath = path.resolve(__dirname, '..', 'Layout.module.css');
+      cssContent = fs.readFileSync(cssPath, 'utf-8');
+    });
+
+    it('header-right has min-width: fit-content to prevent shrinking', () => {
+      const headerRightBlock = cssContent.match(/\.header-right\s*\{[^}]+\}/)?.[0] ?? '';
+      expect(headerRightBlock).toMatch(/min-width:\s*fit-content/);
+    });
+
+    it('header-center has overflow: hidden to clip before header-right', () => {
+      const headerCenterBlock = cssContent.match(/\.header-center\s*\{[^}]+\}/)?.[0] ?? '';
+      expect(headerCenterBlock).toMatch(/overflow:\s*hidden/);
+    });
+
+    it('header-right uses flex: 0 0 auto (does not grow or shrink)', () => {
+      const headerRightBlock = cssContent.match(/\.header-right\s*\{[^}]+\}/)?.[0] ?? '';
+      expect(headerRightBlock).toMatch(/flex:\s*0\s+0\s+auto/);
+    });
+
+    it('header-center uses flex: 1 1 auto (shrinks before header-right)', () => {
+      const headerCenterBlock = cssContent.match(/\.header-center\s*\{[^}]+\}/)?.[0] ?? '';
+      expect(headerCenterBlock).toMatch(/flex:\s*1\s+1\s+auto/);
+    });
+
+    it('header-center has min-width: 0 to allow shrinking below content size', () => {
+      const headerCenterBlock = cssContent.match(/\.header-center\s*\{[^}]+\}/)?.[0] ?? '';
+      expect(headerCenterBlock).toMatch(/min-width:\s*0/);
+    });
+  });
 });
