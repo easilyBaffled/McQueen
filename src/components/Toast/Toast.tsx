@@ -1,3 +1,4 @@
+import { useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { ToastData } from './ToastProvider';
 import styles from './Toast.module.css';
@@ -8,6 +9,20 @@ interface ToastProps {
 }
 
 export default function Toast({ toasts, removeToast }: ToastProps) {
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && toasts.length > 0) {
+        removeToast(toasts[toasts.length - 1].id);
+      }
+    },
+    [toasts, removeToast],
+  );
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
   return (
     <div className={styles['toast-container']} role="status" aria-live="polite">
       <AnimatePresence>

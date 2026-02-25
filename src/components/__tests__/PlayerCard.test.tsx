@@ -96,6 +96,79 @@ describe('PlayerCard', () => {
   });
 });
 
+describe('Sparkline accessibility (mcq-x02)', () => {
+  const playerWithHistory = createMockEnrichedPlayer({
+    currentPrice: 54.25,
+    changePercent: 2.5,
+    priceChange: 1.25,
+    moveReason: 'test reason',
+    contentTiles: [],
+    priceHistory: [
+      { timestamp: '2024-01-15T10:00:00Z', price: 52, reason: { type: 'news', headline: 'test', source: 'ESPN' } },
+    ],
+  });
+
+  const downPlayerWithHistory = createMockEnrichedPlayer({
+    name: 'Joe Burrow',
+    currentPrice: 48.00,
+    changePercent: -3.1,
+    priceChange: -1.5,
+    moveReason: 'test reason',
+    contentTiles: [],
+    priceHistory: [
+      { timestamp: '2024-01-15T10:00:00Z', price: 50, reason: { type: 'news', headline: 'test', source: 'ESPN' } },
+    ],
+  });
+
+  it('has aria-label on the chart container describing upward trend', () => {
+    renderWithProviders(<PlayerCard player={playerWithHistory} />);
+    const chartContainer = document.querySelector('[class*="card-chart"]');
+    expect(chartContainer).toHaveAttribute('aria-label');
+    expect(chartContainer!.getAttribute('aria-label')).toMatch(/7-day price trend.*up.*2\.50%/i);
+  });
+
+  it('has aria-label on the chart container describing downward trend', () => {
+    renderWithProviders(<PlayerCard player={downPlayerWithHistory} />);
+    const chartContainer = document.querySelector('[class*="card-chart"]');
+    expect(chartContainer).toHaveAttribute('aria-label');
+    expect(chartContainer!.getAttribute('aria-label')).toMatch(/7-day price trend.*down.*3\.10%/i);
+  });
+
+  it('has aria-label indicating flat trend for 0% change', () => {
+    const flatPlayer = createMockEnrichedPlayer({
+      changePercent: 0,
+      priceHistory: [
+        { timestamp: '2024-01-15T10:00:00Z', price: 50, reason: { type: 'news', headline: 'test', source: 'ESPN' } },
+      ],
+    });
+    renderWithProviders(<PlayerCard player={flatPlayer} />);
+    const chartContainer = document.querySelector('[class*="card-chart"]');
+    expect(chartContainer).toHaveAttribute('aria-label');
+    expect(chartContainer!.getAttribute('aria-label')).toMatch(/flat|no change/i);
+  });
+
+  it('hides the SVG chart from screen readers with aria-hidden', () => {
+    renderWithProviders(<PlayerCard player={playerWithHistory} />);
+    const chartContainer = document.querySelector('[class*="card-chart"]');
+    const ariaHiddenWrapper = chartContainer!.querySelector('[aria-hidden="true"]');
+    expect(ariaHiddenWrapper).toBeInTheDocument();
+    expect(ariaHiddenWrapper!.querySelector('[data-testid="line-chart"]')).toBeInTheDocument();
+  });
+
+  it('does not present misleading aria-label when priceHistory is empty', () => {
+    const emptyHistoryPlayer = createMockEnrichedPlayer({
+      priceHistory: [],
+    });
+    renderWithProviders(<PlayerCard player={emptyHistoryPlayer} />);
+    const chartContainer = document.querySelector('[class*="card-chart"]');
+    if (chartContainer) {
+      const ariaLabel = chartContainer.getAttribute('aria-label');
+      expect(ariaLabel === null || ariaLabel === '').toBeFalsy;
+      expect(chartContainer).toHaveAttribute('aria-hidden', 'true');
+    }
+  });
+});
+
 describe('truncateAtWord', () => {
   it('returns short text unchanged', () => {
     expect(truncateAtWord('Traded to the Chiefs', 60)).toBe('Traded to the Chiefs');

@@ -128,20 +128,47 @@ export default function PlayerCard({ player, showFirstTradeTip = false }: Player
         </div>
       </div>
 
-      <div className={styles['card-chart']}>
-        <div className={styles['chart-time-label']}>Last 7 days</div>
-        <ResponsiveContainer width="100%" height={40}>
-          <LineChart data={sparklineData}>
-            <Line
-              type="linear"
-              dataKey="price"
-              stroke={isUp ? '#00C853' : '#FF1744'}
-              strokeWidth={2}
-              dot={false}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+      {sparklineData.length > 0 ? (
+        <div
+          className={styles['card-chart']}
+          role="img"
+          aria-label={
+            player.changePercent === 0
+              ? '7-day price trend: no change'
+              : `7-day price trend: ${isUp ? 'up' : 'down'} ${Math.abs(player.changePercent).toFixed(2)}%`
+          }
+        >
+          <div className={styles['chart-time-label']}>Last 7 days</div>
+          <div aria-hidden="true">
+            <ResponsiveContainer width="100%" height={40}>
+              <LineChart data={sparklineData}>
+                <Line
+                  type="linear"
+                  dataKey="price"
+                  stroke={isUp ? '#00C853' : '#FF1744'}
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      ) : (
+        <div className={styles['card-chart']} aria-hidden="true">
+          <div className={styles['chart-time-label']}>Last 7 days</div>
+          <ResponsiveContainer width="100%" height={40}>
+            <LineChart data={sparklineData}>
+              <Line
+                type="linear"
+                dataKey="price"
+                stroke={isUp ? '#00C853' : '#FF1744'}
+                strokeWidth={2}
+                dot={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {player.moveReason && (
         <p className={styles['card-reason']}>{truncateAtWord(player.moveReason, 60)}</p>
