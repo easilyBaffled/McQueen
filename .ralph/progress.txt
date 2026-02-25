@@ -70,3 +70,4 @@
 2026-02-25 05:42:57 | mcq-vqz.1 | DONE | Fix Market sidebar sticky positioning to account for header
 2026-02-25 05:47:56 | mcq-vqz.2 | DONE | Fix header Total Value clipping on scenarios with badges
 2026-02-25 05:56:26 | mcq-2dq.1 | DONE | Sync Onboarding completion with OnboardingProvider state
+2026-02-25 05:59:25 | mcq-36s.2 | DONE | Add tooltip explanation to disabled Sell tab
