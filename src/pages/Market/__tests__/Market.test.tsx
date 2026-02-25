@@ -1,4 +1,6 @@
 import React from 'react';
+import fs from 'fs';
+import path from 'path';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -588,6 +590,16 @@ describe('Market page', () => {
     expect(screen.getByTestId('players-grid')).toBeInTheDocument();
   });
 
+  // TC-028: Sidebar element is rendered with the sticky CSS module class
+  it('renders the market-sidebar element in the layout', async () => {
+    renderMarket();
+    await act(async () => { vi.advanceTimersByTime(300); });
+
+    const sidebar = screen.getByTestId('market-sidebar');
+    expect(sidebar).toBeInTheDocument();
+    expect(sidebar.className).toBeTruthy();
+  });
+
   // TC-027: ESPN empty-state refresh button calls refreshEspnNews
   it('ESPN empty-state refresh button triggers refreshEspnNews', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
@@ -601,5 +613,24 @@ describe('Market page', () => {
 
     await user.click(screen.getByTestId('espn-empty-refresh'));
     expect(mockRefresh).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Market sidebar sticky positioning (CSS)', () => {
+  const cssPath = path.resolve(__dirname, '../Market.module.css');
+  const css = fs.readFileSync(cssPath, 'utf-8');
+
+  it('uses var(--header-height) in the sidebar top value', () => {
+    expect(css).toMatch(/\.market-sidebar\s*\{[^}]*top:\s*calc\(var\(--header-height\)\s*\+\s*16px\)/);
+  });
+
+  it('sidebar is position: sticky', () => {
+    expect(css).toMatch(/\.market-sidebar\s*\{[^}]*position:\s*sticky/);
+  });
+
+  it('responsive breakpoint sets sidebar to position: static', () => {
+    const mediaBlock = css.match(/@media[^{]*max-width:\s*1200px[^{]*\{([\s\S]*?)\n\}/);
+    expect(mediaBlock).toBeTruthy();
+    expect(mediaBlock![1]).toMatch(/\.market-sidebar\s*\{[^}]*position:\s*static/);
   });
 });
