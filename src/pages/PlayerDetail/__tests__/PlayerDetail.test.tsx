@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import PlayerDetail from '../PlayerDetail';
+import styles from '../PlayerDetail.module.css';
 import { renderWithProviders } from '../../../test/renderWithProviders';
 import { createMockEnrichedPlayer } from '../../../test/mockData';
 
@@ -500,6 +501,106 @@ describe('PlayerDetail page', () => {
     expect(screen.getByText('Related Content')).toBeInTheDocument();
     expect(screen.getByText('Mahomes dominates')).toBeInTheDocument();
     expect(screen.getByText('ESPN')).toBeInTheDocument();
+  });
+
+  describe('Content tile type badge CSS module classes', () => {
+    const tileTypes = ['article', 'video', 'analysis', 'news'] as const;
+
+    function renderWithContentTiles(
+      tiles: Array<{ type: string; title: string; source: string; url: string }>,
+    ) {
+      const player = createMockEnrichedPlayer({
+        id: 'mahomes',
+        name: 'Patrick Mahomes',
+        currentPrice: 120.5,
+        changePercent: 5.2,
+        basePrice: 100,
+        contentTiles: tiles,
+        priceHistory: [
+          {
+            price: 120.5,
+            timestamp: '2025-01-02T14:00:00Z',
+            reason: { type: 'news', headline: 'Big game' },
+          },
+        ],
+      });
+      return renderPlayerDetail({
+        tradingOverrides: {
+          getPlayer: vi.fn(() => player),
+          portfolio: {},
+        },
+      });
+    }
+
+    it.each(tileTypes)(
+      'applies scoped CSS module class for %s tile type badge (TC-001–TC-004)',
+      (type) => {
+        renderWithContentTiles([
+          { type, title: `${type} title`, source: 'Source', url: 'https://example.com' },
+        ]);
+        const badge = screen.getByText(type);
+        expect(badge).toHaveClass(styles['tile-type']);
+        expect(badge).toHaveClass(styles[type]);
+      },
+    );
+
+    it('does not leak raw unscoped class names into the DOM (TC-007)', () => {
+      renderWithContentTiles(
+        tileTypes.map((type) => ({
+          type,
+          title: `${type} title`,
+          source: 'Source',
+          url: 'https://example.com',
+        })),
+      );
+      tileTypes.forEach((type) => {
+        const badge = screen.getByText(type);
+        const classes = badge.className.split(/\s+/);
+        const hasRawUnscoped = classes.some((c) => c === type);
+        expect(hasRawUnscoped).toBe(false);
+      });
+    });
+
+    it('falls back to empty string for unknown tile type (TC-005)', () => {
+      renderWithContentTiles([
+        { type: 'podcast', title: 'Fantasy Pod', source: 'Spotify', url: 'https://example.com' },
+      ]);
+      const badge = screen.getByText('podcast');
+      expect(badge).toHaveClass(styles['tile-type']);
+      const classes = badge.className.split(/\s+/).filter(Boolean);
+      expect(classes).toHaveLength(1);
+    });
+
+    it('each tile gets its own correct type class when multiple types present (TC-006)', () => {
+      renderWithContentTiles(
+        tileTypes.map((type) => ({
+          type,
+          title: `${type} title`,
+          source: 'Source',
+          url: 'https://example.com',
+        })),
+      );
+      tileTypes.forEach((type) => {
+        const badge = screen.getByText(type);
+        expect(badge).toHaveClass(styles['tile-type']);
+        expect(badge).toHaveClass(styles[type]);
+        const otherTypes = tileTypes.filter((t) => t !== type);
+        otherTypes.forEach((other) => {
+          expect(badge).not.toHaveClass(styles[other]);
+        });
+      });
+    });
+
+    it('base tile-type class is always present regardless of type (TC-008)', () => {
+      renderWithContentTiles([
+        { type: 'article', title: 'Article', source: 'ESPN', url: 'https://example.com' },
+        { type: 'unknown', title: 'Unknown', source: 'Other', url: 'https://example.com' },
+      ]);
+      const articleBadge = screen.getByText('article');
+      const unknownBadge = screen.getByText('unknown');
+      expect(articleBadge).toHaveClass(styles['tile-type']);
+      expect(unknownBadge).toHaveClass(styles['tile-type']);
+    });
   });
 
   it('renders league owners when holdings exist', () => {
