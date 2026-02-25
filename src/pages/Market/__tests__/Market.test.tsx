@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import Market from '../Market';
 import { renderWithProviders } from '../../../test/renderWithProviders';
 import { createMockEnrichedPlayer } from '../../../test/mockData';
-import type { EnrichedPlayer, ScenarioContextValue, TradingContextValue } from '../../../types';
+import type { EnrichedPlayer, ScenarioContextValue, SimulationContextValue, TradingContextValue } from '../../../types';
 
 // ── Mock child components ──────────────────────────────────────────
 
@@ -156,15 +156,17 @@ function renderMarket(
     players?: EnrichedPlayer[];
     portfolio?: TradingContextValue['portfolio'];
     scenarioOverrides?: Partial<ScenarioContextValue>;
+    simulationOverrides?: Partial<SimulationContextValue>;
   } = {},
 ) {
-  const { players = mockPlayers, portfolio = {}, scenarioOverrides } = opts;
+  const { players = mockPlayers, portfolio = {}, scenarioOverrides, simulationOverrides } = opts;
   return renderWithProviders(
     <MemoryRouter>
       <Market />
     </MemoryRouter>,
     {
       scenarioOverrides: { ...defaultScenarioOverrides(), ...scenarioOverrides },
+      simulationOverrides,
       tradingOverrides: defaultTradingOverrides(players, portfolio),
     },
   );
@@ -532,5 +534,72 @@ describe('Market page', () => {
 
     expect(screen.getByText("Today's Movers")).toBeInTheDocument();
     expect(screen.getByText('Market activity')).toBeInTheDocument();
+  });
+
+  // TC-023: ESPN empty-state shown when espn-live has no players
+  it('shows ESPN empty-state when espn-live scenario has no players', async () => {
+    renderMarket({
+      players: [],
+      scenarioOverrides: { scenario: 'espn-live', currentData: null },
+      simulationOverrides: { isEspnLiveMode: true, espnLoading: false, espnError: null },
+    });
+    await act(async () => { vi.advanceTimersByTime(300); });
+
+    expect(screen.getByTestId('espn-empty-state')).toBeInTheDocument();
+    expect(screen.getByText('No Live ESPN Data Right Now')).toBeInTheDocument();
+    expect(screen.getByTestId('espn-empty-refresh')).toBeInTheDocument();
+  });
+
+  // TC-024: ESPN empty-state shows error message when ESPN fetch fails
+  it('shows ESPN error message in empty-state when espnError is set', async () => {
+    renderMarket({
+      players: [],
+      scenarioOverrides: { scenario: 'espn-live', currentData: null },
+      simulationOverrides: { isEspnLiveMode: true, espnLoading: false, espnError: 'Network timeout' },
+    });
+    await act(async () => { vi.advanceTimersByTime(300); });
+
+    expect(screen.getByTestId('espn-empty-state')).toBeInTheDocument();
+    expect(screen.getByText('Unable to Load ESPN Data')).toBeInTheDocument();
+    expect(screen.getByText(/Network timeout/)).toBeInTheDocument();
+  });
+
+  // TC-025: ESPN empty-state not shown when players exist
+  it('does not show ESPN empty-state when players are available', async () => {
+    renderMarket({
+      scenarioOverrides: { scenario: 'espn-live', currentData: null },
+      simulationOverrides: { isEspnLiveMode: true, espnLoading: false, espnError: null },
+    });
+    await act(async () => { vi.advanceTimersByTime(300); });
+
+    expect(screen.queryByTestId('espn-empty-state')).not.toBeInTheDocument();
+    expect(screen.getByTestId('players-grid')).toBeInTheDocument();
+  });
+
+  // TC-026: ESPN empty-state not shown for non-ESPN scenarios with empty players
+  it('does not show ESPN empty-state for midweek scenario with empty players', async () => {
+    renderMarket({
+      players: [],
+      scenarioOverrides: { scenario: 'midweek', currentData: null },
+    });
+    await act(async () => { vi.advanceTimersByTime(300); });
+
+    expect(screen.queryByTestId('espn-empty-state')).not.toBeInTheDocument();
+    expect(screen.getByTestId('players-grid')).toBeInTheDocument();
+  });
+
+  // TC-027: ESPN empty-state refresh button calls refreshEspnNews
+  it('ESPN empty-state refresh button triggers refreshEspnNews', async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    const mockRefresh = vi.fn();
+    renderMarket({
+      players: [],
+      scenarioOverrides: { scenario: 'espn-live', currentData: null },
+      simulationOverrides: { isEspnLiveMode: true, espnLoading: false, espnError: null, refreshEspnNews: mockRefresh },
+    });
+    await act(async () => { vi.advanceTimersByTime(300); });
+
+    await user.click(screen.getByTestId('espn-empty-refresh'));
+    expect(mockRefresh).toHaveBeenCalledTimes(1);
   });
 });

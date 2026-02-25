@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useScenario } from '../../context/ScenarioContext';
+import { useSimulation } from '../../context/SimulationContext';
 import { useTrading } from '../../context/TradingContext';
 import PlayerCard from '../../components/PlayerCard/PlayerCard';
 import MiniLeaderboard from '../../components/MiniLeaderboard/MiniLeaderboard';
@@ -20,6 +21,7 @@ const sortOptions = [
 
 export default function Market() {
   const { currentData, scenario } = useScenario();
+  const { espnLoading, espnError, refreshEspnNews } = useSimulation();
   const { getPlayers, portfolio } = useTrading();
   const hasNoTrades = Object.keys(portfolio).length === 0;
   const [sortBy, setSortBy] = useState('risers');
@@ -160,6 +162,26 @@ export default function Market() {
         <div className={styles['market-main']}>
           {isLoading ? (
             <MarketSkeleton count={6} />
+          ) : scenario === 'espn-live' && sortedPlayers.length === 0 && !espnLoading ? (
+            <div className={styles['espn-empty-state']} data-testid="espn-empty-state">
+              <div className={styles['espn-empty-icon']}>📡</div>
+              <h3 className={styles['espn-empty-title']}>
+                {espnError ? 'Unable to Load ESPN Data' : 'No Live ESPN Data Right Now'}
+              </h3>
+              <p className={styles['espn-empty-text']}>
+                {espnError
+                  ? `There was an error fetching ESPN news: ${espnError}. Try refreshing or switch to another scenario.`
+                  : 'There are no live ESPN headlines at the moment. Try refreshing or switch to another scenario to start trading.'}
+              </p>
+              <button
+                className={styles['espn-empty-refresh']}
+                data-testid="espn-empty-refresh"
+                onClick={refreshEspnNews}
+                disabled={espnLoading}
+              >
+                ⟳ Refresh ESPN News
+              </button>
+            </div>
           ) : (
             <div className={styles['players-grid']} data-testid="players-grid">
               <AnimatePresence mode="popLayout">

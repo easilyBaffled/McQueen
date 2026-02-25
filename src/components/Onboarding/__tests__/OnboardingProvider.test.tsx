@@ -91,4 +91,46 @@ describe('OnboardingProvider', () => {
     render(<Standalone />);
     expect(screen.getByTestId('default')).toHaveTextContent('true');
   });
+
+  it('calling markOnboardingComplete twice is idempotent', () => {
+    render(
+      <OnboardingProvider>
+        <TestConsumer />
+      </OnboardingProvider>,
+    );
+    act(() => {
+      screen.getByTestId('complete').click();
+    });
+    act(() => {
+      screen.getByTestId('complete').click();
+    });
+    expect(screen.getByTestId('completed')).toHaveTextContent('true');
+    expect(screen.getByTestId('firstTrade')).toHaveTextContent('true');
+    expect(localStorage.getItem(ONBOARDING_KEY)).toBe('true');
+  });
+
+  it('showFirstTradeGuide is false when first-trade-seen is already set', () => {
+    localStorage.setItem('mcqueen-first-trade-seen', 'true');
+    render(
+      <OnboardingProvider>
+        <TestConsumer />
+      </OnboardingProvider>,
+    );
+    act(() => {
+      screen.getByTestId('complete').click();
+    });
+    expect(screen.getByTestId('firstTrade')).toHaveTextContent('true');
+  });
+
+  it('showFirstTradeGuide stays false for returning user with first-trade-seen', () => {
+    localStorage.setItem(ONBOARDING_KEY, 'true');
+    localStorage.setItem('mcqueen-first-trade-seen', 'true');
+    render(
+      <OnboardingProvider>
+        <TestConsumer />
+      </OnboardingProvider>,
+    );
+    expect(screen.getByTestId('firstTrade')).toHaveTextContent('false');
+    expect(screen.getByTestId('completed')).toHaveTextContent('true');
+  });
 });

@@ -33,13 +33,17 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-vi.mock('../../../context/SimulationContext', () => ({
-  useSimulation: vi.fn(() => ({
-    history: [],
-    tick: 0,
-    unifiedTimeline: [],
-  })),
-}));
+vi.mock('../../../context/SimulationContext', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../context/SimulationContext')>();
+  return {
+    ...actual,
+    useSimulation: vi.fn(() => ({
+      history: [],
+      tick: 0,
+      unifiedTimeline: [],
+    })),
+  };
+});
 
 import { useSimulation } from '../../../context/SimulationContext';
 const mockUseSimulation = vi.mocked(useSimulation);

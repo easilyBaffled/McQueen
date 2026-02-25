@@ -6,6 +6,7 @@ import PlayerCard from '../PlayerCard/PlayerCard';
 import { ToastProvider, useToast } from '../Toast/ToastProvider';
 import Layout from '../Layout/Layout';
 import Onboarding from '../Onboarding/Onboarding';
+import { OnboardingProvider } from '../Onboarding/OnboardingProvider';
 import AddEventModal from '../AddEventModal/AddEventModal';
 import { Glossary, EventMarkerPopup, FirstTradeGuide } from '../../shared';
 import Portfolio from '../../pages/Portfolio/Portfolio';
@@ -252,7 +253,11 @@ describe('ARIA attributes (mcq-o0b.2)', () => {
     localStorage.removeItem('mcqueen-first-trade-seen');
 
     vi.useFakeTimers();
-    render(<FirstTradeGuide hasCompletedFirstTrade={false} />);
+    render(
+      <OnboardingProvider>
+        <FirstTradeGuide hasCompletedFirstTrade={false} />
+      </OnboardingProvider>,
+    );
     vi.advanceTimersByTime(600);
     vi.useRealTimers();
 

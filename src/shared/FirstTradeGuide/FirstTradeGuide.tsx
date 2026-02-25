@@ -1,47 +1,38 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useOnboarding } from '../../components/Onboarding/OnboardingProvider';
 import styles from './FirstTradeGuide.module.css';
-
-const FIRST_TRADE_KEY = 'mcqueen-first-trade-seen';
-const ONBOARDING_COMPLETED_KEY = 'mcqueen-onboarding-just-completed';
 
 interface FirstTradeGuideProps {
   hasCompletedFirstTrade: boolean;
 }
 
 export default function FirstTradeGuide({ hasCompletedFirstTrade }: FirstTradeGuideProps) {
+  const { showFirstTradeGuide, dismissFirstTradeGuide } = useOnboarding();
   const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState(0);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    // Only show if user just completed onboarding and hasn't made a trade
-    const justCompleted =
-      localStorage.getItem(ONBOARDING_COMPLETED_KEY) === 'true';
-    const hasSeenGuide = localStorage.getItem(FIRST_TRADE_KEY) === 'true';
-
-    if (justCompleted && !hasSeenGuide && !hasCompletedFirstTrade) {
-      // Small delay to let the page load first
+    if (showFirstTradeGuide && !hasCompletedFirstTrade) {
       const timer = setTimeout(() => {
         setIsVisible(true);
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [hasCompletedFirstTrade]);
-
-  // Auto-hide when user makes their first trade
-  useEffect(() => {
-    if (hasCompletedFirstTrade && isVisible) {
-      localStorage.setItem(FIRST_TRADE_KEY, 'true');
-      localStorage.removeItem(ONBOARDING_COMPLETED_KEY);
+    if (!showFirstTradeGuide || hasCompletedFirstTrade) {
       setIsVisible(false);
     }
-  }, [hasCompletedFirstTrade, isVisible]);
+  }, [showFirstTradeGuide, hasCompletedFirstTrade]);
+
+  useEffect(() => {
+    if (hasCompletedFirstTrade && isVisible) {
+      dismissFirstTradeGuide();
+      setIsVisible(false);
+    }
+  }, [hasCompletedFirstTrade, isVisible, dismissFirstTradeGuide]);
 
   const handleDismiss = () => {
-    localStorage.setItem(FIRST_TRADE_KEY, 'true');
-    localStorage.removeItem(ONBOARDING_COMPLETED_KEY);
+    dismissFirstTradeGuide();
     setIsVisible(false);
   };
 

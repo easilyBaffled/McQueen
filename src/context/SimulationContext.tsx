@@ -29,7 +29,7 @@ import { buildUnifiedTimeline } from '../services/simulationEngine';
 import { useScenario } from './ScenarioContext';
 import type { ChildrenProps, HistoryEntry, PriceHistoryEntry, SimulationContextValue, EspnArticle, Player, TimelineEntry } from '../types';
 
-const SimulationContext = createContext<SimulationContextValue | null>(null);
+export const SimulationContext = createContext<SimulationContextValue | null>(null);
 
 export function SimulationProvider({ children }: ChildrenProps) {
   const { scenario, players, scenarioVersion } = useScenario();

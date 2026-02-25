@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ONBOARDING_KEY, ONBOARDING_COMPLETED_KEY } from './OnboardingProvider';
+import { ONBOARDING_KEY, useOnboarding } from './OnboardingProvider';
 import styles from './Onboarding.module.css';
 
 export default function Onboarding() {
   const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState(0);
   const [isReady, setIsReady] = useState(false);
+  const { markOnboardingComplete } = useOnboarding();
 
   useEffect(() => {
-    // Small delay to ensure app has fully loaded before showing onboarding
     const timer = setTimeout(() => {
       const hasOnboarded = localStorage.getItem(ONBOARDING_KEY);
       if (!hasOnboarded) {
@@ -22,11 +22,9 @@ export default function Onboarding() {
   }, []);
 
   const handleComplete = useCallback(() => {
-    localStorage.setItem(ONBOARDING_KEY, 'true');
-    localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
+    markOnboardingComplete?.();
     setIsVisible(false);
-    window.dispatchEvent(new CustomEvent('mcqueen-onboarding-complete'));
-  }, []);
+  }, [markOnboardingComplete]);
 
   useEffect(() => {
     if (!isVisible) return;

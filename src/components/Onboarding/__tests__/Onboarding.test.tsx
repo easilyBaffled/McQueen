@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Onboarding from '../Onboarding';
+import { OnboardingProvider, ONBOARDING_KEY, ONBOARDING_COMPLETED_KEY } from '../OnboardingProvider';
 
 // ── Mock framer-motion ──────────────────────────────────────────────
 const componentCache: Record<string, React.ComponentType<Record<string, unknown>>> = {};
@@ -48,8 +49,16 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
+function renderOnboarding() {
+  return render(
+    <OnboardingProvider>
+      <Onboarding />
+    </OnboardingProvider>,
+  );
+}
+
 function renderAndShow() {
-  const result = render(<Onboarding />);
+  const result = renderOnboarding();
   act(() => {
     vi.advanceTimersByTime(300);
   });
@@ -75,7 +84,7 @@ describe('Onboarding', () => {
   // ── TC-001: Modal renders for new users ───────────────────────────
   describe('TC-001: Modal renders for new users', () => {
     it('shows the modal after 300ms delay', () => {
-      render(<Onboarding />);
+      renderOnboarding();
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
       act(() => {
@@ -89,7 +98,7 @@ describe('Onboarding', () => {
     });
 
     it('does not show modal before 300ms', () => {
-      render(<Onboarding />);
+      renderOnboarding();
       act(() => {
         vi.advanceTimersByTime(299);
       });
@@ -101,7 +110,7 @@ describe('Onboarding', () => {
   describe('TC-002: Modal does not render for returning users', () => {
     it('hides modal when mcqueen-onboarded is "true"', () => {
       localStorage.setItem('mcqueen-onboarded', 'true');
-      render(<Onboarding />);
+      renderOnboarding();
       act(() => {
         vi.advanceTimersByTime(300);
       });
@@ -110,7 +119,7 @@ describe('Onboarding', () => {
 
     it('suppresses modal for any localStorage value', () => {
       localStorage.setItem('mcqueen-onboarded', 'yes');
-      render(<Onboarding />);
+      renderOnboarding();
       act(() => {
         vi.advanceTimersByTime(300);
       });
@@ -241,18 +250,13 @@ describe('Onboarding', () => {
   });
 
   // ── TC-010: Escape inactive after dismissal ───────────────────────
-  it('TC-010: Escape key does not fire after modal dismissed', () => {
+  it('TC-010: Escape key does not reopen modal after dismissal', () => {
     renderAndShow();
     fireEvent.click(screen.getByRole('button', { name: /skip/i }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
-    const spy = vi.fn();
-    window.addEventListener('mcqueen-onboarding-complete', spy);
-
     fireEvent.keyDown(document, { key: 'Escape' });
-    expect(spy).not.toHaveBeenCalled();
-
-    window.removeEventListener('mcqueen-onboarding-complete', spy);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   // ── TC-011: localStorage mcqueen-onboarded set on completion ──────
@@ -284,40 +288,28 @@ describe('Onboarding', () => {
     });
   });
 
-  // ── TC-013: Custom event dispatched on completion ─────────────────
-  describe('TC-013: Custom event mcqueen-onboarding-complete dispatched', () => {
-    it('dispatches on Skip', () => {
+  // ── TC-013: markOnboardingComplete called via context on completion ─
+  describe('TC-013: markOnboardingComplete updates context state', () => {
+    it('sets localStorage keys on Skip', () => {
       renderAndShow();
-      const spy = vi.fn();
-      window.addEventListener('mcqueen-onboarding-complete', spy);
-
       fireEvent.click(screen.getByRole('button', { name: /skip/i }));
-      expect(spy).toHaveBeenCalledTimes(1);
-
-      window.removeEventListener('mcqueen-onboarding-complete', spy);
+      expect(localStorage.getItem(ONBOARDING_KEY)).toBe('true');
+      expect(localStorage.getItem(ONBOARDING_COMPLETED_KEY)).toBe('true');
     });
 
-    it('dispatches on Escape', () => {
+    it('sets localStorage keys on Escape', () => {
       renderAndShow();
-      const spy = vi.fn();
-      window.addEventListener('mcqueen-onboarding-complete', spy);
-
       fireEvent.keyDown(document, { key: 'Escape' });
-      expect(spy).toHaveBeenCalledTimes(1);
-
-      window.removeEventListener('mcqueen-onboarding-complete', spy);
+      expect(localStorage.getItem(ONBOARDING_KEY)).toBe('true');
+      expect(localStorage.getItem(ONBOARDING_COMPLETED_KEY)).toBe('true');
     });
 
-    it('dispatches on final Next', () => {
+    it('sets localStorage keys on final Next', () => {
       renderAndShow();
-      const spy = vi.fn();
-      window.addEventListener('mcqueen-onboarding-complete', spy);
-
       clickNext(5);
       fireEvent.click(screen.getByRole('button', { name: /start trading/i }));
-      expect(spy).toHaveBeenCalledTimes(1);
-
-      window.removeEventListener('mcqueen-onboarding-complete', spy);
+      expect(localStorage.getItem(ONBOARDING_KEY)).toBe('true');
+      expect(localStorage.getItem(ONBOARDING_COMPLETED_KEY)).toBe('true');
     });
   });
 

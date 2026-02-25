@@ -40,13 +40,17 @@ vi.mock('framer-motion', () => ({
 }));
 
 const mockRefreshEspnNews = vi.fn();
-vi.mock('../../../context/SimulationContext', () => ({
-  useSimulation: vi.fn(() => ({
-    espnLoading: false,
-    espnError: null,
-    refreshEspnNews: mockRefreshEspnNews,
-  })),
-}));
+vi.mock('../../../context/SimulationContext', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../context/SimulationContext')>();
+  return {
+    ...actual,
+    useSimulation: vi.fn(() => ({
+      espnLoading: false,
+      espnError: null,
+      refreshEspnNews: mockRefreshEspnNews,
+    })),
+  };
+});
 
 import { useSimulation } from '../../../context/SimulationContext';
 const mockUseSimulation = vi.mocked(useSimulation);

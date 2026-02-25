@@ -2,10 +2,11 @@ import { type ReactElement, type ReactNode } from 'react';
 import { render, type RenderOptions, type RenderResult } from '@testing-library/react';
 import { vi } from 'vitest';
 import { ScenarioContext } from '../context/ScenarioContext';
+import { SimulationContext } from '../context/SimulationContext';
 import { TradingContext } from '../context/TradingContext';
 import { SocialContext } from '../context/SocialContext';
 import { ToastContext, type ToastContextValue } from '../components/Toast/ToastProvider';
-import type { ScenarioContextValue, TradingContextValue, SocialContextValue } from '../types';
+import type { ScenarioContextValue, SimulationContextValue, TradingContextValue, SocialContextValue } from '../types';
 
 function createDefaultScenarioValue(): ScenarioContextValue {
   return {
@@ -15,6 +16,27 @@ function createDefaultScenarioValue(): ScenarioContextValue {
     players: [],
     scenarioLoading: false,
     scenarioVersion: 0,
+  };
+}
+
+function createDefaultSimulationValue(): SimulationContextValue {
+  return {
+    tick: 0,
+    isPlaying: false,
+    setIsPlaying: vi.fn(),
+    priceOverrides: {},
+    history: [],
+    unifiedTimeline: [],
+    playoffDilutionApplied: false,
+    isEspnLiveMode: false,
+    espnNews: [],
+    espnLoading: false,
+    espnError: null,
+    espnPriceHistory: {},
+    goToHistoryPoint: vi.fn(),
+    applyPlayoffDilution: vi.fn(),
+    refreshEspnNews: vi.fn(),
+    getUnifiedTimeline: vi.fn(() => []),
   };
 }
 
@@ -59,6 +81,7 @@ function createDefaultToastValue(): ToastContextValue {
 
 export interface RenderWithProvidersOptions extends Omit<RenderOptions, 'wrapper'> {
   scenarioOverrides?: Partial<ScenarioContextValue>;
+  simulationOverrides?: Partial<SimulationContextValue>;
   tradingOverrides?: Partial<TradingContextValue>;
   socialOverrides?: Partial<SocialContextValue>;
   toastOverrides?: Partial<ToastContextValue>;
@@ -70,6 +93,7 @@ export function renderWithProviders(
 ): RenderResult {
   const {
     scenarioOverrides,
+    simulationOverrides,
     tradingOverrides,
     socialOverrides,
     toastOverrides,
@@ -79,6 +103,10 @@ export function renderWithProviders(
   const scenarioValue: ScenarioContextValue = {
     ...createDefaultScenarioValue(),
     ...scenarioOverrides,
+  };
+  const simulationValue: SimulationContextValue = {
+    ...createDefaultSimulationValue(),
+    ...simulationOverrides,
   };
   const tradingValue: TradingContextValue = {
     ...createDefaultTradingValue(),
@@ -96,13 +124,15 @@ export function renderWithProviders(
   function Wrapper({ children }: { children: ReactNode }) {
     return (
       <ScenarioContext.Provider value={scenarioValue}>
-        <TradingContext.Provider value={tradingValue}>
-          <SocialContext.Provider value={socialValue}>
-            <ToastContext.Provider value={toastValue}>
-              {children}
-            </ToastContext.Provider>
-          </SocialContext.Provider>
-        </TradingContext.Provider>
+        <SimulationContext.Provider value={simulationValue}>
+          <TradingContext.Provider value={tradingValue}>
+            <SocialContext.Provider value={socialValue}>
+              <ToastContext.Provider value={toastValue}>
+                {children}
+              </ToastContext.Provider>
+            </SocialContext.Provider>
+          </TradingContext.Provider>
+        </SimulationContext.Provider>
       </ScenarioContext.Provider>
     );
   }
