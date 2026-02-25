@@ -1,22 +1,25 @@
 # McQueen UI Audit Report
 
 **Date:** February 24, 2026
-**Method:** Static code analysis of all pages and components, simulating 4 user personas
+**Method:** Static code analysis + live browser dogfood testing (cursor-ide-browser MCP), simulating 4 user personas
 **Dev Server:** Running at http://localhost:5173 (Vite, confirmed 200 OK)
+**Dogfood session:** Full-app browser walkthrough covering all 6 nav pages, all 5 demo scenarios, trading flow, glossary panel. Screenshots archived in `dogfood-output/screenshots/`.
 
 ---
 
 ## Executive Summary
 
-| Severity | Count |
-|----------|-------|
-| Critical | 2     |
-| High     | 7     |
-| Medium   | 9     |
-| Low      | 6     |
-| **Total**| **24**|
+| Severity | Count (code analysis) | Count (browser dogfood) | Combined |
+|----------|-----------------------|-------------------------|----------|
+| Critical | 2                     | 0                       | 2        |
+| High     | 7                     | 1                       | 8        |
+| Medium   | 9                     | 2                       | 11       |
+| Low      | 6                     | 3                       | 9        |
+| **Total**| **24**                | **6**                   | **30**   |
 
 All 7 required pages were audited: Market, PlayerDetail, Portfolio, Watchlist, Mission, Leaderboard, Timeline. All 4 personas were walked through via code-level analysis. Issues span visual bugs, interaction bugs, UX friction, data display issues, accessibility gaps, and performance concerns.
+
+**Browser dogfood addendum (6 new issues, H-8 through L-9):** Live testing confirmed many code-analysis findings and surfaced 6 additional issues not visible from static analysis — most notably that the ESPN Live scenario (the default!) presents an empty first-impression, and that the header layout overflows on scenarios with extra badges. No JS console errors were observed during the browser session.
 
 ---
 
@@ -130,6 +133,19 @@ All 7 required pages were audited: Market, PlayerDetail, Portfolio, Watchlist, M
 **Expected:** Timeline controls should be accessible in Live mode for all users, or at minimum the scenario should auto-play visibly
 **Actual:** Timeline Debugger is hidden behind dev mode flag
 
+#### H-8: ESPN Live scenario (default) shows empty app with no feedback on refresh *(browser-confirmed)*
+
+**Affected page/component:** ScenarioToggle, SimulationContext, Timeline
+**Source:** Dogfood browser test — ISSUE-003
+**Description:** The "ESPN Live" demo scenario is the default selected tab when the app loads. It shows all-zero counters (Events: 0, TDs: 0, INTs: 0, Stats: 0, News: 0, Trades: 0) and "No events match your filters" on the Timeline. This means a new user's very first impression of the app is a completely empty page. Clicking the "Refresh ESPN news" button (circular arrow) disables the button briefly but produces no visible result — no data, no loading spinner, no success/error toast, and no console errors. The user has no way to know whether the refresh attempted and failed or if the feature is simply non-functional. This is likely caused by the ESPN API proxy failing silently (see Console Errors section, item #3), but the UX impact is severe because it's the default scenario.
+**Steps to reproduce:**
+1. Load http://localhost:5173/ fresh — ESPN Live is selected by default
+2. Observe all counters at 0 and "No events match your filters"
+3. Click the refresh button next to the ESPN tab — button disables briefly, then re-enables with no change
+**Expected:** Either (a) ESPN Live loads real data, or (b) a clear error state with a fallback, or (c) a different scenario is the default
+**Actual:** Empty page, silent refresh failure, no user feedback
+**Screenshot evidence:** `dogfood-output/screenshots/issue-001-espn-live-clipped.png`, `dogfood-output/screenshots/issue-003-espn-after-refresh.png`
+
 ---
 
 ### Medium
@@ -232,6 +248,32 @@ All 7 required pages were audited: Market, PlayerDetail, Portfolio, Watchlist, M
 **Expected:** Some loading indicator on the scenario toggle or a brief transition state
 **Actual:** Tab highlights immediately; possible flash of stale content before new data loads
 
+#### M-10: Total Value label and dollar amount clipped at right edge of header *(browser-confirmed)*
+
+**Affected page/component:** Layout (Header), ScenarioToggle
+**Source:** Dogfood browser test — ISSUE-001
+**Description:** The "TOTAL VALUE" label and dollar amount in the top-right corner of the header are truncated by the viewport edge. The label shows "TO..." or "TOTAL VALU..." and the amount shows "$11,0..." or "$10,000.0..." instead of the full text. This happens because the demo scenario tabs and other header elements (LIVE badge, ESPN badge, refresh button) consume too much horizontal space. The issue is worst on ESPN Live and Live Game scenarios. On Midweek (no extra badges), the balance renders correctly.
+**Steps to reproduce:**
+1. Load http://localhost:5173/ with ESPN Live or Live Game scenario selected
+2. Observe top-right corner — "TOTAL VALUE" and dollar amount are clipped
+3. Switch to Midweek scenario — the full "$11,005.00" is visible
+**Expected:** Total Value always fully visible regardless of which scenario tab is selected
+**Actual:** Text overflows and is clipped when scenario tabs have extra badges
+**Screenshot evidence:** `dogfood-output/screenshots/issue-001-espn-live-clipped.png`, `dogfood-output/screenshots/issue-001-live-game-clipped.png`
+
+#### M-11: All page content renders below the fold — initial viewport appears blank *(browser-confirmed)*
+
+**Affected page/component:** Layout, all pages
+**Source:** Dogfood browser test — ISSUE-002
+**Description:** On every page (Timeline, Portfolio, Watchlist, Mission, Leaderboard), the header area — logo, demo scenario tabs, Help button, balance, navigation bar — consumes approximately 120px of vertical space. This pushes all meaningful page content below the initial viewport. When a user navigates to any page, they first see what appears to be a completely blank/dark page and must scroll down to discover actual content. This is especially confusing on Portfolio, Watchlist, and Leaderboard where the initial viewport shows only dark empty space, giving the impression the page is broken. Related to M-4 (sticky sidebar positioning) but is a broader layout issue affecting all pages.
+**Steps to reproduce:**
+1. Navigate to http://localhost:5173/portfolio — viewport shows an empty dark page
+2. Navigate to http://localhost:5173/leaderboard — viewport shows empty dark boxes
+3. Scroll down on any page to reveal the actual content below the fold
+**Expected:** Page content is immediately visible without scrolling
+**Actual:** Header consumes all above-the-fold space; content appears only after scroll
+**Screenshot evidence:** `dogfood-output/screenshots/issue-002-portfolio-full.png`, `dogfood-output/screenshots/issue-002-leaderboard-full.png`
+
 ---
 
 ### Low
@@ -300,11 +342,52 @@ All 7 required pages were audited: Market, PlayerDetail, Portfolio, Watchlist, M
 **Expected:** Column header accurately describes the data (e.g., "Gain" or "Session Gain")
 **Actual:** "Weekly Gain" implies time-based tracking that doesn't exist
 
+#### L-7: Raw enum "LEAGUE_TRADE" displayed in timeline event tags *(browser-confirmed)*
+
+**Affected page/component:** Timeline
+**Source:** Dogfood browser test — ISSUE-004
+**Description:** Timeline events display raw machine-readable tag text "LEAGUE_TRADE" instead of a human-friendly label like "Trade." The Type filter dropdown correctly maps this to "Trades," but the badge rendered on individual timeline entries uses the internal enum value with an underscore. This looks unpolished and inconsistent with the dropdown labels.
+**Steps to reproduce:**
+1. Select "Live Game" scenario tab
+2. Scroll down on the Timeline page
+3. Observe "LEAGUE_TRADE" tag badges next to player names on trade events
+**Expected:** Badge text reads "Trade" (matching the filter dropdown label)
+**Actual:** Badge shows raw "LEAGUE_TRADE"
+**Screenshot evidence:** `dogfood-output/screenshots/issue-004-league-trade-tag.png`
+
+#### L-8: Player detail shows future-dated event relative to scenario date *(browser-confirmed)*
+
+**Affected page/component:** PlayerDetail, scenario data
+**Source:** Dogfood browser test — ISSUE-005
+**Description:** On the Midweek scenario (labeled "Wed, Dec 4"), the Jameson Williams player detail page shows a price change entry dated "Dec 6, 10:00 AM" — two days in the future relative to the scenario's date. This breaks immersion of the demo scenario, as events should not occur after the scenario's current date.
+**Steps to reproduce:**
+1. Select "Midweek" scenario tab
+2. Navigate to Market → click Jameson Williams
+3. Scroll to "PRICE CHANGES" section
+4. Observe "Dec 6, 10:00 AM" entry (2 days after the Dec 4 scenario date)
+**Expected:** All events are dated at or before the scenario's current date
+**Actual:** Entry from Dec 6 appears in a Dec 4 scenario
+**Screenshot evidence:** `dogfood-output/screenshots/issue-005-future-date.png`
+
+#### L-9: Welcome banner uses debug-style dashed red border *(browser-confirmed)*
+
+**Affected page/component:** Market (Welcome banner)
+**Source:** Dogfood browser test — ISSUE-006
+**Description:** The "Welcome to McQueen!" banner at the top of the Market page has a prominent dashed red border that looks like a debug/development styling artifact. The rest of the app uses solid, subtle borders — this dashed red border is visually inconsistent and gives the impression of a leftover development aid.
+**Steps to reproduce:**
+1. Navigate to http://localhost:5173/market
+2. Observe the welcome banner has a red dashed border
+**Expected:** Banner border is consistent with the app's design system (solid, subtle)
+**Actual:** Red dashed border resembling a debug outline
+**Screenshot evidence:** `dogfood-output/screenshots/issue-006-market-page.png`
+
 ---
 
 ## Console Errors
 
-No browser MCP was available in this environment to capture live console output. Based on code analysis, the following potential console errors/warnings were identified:
+**Live browser session (dogfood):** No JavaScript errors or warnings were observed during the full browser walkthrough. The console only contained standard Vite HMR messages (`[vite] connecting...`, `[vite] connected.`) and a React DevTools recommendation. The ESPN Live refresh button did not produce any console errors, suggesting the fetch may be silently swallowed or the proxy is returning empty data rather than an error.
+
+**Code analysis (potential issues):** Based on static analysis, the following potential console errors/warnings were identified:
 
 1. **React key warning in PlayerCard sparkline:** The `sparklineData` array pushes `currentPrice` at the end but uses default numeric indices. This is fine for Recharts but could generate warnings if the data array is empty.
 
@@ -320,18 +403,18 @@ No browser MCP was available in this environment to capture live console output.
 
 ## Pages Audited
 
-| Page | Visited By | Issues Found |
-|------|-----------|--------------|
-| Market | New User, Active Trader | C-2, H-5, M-1, M-4, L-3 |
-| PlayerDetail | New User, Active Trader | H-3, H-5, M-2, M-5, L-1 |
-| Portfolio | New User, Active Trader | H-2, L-2 |
-| Watchlist | Active Trader | M-8 |
-| Mission | Mission Player | H-6, M-3 |
-| Leaderboard | Mission Player | M-6, L-6 |
-| Timeline | New User, Scenario Explorer | H-4, H-7, L-3, L-4 |
-| Onboarding | New User | C-1, H-1 |
-| ScenarioToggle | Scenario Explorer | M-9 |
-| PlayoffAnnouncementModal | Scenario Explorer | L-5 |
+| Page | Visited By | Issues Found (code) | Issues Found (browser) |
+|------|-----------|---------------------|------------------------|
+| Market | New User, Active Trader, Browser | C-2, H-5, M-1, M-4, L-3 | L-9 |
+| PlayerDetail | New User, Active Trader, Browser | H-3, H-5, M-2, M-5, L-1 | L-8 |
+| Portfolio | New User, Active Trader, Browser | H-2, L-2 | M-11 |
+| Watchlist | Active Trader, Browser | M-8 | M-11 |
+| Mission | Mission Player, Browser | H-6, M-3 | M-11 |
+| Leaderboard | Mission Player, Browser | M-6, L-6 | M-11 |
+| Timeline | New User, Scenario Explorer, Browser | H-4, H-7, L-3, L-4 | H-8, L-7, M-11 |
+| Onboarding | New User | C-1, H-1 | — |
+| ScenarioToggle | Scenario Explorer, Browser | M-9 | H-8, M-10 |
+| PlayoffAnnouncementModal | Scenario Explorer | L-5 | — |
 
 ---
 
@@ -341,39 +424,49 @@ No browser MCP was available in this environment to capture live console output.
 
 2. **C-2: Nav link classes use raw strings** — Fix immediately. Navigation is completely unstyled, making the app unusable. Change all `nav-link` references to use `styles['nav-link']` and conditionally apply `styles['active']`.
 
-3. **H-1: Onboarding doesn't sync state back to provider** — High priority. First-trade guide never shows without a page refresh, breaking the new-user flow.
+3. **H-8: ESPN Live default scenario is empty with silent refresh failure** *(browser-confirmed)* — High priority. This is the first thing a new user sees. Either make ESPN Live work, show a clear error fallback, or change the default scenario to Midweek.
 
-4. **H-2: Portfolio resets on scenario switch without warning** — High priority. Silent data loss is frustrating; add a confirmation dialog.
+4. **H-1: Onboarding doesn't sync state back to provider** — High priority. First-trade guide never shows without a page refresh, breaking the new-user flow.
 
-5. **H-4: Timeline time filters show empty results for demo data** — High priority. Two of three time filter options are non-functional, confusing users.
+5. **H-2: Portfolio resets on scenario switch without warning** — High priority. Silent data loss is frustrating; add a confirmation dialog.
 
-6. **H-7: TimelineDebugger hidden behind dev mode** — High priority for the Live scenario experience. Consider showing a simplified version for all users in Live mode.
+6. **H-4: Timeline time filters show empty results for demo data** — High priority. Two of three time filter options are non-functional, confusing users.
 
-7. **H-6: Mission selector limited to 12 players** — High priority. Limits mission gameplay; add search/filter or scrollable list.
+7. **H-7: TimelineDebugger hidden behind dev mode** — High priority for the Live scenario experience. Consider showing a simplified version for all users in Live mode.
 
-8. **H-3: Sell tab disabled without explanation** — Important UX fix. Add tooltip text.
+8. **H-6: Mission selector limited to 12 players** — High priority. Limits mission gameplay; add search/filter or scrollable list.
 
-9. **H-5: PlayerCard moveReason hard truncation** — Moderate priority. Use word-boundary truncation.
+9. **H-3: Sell tab disabled without explanation** — Important UX fix. Add tooltip text.
 
-10. **M-2: Content tile type badges unstyled** — Moderate. Fix CSS module class usage.
+10. **H-5: PlayerCard moveReason hard truncation** — Moderate priority. Use word-boundary truncation.
 
-11. **M-3: Mission result-chip status class raw string** — Moderate. Fix CSS module class usage.
+11. **M-10: Total Value clipped in header** *(browser-confirmed)* — Moderate. Header layout needs to accommodate scenario tab badges without truncating the balance. May be fixable alongside M-4/M-11.
 
-12. **M-4: Market sidebar overlaps sticky header** — Moderate. Update `top` value.
+12. **M-11: Content below the fold on all pages** *(browser-confirmed)* — Moderate. Header consumes too much vertical space. Consider reducing header height or making content scroll independently.
 
-13. **M-1: PlayerCard sparkline not accessible** — Moderate. Add `aria-label`.
+13. **M-2: Content tile type badges unstyled** — Moderate. Fix CSS module class usage.
 
-14. **M-7: Toast lacks keyboard/ARIA support** — Moderate accessibility fix.
+14. **M-3: Mission result-chip status class raw string** — Moderate. Fix CSS module class usage.
 
-15. **M-5: Chart tooltip always truncated** — Low-moderate. Smart truncation + date.
+15. **M-4: Market sidebar overlaps sticky header** — Moderate. Update `top` value.
 
-16. **M-6: Leaderboard avatar alignment** — Low-moderate. Add flex layout.
+16. **M-1: PlayerCard sparkline not accessible** — Moderate. Add `aria-label`.
 
-17. **M-8: Watchlist remove button touch target** — Low-moderate. Increase padding.
+17. **M-7: Toast lacks keyboard/ARIA support** — Moderate accessibility fix.
 
-18. **M-9: Scenario toggle no loading indicator** — Low-moderate. Add brief loading state.
+18. **M-5: Chart tooltip always truncated** — Low-moderate. Smart truncation + date.
 
-19. **L-1 through L-6** — Low priority polish items; address in subsequent sprints.
+19. **M-6: Leaderboard avatar alignment** — Low-moderate. Add flex layout.
+
+20. **M-8: Watchlist remove button touch target** — Low-moderate. Increase padding.
+
+21. **M-9: Scenario toggle no loading indicator** — Low-moderate. Add brief loading state.
+
+22. **L-7: LEAGUE_TRADE raw enum in timeline tags** *(browser-confirmed)* — Low. Map enum to display label.
+
+23. **L-9: Welcome banner dashed red border** *(browser-confirmed)* — Low. Replace with solid border matching design system.
+
+24. **L-1 through L-6, L-8** — Low priority polish items; address in subsequent sprints.
 
 ---
 
@@ -381,10 +474,10 @@ No browser MCP was available in this environment to capture live console output.
 
 | Category | Evaluated | Issues Found |
 |----------|-----------|--------------|
-| Visual bugs | Yes | C-1, C-2, M-2, M-3, M-4, M-6 |
-| Interaction bugs | Yes | H-1, H-2, H-3, H-4, H-7 |
-| UX friction | Yes | H-3, H-5, H-6, M-5, M-9, L-6 |
-| Data display issues | Yes | H-4, H-5, M-5, L-4, L-5, L-6 |
-| Accessibility gaps | Yes | M-1, M-7, M-8, L-3 |
-| Console errors | Yes | See Console Errors section |
-| Performance issues | Yes | No significant issues found (lazy loading, skeleton states, memoization all in place) |
+| Visual bugs | Yes (code + browser) | C-1, C-2, M-2, M-3, M-4, M-6, **M-10**, **L-9** |
+| Interaction bugs | Yes (code + browser) | H-1, H-2, H-3, H-4, H-7, **H-8** |
+| UX friction | Yes (code + browser) | H-3, H-5, H-6, M-5, M-9, L-6, **M-11** |
+| Data display issues | Yes (code + browser) | H-4, H-5, M-5, L-4, L-5, L-6, **L-7**, **L-8** |
+| Accessibility gaps | Yes (code) | M-1, M-7, M-8, L-3 |
+| Console errors | Yes (code + browser) | See Console Errors section |
+| Performance issues | Yes (code + browser) | No significant issues found (lazy loading, skeleton states, memoization all in place) |
