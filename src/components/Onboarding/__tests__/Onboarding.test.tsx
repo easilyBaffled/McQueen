@@ -2,7 +2,8 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Onboarding from '../Onboarding';
-import { OnboardingProvider, ONBOARDING_KEY, ONBOARDING_COMPLETED_KEY } from '../OnboardingProvider';
+import { OnboardingProvider, useOnboarding, ONBOARDING_KEY, ONBOARDING_COMPLETED_KEY } from '../OnboardingProvider';
+import FirstTradeGuide from '../../../shared/FirstTradeGuide/FirstTradeGuide';
 
 // ── Mock framer-motion ──────────────────────────────────────────────
 const componentCache: Record<string, React.ComponentType<Record<string, unknown>>> = {};
@@ -69,6 +70,30 @@ function clickNext(times = 1) {
   for (let i = 0; i < times; i++) {
     fireEvent.click(screen.getByRole('button', { name: /next|start trading/i }));
   }
+}
+
+function TestStateConsumer() {
+  const { hasCompletedOnboarding, isNewUser, showFirstTradeGuide } = useOnboarding();
+  return (
+    <div>
+      <span data-testid="ctx-completed">{String(hasCompletedOnboarding)}</span>
+      <span data-testid="ctx-new-user">{String(isNewUser)}</span>
+      <span data-testid="ctx-show-guide">{String(showFirstTradeGuide)}</span>
+    </div>
+  );
+}
+
+function renderWithState() {
+  const result = render(
+    <OnboardingProvider>
+      <Onboarding />
+      <TestStateConsumer />
+    </OnboardingProvider>,
+  );
+  act(() => {
+    vi.advanceTimersByTime(300);
+  });
+  return result;
 }
 
 describe('Onboarding', () => {
@@ -525,5 +550,204 @@ describe('Onboarding', () => {
         if (i < 5) clickNext();
       }
     });
+  });
+
+  // ── mcq-2dq.1: Provider state sync on onboarding completion ─────────
+  describe('mcq-2dq.1: Provider state sync on completion', () => {
+    it('TC-001: final step updates provider state without refresh', () => {
+      renderWithState();
+      expect(screen.getByTestId('ctx-completed')).toHaveTextContent('false');
+      expect(screen.getByTestId('ctx-new-user')).toHaveTextContent('true');
+      expect(screen.getByTestId('ctx-show-guide')).toHaveTextContent('false');
+
+      clickNext(5);
+      fireEvent.click(screen.getByRole('button', { name: /start trading/i }));
+
+      expect(screen.getByTestId('ctx-completed')).toHaveTextContent('true');
+      expect(screen.getByTestId('ctx-new-user')).toHaveTextContent('false');
+      expect(screen.getByTestId('ctx-show-guide')).toHaveTextContent('true');
+    });
+
+    it('TC-002: skip button updates provider state', () => {
+      renderWithState();
+      fireEvent.click(screen.getByRole('button', { name: /skip/i }));
+
+      expect(screen.getByTestId('ctx-completed')).toHaveTextContent('true');
+      expect(screen.getByTestId('ctx-new-user')).toHaveTextContent('false');
+      expect(screen.getByTestId('ctx-show-guide')).toHaveTextContent('true');
+    });
+
+    it('TC-002 edge: skip from middle step updates provider state', () => {
+      renderWithState();
+      clickNext(3);
+      fireEvent.click(screen.getByRole('button', { name: /skip/i }));
+
+      expect(screen.getByTestId('ctx-completed')).toHaveTextContent('true');
+      expect(screen.getByTestId('ctx-show-guide')).toHaveTextContent('true');
+    });
+
+    it('TC-003: escape key updates provider state', () => {
+      renderWithState();
+      fireEvent.keyDown(document, { key: 'Escape' });
+
+      expect(screen.getByTestId('ctx-completed')).toHaveTextContent('true');
+      expect(screen.getByTestId('ctx-new-user')).toHaveTextContent('false');
+      expect(screen.getByTestId('ctx-show-guide')).toHaveTextContent('true');
+    });
+
+    it('TC-003 edge: escape on last step updates provider state', () => {
+      renderWithState();
+      clickNext(5);
+      fireEvent.keyDown(document, { key: 'Escape' });
+
+      expect(screen.getByTestId('ctx-completed')).toHaveTextContent('true');
+      expect(screen.getByTestId('ctx-show-guide')).toHaveTextContent('true');
+    });
+
+    it('TC-005: provider state matches localStorage after completion', () => {
+      renderWithState();
+      fireEvent.click(screen.getByRole('button', { name: /skip/i }));
+
+      expect(localStorage.getItem(ONBOARDING_KEY)).toBe('true');
+      expect(localStorage.getItem(ONBOARDING_COMPLETED_KEY)).toBe('true');
+      expect(screen.getByTestId('ctx-completed')).toHaveTextContent('true');
+      expect(screen.getByTestId('ctx-new-user')).toHaveTextContent('false');
+      expect(screen.getByTestId('ctx-show-guide')).toHaveTextContent('true');
+    });
+
+    it('TC-010: isNewUser transitions from true to false immediately', () => {
+      renderWithState();
+      expect(screen.getByTestId('ctx-new-user')).toHaveTextContent('true');
+
+      fireEvent.click(screen.getByRole('button', { name: /skip/i }));
+
+      expect(screen.getByTestId('ctx-new-user')).toHaveTextContent('false');
+    });
+  });
+
+  // ── mcq-2dq.1 TC-004: FirstTradeGuide integration ──────────────────
+  describe('mcq-2dq.1: FirstTradeGuide appears after onboarding', () => {
+    it('TC-004: FirstTradeGuide renders without page refresh after onboarding', () => {
+      render(
+        <OnboardingProvider>
+          <Onboarding />
+          <FirstTradeGuide hasCompletedFirstTrade={false} />
+        </OnboardingProvider>,
+      );
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
+
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      expect(screen.queryByText('Make Your First Trade!')).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: /skip/i }));
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+      expect(screen.getByText('Make Your First Trade!')).toBeInTheDocument();
+    });
+
+    it('TC-004 edge: FirstTradeGuide does not appear when hasCompletedFirstTrade is true', () => {
+      render(
+        <OnboardingProvider>
+          <Onboarding />
+          <FirstTradeGuide hasCompletedFirstTrade={true} />
+        </OnboardingProvider>,
+      );
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /skip/i }));
+
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+      expect(screen.queryByText('Make Your First Trade!')).not.toBeInTheDocument();
+    });
+  });
+
+  // ── mcq-2dq.1 TC-006: No redundant localStorage writes ─────────────
+  describe('mcq-2dq.1: No redundant direct localStorage writes', () => {
+    it('TC-006: skip sets exactly the two provider keys, nothing extra', () => {
+      renderWithState();
+      fireEvent.click(screen.getByRole('button', { name: /skip/i }));
+
+      expect(localStorage).toHaveLength(2);
+      expect(localStorage.getItem(ONBOARDING_KEY)).toBe('true');
+      expect(localStorage.getItem(ONBOARDING_COMPLETED_KEY)).toBe('true');
+    });
+
+    it('TC-006: escape sets exactly the two provider keys, nothing extra', () => {
+      renderWithState();
+      fireEvent.keyDown(document, { key: 'Escape' });
+
+      expect(localStorage).toHaveLength(2);
+      expect(localStorage.getItem(ONBOARDING_KEY)).toBe('true');
+      expect(localStorage.getItem(ONBOARDING_COMPLETED_KEY)).toBe('true');
+    });
+
+    it('TC-006: final step sets exactly the two provider keys, nothing extra', () => {
+      renderWithState();
+      clickNext(5);
+      fireEvent.click(screen.getByRole('button', { name: /start trading/i }));
+
+      expect(localStorage).toHaveLength(2);
+      expect(localStorage.getItem(ONBOARDING_KEY)).toBe('true');
+      expect(localStorage.getItem(ONBOARDING_COMPLETED_KEY)).toBe('true');
+    });
+  });
+
+  // ── mcq-2dq.1 TC-007: No CustomEvent dispatch ──────────────────────
+  it('TC-007: no CustomEvent dispatched on completion', () => {
+    const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+    renderWithState();
+    dispatchSpy.mockClear();
+
+    fireEvent.click(screen.getByRole('button', { name: /skip/i }));
+
+    const customEvents = dispatchSpy.mock.calls.filter(
+      ([event]) => event instanceof CustomEvent,
+    );
+    expect(customEvents).toHaveLength(0);
+
+    dispatchSpy.mockRestore();
+  });
+
+  // ── mcq-2dq.1 TC-008: Returning user no state changes ──────────────
+  it('TC-008: returning user does not trigger markOnboardingComplete', () => {
+    localStorage.setItem(ONBOARDING_KEY, 'true');
+    render(
+      <OnboardingProvider>
+        <Onboarding />
+        <TestStateConsumer />
+      </OnboardingProvider>,
+    );
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByTestId('ctx-completed')).toHaveTextContent('true');
+    expect(screen.getByTestId('ctx-new-user')).toHaveTextContent('false');
+  });
+
+  // ── mcq-2dq.1 TC-009: Optional chaining guard ──────────────────────
+  it('TC-009: closes without error when rendered outside OnboardingProvider', () => {
+    render(<Onboarding />);
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+
+    expect(() => {
+      fireEvent.click(screen.getByRole('button', { name: /skip/i }));
+    }).not.toThrow();
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 });
