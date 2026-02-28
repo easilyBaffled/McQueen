@@ -684,8 +684,8 @@ describe('SocialContext', () => {
   });
 
   // TC-020
-  describe('TC-020: League data is cached after first load', () => {
-    it('returns same data on remount without re-importing', async () => {
+  describe('TC-020: League data is available after remount', () => {
+    it('returns same data on remount', async () => {
       const { result, unmount } = await renderAndWait();
       const firstLoad = result.current.social.getLeagueMembers();
       unmount();
@@ -704,6 +704,31 @@ describe('SocialContext', () => {
       expect(secondLoad.length).toBe(firstLoad.length);
       expect(secondLoad[0].id).toBe(firstLoad[0].id);
 
+      hook2.unmount();
+    });
+  });
+
+  // TC-026
+  describe('TC-026: Cache resets when SocialProvider unmounts and remounts', () => {
+    it('does not share cache state between independent mounts', async () => {
+      const { result, unmount } = await renderAndWait();
+      expect(result.current.social.getLeagueMembers().length).toBe(11);
+      unmount();
+
+      const hook2 = renderHook(() => useSocialAndScenarioAndTrading(), {
+        wrapper: FullWrapper,
+      });
+
+      expect(hook2.result.current.social.getLeagueMembers()).toEqual([]);
+
+      await waitFor(() => {
+        expect(hook2.result.current.scenario.scenarioLoading).toBe(false);
+      });
+      await waitFor(() => {
+        expect(hook2.result.current.social.getLeagueMembers().length).toBeGreaterThan(0);
+      });
+
+      expect(hook2.result.current.social.getLeagueMembers().length).toBe(11);
       hook2.unmount();
     });
   });

@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
 } from 'react';
 
 import {
@@ -24,26 +25,13 @@ export const SocialContext = createContext<SocialContextValue | null>(null);
 const leagueLoader = () =>
   import('../data/leagueMembers.json').then((m) => m.default as unknown as { members: LeagueMember[]; holdings: Record<string, LeagueHolding[]> });
 
-let leagueMembersCache: LeagueMember[] | null = null;
-let leagueHoldingsCache: Record<string, LeagueHolding[]> | null = null;
-
-async function getLeagueData() {
-  if (leagueMembersCache) {
-    return {
-      members: leagueMembersCache,
-      holdings: leagueHoldingsCache,
-    };
-  }
-  const data = await leagueLoader();
-  leagueMembersCache = data.members;
-  leagueHoldingsCache = data.holdings;
-  return { members: leagueMembersCache, holdings: leagueHoldingsCache };
-}
-
 export function SocialProvider({ children }: ChildrenProps) {
   const { scenarioVersion } = useScenario();
   const { getPlayer, getEffectivePrice, portfolio, cash, getPortfolioValue } =
     useTrading();
+
+  const leagueMembersCacheRef = useRef<LeagueMember[] | null>(null);
+  const leagueHoldingsCacheRef = useRef<Record<string, LeagueHolding[]> | null>(null);
 
   const [watchlist, setWatchlist] = useState<string[]>(() =>
     read(STORAGE_KEYS.watchlist, []),
@@ -57,7 +45,14 @@ export function SocialProvider({ children }: ChildrenProps) {
   const [leagueHoldings, setLeagueHoldings] = useState<Record<string, LeagueHolding[]>>({});
 
   useEffect(() => {
-    getLeagueData().then(({ members, holdings }) => {
+    if (leagueMembersCacheRef.current) {
+      setLeagueMembers(leagueMembersCacheRef.current);
+      setLeagueHoldings(leagueHoldingsCacheRef.current ?? {});
+      return;
+    }
+    leagueLoader().then(({ members, holdings }) => {
+      leagueMembersCacheRef.current = members;
+      leagueHoldingsCacheRef.current = holdings;
       setLeagueMembers(members ?? []);
       setLeagueHoldings(holdings ?? {});
     });

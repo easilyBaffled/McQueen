@@ -57,3 +57,4 @@
 2026-02-28 16:13:31 | mcq-1zw.2 | DONE | Memoize all context provider values
 2026-02-28 16:20:00 | mcq-1zw.5 | DONE | Complete CSS Modules migration
 2026-02-28 16:23:33 | mcq-1zw.5 | DONE | Complete CSS Modules migration
+2026-02-28 16:33:05 | mcq-1zw.4 | DONE | Add storage version migration support
