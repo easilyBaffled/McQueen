@@ -1,0 +1,92 @@
+# Ralph Progress Log (append-only)
+# Format: YYYY-MM-DD HH:MM | BEAD_ID | STATUS | Summary
+# -----------------------------------------------------------
+2026-02-19 06:28:43 | mcq-b6u | DONE | Build Tooling Foundation
+2026-02-19 06:29:19 | mcq-b6u.1 | DONE | Add tsconfig.json with strict mode
+2026-02-19 06:35:07 | mcq-qbm | DONE | Testing Infrastructure
+2026-02-19 06:54:00 | mcq-o0b | DONE | Accessibility
+2026-02-19 06:55:11 | mcq-b6u.2 | DONE | Configure Vite vendor chunking
+2026-02-19 07:03:14 | mcq-o0b.1 | DONE | Add eslint-plugin-jsx-a11y and resolve warnings
+2026-02-19 07:08:50 | mcq-o0b.2 | DONE | Add ARIA attributes and focus indicators
+2026-02-19 07:21:36 | mcq-o0b.3 | DONE | Add keyboard navigation support
+2026-02-19 07:30:02 | mcq-o0b.4 | DONE | Add secondary indicators for color-coded values
+2026-02-19 09:26:28 | mcq-tj0 | DONE | Data Layer: Types, Storage, and Dynamic Loading
+2026-02-19 09:32:22 | mcq-tj0.1 | DONE | Create TypeScript type definitions
+2026-02-19 10:01:26 | mcq-qzq | DONE | Service Layer Refactor
+2026-02-19 10:10:00 | mcq-tj0.2 | DONE | Convert constants and utils to TypeScript
+2026-02-19 10:09:29 | mcq-tj0.2 | DONE | Convert constants and utils to TypeScript
+2026-02-19 10:16:00 | mcq-tj0.3 | DONE | Create storageService with schema versioning
+2026-02-19 10:16:31 | mcq-tj0.3 | DONE | Create storageService with schema versioning
+2026-02-19 10:21:22 | mcq-qzq.1 | DONE | Convert sentimentEngine to TypeScript
+2026-02-19 10:26:53 | mcq-qzq.3 | DONE | Convert espnService to TypeScript
+2026-02-19 10:33:16 | mcq-qzq.4 | DONE | Extract priceResolver as pure module
+2026-02-19 10:43:03 | mcq-tj0.4 | DONE | Convert scenario data loading to dynamic import()
+2026-02-19 11:26:38 | mcq-vlu | DONE | State Management: Split GameContext
+2026-02-19 11:36:29 | mcq-qzq.2 | DONE | Convert priceCalculator to TypeScript
+2026-02-19 11:41:58 | mcq-qzq.5 | DONE | Create SimulationEngine interface and TimelineSimulationEngine
+2026-02-19 11:46:23 | mcq-vlu.1 | DONE | Create ScenarioContext
+2026-02-19 11:57:26 | mcq-qbm.1 | DONE | Add unit tests for service modules
+2026-02-19 12:32:38 | mcq-qzq.6 | DONE | Create EspnSimulationEngine
+2026-02-19 12:40:48 | mcq-35g.1 | DONE | Create ErrorBoundary component
+2026-02-19 13:45:53 | mcq-35g | DONE | UI Components: Restructure, Error Boundaries, and Code Splitting
+2026-02-19 13:50:27 | mcq-35g.2 | DONE | Move shared components to src/shared/
+2026-02-19 13:58:53 | mcq-35g.3 | DONE | Restructure feature components into co-located directories
+2026-02-19 14:02:29 | mcq-35g.4 | DONE | Restructure pages into co-located directories
+2026-02-19 14:11:27 | mcq-35g.6 | DONE | Fix Leaderboard to use real league data
+2026-02-19 16:53:53 | mcq-8hr.1 | DONE | Create shared test helpers (renderWithProviders + mockData)
+2026-02-19 16:59:30 | mcq-8hr.2 | DONE | Add Vitest tests for Market page (0% coverage)
+2026-02-19 17:04:34 | mcq-8hr.3 | DONE | Add Vitest tests for Watchlist page (0% coverage)
+2026-02-19 17:09:41 | mcq-8hr.4 | DONE | Add Vitest tests for Mission page (0% coverage)
+2026-02-19 17:17:04 | mcq-8hr.5 | DONE | Add Vitest tests for Onboarding component (0% coverage)
+2026-02-19 17:22:57 | mcq-8hr.6 | DONE | Add Vitest tests for DailyMission component (0% coverage)
+2026-02-19 17:45:00 | mcq-8hr.9 | DONE | Add data-testid attributes to 12 source components for 59 Cypress selectors
+2026-02-19 17:43:45 | mcq-8hr.9 | DONE | Add data-testid attributes to source components for Cypress selectors
+2026-02-19 17:56:49 | mcq-8hr.10 | DONE | Fix all Cypress E2E tests -- migrate selectors from CSS classes to data-testid
+2026-02-20 08:29:16 | mcq-vlu.2 | DONE | Create SimulationContext
+2026-02-20 09:17:07 | mcq-qbm.4 | DONE | Verify Cypress E2E suite passes end-to-end
+2026-02-20 09:40:46 | mcq-8hr.11 | DONE | Verify coverage targets met
+2026-02-20 09:47:00 | mcq-qbm.2 | DONE | Add unit tests for simulation engines
+2026-02-20 09:48:27 | mcq-qbm.2 | DONE | Add unit tests for simulation engines
+2026-02-20 09:58:58 | mcq-8hr.7 | DONE | Add Vitest tests for remaining 0% components (PlayoffModal, MiniLeaderboard, LiveTicker)
+2026-02-20 10:18:07 | mcq-8hr.8 | DONE | Expand Vitest tests for partially-covered files (Portfolio, PlayerDetail, shared components)
+2026-02-23 18:22:29 | mcq-vlu.3 | DONE | Create TradingContext
+2026-02-23 19:48:34 | mcq-vlu.4 | DONE | Create SocialContext
+2026-02-23 20:03:46 | mcq-vlu.5 | DONE | Wire provider composition and remove GameContext
+2026-02-24 01:31:47 | mcq-qbm.3 | DONE | Add unit tests for context providers
+2026-02-23 20:32:38 | mcq-qbm.3 | DONE | Add unit tests for context providers
+2026-02-24 17:07:13 | mcq-pmw | DONE | Research: Exploratory UI Audit via Browser Testing
+2026-02-24 20:29:52 | mcq-aow | DONE | Spec: UI Audit Repair Specification
+2026-02-24 20:52:31 | mcq-63p | DONE | CSS Module Class Fixes
+2026-02-24 20:58:57 | mcq-63p.1 | DONE | Fix Onboarding content wrapper CSS module class
+2026-02-24 21:04:27 | mcq-63p.2 | DONE | Fix Layout nav link CSS module classes
+2026-02-24 21:09:58 | mcq-63p.3 | DONE | Fix PlayerDetail content tile type badge CSS module classes
+2026-02-24 21:15:26 | mcq-63p.4 | DONE | Fix DailyMission result-chip status CSS module classes
+2026-02-24 21:24:04 | mcq-vqz | DONE | Layout and Header Repair
+2026-02-24 21:36:52 | mcq-2dq | DONE | Onboarding and First-Run Experience
+2026-02-24 21:45:00 | mcq-2dq.2 | DONE | Change default scenario from ESPN Live to Midweek and add ESPN empty-state fallback
+2026-02-24 21:42:27 | mcq-2dq.2 | DONE | Change default scenario from ESPN Live to Midweek and add ESPN empty-state fallback
+2026-02-24 21:50:42 | mcq-36s | DONE | Trading UX Improvements
+2026-02-24 21:55:19 | mcq-36s.1 | DONE | Add confirmation dialog before portfolio reset on scenario switch
+2026-02-25 05:42:57 | mcq-vqz.1 | DONE | Fix Market sidebar sticky positioning to account for header
+2026-02-25 05:47:56 | mcq-vqz.2 | DONE | Fix header Total Value clipping on scenarios with badges
+2026-02-25 05:56:26 | mcq-2dq.1 | DONE | Sync Onboarding completion with OnboardingProvider state
+2026-02-25 05:59:25 | mcq-36s.2 | DONE | Add tooltip explanation to disabled Sell tab
+2026-02-25 06:06:00 | mcq-36s.3 | DONE | Fix PlayerCard moveReason truncation to respect word boundaries
+2026-02-25 06:18:00 | mcq-dvn | DONE | Timeline and Scenario Improvements
+2026-02-25 06:19:27 | mcq-dvn | DONE | Timeline and Scenario Improvements
+2026-02-25 06:25:41 | mcq-dvn.1 | DONE | Fix Timeline time filters to use scenario-relative dates
+2026-02-25 06:32:30 | mcq-c51 | DONE | Mission and Leaderboard Improvements
+2026-02-25 06:38:36 | mcq-c51.1 | DONE | Add search/filter and expand player selector in DailyMission
+2026-02-25 06:46:57 | mcq-x02 | DONE | Accessibility Improvements
+2026-02-25 06:56:33 | mcq-vqz.3 | DONE | Reduce header/nav vertical footprint to show content above the fold
+2026-02-25 08:11:41 | mcq-dvn.2 | FAIL | Add simplified live simulation indicator for non-dev users (exit=1)
+2026-02-25 08:23:04 | mcq-dvn.2 | DONE | Add simplified live simulation indicator for non-dev users
+2026-02-25 08:27:13 | mcq-dvn.4 | DONE | Replace hardcoded LiveTicker fallback text
+2026-02-25 08:33:35 | mcq-dvn.5 | DONE | Map raw event type strings to display labels in Timeline
+2026-02-25 08:38:20 | mcq-c51.2 | DONE | Fix Leaderboard trader column alignment
+2026-02-25 08:49:06 | mcq-x8o | DONE | Minor Polish
+2026-02-25 08:53:05 | mcq-x8o.1 | DONE | Fix PlayerDetail chart tooltip truncation and add date context
+2026-02-25 08:59:55 | mcq-dvn.6 | DONE | Filter out future-dated events relative to scenario date
+2026-02-25 09:03:50 | mcq-c51.3 | DONE | Rename Weekly Gain column header to Gain
+2026-02-25 09:10:19 | mcq-x8o.2 | DONE | Add viewport boundary checking to EventMarkerPopup
+2026-02-25 09:13:49 | mcq-x8o.3 | DONE | Make Portfolio responsive column hiding class-based instead of nth-child

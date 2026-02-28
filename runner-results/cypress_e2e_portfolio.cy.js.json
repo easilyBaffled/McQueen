@@ -1,0 +1,10 @@
+{
+  "suites": 1,
+  "tests": 8,
+  "passes": 8,
+  "pending": 0,
+  "failures": 0,
+  "start": "2026-02-19T16:07:49.495Z",
+  "duration": 3427,
+  "file": "cypress/e2e/portfolio.cy.js"
+}

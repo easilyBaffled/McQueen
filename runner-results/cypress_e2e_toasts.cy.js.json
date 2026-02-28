@@ -1,0 +1,10 @@
+{
+  "suites": 1,
+  "tests": 3,
+  "passes": 3,
+  "pending": 0,
+  "failures": 0,
+  "start": "2026-02-19T16:07:46.627Z",
+  "duration": 2998,
+  "file": "cypress/e2e/toasts.cy.js"
+}

@@ -1,0 +1,58 @@
+.simulation-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.indicator-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-up);
+  border-radius: 50%;
+  animation: indicator-pulse 1.5s infinite;
+}
+
+@keyframes indicator-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+.indicator-text {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.indicator-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.indicator-toggle:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+.indicator-toggle svg {
+  width: 14px;
+  height: 14px;
+}

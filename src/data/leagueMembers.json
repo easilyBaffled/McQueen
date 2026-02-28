@@ -14,142 +14,141 @@
   ],
   "holdings": {
     "mahomes": [
-      { "memberId": "gridiron", "shares": 15, "avgCost": 135.00 },
+      { "memberId": "gridiron", "shares": 15, "avgCost": 135.0 },
       { "memberId": "tdking", "shares": 8, "avgCost": 140.25 },
-      { "memberId": "fantasymvp", "shares": 12, "avgCost": 138.50 }
+      { "memberId": "fantasymvp", "shares": 12, "avgCost": 138.5 }
     ],
     "allen": [
-      { "memberId": "stockjock", "shares": 20, "avgCost": 158.00 },
-      { "memberId": "endzone", "shares": 5, "avgCost": 162.50 }
+      { "memberId": "stockjock", "shares": 20, "avgCost": 158.0 },
+      { "memberId": "endzone", "shares": 5, "avgCost": 162.5 }
     ],
     "hill": [
-      { "memberId": "rookie", "shares": 10, "avgCost": 125.00 },
-      { "memberId": "chartchaser", "shares": 7, "avgCost": 120.50 }
+      { "memberId": "rookie", "shares": 10, "avgCost": 125.0 },
+      { "memberId": "chartchaser", "shares": 7, "avgCost": 120.5 }
     ],
     "mccaffrey": [
-      { "memberId": "gridiron", "shares": 18, "avgCost": 148.00 },
+      { "memberId": "gridiron", "shares": 18, "avgCost": 148.0 },
       { "memberId": "fantasymvp", "shares": 10, "avgCost": 152.25 },
-      { "memberId": "pigskin", "shares": 6, "avgCost": 150.00 }
+      { "memberId": "pigskin", "shares": 6, "avgCost": 150.0 }
     ],
     "jefferson": [
-      { "memberId": "tdking", "shares": 12, "avgCost": 128.50 },
-      { "memberId": "nflnerd", "shares": 8, "avgCost": 130.00 }
+      { "memberId": "tdking", "shares": 12, "avgCost": 128.5 },
+      { "memberId": "nflnerd", "shares": 8, "avgCost": 130.0 }
     ],
     "kelce": [
-      { "memberId": "bullmarket", "shares": 15, "avgCost": 105.00 },
-      { "memberId": "stockjock", "shares": 10, "avgCost": 102.50 }
+      { "memberId": "bullmarket", "shares": 15, "avgCost": 105.0 },
+      { "memberId": "stockjock", "shares": 10, "avgCost": 102.5 }
     ],
     "henry": [
-      { "memberId": "endzone", "shares": 14, "avgCost": 122.00 },
-      { "memberId": "pigskin", "shares": 9, "avgCost": 125.50 }
+      { "memberId": "endzone", "shares": 14, "avgCost": 122.0 },
+      { "memberId": "pigskin", "shares": 9, "avgCost": 125.5 }
     ],
     "chase": [
-      { "memberId": "gridiron", "shares": 10, "avgCost": 140.00 },
-      { "memberId": "tdking", "shares": 15, "avgCost": 142.00 },
-      { "memberId": "chartchaser", "shares": 8, "avgCost": 143.50 }
+      { "memberId": "gridiron", "shares": 10, "avgCost": 140.0 },
+      { "memberId": "tdking", "shares": 15, "avgCost": 142.0 },
+      { "memberId": "chartchaser", "shares": 8, "avgCost": 143.5 }
     ],
     "lamb": [
-      { "memberId": "rookie", "shares": 12, "avgCost": 118.00 },
-      { "memberId": "nflnerd", "shares": 6, "avgCost": 115.50 }
+      { "memberId": "rookie", "shares": 12, "avgCost": 118.0 },
+      { "memberId": "nflnerd", "shares": 6, "avgCost": 115.5 }
     ],
     "hurts": [
-      { "memberId": "fantasymvp", "shares": 8, "avgCost": 135.00 },
-      { "memberId": "bullmarket", "shares": 5, "avgCost": 138.00 }
+      { "memberId": "fantasymvp", "shares": 8, "avgCost": 135.0 },
+      { "memberId": "bullmarket", "shares": 5, "avgCost": 138.0 }
     ],
     "barkley": [
-      { "memberId": "stockjock", "shares": 12, "avgCost": 145.00 },
-      { "memberId": "endzone", "shares": 10, "avgCost": 148.50 },
-      { "memberId": "gridiron", "shares": 8, "avgCost": 150.00 }
+      { "memberId": "stockjock", "shares": 12, "avgCost": 145.0 },
+      { "memberId": "endzone", "shares": 10, "avgCost": 148.5 },
+      { "memberId": "gridiron", "shares": 8, "avgCost": 150.0 }
     ],
     "brown": [
-      { "memberId": "chartchaser", "shares": 9, "avgCost": 128.00 },
-      { "memberId": "pigskin", "shares": 6, "avgCost": 126.50 }
+      { "memberId": "chartchaser", "shares": 9, "avgCost": 128.0 },
+      { "memberId": "pigskin", "shares": 6, "avgCost": 126.5 }
     ],
     "lamar": [
-      { "memberId": "tdking", "shares": 18, "avgCost": 152.00 },
-      { "memberId": "fantasymvp", "shares": 14, "avgCost": 155.00 },
-      { "memberId": "nflnerd", "shares": 10, "avgCost": 154.50 }
+      { "memberId": "tdking", "shares": 18, "avgCost": 152.0 },
+      { "memberId": "fantasymvp", "shares": 14, "avgCost": 155.0 },
+      { "memberId": "nflnerd", "shares": 10, "avgCost": 154.5 }
     ],
     "gibbs": [
-      { "memberId": "rookie", "shares": 15, "avgCost": 88.00 },
-      { "memberId": "stockjock", "shares": 8, "avgCost": 92.00 }
+      { "memberId": "rookie", "shares": 15, "avgCost": 88.0 },
+      { "memberId": "stockjock", "shares": 8, "avgCost": 92.0 }
     ],
     "stroud": [
-      { "memberId": "gridiron", "shares": 10, "avgCost": 130.00 },
-      { "memberId": "bullmarket", "shares": 12, "avgCost": 132.50 }
+      { "memberId": "gridiron", "shares": 10, "avgCost": 130.0 },
+      { "memberId": "bullmarket", "shares": 12, "avgCost": 132.5 }
     ],
     "waddle": [
-      { "memberId": "chartchaser", "shares": 8, "avgCost": 95.00 },
-      { "memberId": "endzone", "shares": 5, "avgCost": 94.00 }
+      { "memberId": "chartchaser", "shares": 8, "avgCost": 95.0 },
+      { "memberId": "endzone", "shares": 5, "avgCost": 94.0 }
     ],
     "mixon": [
-      { "memberId": "pigskin", "shares": 10, "avgCost": 112.00 },
-      { "memberId": "nflnerd", "shares": 7, "avgCost": 110.50 }
+      { "memberId": "pigskin", "shares": 10, "avgCost": 112.0 },
+      { "memberId": "nflnerd", "shares": 7, "avgCost": 110.5 }
     ],
     "nabers": [
-      { "memberId": "rookie", "shares": 20, "avgCost": 82.00 },
-      { "memberId": "tdking", "shares": 12, "avgCost": 85.00 }
+      { "memberId": "rookie", "shares": 20, "avgCost": 82.0 },
+      { "memberId": "tdking", "shares": 12, "avgCost": 85.0 }
     ],
     "williams-j": [
-      { "memberId": "stockjock", "shares": 25, "avgCost": 68.00 },
-      { "memberId": "chartchaser", "shares": 15, "avgCost": 72.00 }
+      { "memberId": "stockjock", "shares": 25, "avgCost": 68.0 },
+      { "memberId": "chartchaser", "shares": 15, "avgCost": 72.0 }
     ],
     "montgomery": [
-      { "memberId": "endzone", "shares": 8, "avgCost": 88.00 },
-      { "memberId": "bullmarket", "shares": 6, "avgCost": 86.50 }
+      { "memberId": "endzone", "shares": 8, "avgCost": 88.0 },
+      { "memberId": "bullmarket", "shares": 6, "avgCost": 86.5 }
     ],
     "rice": [
-      { "memberId": "gridiron", "shares": 12, "avgCost": 70.00 },
-      { "memberId": "fantasymvp", "shares": 8, "avgCost": 72.50 }
+      { "memberId": "gridiron", "shares": 12, "avgCost": 70.0 },
+      { "memberId": "fantasymvp", "shares": 8, "avgCost": 72.5 }
     ],
     "cook": [
-      { "memberId": "pigskin", "shares": 10, "avgCost": 92.00 },
-      { "memberId": "nflnerd", "shares": 6, "avgCost": 94.50 }
+      { "memberId": "pigskin", "shares": 10, "avgCost": 92.0 },
+      { "memberId": "nflnerd", "shares": 6, "avgCost": 94.5 }
     ],
     "pacheco": [
-      { "memberId": "tdking", "shares": 8, "avgCost": 85.00 },
-      { "memberId": "stockjock", "shares": 10, "avgCost": 87.00 }
+      { "memberId": "tdking", "shares": 8, "avgCost": 85.0 },
+      { "memberId": "stockjock", "shares": 10, "avgCost": 87.0 }
     ],
     "worthy": [
-      { "memberId": "rookie", "shares": 18, "avgCost": 55.00 },
-      { "memberId": "chartchaser", "shares": 12, "avgCost": 58.00 }
+      { "memberId": "rookie", "shares": 18, "avgCost": 55.0 },
+      { "memberId": "chartchaser", "shares": 12, "avgCost": 58.0 }
     ],
     "kincaid": [
-      { "memberId": "endzone", "shares": 10, "avgCost": 65.00 },
-      { "memberId": "bullmarket", "shares": 8, "avgCost": 67.50 }
+      { "memberId": "endzone", "shares": 10, "avgCost": 65.0 },
+      { "memberId": "bullmarket", "shares": 8, "avgCost": 67.5 }
     ],
     "diggs-s": [
-      { "memberId": "gridiron", "shares": 6, "avgCost": 90.00 },
-      { "memberId": "pigskin", "shares": 4, "avgCost": 88.00 }
+      { "memberId": "gridiron", "shares": 6, "avgCost": 90.0 },
+      { "memberId": "pigskin", "shares": 4, "avgCost": 88.0 }
     ],
     "shakir": [
-      { "memberId": "nflnerd", "shares": 15, "avgCost": 50.00 },
-      { "memberId": "rookie", "shares": 10, "avgCost": 52.00 }
+      { "memberId": "nflnerd", "shares": 15, "avgCost": 50.0 },
+      { "memberId": "rookie", "shares": 10, "avgCost": 52.0 }
     ],
     "purdy": [
-      { "memberId": "fantasymvp", "shares": 10, "avgCost": 138.00 },
-      { "memberId": "tdking", "shares": 8, "avgCost": 140.00 }
+      { "memberId": "fantasymvp", "shares": 10, "avgCost": 138.0 },
+      { "memberId": "tdking", "shares": 8, "avgCost": 140.0 }
     ],
     "goff": [
-      { "memberId": "stockjock", "shares": 12, "avgCost": 132.00 },
-      { "memberId": "endzone", "shares": 8, "avgCost": 135.00 }
+      { "memberId": "stockjock", "shares": 12, "avgCost": 132.0 },
+      { "memberId": "endzone", "shares": 8, "avgCost": 135.0 }
     ],
     "st-brown": [
-      { "memberId": "gridiron", "shares": 14, "avgCost": 138.00 },
-      { "memberId": "chartchaser", "shares": 10, "avgCost": 140.50 }
+      { "memberId": "gridiron", "shares": 14, "avgCost": 138.0 },
+      { "memberId": "chartchaser", "shares": 10, "avgCost": 140.5 }
     ],
     "samuel": [
-      { "memberId": "pigskin", "shares": 8, "avgCost": 100.00 },
-      { "memberId": "bullmarket", "shares": 6, "avgCost": 102.50 }
+      { "memberId": "pigskin", "shares": 8, "avgCost": 100.0 },
+      { "memberId": "bullmarket", "shares": 6, "avgCost": 102.5 }
     ],
     "aiyuk": [
-      { "memberId": "nflnerd", "shares": 10, "avgCost": 92.00 },
-      { "memberId": "rookie", "shares": 8, "avgCost": 95.00 }
+      { "memberId": "nflnerd", "shares": 10, "avgCost": 92.0 },
+      { "memberId": "rookie", "shares": 8, "avgCost": 95.0 }
     ],
     "kittle": [
-      { "memberId": "tdking", "shares": 10, "avgCost": 88.00 },
-      { "memberId": "fantasymvp", "shares": 6, "avgCost": 90.00 }
+      { "memberId": "tdking", "shares": 10, "avgCost": 88.0 },
+      { "memberId": "fantasymvp", "shares": 6, "avgCost": 90.0 }
     ]
   }
 }
-

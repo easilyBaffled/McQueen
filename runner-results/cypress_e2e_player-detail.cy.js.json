@@ -1,0 +1,10 @@
+{
+  "suites": 1,
+  "tests": 17,
+  "passes": 17,
+  "pending": 0,
+  "failures": 0,
+  "start": "2026-02-19T16:07:35.935Z",
+  "duration": 11509,
+  "file": "cypress/e2e/player-detail.cy.js"
+}

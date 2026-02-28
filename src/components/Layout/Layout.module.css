@@ -1,0 +1,267 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--color-bg-dark);
+}
+
+.skip-to-main {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 9999;
+  padding: 12px 24px;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+}
+
+.skip-to-main:focus {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  width: auto;
+  height: auto;
+  overflow: visible;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-height);
+  padding: 0 24px;
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  flex: 0 0 auto;
+}
+
+.header-right {
+  flex: 0 0 auto;
+  min-width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  white-space: nowrap;
+}
+
+/* Help Button */
+.help-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.help-button:hover {
+  background: var(--color-bg-card-hover);
+  border-color: var(--color-border-light);
+  color: var(--color-text-primary);
+}
+
+.help-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.help-text {
+  display: inline;
+}
+
+@media (max-width: 600px) {
+  .help-text {
+    display: none;
+  }
+}
+
+.header-center {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.logo-mcqueen {
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing: 2px;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.logo-tagline {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+/* User Balance */
+.user-balance {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.balance-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text-muted);
+}
+
+.balance-value {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.balance-value.up {
+  color: var(--color-up);
+}
+
+.balance-value.down {
+  color: var(--color-down);
+}
+
+/* Navigation */
+.nav {
+  display: flex;
+  gap: 4px;
+  padding: 6px 24px;
+  background: var(--color-bg-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.nav-link:hover {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}
+
+.nav-link.active {
+  background: var(--color-primary);
+  color: white;
+}
+
+.nav-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 16px 24px;
+  max-width: var(--max-content-width);
+  width: 100%;
+  margin: 0 auto;
+}
+
+.page-container {
+  width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .header-left {
+    flex: 0 0 auto;
+  }
+
+  .header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+
+  .header-right {
+    flex: 0 0 auto;
+    gap: 8px;
+  }
+
+  .logo-mcqueen {
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+
+  .logo-tagline {
+    display: none;
+  }
+
+  .balance-label {
+    display: none;
+  }
+
+  .balance-value {
+    font-size: 14px;
+  }
+
+  .nav {
+    padding: 4px 16px;
+    overflow-x: auto;
+  }
+
+  .nav-link {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .main-content {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 0 8px;
+  }
+
+  .logo-mcqueen {
+    font-size: 18px;
+  }
+}

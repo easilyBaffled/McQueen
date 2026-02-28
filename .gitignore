@@ -23,3 +23,15 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Cypress artifacts
+cypress/videos
+cypress/screenshots
+
+# Coverage reports
+coverage
+.nyc_output
+
+# Ralph agent runner (execution log is machine-local; *.log already covers it)
+# .ralph/ralph.log  -- excluded by *.log above
+# .ralph/PROMPT.md, AGENT.md, progress.txt -- tracked
