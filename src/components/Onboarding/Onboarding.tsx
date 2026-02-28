@@ -6,7 +6,7 @@ import styles from './Onboarding.module.css';
 export default function Onboarding() {
   const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState(0);
-  const [isReady, setIsReady] = useState(false);
+  const [, setIsReady] = useState(false);
 
   useEffect(() => {
     // Small delay to ensure app has fully loaded before showing onboarding

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import styles from './FirstTradeGuide.module.css';
 
 const FIRST_TRADE_KEY = 'mcqueen-first-trade-seen';
@@ -13,8 +12,6 @@ interface FirstTradeGuideProps {
 export default function FirstTradeGuide({ hasCompletedFirstTrade }: FirstTradeGuideProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState(0);
-  const navigate = useNavigate();
-
   useEffect(() => {
     // Only show if user just completed onboarding and hasn't made a trade
     const justCompleted =

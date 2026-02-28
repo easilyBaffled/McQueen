@@ -10,7 +10,6 @@ import {
   mockEnrichedPlayer,
   mockPortfolio,
   mockEmptyPortfolio,
-  mockLeaderboardRankings,
 } from '../mockData';
 import { useScenario } from '../../context/ScenarioContext';
 import { useTrading } from '../../context/TradingContext';

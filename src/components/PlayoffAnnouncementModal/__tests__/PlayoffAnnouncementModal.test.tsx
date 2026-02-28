@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import PlayoffAnnouncementModal from '../PlayoffAnnouncementModal';
 import { ScenarioContext } from '../../../context/ScenarioContext';
 import type { ScenarioContextValue } from '../../../types';
@@ -64,10 +64,11 @@ function renderModal(scenario = 'playoffs', dilutionApplied = false) {
     scenario,
     setScenario: vi.fn(),
     currentData: {
+      scenario,
       players: [
-        { id: 'mahomes', name: 'Mahomes', team: 'KC', position: 'QB', basePrice: 100, priceHistory: [{ price: 110, timestamp: '2024-01-01' }], totalSharesAvailable: 1000 },
-        { id: 'allen', name: 'Allen', team: 'BUF', position: 'QB', basePrice: 90, priceHistory: [{ price: 95, timestamp: '2024-01-01' }], totalSharesAvailable: 1000 },
-        { id: 'diggs-s', name: 'Diggs', team: 'HOU', position: 'WR', basePrice: 80, isBuyback: true, priceHistory: [{ price: 70, timestamp: '2024-01-01' }], totalSharesAvailable: 1000 },
+        { id: 'mahomes', name: 'Mahomes', team: 'KC', position: 'QB', basePrice: 100, priceHistory: [{ price: 110, timestamp: '2024-01-01', reason: { type: 'news', headline: 'baseline' } }], totalSharesAvailable: 1000 },
+        { id: 'allen', name: 'Allen', team: 'BUF', position: 'QB', basePrice: 90, priceHistory: [{ price: 95, timestamp: '2024-01-01', reason: { type: 'news', headline: 'baseline' } }], totalSharesAvailable: 1000 },
+        { id: 'diggs-s', name: 'Diggs', team: 'HOU', position: 'WR', basePrice: 80, isBuyback: true, priceHistory: [{ price: 70, timestamp: '2024-01-01', reason: { type: 'news', headline: 'baseline' } }], totalSharesAvailable: 1000 },
       ],
     },
     players: [],
@@ -130,9 +131,10 @@ describe('PlayoffAnnouncementModal', () => {
       scenario: 'playoffs',
       setScenario: vi.fn(),
       currentData: {
+        scenario: 'playoffs',
         players: [
-          { id: 'unknown-player', name: 'NoHoldings', team: 'NYG', position: 'WR', basePrice: 60, isBuyback: true, priceHistory: [{ price: 50, timestamp: '2024-01-01' }], totalSharesAvailable: 1000 },
-          { id: 'mahomes', name: 'Mahomes', team: 'KC', position: 'QB', basePrice: 100, priceHistory: [{ price: 110, timestamp: '2024-01-01' }], totalSharesAvailable: 1000 },
+          { id: 'unknown-player', name: 'NoHoldings', team: 'NYG', position: 'WR', basePrice: 60, isBuyback: true, priceHistory: [{ price: 50, timestamp: '2024-01-01', reason: { type: 'news', headline: 'baseline' } }], totalSharesAvailable: 1000 },
+          { id: 'mahomes', name: 'Mahomes', team: 'KC', position: 'QB', basePrice: 100, priceHistory: [{ price: 110, timestamp: '2024-01-01', reason: { type: 'news', headline: 'baseline' } }], totalSharesAvailable: 1000 },
         ],
       },
       players: [],
@@ -218,8 +220,9 @@ describe('PlayoffAnnouncementModal', () => {
       scenario: 'playoffs',
       setScenario: vi.fn(),
       currentData: {
+        scenario: 'playoffs',
         players: [
-          { id: 'mahomes', name: 'Mahomes', team: 'KC', position: 'QB', basePrice: 100, priceHistory: [{ price: 110, timestamp: '2024-01-01' }], totalSharesAvailable: 1000 },
+          { id: 'mahomes', name: 'Mahomes', team: 'KC', position: 'QB', basePrice: 100, priceHistory: [{ price: 110, timestamp: '2024-01-01', reason: { type: 'news', headline: 'baseline' } }], totalSharesAvailable: 1000 },
         ],
       },
       players: [],

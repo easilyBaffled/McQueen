@@ -1253,7 +1253,7 @@ interface TimelineViewProps {
 
 function TimelineView({
   timeline,
-  players,
+  players: _players,
   copyToClipboard,
   copiedId,
   scrollToPriceEntry,

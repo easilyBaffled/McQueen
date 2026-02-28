@@ -7,7 +7,6 @@ import {
 } from 'react';
 
 import {
-  INITIAL_CASH,
   AI_BASE_CASH,
   MISSION_PICKS_PER_CATEGORY,
   STORAGE_KEYS,

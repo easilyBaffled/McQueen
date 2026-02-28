@@ -5,7 +5,6 @@ import userEvent from '@testing-library/user-event';
 import PlayerCard from '../PlayerCard/PlayerCard';
 import { ToastProvider, useToast } from '../Toast/ToastProvider';
 import Layout from '../Layout/Layout';
-import Onboarding from '../Onboarding/Onboarding';
 import AddEventModal from '../AddEventModal/AddEventModal';
 import { Glossary, EventMarkerPopup, FirstTradeGuide } from '../../shared';
 import Portfolio from '../../pages/Portfolio/Portfolio';

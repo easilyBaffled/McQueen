@@ -8,8 +8,6 @@ export default function LiveTicker() {
   const { scenario } = useScenario();
   const { history, tick, unifiedTimeline } = useSimulation();
 
-  if (scenario !== 'live') return null;
-
   // Get recent events from the unified timeline (up to current tick)
   const recentEvents = useMemo(() => {
     if (!unifiedTimeline || unifiedTimeline.length === 0) return [];
@@ -33,6 +31,8 @@ export default function LiveTicker() {
       .slice(-3)
       .reverse();
   }, [history]);
+
+  if (scenario !== 'live') return null;
 
   const displayEvent =
     currentEvent ||

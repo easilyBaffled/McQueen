@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTrading } from '../../context/TradingContext';
 import { useToast } from '../../components/Toast/ToastProvider';
-import type { PriceReason, PriceHistoryEntry, ContentItem, Player } from '../../types';
+import type { PriceReason, PriceHistoryEntry, ContentItem } from '../../types';
 import styles from './Timeline.module.css';
 
 interface TimelineEvent {

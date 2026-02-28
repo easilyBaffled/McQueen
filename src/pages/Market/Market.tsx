@@ -51,7 +51,7 @@ export default function Market() {
   }, [scenario]);
 
   const sortedPlayers = useMemo(() => {
-    let filtered = players.filter(
+    const filtered = players.filter(
       (p) =>
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.team.toLowerCase().includes(searchQuery.toLowerCase()),

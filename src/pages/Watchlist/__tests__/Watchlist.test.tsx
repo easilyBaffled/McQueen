@@ -206,7 +206,7 @@ describe('Watchlist page', () => {
     expect(screen.getByText('📊 Popular Players')).toBeInTheDocument();
 
     const buttons = screen.getAllByRole('button');
-    const quickAddButtons = buttons.filter((btn) =>
+    const _quickAddButtons = buttons.filter((btn) =>
       btn.className.includes('quick-add-player') || btn.querySelector('[class*="quick-add-name"]'),
     );
 
@@ -274,7 +274,6 @@ describe('Watchlist page', () => {
   // TC-008: Clicking quick-add calls addToWatchlist and shows success toast
   it('calls addToWatchlist and shows success toast on quick-add click', async () => {
     const addToWatchlist = vi.fn();
-    const addToast = vi.fn();
 
     renderWatchlist({
       players: [mahomes],

@@ -150,7 +150,7 @@ describe('LiveTicker', () => {
       history: [],
       tick: 0,
       unifiedTimeline: [],
-    } as ReturnType<typeof useSimulation>);
+    } as unknown as ReturnType<typeof useSimulation>);
     renderWithProviders(<LiveTicker />, {
       scenarioOverrides: { scenario: 'live' },
     });

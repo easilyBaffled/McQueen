@@ -27,7 +27,7 @@ import { getCurrentPriceFromHistory } from '../services/priceResolver';
 import { buildUnifiedTimeline } from '../services/simulationEngine';
 
 import { useScenario } from './ScenarioContext';
-import type { ChildrenProps, HistoryEntry, PriceHistoryEntry, SimulationContextValue, EspnArticle, Player, TimelineEntry } from '../types';
+import type { ChildrenProps, HistoryEntry, PriceHistoryEntry, SimulationContextValue, EspnArticle } from '../types';
 
 const SimulationContext = createContext<SimulationContextValue | null>(null);
 

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { read, write, remove, CURRENT_VERSION } from '../storageService';
-import { STORAGE_VERSION, STORAGE_KEYS } from '../../constants';
+import { STORAGE_VERSION } from '../../constants';
 
 // TC-001: storageService module exists with typed read/write/remove exports
 describe('TC-001: module exports', () => {

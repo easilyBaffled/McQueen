@@ -367,12 +367,15 @@ export default function PlayerDetail() {
                       borderRadius: '8px',
                     }}
                     labelStyle={{ display: 'none' }}
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    formatter={(value: any, _name: any, props: any) => {
+                    formatter={(
+                      value: number,
+                      _name: string,
+                      props: { payload?: ChartEntry },
+                    ) => {
                       const entry = props.payload;
                       return [
                         `$${Number(value).toFixed(2)}`,
-                        entry.reason?.headline
+                        entry?.reason?.headline
                           ? entry.reason.headline.substring(0, 40) + '...'
                           : 'Price',
                       ];
@@ -393,11 +396,26 @@ export default function PlayerDetail() {
                   />
                   {/* Event markers for significant price changes */}
                   <Customized
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    component={(({ xAxisMap, yAxisMap }: any) => {
-                      const xAxis = xAxisMap && Object.values(xAxisMap)[0];
-                      const yAxis = yAxisMap && Object.values(yAxisMap)[0];
-                      if (!xAxis?.scale || !yAxis?.scale) return null;
+                    component={({
+                      xAxisMap,
+                      yAxisMap,
+                    }: {
+                      xAxisMap?: Record<
+                        string,
+                        { scale?: (v: number) => number }
+                      >;
+                      yAxisMap?: Record<
+                        string,
+                        { scale?: (v: number) => number }
+                      >;
+                    }) => {
+                      const xAxis =
+                        xAxisMap && Object.values(xAxisMap)[0];
+                      const yAxis =
+                        yAxisMap && Object.values(yAxisMap)[0];
+                      const xScale = xAxis?.scale;
+                      const yScale = yAxis?.scale;
+                      if (!xScale || !yScale) return null;
 
                       return (
                         <g className={styles['event-markers']}>
@@ -420,8 +438,8 @@ export default function PlayerDetail() {
 
                             if (!showMarker) return null;
 
-                            const cx = xAxis.scale(entry.time);
-                            const cy = yAxis.scale(entry.price);
+                            const cx = xScale(entry.time);
+                            const cy = yScale(entry.price);
 
                             if (isNaN(cx) || isNaN(cy)) return null;
 
@@ -436,8 +454,7 @@ export default function PlayerDetail() {
                           })}
                         </g>
                       );
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    }) as any}
+                    }}
                   />
                 </LineChart>
               </ResponsiveContainer>

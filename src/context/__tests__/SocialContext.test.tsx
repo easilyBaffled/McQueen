@@ -1,11 +1,11 @@
 import React from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { renderHook, act, waitFor, render, screen } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { ScenarioProvider, useScenario } from '../ScenarioContext';
 import { SimulationProvider } from '../SimulationContext';
 import { TradingProvider, useTrading } from '../TradingContext';
 import { SocialProvider, useSocial } from '../SocialContext';
-import { INITIAL_CASH, AI_BASE_CASH, MISSION_PICKS_PER_CATEGORY, STORAGE_KEYS } from '../../constants';
+import { AI_BASE_CASH, MISSION_PICKS_PER_CATEGORY, STORAGE_KEYS } from '../../constants';
 import { read, write } from '../../services/storageService';
 
 vi.mock('../../services/espnService', async (importOriginal) => {
