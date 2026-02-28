@@ -41,6 +41,7 @@ export function TradingProvider({ children }: ChildrenProps) {
   );
   const [userImpact, setUserImpact] = useState<Record<string, number>>({});
   const didApplyStarting = useRef(false);
+  const lastResetVersionRef = useRef(0);
 
   useEffect(() => {
     write(STORAGE_KEYS.portfolio, portfolio);
@@ -64,12 +65,14 @@ export function TradingProvider({ children }: ChildrenProps) {
   // Reset on scenario change
   useEffect(() => {
     if (scenarioVersion === 0) return;
+    if (scenarioVersion === lastResetVersionRef.current) return;
+    lastResetVersionRef.current = scenarioVersion;
 
     const startingPortfolio = currentData?.startingPortfolio || {};
     setPortfolio(startingPortfolio);
     setCash(INITIAL_CASH);
     setUserImpact({});
-  }, [scenarioVersion]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [scenarioVersion, currentData]);
 
   const getEffectivePrice = useCallback(
     (playerId: string) =>

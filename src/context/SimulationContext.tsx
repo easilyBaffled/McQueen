@@ -47,6 +47,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
   const [espnPriceHistory, setEspnPriceHistory] = useState<Record<string, PriceHistoryEntry[]>>({});
   const [processedArticleIds, setProcessedArticleIds] = useState<Set<string>>(new Set());
   const espnRefreshRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lastResetVersionRef = useRef(0);
 
   const isEspnLiveMode = scenario === 'espn-live';
 
@@ -60,6 +61,8 @@ export function SimulationProvider({ children }: ChildrenProps) {
   // Reset state on scenario change
   useEffect(() => {
     if (scenarioVersion === 0) return;
+    if (scenarioVersion === lastResetVersionRef.current) return;
+    lastResetVersionRef.current = scenarioVersion;
 
     setPriceOverrides({});
     setTick(0);
@@ -86,7 +89,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
         : 'Scenario loaded';
 
     setHistory([{ tick: 0, prices: initialPrices, action: actionMessage }]);
-  }, [scenarioVersion]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [scenarioVersion, players, scenario]);
 
   // Initial history on first mount (when scenarioVersion === 0)
   useEffect(() => {
@@ -110,6 +113,13 @@ export function SimulationProvider({ children }: ChildrenProps) {
     setHistory([{ tick: 0, prices: initialPrices, action: actionMessage }]);
   }, [players, scenario, history.length]);
 
+  const espnPriceHistoryRef = useRef(espnPriceHistory);
+  espnPriceHistoryRef.current = espnPriceHistory;
+  const processedArticleIdsRef = useRef(processedArticleIds);
+  processedArticleIdsRef.current = processedArticleIds;
+  const priceOverridesRef = useRef(priceOverrides);
+  priceOverridesRef.current = priceOverrides;
+
   // ESPN Live: Fetch and process news
   const fetchAndProcessEspnNews = useCallback(async () => {
     if (!isEspnLiveMode) return;
@@ -121,8 +131,8 @@ export function SimulationProvider({ children }: ChildrenProps) {
       const news = await fetchNFLNews(ESPN_NEWS_LIMIT);
       setEspnNews(news);
 
-      const newPriceHistory = { ...espnPriceHistory };
-      const newProcessedIds = new Set(processedArticleIds);
+      const newPriceHistory = { ...espnPriceHistoryRef.current };
+      const newProcessedIds = new Set(processedArticleIdsRef.current);
 
       for (const article of news) {
         if (newProcessedIds.has(article.id)) continue;
@@ -144,7 +154,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
             );
 
             const currentPrice =
-              priceOverrides[player.id] ?? player.basePrice;
+              priceOverridesRef.current[player.id] ?? player.basePrice;
 
             const { newPrice, changePercent } = calculateNewPrice(
               currentPrice,
@@ -195,13 +205,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
     } finally {
       setEspnLoading(false);
     }
-  }, [
-    isEspnLiveMode,
-    players,
-    espnPriceHistory,
-    processedArticleIds,
-    priceOverrides,
-  ]);
+  }, [isEspnLiveMode, players]);
 
   // ESPN Live: Auto-refresh effect
   useEffect(() => {
@@ -219,7 +223,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
         }
       };
     }
-  }, [isEspnLiveMode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isEspnLiveMode, fetchAndProcessEspnNews]);
 
   const refreshEspnNews = useCallback(() => {
     if (isEspnLiveMode) {
