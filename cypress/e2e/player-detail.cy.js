@@ -42,7 +42,7 @@ describe('Player Detail Page', () => {
   // TC-PD-005
   it('buys shares', () => {
     visitFirstPlayer();
-    cy.get('[data-testid="trading-tab"]').contains('Buy').should('have.class', 'active');
+    cy.get('[data-testid="trading-tab"]').contains('Buy').should('have.attr', 'data-active', 'true');
     cy.get('[data-testid="order-total"]').should('contain.text', '$');
     cy.get('[data-testid="trade-button"][data-variant="buy"]').click();
     cy.get('[data-testid="toast"]').should('be.visible');
@@ -66,7 +66,7 @@ describe('Player Detail Page', () => {
     cy.get('[data-testid="toast"]').should('not.exist');
 
     cy.get('[data-testid="trading-tab"]').contains('Sell').should('not.be.disabled').click();
-    cy.get('[data-testid="trading-tab"]').contains('Sell').should('have.class', 'active');
+    cy.get('[data-testid="trading-tab"]').contains('Sell').should('have.attr', 'data-active', 'true');
     cy.get('[data-testid="trade-button"][data-variant="sell"]').should('exist').click();
     cy.get('[data-testid="toast"]').should('be.visible');
   });
@@ -79,7 +79,7 @@ describe('Player Detail Page', () => {
     cy.get('[data-testid="toast"]').should('not.exist');
 
     cy.get('[data-testid="trading-tab"]').contains('Sell').should('not.be.disabled').click();
-    cy.get('[data-testid="trading-tab"]').contains('Sell').should('have.class', 'active');
+    cy.get('[data-testid="trading-tab"]').contains('Sell').should('have.attr', 'data-active', 'true');
     cy.get('[data-testid="form-input"]').clear().type('999');
     cy.get('[data-testid="trade-button"][data-variant="sell"]').should('exist');
   });

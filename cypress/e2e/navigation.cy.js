@@ -19,12 +19,12 @@ describe('Layout and Navigation', () => {
   // TC-NAV-002
   it('highlights the active route', () => {
     cy.visit('/market');
-    cy.get('nav a[href="/market"]').should('have.class', 'active');
-    cy.get('nav a[href="/portfolio"]').should('not.have.class', 'active');
+    cy.get('nav a[href="/market"]').should('have.attr', 'aria-current', 'page');
+    cy.get('nav a[href="/portfolio"]').should('not.have.attr', 'aria-current');
 
     cy.get('nav a[href="/portfolio"]').click();
-    cy.get('nav a[href="/portfolio"]').should('have.class', 'active');
-    cy.get('nav a[href="/market"]').should('not.have.class', 'active');
+    cy.get('nav a[href="/portfolio"]').should('have.attr', 'aria-current', 'page');
+    cy.get('nav a[href="/market"]').should('not.have.attr', 'aria-current');
   });
 
   // TC-NAV-003

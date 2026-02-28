@@ -142,8 +142,9 @@ export default function Market() {
           {sortOptions.map((option) => (
             <button
               key={option.id}
-              className={`${styles['sort-tab']} ${sortBy === option.id ? styles['active'] + ' active' : ''}`}
+              className={`${styles['sort-tab']} ${sortBy === option.id ? styles['active'] : ''}`}
               data-testid="sort-tab"
+              data-active={sortBy === option.id ? 'true' : undefined}
               onClick={() => setSortBy(option.id)}
             >
               {option.label}

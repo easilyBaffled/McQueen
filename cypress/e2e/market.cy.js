@@ -15,20 +15,20 @@ describe('Market Page', () => {
   it('sorts players with tabs', () => {
     cy.get('[data-testid="sort-tab"]')
       .contains('Biggest Risers')
-      .should('have.class', 'active');
+      .should('have.attr', 'data-active', 'true');
 
     cy.get('[data-testid="sort-tab"]').contains('Biggest Fallers').click();
     cy.get('[data-testid="sort-tab"]')
       .contains('Biggest Fallers')
-      .should('have.class', 'active');
+      .should('have.attr', 'data-active', 'true');
 
     cy.get('[data-testid="sort-tab"]').contains('Most Active').click();
-    cy.get('[data-testid="sort-tab"]').contains('Most Active').should('have.class', 'active');
+    cy.get('[data-testid="sort-tab"]').contains('Most Active').should('have.attr', 'data-active', 'true');
 
     cy.get('[data-testid="sort-tab"]').contains('Highest Price').click();
     cy.get('[data-testid="sort-tab"]')
       .contains('Highest Price')
-      .should('have.class', 'active');
+      .should('have.attr', 'data-active', 'true');
   });
 
   // TC-MKT-003

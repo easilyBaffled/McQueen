@@ -686,8 +686,9 @@ export default function PlayerDetail() {
               onKeyDown={handleTradeTabKeyDown}
             >
               <button
-                className={`${styles['trading-tab']} ${activeTab === 'buy' ? styles['active'] + ' active' : ''}`}
+                className={`${styles['trading-tab']} ${activeTab === 'buy' ? styles['active'] : ''}`}
                 data-testid="trading-tab"
+                data-active={activeTab === 'buy' ? 'true' : undefined}
                 role="tab"
                 aria-selected={activeTab === 'buy'}
                 tabIndex={activeTab === 'buy' ? 0 : -1}
@@ -696,8 +697,9 @@ export default function PlayerDetail() {
                 Buy
               </button>
               <button
-                className={`${styles['trading-tab']} ${activeTab === 'sell' ? styles['active'] + ' active' : ''}`}
+                className={`${styles['trading-tab']} ${activeTab === 'sell' ? styles['active'] : ''}`}
                 data-testid="trading-tab"
+                data-active={activeTab === 'sell' ? 'true' : undefined}
                 role="tab"
                 aria-selected={activeTab === 'sell'}
                 tabIndex={activeTab === 'sell' ? 0 : -1}

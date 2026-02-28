@@ -491,19 +491,19 @@ export default function ScenarioInspector() {
               aria-labelledby="inspector-view-label"
             >
               <button
-                className={viewMode === 'full' ? 'active' : ''}
+                className={viewMode === 'full' ? styles['active'] : ''}
                 onClick={() => setViewMode('full')}
               >
                 Full Scenario
               </button>
               <button
-                className={viewMode === 'player' ? 'active' : ''}
+                className={viewMode === 'player' ? styles['active'] : ''}
                 onClick={() => setViewMode('player')}
               >
                 Single Player
               </button>
               <button
-                className={viewMode === 'timeline' ? 'active' : ''}
+                className={viewMode === 'timeline' ? styles['active'] : ''}
                 onClick={() => setViewMode('timeline')}
               >
                 Timeline
