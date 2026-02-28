@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useRef,
+  useMemo,
 } from 'react';
 
 import {
@@ -235,7 +236,7 @@ export function TradingProvider({ children }: ChildrenProps) {
     };
   }, [portfolio, getEffectivePrice]);
 
-  const value: TradingContextValue = {
+  const value = useMemo<TradingContextValue>(() => ({
     portfolio,
     cash,
     buyShares,
@@ -244,7 +245,7 @@ export function TradingProvider({ children }: ChildrenProps) {
     getPlayer,
     getPlayers,
     getPortfolioValue,
-  };
+  }), [portfolio, cash, buyShares, sellShares, getEffectivePrice, getPlayer, getPlayers, getPortfolioValue]);
 
   return (
     <TradingContext.Provider value={value}>{children}</TradingContext.Provider>

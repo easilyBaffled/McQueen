@@ -4,6 +4,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useMemo,
 } from 'react';
 
 import {
@@ -249,7 +250,7 @@ export function SocialProvider({ children }: ChildrenProps) {
     leagueHoldings,
   ]);
 
-  const value: SocialContextValue = {
+  const value = useMemo<SocialContextValue>(() => ({
     watchlist,
     missionPicks,
     missionRevealed,
@@ -264,7 +265,7 @@ export function SocialProvider({ children }: ChildrenProps) {
     getLeaderboardRankings,
     getLeagueHoldings: getLeagueHoldingsFn,
     getLeagueMembers,
-  };
+  }), [watchlist, missionPicks, missionRevealed, addToWatchlist, removeFromWatchlist, isWatching, setMissionPick, clearMissionPick, revealMission, resetMission, getMissionScore, getLeaderboardRankings, getLeagueHoldingsFn, getLeagueMembers]);
 
   return (
     <SocialContext.Provider value={value}>{children}</SocialContext.Provider>

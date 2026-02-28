@@ -327,7 +327,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
     return unifiedTimeline;
   }, [unifiedTimeline]);
 
-  const value: SimulationContextValue = {
+  const value = useMemo<SimulationContextValue>(() => ({
     tick,
     isPlaying,
     setIsPlaying,
@@ -344,7 +344,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
     applyPlayoffDilution,
     refreshEspnNews,
     getUnifiedTimeline,
-  };
+  }), [tick, isPlaying, setIsPlaying, priceOverrides, history, unifiedTimeline, playoffDilutionApplied, isEspnLiveMode, espnNews, espnLoading, espnError, espnPriceHistory, goToHistoryPoint, applyPlayoffDilution, refreshEspnNews, getUnifiedTimeline]);
 
   return (
     <SimulationContext.Provider value={value}>

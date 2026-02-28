@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useRef,
+  useMemo,
 } from 'react';
 
 import { STORAGE_KEYS } from '../constants';
@@ -65,7 +66,7 @@ export function ScenarioProvider({ children }: ChildrenProps) {
     };
   }, [scenario]);
 
-  const players = currentData?.players || [];
+  const players = useMemo(() => currentData?.players || [], [currentData]);
 
   const setScenario = useCallback((newScenario: string) => {
     scenarioVersionRef.current += 1;
@@ -73,14 +74,14 @@ export function ScenarioProvider({ children }: ChildrenProps) {
     setScenarioState(newScenario);
   }, []);
 
-  const value: ScenarioContextValue = {
+  const value = useMemo<ScenarioContextValue>(() => ({
     scenario,
     setScenario,
     currentData,
     players,
     scenarioLoading,
     scenarioVersion,
-  };
+  }), [scenario, setScenario, currentData, players, scenarioLoading, scenarioVersion]);
 
   return (
     <ScenarioContext.Provider value={value}>

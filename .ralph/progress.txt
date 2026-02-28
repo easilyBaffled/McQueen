@@ -53,3 +53,4 @@
 2026-02-23 19:48:34 | mcq-vlu.4 | DONE | Create SocialContext
 2026-02-23 20:03:46 | mcq-vlu.5 | DONE | Wire provider composition and remove GameContext
 2026-02-24 01:31:47 | mcq-qbm.3 | DONE | Add unit tests for context providers
+2026-02-28 16:05:36 | mcq-1zw.1 | DONE | Set up TypeScript ESLint linting
