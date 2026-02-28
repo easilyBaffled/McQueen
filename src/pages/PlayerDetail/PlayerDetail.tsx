@@ -1,73 +1,17 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  ReferenceLine,
-  Customized,
-} from 'recharts';
 import { useTrading } from '../../context/TradingContext';
 import { useSocial } from '../../context/SocialContext';
-import { EventMarkerPopup, getEventConfig } from '../../shared';
 import { useToast } from '../../components';
-import { getPlayerNewsUrls } from '../../utils/espnUrls';
-import { getPlayerHeadshotUrl } from '../../utils/playerImages';
-import type { PriceReason, EventData } from '../../types';
+import {
+  PlayerHeader,
+  PriceChart,
+  TradeForm,
+  HoldingsCard,
+  PriceTimeline,
+  LeagueOwners,
+} from './components';
 import styles from './PlayerDetail.module.css';
-
-// Event type colors (matching ScenarioInspector)
-const EVENT_TYPE_COLORS: Record<string, string> = {
-  TD: '#00C853',
-  INT: '#FF1744',
-  stats: '#00BCD4',
-  news: '#2196F3',
-  trade: '#9C27B0',
-  league_trade: '#9C27B0',
-  injury: '#FF9800',
-  default: '#666666',
-};
-
-const REASON_TYPE_COLORS: Record<string, string> = {
-  game_event: '#00BCD4',
-  news: '#2196F3',
-  league_trade: '#9C27B0',
-  unknown: '#666666',
-};
-
-// Map reason types to event config types
-function getReasonEventType(reason: PriceReason | null | undefined): string {
-  if (!reason) return 'default';
-
-  if (reason.type === 'game_event') {
-    return reason.eventType || 'stats';
-  } else if (reason.type === 'news') {
-    return 'news';
-  } else if (reason.type === 'league_trade') {
-    return 'trade';
-  }
-
-  return 'default';
-}
-
-// Get display label for event type
-function getEventTypeLabel(reason: PriceReason | null | undefined): string {
-  if (!reason) return 'Event';
-
-  if (reason.type === 'game_event') {
-    return reason.eventType || 'STATS';
-  } else if (reason.type === 'news') {
-    return 'NEWS';
-  } else if (reason.type === 'league_trade') {
-    return 'TRADE';
-  }
-
-  return 'EVENT';
-}
 
 export default function PlayerDetail() {
   const { playerId } = useParams();
@@ -77,42 +21,11 @@ export default function PlayerDetail() {
     useSocial();
   const { addToast } = useToast();
 
-  const [buyAmount, setBuyAmount] = useState(1);
-  const [sellAmount, setSellAmount] = useState(1);
-  const [activeTab, setActiveTab] = useState('buy');
-  const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
-  const [imageError, setImageError] = useState(false);
-  const [playerNewsUrls, setPlayerNewsUrls] = useState<Record<string, string>>({});
-  const chartContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    getPlayerNewsUrls().then(setPlayerNewsUrls);
-  }, []);
-
   const id = playerId ?? '';
   const player = getPlayer(id);
   const holding = portfolio[id];
   const watching = isWatching(id);
   const leagueHoldings = getLeagueHoldings(id);
-
-  const handleTradeTabKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-    const tabs = Array.from(
-      e.currentTarget.querySelectorAll<HTMLElement>('[role="tab"]:not([disabled])'),
-    );
-    const currentIndex = tabs.indexOf(document.activeElement as HTMLElement);
-    if (currentIndex === -1) return;
-
-    e.preventDefault();
-    let nextIndex: number;
-    if (e.key === 'ArrowRight') {
-      nextIndex = (currentIndex + 1) % tabs.length;
-    } else {
-      nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-    }
-    tabs[nextIndex].focus();
-  }, []);
 
   if (!player) {
     return (
@@ -128,130 +41,7 @@ export default function PlayerDetail() {
     );
   }
 
-  // Generate chart data from new priceHistory format
-  const chartData =
-    player.priceHistory?.map((entry, i) => ({
-      time: i,
-      price: entry.price,
-      timestamp: entry.timestamp,
-      reason: entry.reason,
-      content: entry.content,
-    })) || [];
-
-  // Format date for x-axis labels (e.g., "Nov 5")
-  const formatDateLabel = (index: number) => {
-    const entry = chartData[index];
-    if (!entry?.timestamp) return '';
-    const date = new Date(entry.timestamp);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
-
-  // Calculate tick interval to show ~5 labels
-  const xAxisInterval = Math.max(0, Math.floor((chartData.length - 1) / 4));
-
-  // Handle event marker click - now using PriceChange format
-  interface ChartEntry {
-    time: number;
-    price: number;
-    timestamp: string;
-    reason: PriceReason;
-    content?: import('../../types').ContentItem[];
-  }
-
-  const handleEventClick = (priceEntry: ChartEntry, cx: number, cy: number) => {
-    setPopupPosition({ x: cx, y: cy + 20 });
-    const eventForPopup: EventData = {
-      type: getReasonEventType(priceEntry.reason),
-      headline: priceEntry.reason?.headline || '',
-      source: priceEntry.reason?.source || '',
-      url: priceEntry.reason?.url || '',
-      price: priceEntry.price,
-      timestamp: priceEntry.timestamp,
-      memberId: priceEntry.reason?.memberId,
-      action: priceEntry.reason?.action,
-      shares: priceEntry.reason?.shares,
-    };
-    setSelectedEvent(eventForPopup);
-  };
-
-  const closeEventPopup = () => {
-    setSelectedEvent(null);
-  };
-
-  // SVG paths for chart markers (scaled for 10px radius marker)
-  const markerPaths: Record<string, string> = {
-    TD: 'M0 -5L1.5 -1.5L5.5 -0.8L2.5 2L3.1 6L0 4.2L-3.1 6L-2.5 2L-5.5 -0.8L-1.5 -1.5Z', // star
-    INT: 'M-4 -4L4 4M4 -4L-4 4', // X
-    injury: 'M-1.5 -5V5M-5 -1.5H5', // plus
-    trade: 'M-4 1L0 -3L4 1M-4 -1L0 3L4 -1', // arrows
-    league_trade: 'M-4 3L0 -3L4 3', // up arrow
-    news: 'M-4 -4H4V4H-4ZM-2 -1H2M-2 1H2', // document
-    earnings: 'M0 -5V5M-3 -3H2M-2 0H3M-3 3H2', // $
-    stats: 'M-4 5V0M0 5V-3M4 5V-5', // bar chart
-    game_event: 'M0 -4A6 4 0 0 1 0 4A6 4 0 0 1 0 -4', // football
-    default: '', // just circle
-  };
-
-  // Custom event marker shape component
-  const EventMarker = ({ cx, cy, priceEntry }: { cx: number; cy: number; priceEntry: ChartEntry }) => {
-    const eventType = getReasonEventType(priceEntry.reason);
-    const config = getEventConfig(eventType);
-    const path = markerPaths[eventType] || markerPaths.default;
-    const isStroke = ['INT', 'injury', 'news', 'stats'].includes(eventType);
-
-    return (
-      <g
-        style={{ cursor: 'pointer' }}
-        onClick={() => handleEventClick(priceEntry, cx, cy)}
-        transform={`translate(${cx}, ${cy})`}
-      >
-        <circle
-          cx={0}
-          cy={0}
-          r={10}
-          fill={config.color}
-          stroke="#1A1A1A"
-          strokeWidth={2}
-        />
-        {path && (
-          <path
-            d={path}
-            fill={isStroke ? 'none' : '#fff'}
-            stroke={isStroke ? '#fff' : 'none'}
-            strokeWidth={isStroke ? 1.5 : 0}
-            strokeLinecap="round"
-            style={{ pointerEvents: 'none' }}
-          />
-        )}
-      </g>
-    );
-  };
-
-  const handleBuy = () => {
-    const cost = player.currentPrice * buyAmount;
-    if (buyShares(id, buyAmount)) {
-      addToast(
-        `Purchased ${buyAmount} share${buyAmount > 1 ? 's' : ''} of ${player.name} for $${cost.toFixed(2)}`,
-        'success',
-      );
-      setBuyAmount(1);
-    } else {
-      addToast('Insufficient funds for this purchase', 'error');
-    }
-  };
-
-  const handleSell = () => {
-    const proceeds = player.currentPrice * sellAmount;
-    if (sellShares(id, sellAmount)) {
-      addToast(
-        `Sold ${sellAmount} share${sellAmount > 1 ? 's' : ''} of ${player.name} for $${proceeds.toFixed(2)}`,
-        'success',
-      );
-      setSellAmount(1);
-    } else {
-      addToast('Unable to complete sale', 'error');
-    }
-  };
+  const isUp = player.changePercent >= 0;
 
   const handleWatchlistToggle = () => {
     if (watching) {
@@ -263,20 +53,6 @@ export default function PlayerDetail() {
     }
   };
 
-  const isUp = player.changePercent >= 0;
-
-  // Format timestamp for display
-  const formatTimestamp = (timestamp: string) => {
-    if (!timestamp) return '';
-    const date = new Date(timestamp);
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-    });
-  };
-
   return (
     <div className={styles['player-detail-page']} data-testid="player-detail-page">
       <button onClick={() => navigate(-1)} className={styles['back-link']} data-testid="back-link">
@@ -286,189 +62,16 @@ export default function PlayerDetail() {
         Back
       </button>
 
-      <div className={styles['player-header']} data-testid="player-header">
-        <div className={styles['player-header-left']}>
-          <div className={styles['player-avatar']}>
-            {getPlayerHeadshotUrl(id, 'large') && !imageError ? (
-              <img
-                src={getPlayerHeadshotUrl(id, 'large') ?? undefined}
-                alt={player.name}
-                onError={() => setImageError(true)}
-              />
-            ) : (
-              <div className={styles['avatar-placeholder']}>
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                </svg>
-              </div>
-            )}
-          </div>
-          <div className={styles['player-info']}>
-            <div className={styles['player-meta']}>
-              <span className={styles['player-team-badge']}>{player.team}</span>
-              <span className={styles['player-position']}>{player.position}</span>
-            </div>
-            <h1 className={styles['player-name']} data-testid="player-name">{player.name}</h1>
-          </div>
-        </div>
-
-        <div className={styles['player-price-section']}>
-          <div className={`${styles['player-price']} ${isUp ? styles['up'] : styles['down']}`} data-testid="player-price">
-            <span className={styles['price-value']}>
-              ${player.currentPrice.toFixed(2)}
-            </span>
-            <span
-              className={`${styles['price-change']} ${isUp ? 'text-up' : 'text-down'}`}
-              data-testid="price-change"
-              aria-label={`${isUp ? 'Up' : 'Down'} ${Math.abs(player.changePercent).toFixed(2)} percent`}
-            >
-              {isUp ? '▲' : '▼'} {Math.abs(player.changePercent).toFixed(2)}%
-            </span>
-          </div>
-        </div>
-      </div>
+      <PlayerHeader player={player} playerId={id} />
 
       <div className={styles['player-content']}>
         <div className={styles['main-column']}>
-          {/* Price Chart */}
-          <motion.div
-            className={styles['chart-card']}
-            data-testid="chart-card"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <h3>Price History</h3>
-            <div className={styles['chart-container']} data-testid="chart-container" ref={chartContainerRef}>
-              <ResponsiveContainer width="100%" height={250}>
-                <LineChart
-                  data={chartData}
-                  margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
-                >
-                  <XAxis
-                    dataKey="time"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#666', fontSize: 11 }}
-                    tickFormatter={formatDateLabel}
-                    interval={xAxisInterval}
-                  />
-                  <YAxis
-                    domain={['dataMin - 5', 'dataMax + 5']}
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#666', fontSize: 12 }}
-                    width={50}
-                    tickFormatter={(v) => `$${v}`}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      background: '#1A1A1A',
-                      border: '1px solid #333',
-                      borderRadius: '8px',
-                    }}
-                    labelStyle={{ display: 'none' }}
-                    formatter={(
-                      value: number,
-                      _name: string,
-                      props: { payload?: ChartEntry },
-                    ) => {
-                      const entry = props.payload;
-                      return [
-                        `$${Number(value).toFixed(2)}`,
-                        entry?.reason?.headline
-                          ? entry.reason.headline.substring(0, 40) + '...'
-                          : 'Price',
-                      ];
-                    }}
-                  />
-                  <ReferenceLine
-                    y={player.basePrice}
-                    stroke="#666"
-                    strokeDasharray="3 3"
-                  />
-                  <Line
-                    type="linear"
-                    dataKey="price"
-                    stroke={isUp ? '#00C853' : '#FF1744'}
-                    strokeWidth={3}
-                    dot={false}
-                    activeDot={{ r: 6, fill: isUp ? '#00C853' : '#FF1744' }}
-                  />
-                  {/* Event markers for significant price changes */}
-                  <Customized
-                    component={({
-                      xAxisMap,
-                      yAxisMap,
-                    }: {
-                      xAxisMap?: Record<
-                        string,
-                        { scale?: (v: number) => number }
-                      >;
-                      yAxisMap?: Record<
-                        string,
-                        { scale?: (v: number) => number }
-                      >;
-                    }) => {
-                      const xAxis =
-                        xAxisMap && Object.values(xAxisMap)[0];
-                      const yAxis =
-                        yAxisMap && Object.values(yAxisMap)[0];
-                      const xScale = xAxis?.scale;
-                      const yScale = yAxis?.scale;
-                      if (!xScale || !yScale) return null;
+          <PriceChart
+            priceHistory={player.priceHistory || []}
+            basePrice={player.basePrice}
+            isUp={isUp}
+          />
 
-                      return (
-                        <g className={styles['event-markers']}>
-                          {chartData.map((entry, idx) => {
-                            // Only show markers for significant events (not baseline entries)
-                            const reason = entry.reason;
-                            if (
-                              !reason ||
-                              (reason.type === 'news' &&
-                                reason.headline?.includes('baseline'))
-                            ) {
-                              return null;
-                            }
-
-                            // Show markers for game events or significant news
-                            const showMarker =
-                              reason.type === 'game_event' ||
-                              (reason.type === 'news' && reason.eventType) ||
-                              reason.type === 'league_trade';
-
-                            if (!showMarker) return null;
-
-                            const cx = xScale(entry.time);
-                            const cy = yScale(entry.price);
-
-                            if (isNaN(cx) || isNaN(cy)) return null;
-
-                            return (
-                              <EventMarker
-                                key={idx}
-                                cx={cx}
-                                cy={cy}
-                                priceEntry={entry}
-                              />
-                            );
-                          })}
-                        </g>
-                      );
-                    }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-              {selectedEvent && (
-                <EventMarkerPopup
-                  event={selectedEvent as EventData}
-                  position={popupPosition}
-                  onClose={closeEventPopup}
-                />
-              )}
-            </div>
-          </motion.div>
-
-          {/* Move Reason */}
           <motion.div
             className={styles['reason-card']}
             initial={{ opacity: 0, y: 20 }}
@@ -479,7 +82,6 @@ export default function PlayerDetail() {
             <p className={styles['move-reason']}>{player.moveReason}</p>
           </motion.div>
 
-          {/* Content Tiles - now pulled from priceHistory */}
           {player.contentTiles && player.contentTiles.length > 0 && (
             <motion.div
               className={styles['content-section']}
@@ -508,315 +110,28 @@ export default function PlayerDetail() {
             </motion.div>
           )}
 
-          {/* Price History Timeline */}
-          <motion.div
-            className={styles['timeline-card']}
-            data-testid="timeline-card"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <h3>Price Changes</h3>
-            <div className={styles['price-timeline']} data-testid="price-timeline">
-              {[...chartData].reverse().map((entry, i, arr) => {
-                const reasonType = entry.reason?.type || 'unknown';
-                const eventType = entry.reason?.eventType;
-                const typeColor = eventType
-                  ? EVENT_TYPE_COLORS[eventType]
-                  : REASON_TYPE_COLORS[reasonType];
-                const typeLabel = getEventTypeLabel(entry.reason);
-                const isTD = eventType === 'TD';
-                const isINT = eventType === 'INT';
-                const prevPrice =
-                  chartData[chartData.length - 1 - i - 1]?.price ||
-                  player.basePrice;
-                const priceDiff = entry.price - prevPrice;
-                const isPositive = priceDiff >= 0;
-
-                // Get URL from entry, or fallback to player's ESPN news page
-                const entryUrl =
-                  entry.reason?.url && entry.reason.url !== '#'
-                    ? entry.reason.url
-                    : entry.reason?.type === 'news' ||
-                        entry.reason?.type === 'game_event'
-                      ? playerNewsUrls[player.id] || null
-                      : null;
-
-                return (
-                  <div
-                    key={i}
-                    className={`${styles['timeline-entry']} ${isTD ? styles['is-td'] : ''} ${isINT ? styles['is-int'] : ''}`}
-                    data-testid="timeline-entry"
-                  >
-                    {/* Connector line */}
-                    {i < arr.length - 1 && (
-                      <div className={styles['timeline-connector']} />
-                    )}
-
-                    {/* Event marker with inline SVG */}
-                    <div
-                      className={`${styles['timeline-marker']} ${isTD ? styles['marker-td'] : ''} ${isINT ? styles['marker-int'] : ''}`}
-                      style={{ backgroundColor: typeColor }}
-                    >
-                      {/* TD - Star */}
-                      {isTD && (
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          width="14"
-                          height="14"
-                        >
-                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                        </svg>
-                      )}
-                      {/* INT - X */}
-                      {isINT && (
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                          width="12"
-                          height="12"
-                        >
-                          <path d="M6 6L18 18M18 6L6 18" />
-                        </svg>
-                      )}
-                      {/* News - Document */}
-                      {!isTD && !isINT && reasonType === 'news' && (
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          width="12"
-                          height="12"
-                        >
-                          <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
-                        </svg>
-                      )}
-                      {/* Game Event (stats) - Bar chart */}
-                      {!isTD && !isINT && reasonType === 'game_event' && (
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          width="12"
-                          height="12"
-                        >
-                          <path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z" />
-                        </svg>
-                      )}
-                      {/* Trade - Chart */}
-                      {!isTD && !isINT && reasonType === 'league_trade' && (
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          width="12"
-                          height="12"
-                        >
-                          <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" />
-                        </svg>
-                      )}
-                    </div>
-
-                    {/* Event card */}
-                    <div className={styles['timeline-entry-card']}>
-                      <div className={styles['timeline-entry-header']}>
-                        <span className={styles['timeline-time-badge']}>
-                          {formatTimestamp(entry.timestamp)}
-                        </span>
-                        <span
-                          className={styles['timeline-type-badge']}
-                          style={{
-                            backgroundColor: `${typeColor}25`,
-                            color: typeColor,
-                          }}
-                        >
-                          {typeLabel}
-                        </span>
-                      </div>
-
-                      {entryUrl ? (
-                        <a
-                          href={entryUrl}
-                          className={`${styles['timeline-headline']} ${styles['timeline-headline-link']}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {entry.reason?.headline}
-                          <span className={styles['link-icon']}>↗</span>
-                        </a>
-                      ) : (
-                        <p className={styles['timeline-headline']}>
-                          {entry.reason?.headline}
-                        </p>
-                      )}
-
-                      <div
-                        className={`${styles['timeline-price-display']} ${isPositive ? styles['up'] : styles['down']}`}
-                      >
-                        ${entry.price.toFixed(2)}
-                        {i < arr.length - 1 && (
-                          <span className={styles['price-diff']}>
-                            ({isPositive ? '+' : ''}
-                            {priceDiff.toFixed(2)})
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </motion.div>
+          <PriceTimeline
+            priceHistory={player.priceHistory || []}
+            basePrice={player.basePrice}
+            playerId={id}
+          />
         </div>
 
         <div className={styles['sidebar-column']}>
-          {/* Trading Card */}
-          <motion.div
-            className={styles['trading-card']}
-            data-testid="trading-card"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            {/* eslint-disable-next-line jsx-a11y/interactive-supports-focus */}
-            <div
-              className={styles['trading-tabs']}
-              role="tablist"
-              aria-label="Trade type"
-              onKeyDown={handleTradeTabKeyDown}
-            >
-              <button
-                className={`${styles['trading-tab']} ${activeTab === 'buy' ? styles['active'] : ''}`}
-                data-testid="trading-tab"
-                data-active={activeTab === 'buy' ? 'true' : undefined}
-                role="tab"
-                aria-selected={activeTab === 'buy'}
-                tabIndex={activeTab === 'buy' ? 0 : -1}
-                onClick={() => setActiveTab('buy')}
-              >
-                Buy
-              </button>
-              <button
-                className={`${styles['trading-tab']} ${activeTab === 'sell' ? styles['active'] : ''}`}
-                data-testid="trading-tab"
-                data-active={activeTab === 'sell' ? 'true' : undefined}
-                role="tab"
-                aria-selected={activeTab === 'sell'}
-                tabIndex={activeTab === 'sell' ? 0 : -1}
-                onClick={() => setActiveTab('sell')}
-                disabled={!holding}
-              >
-                Sell
-              </button>
-            </div>
+          <TradeForm
+            playerId={id}
+            playerName={player.name}
+            currentPrice={player.currentPrice}
+            holding={holding}
+            buyShares={buyShares}
+            sellShares={sellShares}
+            addToast={addToast}
+          />
 
-            {activeTab === 'buy' ? (
-              <div className={styles['trading-form']}>
-                <label className={styles['form-label']}>
-                  Shares
-                  <input
-                    type="number"
-                    min="1"
-                    value={buyAmount}
-                    onChange={(e) =>
-                      setBuyAmount(Math.max(1, parseInt(e.target.value) || 1))
-                    }
-                    className={styles['form-input']}
-                    data-testid="form-input"
-                  />
-                </label>
-                <div className={styles['order-summary']}>
-                  <span>Estimated Cost</span>
-                  <span className={styles['order-total']} data-testid="order-total">
-                    ${(player.currentPrice * buyAmount).toFixed(2)}
-                  </span>
-                </div>
-                <button className={`${styles['trade-button']} ${styles['buy']}`} data-testid="trade-button" data-variant="buy" onClick={handleBuy}>
-                  Buy {buyAmount} Share{buyAmount > 1 ? 's' : ''}
-                </button>
-              </div>
-            ) : (
-              <div className={styles['trading-form']}>
-                <label className={styles['form-label']}>
-                  Shares (You own {holding?.shares || 0})
-                  <input
-                    type="number"
-                    min="1"
-                    max={holding?.shares || 0}
-                    value={sellAmount}
-                    onChange={(e) =>
-                      setSellAmount(
-                        Math.max(
-                          1,
-                          Math.min(
-                            holding?.shares || 1,
-                            parseInt(e.target.value) || 1,
-                          ),
-                        ),
-                      )
-                    }
-                    className={styles['form-input']}
-                    data-testid="form-input"
-                  />
-                </label>
-                <div className={styles['order-summary']}>
-                  <span>Estimated Proceeds</span>
-                  <span className={styles['order-total']} data-testid="order-total">
-                    ${(player.currentPrice * sellAmount).toFixed(2)}
-                  </span>
-                </div>
-                <button className={`${styles['trade-button']} ${styles['sell']}`} data-testid="trade-button" data-variant="sell" onClick={handleSell}>
-                  Sell {sellAmount} Share{sellAmount > 1 ? 's' : ''}
-                </button>
-              </div>
-            )}
-          </motion.div>
-
-          {/* Holdings Card */}
           {holding && (
-            <motion.div
-              className={styles['holdings-card']}
-              data-testid="holdings-card"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <h4>Your Position</h4>
-              <div className={styles['holdings-stats']}>
-                <div className={styles['holdings-stat']}>
-                  <span className={styles['stat-label']}>Shares</span>
-                  <span className={styles['stat-value']}>{holding.shares}</span>
-                </div>
-                <div className={styles['holdings-stat']}>
-                  <span className={styles['stat-label']}>Avg Cost</span>
-                  <span className={styles['stat-value']}>
-                    ${holding.avgCost.toFixed(2)}
-                  </span>
-                </div>
-                <div className={styles['holdings-stat']}>
-                  <span className={styles['stat-label']}>Market Value</span>
-                  <span className={styles['stat-value']}>
-                    ${(player.currentPrice * holding.shares).toFixed(2)}
-                  </span>
-                </div>
-                <div className={styles['holdings-stat']}>
-                  <span className={styles['stat-label']}>P/L</span>
-                  <span
-                    className={`${styles['stat-value']} ${player.currentPrice - holding.avgCost >= 0 ? 'text-up' : 'text-down'}`}
-                    aria-label={`${player.currentPrice - holding.avgCost >= 0 ? 'Gain' : 'Loss'} of $${Math.abs((player.currentPrice - holding.avgCost) * holding.shares).toFixed(2)}`}
-                  >
-                    {player.currentPrice - holding.avgCost >= 0 ? '▲ +' : '▼ '}
-                    $
-                    {Math.abs(
-                      (player.currentPrice - holding.avgCost) * holding.shares,
-                    ).toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            </motion.div>
+            <HoldingsCard holding={holding} currentPrice={player.currentPrice} />
           )}
 
-          {/* Watchlist Button */}
           <button
             className={`${styles['watchlist-button']} ${watching ? styles['watching'] : ''}`}
             data-testid="watchlist-button"
@@ -833,45 +148,8 @@ export default function PlayerDetail() {
             {watching ? 'Watching' : 'Add to Watchlist'}
           </button>
 
-          {/* League Owners */}
           {leagueHoldings.length > 0 && (
-            <motion.div
-              className={styles['league-owners-card']}
-              data-testid="league-owners-card"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <h4>League Owners ({leagueHoldings.length})</h4>
-              <div className={styles['league-owners-list']}>
-                {leagueHoldings.map((holder) => (
-                  <div
-                    key={holder.memberId}
-                    className={`${styles['league-owner-row']} ${holder.isUser ? styles['is-user'] : ''}`}
-                    data-testid="league-owner-row"
-                  >
-                    <div className={styles['owner-info']}>
-                      <span className={styles['owner-avatar']}>
-                        {holder.isUser ? '👤' : holder.avatar}
-                      </span>
-                      <span className={styles['owner-name']}>{holder.name}</span>
-                    </div>
-                    <div className={styles['owner-stats']}>
-                      <span className={styles['owner-shares']}>
-                        {holder.shares} shares
-                      </span>
-                    <span
-                      className={`${styles['owner-gain']} ${holder.gainPercent >= 0 ? 'text-up' : 'text-down'}`}
-                      aria-label={`${holder.gainPercent >= 0 ? 'Gain' : 'Loss'} ${Math.abs(holder.gainPercent).toFixed(1)} percent`}
-                    >
-                      {holder.gainPercent >= 0 ? '▲ +' : '▼ '}
-                      {holder.gainPercent.toFixed(1)}%
-                    </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+            <LeagueOwners leagueHoldings={leagueHoldings} />
           )}
         </div>
       </div>
