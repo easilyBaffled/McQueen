@@ -7,6 +7,22 @@ interface VersionedEntry<T> {
   data: T;
 }
 
+type Migrator = (data: unknown) => unknown;
+
+const migrations: Map<number, Migrator> = new Map();
+
+export function registerMigration(
+  fromVersion: number,
+  migrator: Migrator,
+): void {
+  if (fromVersion <= 0 || !Number.isInteger(fromVersion)) return;
+  migrations.set(fromVersion, migrator);
+}
+
+export function clearMigrations(): void {
+  migrations.clear();
+}
+
 function isVersionedEntry(value: unknown): value is VersionedEntry<unknown> {
   return (
     typeof value === 'object' &&
@@ -25,7 +41,11 @@ function getStorage(): Storage | null {
   }
 }
 
-export function read<T>(key: string, defaultValue: T): T {
+export function read<T>(
+  key: string,
+  defaultValue: T,
+  validator?: (v: unknown) => v is T,
+): T {
   const storage = getStorage();
   if (!storage) return defaultValue;
 
@@ -39,14 +59,44 @@ export function read<T>(key: string, defaultValue: T): T {
       if (parsed.version <= 0 || parsed.version > CURRENT_VERSION) {
         return defaultValue;
       }
-      if (parsed.data === null || parsed.data === undefined) {
+
+      let data: unknown = parsed.data;
+      if (data === null || data === undefined) {
         return defaultValue;
       }
-      return parsed.data as T;
+
+      if (parsed.version < CURRENT_VERSION) {
+        try {
+          for (let v = parsed.version; v < CURRENT_VERSION; v++) {
+            const migrator = migrations.get(v);
+            if (!migrator) {
+              console.warn(
+                `Missing storage migration for version ${v} → ${v + 1}. Returning default value.`,
+              );
+              return defaultValue;
+            }
+            data = migrator(data);
+            if (data === null || data === undefined) {
+              return defaultValue;
+            }
+          }
+        } catch {
+          return defaultValue;
+        }
+      }
+
+      if (validator && !validator(data)) {
+        return defaultValue;
+      }
+
+      return data as T;
     }
 
     // Legacy entry (no version wrapper) — return raw parsed value
     if (parsed === null || parsed === undefined) {
+      return defaultValue;
+    }
+    if (validator && !validator(parsed)) {
       return defaultValue;
     }
     return parsed as T;
