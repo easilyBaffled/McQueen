@@ -480,12 +480,11 @@ describe('DailyMission', () => {
       { missionPicks: { risers: ['p1'], fallers: ['p2'] } },
     );
 
-    // Find chips via their riser button's parent (the selector-chip div)
     const p1Chip = screen.getByLabelText('Pick Patrick Mahomes as riser').closest('[class*="selector-chip"]')!;
-    expect(p1Chip.className).toMatch(/picked/);
+    expect(p1Chip).toHaveAttribute('data-picked', 'true');
 
     const p3Chip = screen.getByLabelText('Pick Lamar Jackson as riser').closest('[class*="selector-chip"]')!;
-    expect(p3Chip.className).not.toMatch(/picked/);
+    expect(p3Chip).not.toHaveAttribute('data-picked');
   });
 
   // ── TC-020 ────────────────────────────────────────────────────────
@@ -497,21 +496,17 @@ describe('DailyMission', () => {
       { missionPicks: { risers: ['p1'], fallers: ['p2'] } },
     );
 
-    // p1 riser btn should be active
     const p1RiserBtn = screen.getByLabelText('Pick Patrick Mahomes as riser');
-    expect(p1RiserBtn.className).toMatch(/active/);
+    expect(p1RiserBtn).toHaveAttribute('data-active', 'true');
 
-    // p1 faller btn should NOT be active
     const p1FallerBtn = screen.getByLabelText('Pick Patrick Mahomes as faller');
-    expect(p1FallerBtn.className).not.toMatch(/active/);
+    expect(p1FallerBtn).not.toHaveAttribute('data-active');
 
-    // p2 faller btn should be active
     const p2FallerBtn = screen.getByLabelText('Pick Josh Allen as faller');
-    expect(p2FallerBtn.className).toMatch(/active/);
+    expect(p2FallerBtn).toHaveAttribute('data-active', 'true');
 
-    // p2 riser btn should NOT be active
     const p2RiserBtn = screen.getByLabelText('Pick Josh Allen as riser');
-    expect(p2RiserBtn.className).not.toMatch(/active/);
+    expect(p2RiserBtn).not.toHaveAttribute('data-active');
   });
 
   // ── TC-021 ────────────────────────────────────────────────────────
@@ -523,15 +518,13 @@ describe('DailyMission', () => {
       { missionPicks: { risers: [], fallers: [] } },
     );
 
-    // p1 changePercent 2.5 -> "+2.5%"
     expect(screen.getByText('+2.5%')).toBeInTheDocument();
     const upChange = screen.getByText('+2.5%');
-    expect(upChange.className).toMatch(/up/);
+    expect(upChange).toHaveAttribute('data-direction', 'up');
 
-    // p2 changePercent -1.3 -> "-1.3%"
     expect(screen.getByText('-1.3%')).toBeInTheDocument();
     const downChange = screen.getByText('-1.3%');
-    expect(downChange.className).toMatch(/down/);
+    expect(downChange).toHaveAttribute('data-direction', 'down');
   });
 
   // ── TC-022 ────────────────────────────────────────────────────────

@@ -227,7 +227,7 @@ describe('Market page', () => {
     expect(order).toEqual(['Lamar Jackson', 'Patrick Mahomes', 'Josh Allen']);
 
     const risersBtn = screen.getByRole('button', { name: 'Biggest Risers' });
-    expect(risersBtn.className).toMatch(/active/);
+    expect(risersBtn).toHaveAttribute('data-active', 'true');
   });
 
   // TC-004
@@ -241,8 +241,8 @@ describe('Market page', () => {
     const order = getPlayerCardOrder();
     expect(order).toEqual(['Josh Allen', 'Patrick Mahomes', 'Lamar Jackson']);
 
-    expect(screen.getByRole('button', { name: 'Biggest Fallers' }).className).toMatch(/active/);
-    expect(screen.getByRole('button', { name: 'Biggest Risers' }).className).not.toMatch(/active/);
+    expect(screen.getByRole('button', { name: 'Biggest Fallers' })).toHaveAttribute('data-active', 'true');
+    expect(screen.getByRole('button', { name: 'Biggest Risers' })).not.toHaveAttribute('data-active');
   });
 
   // TC-005

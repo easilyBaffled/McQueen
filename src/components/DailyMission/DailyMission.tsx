@@ -251,10 +251,12 @@ export default function DailyMission({ collapsible = false }) {
                         <div
                           key={player.id}
                           className={`${styles['selector-chip']} ${isPicked ? styles['picked'] : ''}`}
+                          data-picked={isPicked ? 'true' : undefined}
                         >
                           <span className={styles['selector-name']}>{player.name}</span>
                           <span
                             className={`${styles['selector-change']} ${player.changePercent >= 0 ? styles['up'] : styles['down']}`}
+                            data-direction={player.changePercent >= 0 ? 'up' : 'down'}
                           >
                             {player.changePercent >= 0 ? '+' : ''}
                             {player.changePercent.toFixed(1)}%
@@ -264,6 +266,7 @@ export default function DailyMission({ collapsible = false }) {
                               className={`${styles['selector-btn']} ${styles['up']} ${isRiser ? styles['active'] : ''}`}
                               data-testid="selector-btn"
                               data-variant="up"
+                              data-active={isRiser ? 'true' : undefined}
                               onClick={() => setMissionPick(player.id, 'riser')}
                               disabled={
                                 missionPicks.risers.length >= 3 && !isRiser
@@ -276,6 +279,7 @@ export default function DailyMission({ collapsible = false }) {
                               className={`${styles['selector-btn']} ${styles['down']} ${isFaller ? styles['active'] : ''}`}
                               data-testid="selector-btn"
                               data-variant="down"
+                              data-active={isFaller ? 'true' : undefined}
                               onClick={() =>
                                 setMissionPick(player.id, 'faller')
                               }

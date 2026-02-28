@@ -330,49 +330,49 @@ describe('Onboarding', () => {
 
   // ── TC-015: Active step indicator reflects current step ───────────
   describe('TC-015: Active step indicator reflects current step', () => {
-    const getDots = () => document.querySelectorAll('[class*="step-dot"]');
+    const getDots = () => screen.getAllByTestId('step-dot');
 
     it('highlights dot 0 on step 0', () => {
       renderAndShow();
-      expect(getDots()[0].className).toMatch(/active/);
-      expect(getDots()[1].className).not.toMatch(/active/);
+      expect(getDots()[0]).toHaveAttribute('data-active', 'true');
+      expect(getDots()[1]).not.toHaveAttribute('data-active');
     });
 
     it('moves active indicator forward with Next', () => {
       renderAndShow();
       clickNext();
-      expect(getDots()[1].className).toMatch(/active/);
-      expect(getDots()[0].className).not.toMatch(/active/);
+      expect(getDots()[1]).toHaveAttribute('data-active', 'true');
+      expect(getDots()[0]).not.toHaveAttribute('data-active');
 
       clickNext();
-      expect(getDots()[2].className).toMatch(/active/);
+      expect(getDots()[2]).toHaveAttribute('data-active', 'true');
     });
 
     it('moves active indicator backward with Back', () => {
       renderAndShow();
       clickNext(2);
-      expect(getDots()[2].className).toMatch(/active/);
+      expect(getDots()[2]).toHaveAttribute('data-active', 'true');
 
       fireEvent.click(screen.getByRole('button', { name: /back/i }));
-      expect(getDots()[1].className).toMatch(/active/);
-      expect(getDots()[2].className).not.toMatch(/active/);
+      expect(getDots()[1]).toHaveAttribute('data-active', 'true');
+      expect(getDots()[2]).not.toHaveAttribute('data-active');
     });
 
     it('highlights last dot on final step', () => {
       renderAndShow();
       clickNext(5);
-      expect(getDots()[5].className).toMatch(/active/);
+      expect(getDots()[5]).toHaveAttribute('data-active', 'true');
     });
   });
 
   // ── TC-016: Completed step indicators ─────────────────────────────
   describe('TC-016: Completed step indicators', () => {
-    const getDots = () => document.querySelectorAll('[class*="step-dot"]');
+    const getDots = () => screen.getAllByTestId('step-dot');
 
     it('no completed dots on step 0', () => {
       renderAndShow();
       getDots().forEach((dot) => {
-        expect(dot.className).not.toMatch(/completed/);
+        expect(dot).not.toHaveAttribute('data-completed');
       });
     });
 
@@ -380,18 +380,18 @@ describe('Onboarding', () => {
       renderAndShow();
 
       clickNext();
-      expect(getDots()[0].className).toMatch(/completed/);
+      expect(getDots()[0]).toHaveAttribute('data-completed', 'true');
 
       clickNext();
-      expect(getDots()[0].className).toMatch(/completed/);
-      expect(getDots()[1].className).toMatch(/completed/);
-      expect(getDots()[2].className).toMatch(/active/);
+      expect(getDots()[0]).toHaveAttribute('data-completed', 'true');
+      expect(getDots()[1]).toHaveAttribute('data-completed', 'true');
+      expect(getDots()[2]).toHaveAttribute('data-active', 'true');
 
       clickNext(2);
       for (let i = 0; i < 4; i++) {
-        expect(getDots()[i].className).toMatch(/completed/);
+        expect(getDots()[i]).toHaveAttribute('data-completed', 'true');
       }
-      expect(getDots()[4].className).toMatch(/active/);
+      expect(getDots()[4]).toHaveAttribute('data-active', 'true');
     });
 
     it('adjusts on backward navigation', () => {
@@ -399,11 +399,11 @@ describe('Onboarding', () => {
       clickNext(3);
       fireEvent.click(screen.getByRole('button', { name: /back/i }));
 
-      expect(getDots()[0].className).toMatch(/completed/);
-      expect(getDots()[1].className).toMatch(/completed/);
-      expect(getDots()[2].className).toMatch(/active/);
-      expect(getDots()[3].className).not.toMatch(/completed/);
-      expect(getDots()[3].className).not.toMatch(/active/);
+      expect(getDots()[0]).toHaveAttribute('data-completed', 'true');
+      expect(getDots()[1]).toHaveAttribute('data-completed', 'true');
+      expect(getDots()[2]).toHaveAttribute('data-active', 'true');
+      expect(getDots()[3]).not.toHaveAttribute('data-completed');
+      expect(getDots()[3]).not.toHaveAttribute('data-active');
     });
   });
 

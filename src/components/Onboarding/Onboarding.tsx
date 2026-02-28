@@ -132,6 +132,7 @@ export default function Onboarding() {
                     className={`${styles['step-dot']} ${i === step ? styles['active'] : ''} ${i < step ? styles['completed'] : ''}`}
                     data-testid="step-dot"
                     data-active={i === step ? 'true' : undefined}
+                    data-completed={i < step ? 'true' : undefined}
                   />
                 ))}
               </div>

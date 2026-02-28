@@ -41,14 +41,16 @@ describe('PlayerCard', () => {
   it('shows positive change indicator when price is up', () => {
     renderWithProviders(<PlayerCard player={basePlayer} />);
     const change = screen.getByText(/2\.50%/);
-    expect(change.className).toMatch(/up/);
+    expect(change).toHaveTextContent('▲');
+    expect(change).toHaveAttribute('aria-label', expect.stringContaining('Up'));
   });
 
   it('shows negative change indicator when price is down', () => {
     const downPlayer = { ...basePlayer, changePercent: -3.1 };
     renderWithProviders(<PlayerCard player={downPlayer} />);
     const change = screen.getByText(/3\.10%/);
-    expect(change.className).toMatch(/down/);
+    expect(change).toHaveTextContent('▼');
+    expect(change).toHaveAttribute('aria-label', expect.stringContaining('Down'));
   });
 
   it('truncates moveReason to 60 characters', () => {
