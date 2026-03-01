@@ -4,14 +4,6 @@ describe('Scenario Switch — prices change and portfolio resets', () => {
     cy.skipOnboarding();
   });
 
-  function getDisplayedPrice() {
-    return cy
-      .get('[data-testid="player-price"]')
-      .find('[class*="price-value"]')
-      .invoke('text')
-      .then((text) => parseFloat(text.replace(/[^0-9.]/g, '')));
-  }
-
   it('switching scenario re-renders market with valid price data', () => {
     cy.visit('/market');
     cy.get('[data-testid="players-grid"]', { timeout: 10000 }).should('exist');
@@ -20,7 +12,7 @@ describe('Scenario Switch — prices change and portfolio resets', () => {
     cy.getPlayerCards()
       .first()
       .invoke('text')
-      .then((midweekText) => {
+      .then(() => {
         cy.get('[role="tablist"][aria-label="Demo scenarios"]')
           .find('[role="tab"]')
           .contains('Playoffs')

@@ -79,7 +79,7 @@ describe('Buy Flow — end-to-end with value assertions', () => {
     cy.visit('/player/mahomes');
     cy.get('[data-testid="player-detail-page"]').should('exist');
 
-    getPlayerPrice().then((price) => {
+    getPlayerPrice().then(() => {
       setShareInput('5');
       cy.get('[data-testid="trade-button"][data-variant="buy"]').click();
       cy.get('[data-testid="toast"]').should('be.visible');

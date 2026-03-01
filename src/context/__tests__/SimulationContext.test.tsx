@@ -14,6 +14,7 @@ vi.mock('../../services/espnService', async (importOriginal) => {
 });
 
 import { fetchNFLNews } from '../../services/espnService';
+import type { Article } from '../../types';
 
 const mockFetchNFLNews = vi.mocked(fetchNFLNews);
 
@@ -848,9 +849,9 @@ describe('SimulationContext', () => {
     // TC-001 (mcq-1zw.6): ESPN fetch is aborted when leaving ESPN-live mode
     it('aborts ESPN fetch when switching away from espn-live', async () => {
       vi.useFakeTimers();
-      let resolveDelayed: (v: unknown[]) => void;
+      let resolveDelayed: (v: Article[]) => void;
       mockFetchNFLNews.mockImplementation(
-        () => new Promise<unknown[]>((resolve) => { resolveDelayed = resolve; }),
+        () => new Promise<Article[]>((resolve) => { resolveDelayed = resolve; }),
       );
 
       const hook = renderSim();
@@ -865,14 +866,14 @@ describe('SimulationContext', () => {
       const lastCallArgs = mockFetchNFLNews.mock.calls[mockFetchNFLNews.mock.calls.length - 1];
       const signalArg = lastCallArgs[1]?.signal;
       expect(signalArg).toBeDefined();
-      expect(signalArg.aborted).toBe(false);
+      expect(signalArg!.aborted).toBe(false);
 
       await act(async () => {
         hook.result.current.sc.setScenario('midweek');
       });
       await vi.advanceTimersByTimeAsync(200);
 
-      expect(signalArg.aborted).toBe(true);
+      expect(signalArg!.aborted).toBe(true);
 
       resolveDelayed!([]);
       vi.clearAllTimers();
@@ -909,7 +910,7 @@ describe('SimulationContext', () => {
     // TC-004 (mcq-1zw.6): Aborted ESPN fetch does not set error state
     it('aborted fetch does not set espnError', async () => {
       vi.useFakeTimers();
-      mockFetchNFLNews.mockImplementation((_limit: number, opts?: { signal?: AbortSignal }) => {
+      mockFetchNFLNews.mockImplementation((_limit?: number, opts?: { signal?: AbortSignal }) => {
         return new Promise((_resolve, reject) => {
           if (opts?.signal) {
             opts.signal.addEventListener('abort', () => {
