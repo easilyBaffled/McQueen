@@ -55,7 +55,9 @@ export function SimulationProvider({ children }: ChildrenProps) {
   const [espnPriceHistory, setEspnPriceHistory] = useState<Record<string, PriceHistoryEntry[]>>({});
   const [processedArticleIds, setProcessedArticleIds] = useState<Set<string>>(new Set());
   const espnRefreshRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isFetchingRef = useRef(false);
   const lastResetVersionRef = useRef(0);
+  const tickRef = useRef(0);
 
   const isEspnLiveMode = scenario === 'espn-live';
 
@@ -73,6 +75,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
     lastResetVersionRef.current = scenarioVersion;
 
     setPriceOverrides({});
+    tickRef.current = 0;
     setTick(0);
     setPlayoffDilutionApplied(false);
     setIsPlaying(scenario === 'live' || scenario === 'superbowl');
@@ -128,10 +131,12 @@ export function SimulationProvider({ children }: ChildrenProps) {
   const priceOverridesRef = useRef(priceOverrides);
   priceOverridesRef.current = priceOverrides;
 
-  // ESPN Live: Fetch and process news
+  // ESPN Live: Fetch and process news (mutex-guarded)
   const fetchAndProcessEspnNews = useCallback(async (signal?: AbortSignal) => {
     if (!isEspnLiveMode) return;
+    if (isFetchingRef.current) return;
 
+    isFetchingRef.current = true;
     setEspnLoading(true);
     setEspnError(null);
 
@@ -221,6 +226,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
       console.error('ESPN fetch error:', error);
       setEspnError(error instanceof Error ? error.message : 'Failed to fetch ESPN news');
     } finally {
+      isFetchingRef.current = false;
       setEspnLoading(false);
     }
   }, [isEspnLiveMode, players]);
@@ -252,7 +258,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
     }
   }, [isEspnLiveMode, fetchAndProcessEspnNews]);
 
-  // Live scenario tick updates
+  // Live scenario tick updates (no nested state setters)
   useEffect(() => {
     if (
       (scenario === 'live' || scenario === 'superbowl') &&
@@ -260,42 +266,38 @@ export function SimulationProvider({ children }: ChildrenProps) {
       unifiedTimeline.length > 0
     ) {
       tickIntervalRef.current = setInterval(() => {
-        setTick((prevTick) => {
-          const nextTick = prevTick + 1;
-          if (nextTick >= unifiedTimeline.length) {
-            setIsPlaying(false);
-            return prevTick;
-          }
+        const nextTick = tickRef.current + 1;
+        if (nextTick >= unifiedTimeline.length) {
+          setIsPlaying(false);
+          return;
+        }
 
-          const timelineEntry = unifiedTimeline[nextTick];
-          if (timelineEntry) {
-            setPriceOverrides((prev) => {
-              const newOverrides = { ...prev };
-              newOverrides[timelineEntry.playerId] = timelineEntry.price;
+        const timelineEntry = unifiedTimeline[nextTick];
+        if (timelineEntry) {
+          const newOverrides = { ...priceOverridesRef.current };
+          newOverrides[timelineEntry.playerId] = timelineEntry.price;
 
-              const currentPrices: Record<string, number> = {};
-              players.forEach((p) => {
-                currentPrices[p.id] =
-                  newOverrides[p.id] || getCurrentPriceFromHistory(p);
-              });
+          const currentPrices: Record<string, number> = {};
+          players.forEach((p) => {
+            currentPrices[p.id] =
+              newOverrides[p.id] || getCurrentPriceFromHistory(p);
+          });
 
-              setHistory((h) => capHistory([
-                ...h,
-                {
-                  tick: nextTick,
-                  prices: currentPrices,
-                  action: timelineEntry.reason?.headline || 'Price update',
-                  playerId: timelineEntry.playerId,
-                  playerName: timelineEntry.playerName,
-                },
-              ]));
+          setPriceOverrides(newOverrides);
+          setHistory((h) => capHistory([
+            ...h,
+            {
+              tick: nextTick,
+              prices: currentPrices,
+              action: timelineEntry.reason?.headline || 'Price update',
+              playerId: timelineEntry.playerId,
+              playerName: timelineEntry.playerName,
+            },
+          ]));
+        }
 
-              return newOverrides;
-            });
-          }
-
-          return nextTick;
-        });
+        tickRef.current = nextTick;
+        setTick(nextTick);
       }, TICK_INTERVAL_MS);
 
       return () => { if (tickIntervalRef.current) clearInterval(tickIntervalRef.current); };
@@ -307,6 +309,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
       if (index >= 0 && index < history.length) {
         const point = history[index];
         setPriceOverrides(point.prices || {});
+        tickRef.current = point.tick;
         setTick(point.tick);
         setHistory((h) => h.slice(0, index + 1));
       }
