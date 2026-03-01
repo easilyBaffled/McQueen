@@ -1,4 +1,5 @@
 import type { Player, ContentItem } from '../types';
+import { MIN_PRICE } from './priceCalculator';
 
 export function getCurrentPriceFromHistory(
   player: Player | null | undefined,
@@ -76,5 +77,7 @@ export function getEffectivePrice(
   }
 
   const impact = userImpact[playerId] || 0;
-  return +(basePrice * (1 + impact)).toFixed(2);
+  const result = +(basePrice * (1 + impact)).toFixed(2);
+  if (result <= 0 && basePrice <= 0) return 0;
+  return Math.max(MIN_PRICE, result);
 }

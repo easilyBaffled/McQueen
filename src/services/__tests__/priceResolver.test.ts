@@ -7,6 +7,7 @@ import {
   getLatestContentFromHistory,
   getAllContentFromHistory,
 } from '../priceResolver';
+import { MIN_PRICE } from '../priceCalculator';
 import type { Player } from '../../types';
 
 function makePlayer(overrides: Partial<Player> = {}): Player {
@@ -382,6 +383,31 @@ describe('getAllContentFromHistory', () => {
       { type: 'video' },
       { type: 'tweet' },
     ]);
+  });
+});
+
+// TC-029: Price floor in getEffectivePrice
+describe('getEffectivePrice — price floor', () => {
+  it('clamps to MIN_PRICE when user impact drives price toward zero', () => {
+    const players: Player[] = [makePlayer({ id: 'p1', basePrice: 0.02 })];
+    const result = getEffectivePrice('p1', { p1: 0.02 }, { p1: -0.99 }, players);
+    expect(result).toBeGreaterThanOrEqual(MIN_PRICE);
+  });
+
+  it('clamps penny stock with negative impact to MIN_PRICE', () => {
+    const players: Player[] = [makePlayer({ id: 'p1', basePrice: 0.01 })];
+    const result = getEffectivePrice('p1', { p1: 0.01 }, { p1: -0.5 }, players);
+    expect(result).toBe(MIN_PRICE);
+  });
+
+  it('zero user impact returns base price unchanged', () => {
+    const players: Player[] = [makePlayer({ id: 'p1', basePrice: 50 })];
+    expect(getEffectivePrice('p1', {}, { p1: 0 }, players)).toBe(50);
+  });
+
+  it('positive impact is not clamped', () => {
+    const players: Player[] = [makePlayer({ id: 'p1', basePrice: 50 })];
+    expect(getEffectivePrice('p1', {}, { p1: 0.5 }, players)).toBe(75);
   });
 });
 

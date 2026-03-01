@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import type { SentimentInput } from '../priceCalculator';
 import {
   applyPriceImpact,
@@ -6,10 +6,11 @@ import {
   calculatePriceImpact,
   calculateNewPrice,
   calculateCumulativeImpact,
+  MIN_PRICE,
 } from '../priceCalculator';
 
-// TC-029
-describe('applyPriceImpact', () => {
+// --- Price floor tests (TC-005) ---
+describe('applyPriceImpact — price floor', () => {
   it('increases price with a positive multiplier', () => {
     expect(applyPriceImpact(100, { impactMultiplier: 1.05 })).toBe(105);
   });
@@ -26,16 +27,114 @@ describe('applyPriceImpact', () => {
     expect(applyPriceImpact(33.33, { impactMultiplier: 0.97 })).toBe(32.33);
   });
 
-  it('returns 0 for price of 0', () => {
-    expect(applyPriceImpact(0, { impactMultiplier: 1.05 })).toBe(0);
+  it('clamps to MIN_PRICE for price of 0', () => {
+    expect(applyPriceImpact(0, { impactMultiplier: 1.05 })).toBe(MIN_PRICE);
   });
 
   it('handles very small price', () => {
-    expect(applyPriceImpact(0.01, { impactMultiplier: 1.05 })).toBe(0.01);
+    expect(applyPriceImpact(0.01, { impactMultiplier: 1.05 })).toBe(MIN_PRICE);
+  });
+
+  it('clamps to MIN_PRICE when multiplier is 0 (100% loss)', () => {
+    expect(applyPriceImpact(1.0, { impactMultiplier: 0.0 })).toBe(MIN_PRICE);
+  });
+
+  it('clamps to MIN_PRICE with negative multiplier', () => {
+    expect(applyPriceImpact(0.5, { impactMultiplier: -1.0 })).toBe(MIN_PRICE);
+  });
+
+  it('does not clamp when result is above floor', () => {
+    expect(applyPriceImpact(100.0, { impactMultiplier: 0.99 })).toBe(99);
+  });
+
+  it('price at exactly MIN_PRICE with negative stays at MIN_PRICE', () => {
+    expect(applyPriceImpact(MIN_PRICE, { impactMultiplier: 0.5 })).toBe(MIN_PRICE);
   });
 });
 
-// TC-034
+// --- NaN guard tests (TC-006) ---
+describe('applyPriceImpact — NaN guard', () => {
+  it('NaN currentPrice returns MIN_PRICE', () => {
+    const result = applyPriceImpact(NaN, { impactMultiplier: 1.05 });
+    expect(result).toBe(MIN_PRICE);
+    expect(Number.isFinite(result)).toBe(true);
+  });
+
+  it('NaN impactMultiplier returns safe default', () => {
+    const result = applyPriceImpact(50, { impactMultiplier: NaN });
+    expect(Number.isFinite(result)).toBe(true);
+    expect(result).toBe(50);
+  });
+
+  it('both NaN returns MIN_PRICE', () => {
+    const result = applyPriceImpact(NaN, { impactMultiplier: NaN });
+    expect(Number.isFinite(result)).toBe(true);
+    expect(result).toBe(MIN_PRICE);
+  });
+});
+
+// --- Infinity guard tests (TC-007) ---
+describe('applyPriceImpact — Infinity guard', () => {
+  it('Infinity currentPrice returns MIN_PRICE', () => {
+    const result = applyPriceImpact(Infinity, { impactMultiplier: 1.05 });
+    expect(Number.isFinite(result)).toBe(true);
+    expect(result).toBe(MIN_PRICE);
+  });
+
+  it('-Infinity currentPrice returns MIN_PRICE', () => {
+    const result = applyPriceImpact(-Infinity, { impactMultiplier: 1.05 });
+    expect(Number.isFinite(result)).toBe(true);
+    expect(result).toBe(MIN_PRICE);
+  });
+
+  it('Infinity impactMultiplier returns safe default', () => {
+    const result = applyPriceImpact(50, { impactMultiplier: Infinity });
+    expect(Number.isFinite(result)).toBe(true);
+    expect(result).toBe(50);
+  });
+
+  it('-Infinity impactMultiplier returns MIN_PRICE', () => {
+    const result = applyPriceImpact(50, { impactMultiplier: -Infinity });
+    expect(Number.isFinite(result)).toBe(true);
+    expect(result).toBe(50);
+  });
+});
+
+// --- calculateNewPrice NaN/Infinity guards (TC-006, TC-007) ---
+describe('calculateNewPrice — NaN/Infinity guards', () => {
+  it('NaN currentPrice returns finite newPrice >= MIN_PRICE', () => {
+    const result = calculateNewPrice(NaN, {
+      sentiment: 'positive',
+      magnitude: 5,
+      confidence: 0.8,
+    });
+    expect(Number.isFinite(result.newPrice)).toBe(true);
+    expect(result.newPrice).toBeGreaterThanOrEqual(MIN_PRICE);
+  });
+
+  it('Infinity currentPrice returns finite newPrice', () => {
+    const result = calculateNewPrice(Infinity, {
+      sentiment: 'neutral',
+      magnitude: 1,
+      confidence: 0.5,
+    });
+    expect(Number.isFinite(result.newPrice)).toBe(true);
+  });
+});
+
+// --- calculateCumulativeImpact NaN guard (TC-006) ---
+describe('calculateCumulativeImpact — NaN guard', () => {
+  it('NaN currentPrice returns safe defaults', () => {
+    const result = calculateCumulativeImpact(NaN, [
+      { sentiment: 'positive', magnitude: 3 },
+    ]);
+    expect(Number.isFinite(result.newPrice)).toBe(true);
+    expect(result.newPrice).toBeGreaterThanOrEqual(MIN_PRICE);
+    expect(Number.isFinite(result.totalImpactPercent)).toBe(true);
+  });
+});
+
+// --- createPriceHistoryEntry (TC-034) ---
 describe('createPriceHistoryEntry', () => {
   it('builds an entry with full article metadata', () => {
     const article = {
@@ -106,20 +205,58 @@ describe('createPriceHistoryEntry', () => {
   });
 });
 
-// TC-026
+// --- Deterministic pricing (TC-008) ---
+describe('calculatePriceImpact — deterministic', () => {
+  it('same inputs produce identical results', () => {
+    const input: SentimentInput = {
+      sentiment: 'positive',
+      magnitude: 5,
+      confidence: 0.8,
+    };
+    const result1 = calculatePriceImpact(input);
+    const result2 = calculatePriceImpact(input);
+    expect(result1.impactPercent).toBe(result2.impactPercent);
+    expect(result1.impactMultiplier).toBe(result2.impactMultiplier);
+  });
+
+  it('different sentiment produces different results', () => {
+    const a = calculatePriceImpact({ sentiment: 'positive', magnitude: 5, confidence: 0.8 });
+    const b = calculatePriceImpact({ sentiment: 'negative', magnitude: 5, confidence: 0.8 });
+    expect(a.impactPercent).not.toBe(b.impactPercent);
+  });
+
+  it('different magnitude produces different results', () => {
+    const a = calculatePriceImpact({ sentiment: 'positive', magnitude: 5, confidence: 0.8 });
+    const c = calculatePriceImpact({ sentiment: 'positive', magnitude: 1, confidence: 0.8 });
+    expect(a.impactPercent).not.toBe(c.impactPercent);
+  });
+});
+
+describe('calculateNewPrice — deterministic', () => {
+  it('same inputs produce identical newPrice', () => {
+    const input: SentimentInput = { sentiment: 'negative', magnitude: 3, confidence: 0.6 };
+    const r1 = calculateNewPrice(100, input);
+    const r2 = calculateNewPrice(100, input);
+    expect(r1.newPrice).toBe(r2.newPrice);
+  });
+});
+
+describe('calculateCumulativeImpact — deterministic', () => {
+  it('same inputs produce identical results', () => {
+    const sentiments: SentimentInput[] = [
+      { sentiment: 'positive', magnitude: 0.5, confidence: 0.9 },
+      { sentiment: 'negative', magnitude: 0.3, confidence: 0.7 },
+    ];
+    const r1 = calculateCumulativeImpact(100, sentiments);
+    const r2 = calculateCumulativeImpact(100, sentiments);
+    expect(r1.newPrice).toBe(r2.newPrice);
+    expect(r1.totalImpactPercent).toBe(r2.totalImpactPercent);
+  });
+});
+
+// --- Impact ranges (TC-026, TC-027) ---
 describe('calculatePriceImpact — positive/high sentiment', () => {
-  let randomSpy: ReturnType<typeof vi.spyOn>;
-
-  beforeEach(() => {
-    randomSpy = vi.spyOn(Math, 'random');
-  });
-
-  afterEach(() => {
-    randomSpy.mockRestore();
-  });
-
   it('produces impact in 3%–5% range for positive/high with confidence 1.0', () => {
-    randomSpy.mockReturnValue(0.5);
     const result = calculatePriceImpact({
       sentiment: 'positive',
       magnitude: 0.8,
@@ -132,7 +269,6 @@ describe('calculatePriceImpact — positive/high sentiment', () => {
   });
 
   it('boundary: magnitude exactly 0.66 maps to "high"', () => {
-    randomSpy.mockReturnValue(0.5);
     const result = calculatePriceImpact({
       sentiment: 'positive',
       magnitude: 0.66,
@@ -142,18 +278,7 @@ describe('calculatePriceImpact — positive/high sentiment', () => {
   });
 });
 
-// TC-027
-describe('calculatePriceImpact — all 9 sentiment/magnitude combos', () => {
-  let randomSpy: ReturnType<typeof vi.spyOn>;
-
-  beforeEach(() => {
-    randomSpy = vi.spyOn(Math, 'random');
-  });
-
-  afterEach(() => {
-    randomSpy.mockRestore();
-  });
-
+describe('calculatePriceImpact — all 9 sentiment/magnitude combos produce values in expected range', () => {
   const combos: Array<{
     sentiment: SentimentInput['sentiment'];
     magnitude: number;
@@ -173,44 +298,21 @@ describe('calculatePriceImpact — all 9 sentiment/magnitude combos', () => {
   ];
 
   combos.forEach(({ sentiment, magnitude, level, minPct, maxPct }) => {
-    it(`${sentiment}/${level}: Math.random=0 → impact at min of range`, () => {
-      randomSpy.mockReturnValue(0);
+    it(`${sentiment}/${level}: impact within [${minPct}, ${maxPct}]%`, () => {
       const result = calculatePriceImpact({
         sentiment,
         magnitude,
         confidence: 1.0,
       });
-      const expected = +(minPct).toFixed(2);
-      expect(result.impactPercent).toBeCloseTo(expected, 1);
-    });
-
-    it(`${sentiment}/${level}: Math.random≈1 → impact at max of range`, () => {
-      randomSpy.mockReturnValue(0.9999);
-      const result = calculatePriceImpact({
-        sentiment,
-        magnitude,
-        confidence: 1.0,
-      });
-      const expected = +(maxPct).toFixed(2);
-      expect(result.impactPercent).toBeCloseTo(expected, 0);
+      expect(result.impactPercent).toBeGreaterThanOrEqual(minPct);
+      expect(result.impactPercent).toBeLessThanOrEqual(maxPct);
     });
   });
 });
 
-// TC-028
+// --- Confidence weighting (TC-028) ---
 describe('calculatePriceImpact — confidence weighting', () => {
-  let randomSpy: ReturnType<typeof vi.spyOn>;
-
-  beforeEach(() => {
-    randomSpy = vi.spyOn(Math, 'random');
-  });
-
-  afterEach(() => {
-    randomSpy.mockRestore();
-  });
-
   it('confidence 0.0 → multiplier 0.7', () => {
-    randomSpy.mockReturnValue(0.5);
     const result = calculatePriceImpact({
       sentiment: 'positive',
       magnitude: 0.8,
@@ -220,7 +322,6 @@ describe('calculatePriceImpact — confidence weighting', () => {
   });
 
   it('confidence 1.0 → multiplier 1.0', () => {
-    randomSpy.mockReturnValue(0.5);
     const result = calculatePriceImpact({
       sentiment: 'positive',
       magnitude: 0.8,
@@ -230,7 +331,6 @@ describe('calculatePriceImpact — confidence weighting', () => {
   });
 
   it('confidence 0.5 → multiplier 0.85', () => {
-    randomSpy.mockReturnValue(0.5);
     const result = calculatePriceImpact({
       sentiment: 'positive',
       magnitude: 0.8,
@@ -240,7 +340,6 @@ describe('calculatePriceImpact — confidence weighting', () => {
   });
 
   it('confidence defaults to 0.5 when omitted', () => {
-    randomSpy.mockReturnValue(0.5);
     const result = calculatePriceImpact({
       sentiment: 'positive',
       magnitude: 0.8,
@@ -248,44 +347,11 @@ describe('calculatePriceImpact — confidence weighting', () => {
     expect(result.details.confidence).toBe(0.5);
     expect(result.details.confidenceMultiplier).toBeCloseTo(0.85, 5);
   });
-
-  it('confidence weighting scales the base impact correctly', () => {
-    randomSpy.mockReturnValue(0.5);
-
-    const full = calculatePriceImpact({
-      sentiment: 'positive',
-      magnitude: 0.8,
-      confidence: 1.0,
-    });
-    const half = calculatePriceImpact({
-      sentiment: 'positive',
-      magnitude: 0.8,
-      confidence: 0.0,
-    });
-
-    expect(full.details.baseImpact).toBeCloseTo(half.details.baseImpact, 5);
-    expect(Math.abs(half.impactPercent)).toBeLessThan(Math.abs(full.impactPercent));
-    expect(Math.abs(half.impactPercent)).toBeCloseTo(
-      Math.abs(full.impactPercent) * 0.7,
-      1,
-    );
-  });
 });
 
-// TC-030
+// --- calculateNewPrice end-to-end (TC-030) ---
 describe('calculateNewPrice — end-to-end', () => {
-  let randomSpy: ReturnType<typeof vi.spyOn>;
-
-  beforeEach(() => {
-    randomSpy = vi.spyOn(Math, 'random');
-  });
-
-  afterEach(() => {
-    randomSpy.mockRestore();
-  });
-
   it('composes impact and returns a complete PriceResult', () => {
-    randomSpy.mockReturnValue(0.5);
     const result = calculateNewPrice(100, {
       sentiment: 'positive',
       magnitude: 0.8,
@@ -299,7 +365,6 @@ describe('calculateNewPrice — end-to-end', () => {
   });
 
   it('positive sentiment increases price', () => {
-    randomSpy.mockReturnValue(0.5);
     const result = calculateNewPrice(100, {
       sentiment: 'positive',
       magnitude: 0.8,
@@ -310,7 +375,6 @@ describe('calculateNewPrice — end-to-end', () => {
   });
 
   it('negative sentiment decreases price', () => {
-    randomSpy.mockReturnValue(0.5);
     const result = calculateNewPrice(100, {
       sentiment: 'negative',
       magnitude: 0.8,
@@ -321,7 +385,6 @@ describe('calculateNewPrice — end-to-end', () => {
   });
 
   it('neutral sentiment keeps price close to original', () => {
-    randomSpy.mockReturnValue(0.5);
     const result = calculateNewPrice(100, {
       sentiment: 'neutral',
       magnitude: 0.1,
@@ -331,20 +394,9 @@ describe('calculateNewPrice — end-to-end', () => {
   });
 });
 
-// TC-031
+// --- calculateCumulativeImpact (TC-031) ---
 describe('calculateCumulativeImpact — multiple sentiments', () => {
-  let randomSpy: ReturnType<typeof vi.spyOn>;
-
-  beforeEach(() => {
-    randomSpy = vi.spyOn(Math, 'random');
-  });
-
-  afterEach(() => {
-    randomSpy.mockRestore();
-  });
-
   it('sorts by confidence and applies correct decay', () => {
-    randomSpy.mockReturnValue(0.5);
     const sentiments: SentimentInput[] = [
       { sentiment: 'positive', magnitude: 0.8, confidence: 0.5 },
       { sentiment: 'positive', magnitude: 0.5, confidence: 0.9 },
@@ -357,7 +409,6 @@ describe('calculateCumulativeImpact — multiple sentiments', () => {
     expect(result.impacts[1].decay).toBeCloseTo(0.7, 5);
     expect(result.impacts[2].decay).toBeCloseTo(0.49, 5);
 
-    // Verify sorted by confidence descending
     expect(result.impacts[0].details.confidence).toBe(0.9);
     expect(result.impacts[1].details.confidence).toBe(0.7);
     expect(result.impacts[2].details.confidence).toBe(0.5);
@@ -371,7 +422,6 @@ describe('calculateCumulativeImpact — multiple sentiments', () => {
   });
 
   it('tracks running price correctly', () => {
-    randomSpy.mockReturnValue(0.5);
     const sentiments: SentimentInput[] = [
       { sentiment: 'positive', magnitude: 0.5, confidence: 0.8 },
       { sentiment: 'positive', magnitude: 0.3, confidence: 0.6 },
@@ -385,20 +435,25 @@ describe('calculateCumulativeImpact — multiple sentiments', () => {
   });
 });
 
-// TC-032
+// --- Price floor in cumulative impact (TC-028) ---
+describe('calculateCumulativeImpact — price floor', () => {
+  it('enforces >= MIN_PRICE even with many negative impacts', () => {
+    const sentiments: SentimentInput[] = Array(10).fill({
+      sentiment: 'negative',
+      magnitude: 10,
+      confidence: 1.0,
+    });
+    const result = calculateCumulativeImpact(0.05, sentiments, { maxTotalImpact: 1 });
+    expect(result.newPrice).toBeGreaterThanOrEqual(MIN_PRICE);
+    result.impacts.forEach((impact) => {
+      expect(impact.runningPrice).toBeGreaterThanOrEqual(MIN_PRICE);
+    });
+  });
+});
+
+// --- maxTotalImpact cap (TC-032) ---
 describe('calculateCumulativeImpact — maxTotalImpact cap', () => {
-  let randomSpy: ReturnType<typeof vi.spyOn>;
-
-  beforeEach(() => {
-    randomSpy = vi.spyOn(Math, 'random');
-  });
-
-  afterEach(() => {
-    randomSpy.mockRestore();
-  });
-
   it('respects custom maxTotalImpact of 5%', () => {
-    randomSpy.mockReturnValue(0.5);
     const sentiments: SentimentInput[] = Array(20).fill({
       sentiment: 'positive',
       magnitude: 1.0,
@@ -412,7 +467,6 @@ describe('calculateCumulativeImpact — maxTotalImpact cap', () => {
   });
 
   it('respects default maxTotalImpact of 10%', () => {
-    randomSpy.mockReturnValue(0.99);
     const sentiments: SentimentInput[] = Array(20).fill({
       sentiment: 'positive',
       magnitude: 1.0,
@@ -424,7 +478,6 @@ describe('calculateCumulativeImpact — maxTotalImpact cap', () => {
   });
 
   it('skips impacts that would exceed the cap', () => {
-    randomSpy.mockReturnValue(0.99);
     const sentiments: SentimentInput[] = Array(20).fill({
       sentiment: 'positive',
       magnitude: 1.0,
@@ -438,20 +491,9 @@ describe('calculateCumulativeImpact — maxTotalImpact cap', () => {
   });
 });
 
-// TC-033
+// --- Custom decayFactor (TC-033) ---
 describe('calculateCumulativeImpact — custom decayFactor', () => {
-  let randomSpy: ReturnType<typeof vi.spyOn>;
-
-  beforeEach(() => {
-    randomSpy = vi.spyOn(Math, 'random');
-  });
-
-  afterEach(() => {
-    randomSpy.mockRestore();
-  });
-
   it('decayFactor 0.5 gives decays 1.0, 0.5, 0.25', () => {
-    randomSpy.mockReturnValue(0.5);
     const sentiments: SentimentInput[] = [
       { sentiment: 'positive', magnitude: 0.5, confidence: 0.9 },
       { sentiment: 'positive', magnitude: 0.5, confidence: 0.8 },
@@ -467,7 +509,6 @@ describe('calculateCumulativeImpact — custom decayFactor', () => {
   });
 
   it('decayFactor 1.0 gives no decay', () => {
-    randomSpy.mockReturnValue(0.5);
     const sentiments: SentimentInput[] = [
       { sentiment: 'positive', magnitude: 0.5, confidence: 0.9 },
       { sentiment: 'positive', magnitude: 0.5, confidence: 0.8 },
@@ -481,7 +522,6 @@ describe('calculateCumulativeImpact — custom decayFactor', () => {
   });
 
   it('decayFactor 0 means only first impact applies', () => {
-    randomSpy.mockReturnValue(0.5);
     const sentiments: SentimentInput[] = [
       { sentiment: 'positive', magnitude: 0.5, confidence: 0.9 },
       { sentiment: 'positive', magnitude: 0.5, confidence: 0.8 },

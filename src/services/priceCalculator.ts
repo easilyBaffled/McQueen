@@ -102,19 +102,45 @@ const PRICE_IMPACT_RANGES: Record<
 
 const CONFIDENCE_WEIGHT = 0.7;
 
+export const MIN_PRICE = 0.01;
+
+function isFiniteNumber(value: number): boolean {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+function safeNumber(value: number, fallback: number): number {
+  return isFiniteNumber(value) ? value : fallback;
+}
+
+function hashCode(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
+  }
+  return hash >>> 0;
+}
+
+function deterministicInRange(min: number, max: number, seed: string): number {
+  const t = (hashCode(seed) % 10000) / 10000;
+  return t * (max - min) + min;
+}
+
 export function calculatePriceImpact(
   sentimentResult: SentimentInput,
 ): PriceImpact {
   const { sentiment, magnitude, confidence = 0.5 } = sentimentResult;
-  const level = getMagnitudeLevel(magnitude);
+  const safeMagnitude = safeNumber(magnitude, 0);
+  const safeConfidence = safeNumber(confidence, 0.5);
+  const level = getMagnitudeLevel(safeMagnitude);
 
   const range =
     PRICE_IMPACT_RANGES[sentiment]?.[level] || PRICE_IMPACT_RANGES.neutral.low;
 
-  const baseImpact = randomInRange(range.min, range.max);
+  const seed = `${sentiment}:${safeMagnitude}:${safeConfidence}`;
+  const baseImpact = deterministicInRange(range.min, range.max, seed);
 
   const confidenceMultiplier =
-    CONFIDENCE_WEIGHT + (1 - CONFIDENCE_WEIGHT) * confidence;
+    CONFIDENCE_WEIGHT + (1 - CONFIDENCE_WEIGHT) * safeConfidence;
   const finalImpact = baseImpact * confidenceMultiplier;
 
   return {
@@ -125,7 +151,7 @@ export function calculatePriceImpact(
       sentiment,
       level,
       baseImpact,
-      confidence,
+      confidence: safeConfidence,
       confidenceMultiplier,
     },
   };
@@ -135,21 +161,24 @@ export function applyPriceImpact(
   currentPrice: number,
   impact: { impactMultiplier: number },
 ): number {
-  const newPrice = currentPrice * impact.impactMultiplier;
-  return +newPrice.toFixed(2);
+  const safePrice = safeNumber(currentPrice, MIN_PRICE);
+  const safeMultiplier = safeNumber(impact.impactMultiplier, 1);
+  const newPrice = safePrice * safeMultiplier;
+  return +Math.max(MIN_PRICE, newPrice).toFixed(2);
 }
 
 export function calculateNewPrice(
   currentPrice: number,
   sentimentResult: SentimentInput,
 ): PriceResult {
+  const safePrice = safeNumber(currentPrice, MIN_PRICE);
   const impact = calculatePriceImpact(sentimentResult);
-  const newPrice = applyPriceImpact(currentPrice, impact);
+  const newPrice = applyPriceImpact(safePrice, impact);
 
   return {
     newPrice,
-    previousPrice: currentPrice,
-    change: +(newPrice - currentPrice).toFixed(2),
+    previousPrice: safePrice,
+    change: +(newPrice - safePrice).toFixed(2),
     changePercent: impact.impactPercent,
     impact,
   };
@@ -162,7 +191,8 @@ export function calculateCumulativeImpact(
 ): CumulativeImpactResult {
   const { maxTotalImpact = 0.1, decayFactor = 0.7 } = options;
 
-  let runningPrice = currentPrice;
+  let runningPrice = safeNumber(currentPrice, MIN_PRICE);
+  const safeStartPrice = runningPrice;
   let totalImpactPercent = 0;
   const impacts: CumulativeImpactItem[] = [];
 
@@ -199,15 +229,11 @@ export function calculateCumulativeImpact(
 
   return {
     newPrice: runningPrice,
-    previousPrice: currentPrice,
-    change: +(runningPrice - currentPrice).toFixed(2),
+    previousPrice: safeStartPrice,
+    change: +(runningPrice - safeStartPrice).toFixed(2),
     totalImpactPercent: +totalImpactPercent.toFixed(2),
     impacts,
   };
-}
-
-function randomInRange(min: number, max: number): number {
-  return Math.random() * (max - min) + min;
 }
 
 function getImpactDescription(impact: number): string {
