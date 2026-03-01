@@ -41,6 +41,9 @@ sync_base.jsonl
 export-state/
 
 # Dolt database (managed by Dolt remotes, not git)
+dolt
+dolt-shm
+dolt-wal
 dolt/
 dolt-access.lock
 
