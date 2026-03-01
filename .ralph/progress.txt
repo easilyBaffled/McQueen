@@ -65,3 +65,4 @@
 2026-02-28 19:42:50 | mcq-1zw.6 | DONE | Fix race conditions and unbounded memory growth
 2026-02-28 20:11:04 | mcq-dvn.3 | DONE | Add loading state to ScenarioToggle during scenario switches
 2026-02-28 21:10:09 | mcq-0gw.1 | DONE | Remove committed binary files and generated artifacts from git
+2026-02-28 21:12:45 | mcq-0gw.2 | DONE | Fix vercel.json installCommand mismatch (yarn vs npm)
