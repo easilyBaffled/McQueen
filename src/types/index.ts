@@ -50,6 +50,8 @@ export interface ScenarioContextValue {
   players: Player[];
   scenarioLoading: boolean;
   scenarioVersion: number;
+  scenarioError: string | null;
+  retryScenarioLoad: () => void;
 }
 
 export interface SimulationContextValue {

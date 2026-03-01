@@ -61,3 +61,4 @@
 2026-02-28 16:40:17 | mcq-1zw.7 | DONE | Move module-level mutable state into React lifecycle
 2026-02-28 18:07:02 | mcq-1zw.3 | DONE | Fix stale closure bugs from exhaustive-deps suppressions
 2026-02-28 18:23:24 | mcq-1zw.8 | DONE | Decompose PlayerDetail into sub-components
+2026-02-28 18:47:29 | mcq-1zw.9 | DONE | Improve test confidence: reduce over-mocking, add integration tests

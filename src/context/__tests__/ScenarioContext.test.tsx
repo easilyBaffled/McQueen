@@ -211,6 +211,63 @@ describe('ScenarioContext', () => {
     consoleSpy.mockRestore();
   });
 
+  // TC-013 (mcq-1zw.6): ScenarioContext exposes scenarioError and retryScenarioLoad
+  it('exposes scenarioError and retryScenarioLoad on context', () => {
+    const { result } = renderScenario();
+    expect(result.current).toHaveProperty('scenarioError');
+    expect(result.current).toHaveProperty('retryScenarioLoad');
+    expect(typeof result.current.retryScenarioLoad).toBe('function');
+    expect(result.current.scenarioError).toBeNull();
+  });
+
+  // TC-014 (mcq-1zw.6): import failure does not leave UI in permanent loading
+  it('scenarioLoading becomes false after import failure', async () => {
+    const { result } = await renderScenarioAndWait();
+
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    act(() => {
+      result.current.setScenario('nonexistent');
+    });
+
+    await waitFor(() => {
+      expect(result.current.scenarioLoading).toBe(false);
+    });
+
+    expect(result.current.scenarioLoading).toBe(false);
+
+    consoleSpy.mockRestore();
+  });
+
+  // TC-024 (mcq-1zw.6): unknown scenario key handled gracefully
+  it('handles unknown scenario key gracefully without crash', async () => {
+    const { result } = await renderScenarioAndWait();
+
+    act(() => {
+      result.current.setScenario('nonexistent-scenario');
+    });
+
+    await waitFor(() => {
+      expect(result.current.scenarioLoading).toBe(false);
+    });
+
+    expect(result.current.scenario).toBe('nonexistent-scenario');
+  });
+
+  it('handles empty string scenario key', async () => {
+    const { result } = await renderScenarioAndWait();
+
+    act(() => {
+      result.current.setScenario('');
+    });
+
+    await waitFor(() => {
+      expect(result.current.scenarioLoading).toBe(false);
+    });
+
+    expect(result.current.scenario).toBe('');
+  });
+
   // TC-013: Scenario selection persisted to localStorage on change
   it('persists scenario to localStorage on change', async () => {
     const { result } = await renderScenarioAndWait();

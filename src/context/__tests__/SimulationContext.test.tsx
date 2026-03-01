@@ -816,6 +816,128 @@ describe('SimulationContext', () => {
       expect(mockFetchNFLNews.mock.calls.length).toBe(callsBefore);
     });
 
+    // TC-019 (mcq-1zw.6): processedArticleIds is reset on scenario change
+    it('processedArticleIds is reset when switching scenarios', async () => {
+      const { result } = await renderAndWait();
+
+      mockFetchNFLNews.mockResolvedValue([
+        makeArticle({
+          id: 'art-mahomes-reset',
+          headline: 'Patrick Mahomes scores touchdown',
+          description: 'Mahomes leads team',
+        }),
+      ]);
+
+      await switchAndWait(result, 'espn-live');
+      await waitFor(() => {
+        expect(result.current.sim.espnLoading).toBe(false);
+      });
+
+      await switchAndWait(result, 'midweek');
+      await switchAndWait(result, 'espn-live');
+      await waitFor(() => {
+        expect(result.current.sim.espnLoading).toBe(false);
+      });
+
+      const espnEntries = result.current.sim.history.filter((h) =>
+        h.action.startsWith('ESPN:'),
+      );
+      expect(espnEntries.length).toBeGreaterThan(0);
+    });
+
+    // TC-001 (mcq-1zw.6): ESPN fetch is aborted when leaving ESPN-live mode
+    it('aborts ESPN fetch when switching away from espn-live', async () => {
+      vi.useFakeTimers();
+      let resolveDelayed: (v: unknown[]) => void;
+      mockFetchNFLNews.mockImplementation(
+        () => new Promise<unknown[]>((resolve) => { resolveDelayed = resolve; }),
+      );
+
+      const hook = renderSim();
+      await vi.advanceTimersByTimeAsync(200);
+
+      await act(async () => {
+        hook.result.current.sc.setScenario('espn-live');
+      });
+      await vi.advanceTimersByTimeAsync(200);
+      expect(mockFetchNFLNews).toHaveBeenCalled();
+
+      const lastCallArgs = mockFetchNFLNews.mock.calls[mockFetchNFLNews.mock.calls.length - 1];
+      const signalArg = lastCallArgs[1]?.signal;
+      expect(signalArg).toBeDefined();
+      expect(signalArg.aborted).toBe(false);
+
+      await act(async () => {
+        hook.result.current.sc.setScenario('midweek');
+      });
+      await vi.advanceTimersByTimeAsync(200);
+
+      expect(signalArg.aborted).toBe(true);
+
+      resolveDelayed!([]);
+      vi.clearAllTimers();
+      vi.useRealTimers();
+    });
+
+    // TC-002 (mcq-1zw.6): ESPN refresh interval is cleared on mode exit
+    it('no further ESPN fetches fire after leaving espn-live', async () => {
+      vi.useFakeTimers();
+      const hook = renderSim();
+      await vi.advanceTimersByTimeAsync(200);
+
+      mockFetchNFLNews.mockResolvedValue([]);
+      await act(async () => {
+        hook.result.current.sc.setScenario('espn-live');
+      });
+      await vi.advanceTimersByTimeAsync(200);
+
+      await act(async () => {
+        hook.result.current.sc.setScenario('midweek');
+      });
+      await vi.advanceTimersByTimeAsync(200);
+
+      const callsAfterLeave = mockFetchNFLNews.mock.calls.length;
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(ESPN_REFRESH_MS * 5);
+      });
+      expect(mockFetchNFLNews.mock.calls.length).toBe(callsAfterLeave);
+
+      vi.clearAllTimers();
+      vi.useRealTimers();
+    });
+
+    // TC-004 (mcq-1zw.6): Aborted ESPN fetch does not set error state
+    it('aborted fetch does not set espnError', async () => {
+      vi.useFakeTimers();
+      mockFetchNFLNews.mockImplementation((_limit: number, opts?: { signal?: AbortSignal }) => {
+        return new Promise((_resolve, reject) => {
+          if (opts?.signal) {
+            opts.signal.addEventListener('abort', () => {
+              reject(new DOMException('The operation was aborted', 'AbortError'));
+            });
+          }
+        });
+      });
+
+      const hook = renderSim();
+      await vi.advanceTimersByTimeAsync(200);
+
+      await act(async () => {
+        hook.result.current.sc.setScenario('espn-live');
+      });
+      await vi.advanceTimersByTimeAsync(200);
+
+      await act(async () => {
+        hook.result.current.sc.setScenario('midweek');
+      });
+      await vi.advanceTimersByTimeAsync(500);
+
+      expect(hook.result.current.sim.espnError).toBeNull();
+
+      vi.clearAllTimers();
+      vi.useRealTimers();
+    });
+
     // TC-030
     it('ESPN refresh interval cleared on scenario change', async () => {
       vi.useFakeTimers();

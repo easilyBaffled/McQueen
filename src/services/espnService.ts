@@ -8,6 +8,7 @@ import type {
 const ESPN_API_BASE = '/espn-api';
 const ESPN_DIRECT_BASE = 'https://site.api.espn.com';
 const CACHE_TTL = 5 * 60 * 1000;
+export const MAX_CACHE_SIZE = 100;
 
 interface CacheEntry {
   data: unknown;
@@ -115,23 +116,47 @@ function getFromCache(key: string): unknown | null {
   return null;
 }
 
+function evictOldest(): void {
+  const keysIter = cache.keys();
+  const oldest = keysIter.next().value;
+  if (oldest !== undefined) {
+    cache.delete(oldest);
+  }
+}
+
 function setCache(key: string, data: unknown): void {
+  if (cache.has(key)) {
+    cache.delete(key);
+  }
+  while (cache.size >= MAX_CACHE_SIZE) {
+    evictOldest();
+  }
   cache.set(key, { data, timestamp: Date.now() });
 }
 
-async function fetchWithFallback<T = unknown>(endpoint: string): Promise<T> {
+interface FetchOptions {
+  signal?: AbortSignal;
+}
+
+async function fetchWithFallback<T = unknown>(endpoint: string, options?: FetchOptions): Promise<T> {
   const cacheKey = endpoint;
   const cached = getFromCache(cacheKey);
   if (cached) {
     return cached as T;
   }
 
+  const signal = options?.signal;
+
   try {
-    let response = await fetch(`${ESPN_API_BASE}${endpoint}`);
+    let response = signal
+      ? await fetch(`${ESPN_API_BASE}${endpoint}`, { signal })
+      : await fetch(`${ESPN_API_BASE}${endpoint}`);
 
     if (!response.ok) {
       console.warn('Proxy failed, trying direct ESPN API...');
-      response = await fetch(`${ESPN_DIRECT_BASE}${endpoint}`);
+      response = signal
+        ? await fetch(`${ESPN_DIRECT_BASE}${endpoint}`, { signal })
+        : await fetch(`${ESPN_DIRECT_BASE}${endpoint}`);
     }
 
     if (!response.ok) {
@@ -147,13 +172,17 @@ async function fetchWithFallback<T = unknown>(endpoint: string): Promise<T> {
   }
 }
 
-export async function fetchNFLNews(limit: number = 20): Promise<Article[]> {
+export async function fetchNFLNews(limit: number = 20, options?: FetchOptions): Promise<Article[]> {
   try {
     const data = await fetchWithFallback<EspnNewsResponse>(
       `/apis/site/v2/sports/football/nfl/news?limit=${limit}`,
+      options,
     );
     return normalizeNewsArticles(data.articles || []);
   } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw error;
+    }
     console.error('Failed to fetch NFL news:', error);
     return [];
   }

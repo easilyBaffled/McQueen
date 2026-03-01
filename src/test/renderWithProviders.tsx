@@ -16,6 +16,8 @@ function createDefaultScenarioValue(): ScenarioContextValue {
     players: [],
     scenarioLoading: false,
     scenarioVersion: 0,
+    scenarioError: null,
+    retryScenarioLoad: vi.fn(),
   };
 }
 
@@ -219,6 +221,8 @@ function renderWithRealProviders(
     players: TEST_SCENARIO_DATA.players,
     scenarioLoading: false,
     scenarioVersion: 0,
+    scenarioError: null,
+    retryScenarioLoad: () => {},
   };
 
   function RealWrapper({ children }: { children: ReactNode }) {

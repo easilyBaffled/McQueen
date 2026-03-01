@@ -7,6 +7,7 @@ import {
   fetchTeamNews,
   fetchScoreboard,
   fetchPlayerNews,
+  MAX_CACHE_SIZE,
 } from '../espnService';
 
 describe('NFL_TEAM_IDS', () => {
@@ -679,5 +680,316 @@ describe('espnService — getCacheStats reports correct metadata', () => {
     const stats = getCacheStats();
     expect(stats.entries[0].expired).toBe(false);
     expect(stats.entries[0].age).toBeGreaterThanOrEqual(60_000);
+  });
+});
+
+// TC-008: espnService cache does not exceed MAX_CACHE_SIZE
+describe('espnService — cache size limit (MAX_CACHE_SIZE)', () => {
+  beforeEach(() => {
+    clearCache();
+    vi.restoreAllMocks();
+  });
+
+  it('exports MAX_CACHE_SIZE as 100', () => {
+    expect(MAX_CACHE_SIZE).toBe(100);
+  });
+
+  it('cache does not exceed MAX_CACHE_SIZE after many unique requests', async () => {
+    let callCount = 0;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(() => {
+        callCount++;
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ articles: [{ id: String(callCount) }] }),
+        });
+      }),
+    );
+
+    for (let i = 1; i <= MAX_CACHE_SIZE + 1; i++) {
+      await fetchNFLNews(i);
+    }
+
+    expect(getCacheStats().size).toBeLessThanOrEqual(MAX_CACHE_SIZE);
+  });
+
+  it('evicts the oldest entry when exceeding MAX_CACHE_SIZE (TC-009)', async () => {
+    let callCount = 0;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(() => {
+        callCount++;
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ articles: [{ id: String(callCount) }] }),
+        });
+      }),
+    );
+
+    for (let i = 1; i <= MAX_CACHE_SIZE; i++) {
+      await fetchNFLNews(i);
+    }
+
+    expect(getCacheStats().size).toBe(MAX_CACHE_SIZE);
+    const firstKey = getCacheStats().keys[0];
+
+    await fetchNFLNews(MAX_CACHE_SIZE + 1);
+
+    expect(getCacheStats().size).toBe(MAX_CACHE_SIZE);
+    expect(getCacheStats().keys).not.toContain(firstKey);
+  });
+
+  it('re-request of evicted endpoint triggers new fetch (TC-008)', async () => {
+    const mockFetch = vi.fn().mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ articles: [{ id: '1' }] }),
+      }),
+    );
+    vi.stubGlobal('fetch', mockFetch);
+
+    for (let i = 1; i <= MAX_CACHE_SIZE + 1; i++) {
+      await fetchNFLNews(i);
+    }
+
+    const callsBefore = mockFetch.mock.calls.length;
+    await fetchNFLNews(1);
+    expect(mockFetch.mock.calls.length).toBeGreaterThan(callsBefore);
+  });
+
+  it('cached non-evicted endpoint still serves from cache', async () => {
+    const mockFetch = vi.fn().mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ articles: [{ id: '1' }] }),
+      }),
+    );
+    vi.stubGlobal('fetch', mockFetch);
+
+    for (let i = 1; i <= 50; i++) {
+      await fetchNFLNews(i);
+    }
+    const callsBefore = mockFetch.mock.calls.length;
+
+    await fetchNFLNews(50);
+    expect(mockFetch.mock.calls.length).toBe(callsBefore);
+  });
+});
+
+// TC-010: espnService does not cache error responses
+describe('espnService — error responses not cached', () => {
+  beforeEach(() => {
+    clearCache();
+    vi.restoreAllMocks();
+  });
+
+  it('does not cache when both proxy and direct fail (500)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: false, status: 500 }),
+    );
+    await fetchNFLNews();
+    expect(getCacheStats().size).toBe(0);
+  });
+
+  it('does not cache on network error', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockRejectedValue(new TypeError('Failed to fetch')),
+    );
+    await fetchNFLNews();
+    expect(getCacheStats().size).toBe(0);
+  });
+
+  it('caches successful response after earlier failure (TC-010)', async () => {
+    const mockFetch = vi.fn()
+      .mockResolvedValueOnce({ ok: false, status: 500 })
+      .mockResolvedValueOnce({ ok: false, status: 500 })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ articles: [{ id: '1', headline: 'Success' }] }),
+      });
+    vi.stubGlobal('fetch', mockFetch);
+
+    await fetchNFLNews(20);
+    expect(getCacheStats().size).toBe(0);
+
+    await fetchNFLNews(20);
+    expect(getCacheStats().size).toBe(1);
+  });
+
+  it('proxy fails but direct succeeds — only successful response cached', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation((url) => {
+        if (url.startsWith('/espn-api')) {
+          return Promise.resolve({ ok: false, status: 500 });
+        }
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ articles: [{ id: '1' }] }),
+        });
+      }),
+    );
+
+    await fetchNFLNews();
+    expect(getCacheStats().size).toBe(1);
+  });
+});
+
+// TC-003: AbortSignal is forwarded through espnService fetch calls
+describe('espnService — AbortSignal support', () => {
+  beforeEach(() => {
+    clearCache();
+    vi.restoreAllMocks();
+  });
+
+  it('forwards AbortSignal to fetch (TC-003)', async () => {
+    const controller = new AbortController();
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ articles: [] }),
+    });
+    vi.stubGlobal('fetch', mockFetch);
+
+    await fetchNFLNews(20, { signal: controller.signal });
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ signal: controller.signal }),
+    );
+  });
+
+  it('AbortSignal is forwarded to fallback fetch (TC-022)', async () => {
+    const controller = new AbortController();
+    const mockFetch = vi.fn().mockImplementation((url) => {
+      if (url.startsWith('/espn-api')) {
+        return Promise.resolve({ ok: false, status: 500 });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ articles: [] }),
+      });
+    });
+    vi.stubGlobal('fetch', mockFetch);
+
+    await fetchNFLNews(20, { signal: controller.signal });
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(mockFetch.mock.calls[0][1]).toEqual({ signal: controller.signal });
+    expect(mockFetch.mock.calls[1][1]).toEqual({ signal: controller.signal });
+  });
+
+  it('abort before resolve rejects with AbortError (TC-003)', async () => {
+    const controller = new AbortController();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(() => {
+        return new Promise((_, reject) => {
+          controller.signal.addEventListener('abort', () => {
+            reject(new DOMException('The operation was aborted', 'AbortError'));
+          });
+        });
+      }),
+    );
+
+    const promise = fetchNFLNews(20, { signal: controller.signal });
+    controller.abort();
+    await expect(promise).rejects.toThrow('The operation was aborted');
+  });
+
+  it('works without signal (backward compatibility)', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ articles: [{ id: '1' }] }),
+    });
+    vi.stubGlobal('fetch', mockFetch);
+
+    const result = await fetchNFLNews(20);
+    expect(result).toHaveLength(1);
+    expect(mockFetch).toHaveBeenCalledWith(expect.any(String));
+    expect(mockFetch.mock.calls[0].length).toBe(1);
+  });
+
+  it('already-aborted signal rejects immediately', async () => {
+    const controller = new AbortController();
+    controller.abort();
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation((_url, opts) => {
+        if (opts?.signal?.aborted) {
+          return Promise.reject(new DOMException('The operation was aborted', 'AbortError'));
+        }
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ articles: [] }) });
+      }),
+    );
+
+    await expect(fetchNFLNews(20, { signal: controller.signal })).rejects.toThrow('The operation was aborted');
+  });
+});
+
+// TC-020: clearCache removes all entries including error-cached entries
+describe('espnService — clearCache with mixed entries', () => {
+  beforeEach(() => {
+    clearCache();
+    vi.restoreAllMocks();
+  });
+
+  it('clears all entries including those after error/success mix', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ articles: [{ id: '1' }] }),
+      }),
+    );
+
+    for (let i = 0; i < 5; i++) {
+      await fetchNFLNews(i + 1);
+    }
+    expect(getCacheStats().size).toBe(5);
+
+    clearCache();
+    expect(getCacheStats().size).toBe(0);
+    expect(getCacheStats().keys).toEqual([]);
+  });
+});
+
+// TC-012: successful cache entries respect standard TTL
+describe('espnService — successful cache TTL unchanged', () => {
+  beforeEach(() => {
+    clearCache();
+    vi.restoreAllMocks();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('cache entry still valid at 4m59s', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ articles: [{ id: '1' }] }),
+    });
+    vi.stubGlobal('fetch', mockFetch);
+
+    await fetchNFLNews();
+    vi.advanceTimersByTime(299_000);
+    await fetchNFLNews();
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('cache entry expired after 5m1s', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ articles: [{ id: '1' }] }),
+    });
+    vi.stubGlobal('fetch', mockFetch);
+
+    await fetchNFLNews();
+    vi.advanceTimersByTime(301_000);
+    await fetchNFLNews();
+    expect(mockFetch).toHaveBeenCalledTimes(2);
   });
 });

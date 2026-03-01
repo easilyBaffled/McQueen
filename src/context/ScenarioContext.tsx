@@ -32,18 +32,23 @@ export function ScenarioProvider({ children }: ChildrenProps) {
   );
   const [currentData, setCurrentData] = useState<ScenarioData | null>(null);
   const [scenarioLoading, setScenarioLoading] = useState(true);
+  const [scenarioError, setScenarioError] = useState<string | null>(null);
   const scenarioVersionRef = useRef(0);
   const [scenarioVersion, setScenarioVersion] = useState(0);
+  const loadIdRef = useRef(0);
 
   useEffect(() => {
     write(STORAGE_KEYS.scenario, scenario);
   }, [scenario]);
 
-  useEffect(() => {
-    let cancelled = false;
-    setScenarioLoading(true);
+  const loadScenario = useCallback((scenarioKey: string) => {
+    loadIdRef.current += 1;
+    const thisLoadId = loadIdRef.current;
 
-    const loader = scenarioLoaders[scenario];
+    setScenarioLoading(true);
+    setScenarioError(null);
+
+    const loader = scenarioLoaders[scenarioKey];
     if (!loader) {
       setScenarioLoading(false);
       return;
@@ -51,20 +56,22 @@ export function ScenarioProvider({ children }: ChildrenProps) {
 
     loader()
       .then((data) => {
-        if (cancelled) return;
+        if (loadIdRef.current !== thisLoadId) return;
         setCurrentData(data);
         setScenarioLoading(false);
       })
-      .catch((err) => {
-        if (cancelled) return;
+      .catch((err: unknown) => {
+        if (loadIdRef.current !== thisLoadId) return;
         console.error('Failed to load scenario:', err);
+        const message = err instanceof Error ? err.message : 'Failed to load scenario';
+        setScenarioError(message);
         setScenarioLoading(false);
       });
+  }, []);
 
-    return () => {
-      cancelled = true;
-    };
-  }, [scenario]);
+  useEffect(() => {
+    loadScenario(scenario);
+  }, [scenario, loadScenario]);
 
   const players = useMemo(() => currentData?.players || [], [currentData]);
 
@@ -74,6 +81,10 @@ export function ScenarioProvider({ children }: ChildrenProps) {
     setScenarioState(newScenario);
   }, []);
 
+  const retryScenarioLoad = useCallback(() => {
+    loadScenario(scenario);
+  }, [scenario, loadScenario]);
+
   const value = useMemo<ScenarioContextValue>(() => ({
     scenario,
     setScenario,
@@ -81,7 +92,9 @@ export function ScenarioProvider({ children }: ChildrenProps) {
     players,
     scenarioLoading,
     scenarioVersion,
-  }), [scenario, setScenario, currentData, players, scenarioLoading, scenarioVersion]);
+    scenarioError,
+    retryScenarioLoad,
+  }), [scenario, setScenario, currentData, players, scenarioLoading, scenarioVersion, scenarioError, retryScenarioLoad]);
 
   return (
     <ScenarioContext.Provider value={value}>

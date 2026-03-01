@@ -29,6 +29,8 @@ import { buildUnifiedTimeline } from '../services/simulationEngine';
 import { useScenario } from './ScenarioContext';
 import type { ChildrenProps, HistoryEntry, PriceHistoryEntry, SimulationContextValue, EspnArticle } from '../types';
 
+const MAX_PROCESSED_ARTICLES = 5000;
+
 const SimulationContext = createContext<SimulationContextValue | null>(null);
 
 export function SimulationProvider({ children }: ChildrenProps) {
@@ -121,14 +123,14 @@ export function SimulationProvider({ children }: ChildrenProps) {
   priceOverridesRef.current = priceOverrides;
 
   // ESPN Live: Fetch and process news
-  const fetchAndProcessEspnNews = useCallback(async () => {
+  const fetchAndProcessEspnNews = useCallback(async (signal?: AbortSignal) => {
     if (!isEspnLiveMode) return;
 
     setEspnLoading(true);
     setEspnError(null);
 
     try {
-      const news = await fetchNFLNews(ESPN_NEWS_LIMIT);
+      const news = await fetchNFLNews(ESPN_NEWS_LIMIT, { signal });
       setEspnNews(news);
 
       const newPriceHistory = { ...espnPriceHistoryRef.current };
@@ -197,9 +199,19 @@ export function SimulationProvider({ children }: ChildrenProps) {
         newProcessedIds.add(article.id);
       }
 
+      if (newProcessedIds.size > MAX_PROCESSED_ARTICLES) {
+        const arr = Array.from(newProcessedIds);
+        const kept = arr.slice(arr.length - Math.floor(MAX_PROCESSED_ARTICLES / 2));
+        setProcessedArticleIds(new Set(kept));
+      } else {
+        setProcessedArticleIds(newProcessedIds);
+      }
+
       setEspnPriceHistory(newPriceHistory);
-      setProcessedArticleIds(newProcessedIds);
     } catch (error: unknown) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        return;
+      }
       console.error('ESPN fetch error:', error);
       setEspnError(error instanceof Error ? error.message : 'Failed to fetch ESPN news');
     } finally {
@@ -210,14 +222,17 @@ export function SimulationProvider({ children }: ChildrenProps) {
   // ESPN Live: Auto-refresh effect
   useEffect(() => {
     if (isEspnLiveMode) {
-      fetchAndProcessEspnNews();
+      const controller = new AbortController();
+
+      fetchAndProcessEspnNews(controller.signal);
 
       espnRefreshRef.current = setInterval(
-        fetchAndProcessEspnNews,
+        () => fetchAndProcessEspnNews(controller.signal),
         ESPN_REFRESH_MS,
       );
 
       return () => {
+        controller.abort();
         if (espnRefreshRef.current) {
           clearInterval(espnRefreshRef.current);
         }

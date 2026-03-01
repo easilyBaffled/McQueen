@@ -74,6 +74,8 @@ function renderModal(scenario = 'playoffs', dilutionApplied = false) {
     players: [],
     scenarioLoading: false,
     scenarioVersion: 0,
+    scenarioError: null,
+    retryScenarioLoad: vi.fn(),
   };
 
   return render(
@@ -140,6 +142,8 @@ describe('PlayoffAnnouncementModal', () => {
       players: [],
       scenarioLoading: false,
       scenarioVersion: 0,
+      scenarioError: null,
+      retryScenarioLoad: vi.fn(),
     };
 
     render(
@@ -228,6 +232,8 @@ describe('PlayoffAnnouncementModal', () => {
       players: [],
       scenarioLoading: false,
       scenarioVersion: 0,
+      scenarioError: null,
+      retryScenarioLoad: vi.fn(),
     };
 
     const { rerender } = render(
