@@ -63,3 +63,4 @@
 2026-02-28 18:23:24 | mcq-1zw.8 | DONE | Decompose PlayerDetail into sub-components
 2026-02-28 18:47:29 | mcq-1zw.9 | DONE | Improve test confidence: reduce over-mocking, add integration tests
 2026-02-28 19:42:50 | mcq-1zw.6 | DONE | Fix race conditions and unbounded memory growth
+2026-02-28 20:11:04 | mcq-dvn.3 | DONE | Add loading state to ScenarioToggle during scenario switches
