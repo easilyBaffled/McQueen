@@ -200,6 +200,20 @@
   }
 }
 
+/* Scenario loading pulse — applied to active tab during data fetch */
+.loading {
+  animation: scenario-loading-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes scenario-loading-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
 /* Divider between scenarios and inspector */
 .scenario-divider {
   width: 1px;

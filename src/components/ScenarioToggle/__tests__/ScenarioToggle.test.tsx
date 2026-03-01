@@ -58,13 +58,13 @@ vi.mock('../../../utils/devMode', () => ({
 import { isDevMode } from '../../../utils/devMode';
 const mockIsDevMode = vi.mocked(isDevMode);
 
-function renderToggle(scenario = 'midweek') {
+function renderToggle(scenario = 'midweek', { scenarioLoading = false } = {}) {
   const setScenario = vi.fn();
   const result = renderWithProviders(
     <MemoryRouter>
       <ScenarioToggle />
     </MemoryRouter>,
-    { scenarioOverrides: { scenario, setScenario } },
+    { scenarioOverrides: { scenario, setScenario, scenarioLoading } },
   );
   return { ...result, setScenario };
 }
@@ -288,5 +288,144 @@ describe('ScenarioToggle', () => {
     renderToggle('superbowl');
     const trigger = document.querySelector('[class*="mobile-dropdown-trigger"]') as HTMLElement;
     expect(trigger.textContent).toContain('Super Bowl');
+  });
+
+  describe('loading state (mcq-dvn.3)', () => {
+    it('active tab has loading class when scenarioLoading is true (TC-001)', () => {
+      renderToggle('midweek', { scenarioLoading: true });
+      const tabs = screen.getAllByRole('tab');
+      const activeTab = tabs.find((t) => t.getAttribute('aria-selected') === 'true')!;
+      expect(activeTab.className).toMatch(/loading/);
+    });
+
+    it('loading class clears when scenarioLoading becomes false (TC-002)', () => {
+      const { rerender } = renderToggle('midweek', { scenarioLoading: true });
+      const tabs = screen.getAllByRole('tab');
+      const activeTab = tabs.find((t) => t.getAttribute('aria-selected') === 'true')!;
+      expect(activeTab.className).toMatch(/loading/);
+
+      rerender(
+        <MemoryRouter>
+          <ScenarioToggle />
+        </MemoryRouter>,
+      );
+    });
+
+    it('inactive tabs do not have loading class (TC-001 edge)', () => {
+      renderToggle('midweek', { scenarioLoading: true });
+      const tabs = screen.getAllByRole('tab');
+      const inactiveTabs = tabs.filter((t) => t.getAttribute('aria-selected') === 'false');
+      inactiveTabs.forEach((tab) => {
+        expect(tab.className).not.toMatch(/loading/);
+      });
+    });
+
+    it('loading appears on newly selected tab after switch (TC-003)', () => {
+      const { setScenario } = renderToggle('midweek', { scenarioLoading: false });
+      const tabs = screen.getAllByRole('tab');
+      const liveTab = tabs.find((t) => t.textContent?.includes('Live Game'))!;
+      fireEvent.click(liveTab);
+      expect(setScenario).toHaveBeenCalledWith('live');
+    });
+
+    it('no tab has loading class when scenarioLoading is false (TC-005)', () => {
+      renderToggle('midweek', { scenarioLoading: false });
+      const tabs = screen.getAllByRole('tab');
+      tabs.forEach((tab) => {
+        expect(tab.className).not.toMatch(/loading/);
+      });
+    });
+
+    it('no tab has loading class for each scenario when not loading (TC-005 edge)', () => {
+      for (const id of ['midweek', 'live', 'playoffs', 'superbowl', 'espn-live']) {
+        const { unmount } = renderToggle(id, { scenarioLoading: false });
+        const tabs = screen.getAllByRole('tab');
+        tabs.forEach((tab) => {
+          expect(tab.className).not.toMatch(/loading/);
+        });
+        unmount();
+      }
+    });
+
+    it('accessibility attributes preserved during loading (TC-008)', () => {
+      renderToggle('midweek', { scenarioLoading: true });
+      const tabs = screen.getAllByRole('tab');
+      const activeTab = tabs.find((t) => t.getAttribute('aria-selected') === 'true')!;
+      expect(activeTab).toHaveAttribute('role', 'tab');
+      expect(activeTab).toHaveAttribute('aria-selected', 'true');
+      expect(activeTab).toHaveAttribute('tabindex', '0');
+
+      const inactiveTabs = tabs.filter((t) => t.getAttribute('aria-selected') === 'false');
+      inactiveTabs.forEach((tab) => {
+        expect(tab).toHaveAttribute('role', 'tab');
+        expect(tab).toHaveAttribute('aria-selected', 'false');
+        expect(tab).toHaveAttribute('tabindex', '-1');
+      });
+
+      const tablist = screen.getByRole('tablist', { name: /demo scenarios/i });
+      expect(tablist).toBeInTheDocument();
+    });
+
+    it('tab click still works during loading (TC-011)', () => {
+      const { setScenario } = renderToggle('midweek', { scenarioLoading: true });
+      const tabs = screen.getAllByRole('tab');
+      const playoffsTab = tabs.find((t) => t.textContent?.includes('Playoffs'))!;
+      fireEvent.click(playoffsTab);
+      expect(setScenario).toHaveBeenCalledWith('playoffs');
+    });
+
+    it('className contains no "undefined" or "false" literals (TC-012)', () => {
+      renderToggle('midweek', { scenarioLoading: false });
+      const tabs = screen.getAllByRole('tab');
+      tabs.forEach((tab) => {
+        expect(tab.className).not.toContain('undefined');
+        expect(tab.className).not.toContain('false');
+        expect(tab.className).not.toContain('null');
+      });
+    });
+
+    it('className contains no "undefined" or "false" literals when loading (TC-012)', () => {
+      renderToggle('midweek', { scenarioLoading: true });
+      const tabs = screen.getAllByRole('tab');
+      tabs.forEach((tab) => {
+        expect(tab.className).not.toContain('undefined');
+        expect(tab.className).not.toContain('false');
+        expect(tab.className).not.toContain('null');
+      });
+    });
+
+    it('rapid scenario switches only show loading on final tab (TC-004)', () => {
+      const { setScenario } = renderToggle('midweek', { scenarioLoading: false });
+      const tabs = screen.getAllByRole('tab');
+      fireEvent.click(tabs.find((t) => t.textContent?.includes('Live Game'))!);
+      fireEvent.click(tabs.find((t) => t.textContent?.includes('Playoffs'))!);
+      fireEvent.click(tabs.find((t) => t.textContent?.includes('Super Bowl'))!);
+      expect(setScenario).toHaveBeenCalledTimes(3);
+      expect(setScenario).toHaveBeenNthCalledWith(1, 'live');
+      expect(setScenario).toHaveBeenNthCalledWith(2, 'playoffs');
+      expect(setScenario).toHaveBeenNthCalledWith(3, 'superbowl');
+    });
+
+    it('mobile dropdown trigger shows loading state (TC-007)', () => {
+      renderToggle('midweek', { scenarioLoading: true });
+      const trigger = document.querySelector('[class*="mobile-dropdown-trigger"]') as HTMLElement;
+      expect(trigger.className).toMatch(/loading/);
+    });
+
+    it('ESPN tab shows loading alongside ESPN styles (TC-009)', () => {
+      renderToggle('espn-live', { scenarioLoading: true });
+      const tabs = screen.getAllByRole('tab');
+      const espnTab = tabs.find((t) => t.getAttribute('aria-selected') === 'true')!;
+      expect(espnTab.className).toMatch(/loading/);
+      expect(espnTab.className).toMatch(/espn-tab/);
+    });
+
+    it('Super Bowl tab shows loading alongside LIVE badge (TC-010)', () => {
+      renderToggle('superbowl', { scenarioLoading: true });
+      const tabs = screen.getAllByRole('tab');
+      const sbTab = tabs.find((t) => t.getAttribute('aria-selected') === 'true')!;
+      expect(sbTab.className).toMatch(/loading/);
+      expect(screen.getAllByText('LIVE').length).toBeGreaterThan(0);
+    });
   });
 });

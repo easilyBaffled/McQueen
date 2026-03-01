@@ -47,7 +47,7 @@ const scenarios = [
 ];
 
 export default function ScenarioToggle() {
-  const { scenario, setScenario } = useScenario();
+  const { scenario, setScenario, scenarioLoading } = useScenario();
   const { espnLoading, espnError, refreshEspnNews } = useSimulation();
   const [showDemoTooltip, setShowDemoTooltip] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
@@ -107,7 +107,7 @@ export default function ScenarioToggle() {
       {/* Mobile Dropdown */}
       <div className={styles['mobile-scenario-dropdown']} ref={dropdownRef}>
         <button
-          className={`${styles['mobile-dropdown-trigger']} ${currentScenario.isEspn ? styles['espn'] : ''}`}
+          className={`${styles['mobile-dropdown-trigger']} ${currentScenario.isEspn ? styles['espn'] : ''}${scenarioLoading ? ` ${styles['loading']}` : ''}`}
           onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
           aria-label={`Select scenario, current: ${currentScenario.label}`}
           aria-expanded={mobileDropdownOpen}
@@ -279,7 +279,7 @@ export default function ScenarioToggle() {
         {scenarios.map((s) => (
           <button
             key={s.id}
-            className={`${styles['scenario-tab']} ${scenario === s.id ? styles['active'] : ''} ${s.isEspn ? styles['espn-tab'] : ''}`}
+            className={`${styles['scenario-tab']} ${scenario === s.id ? styles['active'] : ''} ${s.isEspn ? styles['espn-tab'] : ''}${scenario === s.id && scenarioLoading ? ` ${styles['loading']}` : ''}`}
             role="tab"
             aria-selected={scenario === s.id}
             tabIndex={scenario === s.id ? 0 : -1}
