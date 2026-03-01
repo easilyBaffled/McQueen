@@ -12,6 +12,7 @@ import {
   TICK_INTERVAL_MS,
   ESPN_REFRESH_MS,
   ESPN_NEWS_LIMIT,
+  MAX_HISTORY_SIZE,
 } from '../constants';
 
 import { fetchNFLNews } from '../services/espnService';
@@ -30,6 +31,11 @@ import { useScenario } from './ScenarioContext';
 import type { ChildrenProps, HistoryEntry, PriceHistoryEntry, SimulationContextValue, EspnArticle } from '../types';
 
 const MAX_PROCESSED_ARTICLES = 5000;
+
+function capHistory(entries: HistoryEntry[]): HistoryEntry[] {
+  if (entries.length <= MAX_HISTORY_SIZE) return entries;
+  return entries.slice(entries.length - MAX_HISTORY_SIZE);
+}
 
 const SimulationContext = createContext<SimulationContextValue | null>(null);
 
@@ -181,7 +187,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
               [player.id]: newPrice,
             }));
 
-            setHistory((h) => [
+            setHistory((h) => capHistory([
               ...h,
               {
                 tick: Date.now(),
@@ -192,7 +198,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
                 sentiment: sentimentResult.sentiment,
                 changePercent,
               },
-            ]);
+            ]));
           }
         }
 
@@ -273,7 +279,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
                   newOverrides[p.id] || getCurrentPriceFromHistory(p);
               });
 
-              setHistory((h) => [
+              setHistory((h) => capHistory([
                 ...h,
                 {
                   tick: nextTick,
@@ -282,7 +288,7 @@ export function SimulationProvider({ children }: ChildrenProps) {
                   playerId: timelineEntry.playerId,
                   playerName: timelineEntry.playerName,
                 },
-              ]);
+              ]));
 
               return newOverrides;
             });
@@ -330,14 +336,14 @@ export function SimulationProvider({ children }: ChildrenProps) {
 
       setPlayoffDilutionApplied(true);
 
-      setHistory((h) => [
+      setHistory((h) => capHistory([
         ...h,
         {
           tick,
           prices: {},
           action: `Playoff stock issuance: ${dilutionPercent}% dilution applied`,
         },
-      ]);
+      ]));
     },
     [playoffDilutionApplied, scenario, players, tick],
   );

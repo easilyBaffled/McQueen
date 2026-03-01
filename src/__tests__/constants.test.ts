@@ -6,6 +6,7 @@ import {
   TICK_INTERVAL_MS,
   ESPN_REFRESH_MS,
   ESPN_NEWS_LIMIT,
+  MAX_HISTORY_SIZE,
   MISSION_PICKS_PER_CATEGORY,
   STORAGE_VERSION,
   STORAGE_KEYS,
@@ -20,6 +21,7 @@ describe('constants', () => {
     expect(typeof TICK_INTERVAL_MS).toBe('number');
     expect(typeof ESPN_REFRESH_MS).toBe('number');
     expect(typeof ESPN_NEWS_LIMIT).toBe('number');
+    expect(typeof MAX_HISTORY_SIZE).toBe('number');
     expect(typeof MISSION_PICKS_PER_CATEGORY).toBe('number');
     expect(typeof STORAGE_VERSION).toBe('number');
   });
@@ -27,6 +29,7 @@ describe('constants', () => {
   it('has expected values for game constants', () => {
     expect(INITIAL_CASH).toBe(10000);
     expect(TICK_INTERVAL_MS).toBe(3000);
+    expect(MAX_HISTORY_SIZE).toBe(500);
     expect(STORAGE_VERSION).toBe(1);
   });
 });

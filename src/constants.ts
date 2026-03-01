@@ -5,6 +5,7 @@ export const AI_BASE_CASH: number = 2000;
 export const TICK_INTERVAL_MS: number = 3000;
 export const ESPN_REFRESH_MS: number = 60 * 1000;
 export const ESPN_NEWS_LIMIT: number = 30;
+export const MAX_HISTORY_SIZE: number = 500;
 
 export const MISSION_PICKS_PER_CATEGORY: number = 3;
 
