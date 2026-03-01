@@ -211,9 +211,9 @@ export default function Glossary({ isOpen, onClose }: GlossaryProps) {
 
 // Simple tooltip hook for first-time term encounters
 export function useTermTooltip() {
-  const [seenTerms, setSeenTerms] = useState(() => {
+  const [seenTerms, setSeenTerms] = useState<string[]>(() => {
     const saved = localStorage.getItem('mcqueen-seen-terms');
-    return saved ? JSON.parse(saved) : [];
+    return saved ? (JSON.parse(saved) as string[]) : [];
   });
 
   const markTermSeen = (term: string) => {

@@ -24,14 +24,15 @@ import {
 
 import { useScenario } from './ScenarioContext';
 import { useSimulation } from './SimulationContext';
+import { useEspn } from './EspnContext';
 import type { ChildrenProps, Portfolio, TradingContextValue } from '../types';
 
 export const TradingContext = createContext<TradingContextValue | null>(null);
 
 export function TradingProvider({ children }: ChildrenProps) {
   const { players, scenarioVersion, currentData } = useScenario();
-  const { priceOverrides, isEspnLiveMode, espnPriceHistory } =
-    useSimulation();
+  const { priceOverrides } = useSimulation();
+  const { isEspnLiveMode, espnPriceHistory } = useEspn();
 
   const [portfolio, setPortfolio] = useState<Portfolio>(() =>
     read(STORAGE_KEYS.portfolio, {}),

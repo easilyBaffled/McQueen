@@ -84,7 +84,15 @@ describe('Portfolio Page', () => {
     cy.get('[data-testid="summary-card"]')
       .last()
       .within(() => {
-        cy.get('[data-testid="summary-value"]').should('exist');
+        cy.get('[data-testid="summary-value"]')
+          .should('exist')
+          .and(($el) => {
+            const classes = $el.attr('class') || '';
+            expect(classes).to.match(/text-up|text-down/);
+          });
+        cy.get('[data-testid="summary-value"]')
+          .invoke('attr', 'aria-label')
+          .should('match', /Gain|Loss/);
       });
   });
 
@@ -99,5 +107,7 @@ describe('Portfolio Page', () => {
   it('shows tooltips on hover over summary labels', () => {
     cy.visit('/portfolio');
     cy.get('[data-testid="summary-label"]').first().trigger('mouseenter');
+    cy.get('[class*="info-tooltip-content"]').should('be.visible');
+    cy.get('[data-testid="summary-label"]').first().trigger('mouseleave');
   });
 });

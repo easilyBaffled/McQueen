@@ -62,15 +62,20 @@ export interface SimulationContextValue {
   history: HistoryEntry[];
   unifiedTimeline: TimelineEntry[];
   playoffDilutionApplied: boolean;
+  goToHistoryPoint: (index: number) => void;
+  applyPlayoffDilution: (dilutionPercent: number) => void;
+  getUnifiedTimeline: () => TimelineEntry[];
+  updatePriceOverride: (playerId: string, price: number) => void;
+  addHistoryEntry: (entry: HistoryEntry) => void;
+}
+
+export interface EspnContextValue {
   isEspnLiveMode: boolean;
   espnNews: Article[];
   espnLoading: boolean;
   espnError: string | null;
   espnPriceHistory: Record<string, PriceHistoryEntry[]>;
-  goToHistoryPoint: (index: number) => void;
-  applyPlayoffDilution: (dilutionPercent: number) => void;
   refreshEspnNews: () => void;
-  getUnifiedTimeline: () => TimelineEntry[];
 }
 
 export interface TradingContextValue {

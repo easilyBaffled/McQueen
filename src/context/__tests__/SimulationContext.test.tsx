@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { ScenarioProvider, useScenario } from '../ScenarioContext';
 import { SimulationProvider, useSimulation } from '../SimulationContext';
+import { EspnProvider, useEspn } from '../EspnContext';
 import { TICK_INTERVAL_MS, ESPN_REFRESH_MS } from '../../constants';
 
 vi.mock('../../services/espnService', async (importOriginal) => {
@@ -21,13 +22,15 @@ const mockFetchNFLNews = vi.mocked(fetchNFLNews);
 function Wrapper({ children }: { children: React.ReactNode }) {
   return (
     <ScenarioProvider>
-      <SimulationProvider>{children}</SimulationProvider>
+      <SimulationProvider>
+        <EspnProvider>{children}</EspnProvider>
+      </SimulationProvider>
     </ScenarioProvider>
   );
 }
 
 function useSimAndScenario() {
-  return { sim: useSimulation(), sc: useScenario() };
+  return { sim: useSimulation(), sc: useScenario(), espn: useEspn() };
 }
 
 function renderSim() {
@@ -84,6 +87,7 @@ describe('SimulationContext', () => {
   it('returns an object with all documented properties and correct types', async () => {
     const { result } = await renderAndWait();
     const s = result.current.sim;
+    const e = result.current.espn;
 
     expect(typeof s.tick).toBe('number');
     expect(typeof s.isPlaying).toBe('boolean');
@@ -92,15 +96,18 @@ describe('SimulationContext', () => {
     expect(Array.isArray(s.history)).toBe(true);
     expect(Array.isArray(s.unifiedTimeline)).toBe(true);
     expect(typeof s.playoffDilutionApplied).toBe('boolean');
-    expect(typeof s.isEspnLiveMode).toBe('boolean');
-    expect(Array.isArray(s.espnNews)).toBe(true);
-    expect(typeof s.espnLoading).toBe('boolean');
-    expect(s.espnError === null || typeof s.espnError === 'string').toBe(true);
-    expect(typeof s.espnPriceHistory).toBe('object');
     expect(typeof s.goToHistoryPoint).toBe('function');
     expect(typeof s.applyPlayoffDilution).toBe('function');
-    expect(typeof s.refreshEspnNews).toBe('function');
     expect(typeof s.getUnifiedTimeline).toBe('function');
+    expect(typeof s.updatePriceOverride).toBe('function');
+    expect(typeof s.addHistoryEntry).toBe('function');
+
+    expect(typeof e.isEspnLiveMode).toBe('boolean');
+    expect(Array.isArray(e.espnNews)).toBe(true);
+    expect(typeof e.espnLoading).toBe('boolean');
+    expect(e.espnError === null || typeof e.espnError === 'string').toBe(true);
+    expect(typeof e.espnPriceHistory).toBe('object');
+    expect(typeof e.refreshEspnNews).toBe('function');
   });
 
   // TC-002
@@ -126,16 +133,17 @@ describe('SimulationContext', () => {
   it('initializes all state to defaults on mount', async () => {
     const { result } = await renderAndWait();
     const s = result.current.sim;
+    const e = result.current.espn;
 
     expect(s.tick).toBe(0);
     expect(s.isPlaying).toBe(false);
     expect(s.priceOverrides).toEqual({});
     expect(s.playoffDilutionApplied).toBe(false);
-    expect(s.isEspnLiveMode).toBe(false);
-    expect(s.espnNews).toEqual([]);
-    expect(s.espnLoading).toBe(false);
-    expect(s.espnError).toBeNull();
-    expect(s.espnPriceHistory).toEqual({});
+    expect(e.isEspnLiveMode).toBe(false);
+    expect(e.espnNews).toEqual([]);
+    expect(e.espnLoading).toBe(false);
+    expect(e.espnError).toBeNull();
+    expect(e.espnPriceHistory).toEqual({});
   });
 
   // TC-004
@@ -211,27 +219,27 @@ describe('SimulationContext', () => {
   // TC-008
   it('isEspnLiveMode is false for midweek', async () => {
     const { result } = await renderAndWait();
-    expect(result.current.sim.isEspnLiveMode).toBe(false);
+    expect(result.current.espn.isEspnLiveMode).toBe(false);
   });
 
   it('isEspnLiveMode is false for live', async () => {
     const { result } = await renderAndWait();
     await switchAndWait(result, 'live');
-    expect(result.current.sim.isEspnLiveMode).toBe(false);
+    expect(result.current.espn.isEspnLiveMode).toBe(false);
   });
 
   it('isEspnLiveMode is true for espn-live', async () => {
     const { result } = await renderAndWait();
     await switchAndWait(result, 'espn-live');
-    expect(result.current.sim.isEspnLiveMode).toBe(true);
+    expect(result.current.espn.isEspnLiveMode).toBe(true);
   });
 
   it('isEspnLiveMode returns to false after leaving espn-live', async () => {
     const { result } = await renderAndWait();
     await switchAndWait(result, 'espn-live');
-    expect(result.current.sim.isEspnLiveMode).toBe(true);
+    expect(result.current.espn.isEspnLiveMode).toBe(true);
     await switchAndWait(result, 'playoffs');
-    expect(result.current.sim.isEspnLiveMode).toBe(false);
+    expect(result.current.espn.isEspnLiveMode).toBe(false);
   });
 
   // TC-009
@@ -242,12 +250,13 @@ describe('SimulationContext', () => {
 
     await switchAndWait(result, 'midweek');
     const s = result.current.sim;
+    const e = result.current.espn;
     expect(s.tick).toBe(0);
     expect(s.priceOverrides).toEqual({});
     expect(s.playoffDilutionApplied).toBe(false);
-    expect(s.espnNews).toEqual([]);
-    expect(s.espnError).toBeNull();
-    expect(s.espnPriceHistory).toEqual({});
+    expect(e.espnNews).toEqual([]);
+    expect(e.espnError).toBeNull();
+    expect(e.espnPriceHistory).toEqual({});
     expect(s.history.length).toBe(1);
     expect(s.history[0].tick).toBe(0);
   });
@@ -642,7 +651,7 @@ describe('SimulationContext', () => {
 
       expect(result.current.sc.scenario).toBe('playoffs');
       expect(result.current.sim.isPlaying).toBe(false);
-      expect(result.current.sim.isEspnLiveMode).toBe(false);
+      expect(result.current.espn.isEspnLiveMode).toBe(false);
       expect(result.current.sim.unifiedTimeline).toEqual([]);
 
       const tickBefore = result.current.sim.tick;
@@ -663,10 +672,10 @@ describe('SimulationContext', () => {
       ]);
 
       await switchAndWait(result, 'espn-live');
-      expect(result.current.sim.isEspnLiveMode).toBe(true);
+      expect(result.current.espn.isEspnLiveMode).toBe(true);
 
       await waitFor(() => {
-        expect(result.current.sim.espnLoading).toBe(false);
+        expect(result.current.espn.espnLoading).toBe(false);
       });
       expect(mockFetchNFLNews).toHaveBeenCalled();
     });
@@ -713,7 +722,7 @@ describe('SimulationContext', () => {
 
       await switchAndWait(result, 'espn-live');
       await waitFor(() => {
-        expect(result.current.sim.espnLoading).toBe(false);
+        expect(result.current.espn.espnLoading).toBe(false);
       });
 
       await waitFor(() => {
@@ -746,16 +755,16 @@ describe('SimulationContext', () => {
 
       await switchAndWait(result, 'espn-live');
       await waitFor(() => {
-        expect(result.current.sim.espnLoading).toBe(false);
+        expect(result.current.espn.espnLoading).toBe(false);
       });
 
       const histLen = result.current.sim.history.length;
 
       act(() => {
-        result.current.sim.refreshEspnNews();
+        result.current.espn.refreshEspnNews();
       });
       await waitFor(() => {
-        expect(result.current.sim.espnLoading).toBe(false);
+        expect(result.current.espn.espnLoading).toBe(false);
       });
 
       expect(result.current.sim.history.length).toBe(histLen);
@@ -769,9 +778,9 @@ describe('SimulationContext', () => {
 
       await switchAndWait(result, 'espn-live');
       await waitFor(() => {
-        expect(result.current.sim.espnLoading).toBe(false);
+        expect(result.current.espn.espnLoading).toBe(false);
       });
-      expect(result.current.sim.espnError).toBe('Network timeout');
+      expect(result.current.espn.espnError).toBe('Network timeout');
       spy.mockRestore();
     });
 
@@ -782,9 +791,9 @@ describe('SimulationContext', () => {
 
       await switchAndWait(result, 'espn-live');
       await waitFor(() => {
-        expect(result.current.sim.espnLoading).toBe(false);
+        expect(result.current.espn.espnLoading).toBe(false);
       });
-      expect(result.current.sim.espnError).toBe('Failed to fetch ESPN news');
+      expect(result.current.espn.espnError).toBe('Failed to fetch ESPN news');
       spy.mockRestore();
     });
 
@@ -795,12 +804,12 @@ describe('SimulationContext', () => {
 
       await switchAndWait(result, 'espn-live');
       await waitFor(() => {
-        expect(result.current.sim.espnLoading).toBe(false);
+        expect(result.current.espn.espnLoading).toBe(false);
       });
 
       const callsBefore = mockFetchNFLNews.mock.calls.length;
       act(() => {
-        result.current.sim.refreshEspnNews();
+        result.current.espn.refreshEspnNews();
       });
       await waitFor(() => {
         expect(mockFetchNFLNews.mock.calls.length).toBeGreaterThan(callsBefore);
@@ -812,7 +821,7 @@ describe('SimulationContext', () => {
       const callsBefore = mockFetchNFLNews.mock.calls.length;
 
       act(() => {
-        result.current.sim.refreshEspnNews();
+        result.current.espn.refreshEspnNews();
       });
       expect(mockFetchNFLNews.mock.calls.length).toBe(callsBefore);
     });
@@ -831,13 +840,13 @@ describe('SimulationContext', () => {
 
       await switchAndWait(result, 'espn-live');
       await waitFor(() => {
-        expect(result.current.sim.espnLoading).toBe(false);
+        expect(result.current.espn.espnLoading).toBe(false);
       });
 
       await switchAndWait(result, 'midweek');
       await switchAndWait(result, 'espn-live');
       await waitFor(() => {
-        expect(result.current.sim.espnLoading).toBe(false);
+        expect(result.current.espn.espnLoading).toBe(false);
       });
 
       const espnEntries = result.current.sim.history.filter((h) =>
@@ -933,7 +942,7 @@ describe('SimulationContext', () => {
       });
       await vi.advanceTimersByTimeAsync(500);
 
-      expect(hook.result.current.sim.espnError).toBeNull();
+      expect(hook.result.current.espn.espnError).toBeNull();
 
       vi.clearAllTimers();
       vi.useRealTimers();
@@ -955,7 +964,7 @@ describe('SimulationContext', () => {
         hook.result.current.sc.setScenario('live');
       });
       await vi.advanceTimersByTimeAsync(200);
-      expect(hook.result.current.sim.isEspnLiveMode).toBe(false);
+      expect(hook.result.current.espn.isEspnLiveMode).toBe(false);
 
       const callsAfter = mockFetchNFLNews.mock.calls.length;
       await act(async () => {

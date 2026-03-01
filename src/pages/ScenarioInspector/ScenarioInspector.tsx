@@ -119,7 +119,7 @@ export default function ScenarioInspector() {
     setJsonText(text);
 
     try {
-      const parsed = JSON.parse(text);
+      const parsed = JSON.parse(text) as ScenarioData;
       setParsedData(parsed);
       setJsonError(null);
     } catch (err: unknown) {
@@ -364,7 +364,7 @@ export default function ScenarioInspector() {
         body: JSON.stringify({ scenario, data }),
       });
 
-      const result = await response.json();
+      const result = (await response.json()) as { error?: string };
 
       if (response.ok) {
         setSaveStatus({
@@ -375,7 +375,7 @@ export default function ScenarioInspector() {
       } else {
         setSaveStatus({
           type: 'error',
-          message: result.error || 'Failed to save',
+          message: result.error ?? 'Failed to save',
         });
       }
     } catch (err: unknown) {
@@ -534,7 +534,7 @@ export default function ScenarioInspector() {
         <div className={styles['templates-bar']}>
           <span className={styles['templates-label']}>Templates:</span>
           <button
-            className={`${styles['template-btn']} ${copiedId === styles['tpl-pricechange'] ? styles['copied'] : ''}`}
+            className={`${styles['template-btn']} ${copiedId === 'tpl-pricechange' ? styles['copied'] : ''}`}
             onClick={() =>
               copyToClipboard(
                 JSON.stringify(TEMPLATES.priceChange, null, 2),
@@ -545,7 +545,7 @@ export default function ScenarioInspector() {
             {copiedId === 'tpl-pricechange' ? '✓ Copied!' : '📋 PriceChange'}
           </button>
           <button
-            className={`${styles['template-btn']} ${copiedId === styles['tpl-leaguetrade'] ? styles['copied'] : ''}`}
+            className={`${styles['template-btn']} ${copiedId === 'tpl-leaguetrade' ? styles['copied'] : ''}`}
             onClick={() =>
               copyToClipboard(
                 JSON.stringify(TEMPLATES.leagueTrade, null, 2),
@@ -619,7 +619,7 @@ export default function ScenarioInspector() {
           <div className={styles['panel-header']}>
             <h2>Formatted View</h2>
             <button
-              className={`${styles['copy-full-btn']} ${copiedId === styles['full'] ? styles['copied'] : ''}`}
+              className={`${styles['copy-full-btn']} ${copiedId === 'full' ? styles['copied'] : ''}`}
               onClick={() => copyToClipboard(jsonText, 'full')}
             >
               {copiedId === 'full' ? '✓ Copied!' : '📋 Copy Full JSON'}
@@ -1208,7 +1208,7 @@ function PlayerDetailView({
                     <div className={styles['entry-content-list']}>
                       {entry.content!.map((c: ContentItem, i: number) => (
                         <div key={i} className={styles['content-item']}>
-                          <span className={`${styles['content-type']} ${styles['type-']} ${c.type}`}>
+                          <span className={`${styles['content-type']} ${styles[`type-${c.type}` as keyof typeof styles] || ''}`}>
                             {c.type}
                           </span>
                           <span className={styles['content-title']}>{c.title}</span>
@@ -1531,7 +1531,7 @@ function TimelineView({
                         {event.content!.map((c: ContentItem, i: number) => (
                           <span
                             key={i}
-                            className={`${styles['content-badge']} ${styles['type-']} ${c.type}`}
+                            className={`${styles['content-badge']} ${styles[`type-${c.type}` as keyof typeof styles] || ''}`}
                           >
                             {c.type}: {c.title}
                           </span>

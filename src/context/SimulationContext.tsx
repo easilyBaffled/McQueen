@@ -10,27 +10,14 @@ import {
 
 import {
   TICK_INTERVAL_MS,
-  ESPN_REFRESH_MS,
-  ESPN_NEWS_LIMIT,
   MAX_HISTORY_SIZE,
 } from '../constants';
 
-import { fetchNFLNews } from '../services/espnService';
-import {
-  analyzeSentiment,
-  getSentimentDescription,
-} from '../services/sentimentEngine';
-import {
-  calculateNewPrice,
-  createPriceHistoryEntry,
-} from '../services/priceCalculator';
 import { getCurrentPriceFromHistory } from '../services/priceResolver';
 import { buildUnifiedTimeline } from '../services/simulationEngine';
 
 import { useScenario } from './ScenarioContext';
-import type { ChildrenProps, HistoryEntry, PriceHistoryEntry, SimulationContextValue, EspnArticle } from '../types';
-
-const MAX_PROCESSED_ARTICLES = 5000;
+import type { ChildrenProps, HistoryEntry, SimulationContextValue } from '../types';
 
 function capHistory(entries: HistoryEntry[]): HistoryEntry[] {
   if (entries.length <= MAX_HISTORY_SIZE) return entries;
@@ -38,6 +25,8 @@ function capHistory(entries: HistoryEntry[]): HistoryEntry[] {
 }
 
 const SimulationContext = createContext<SimulationContextValue | null>(null);
+
+export { SimulationContext };
 
 export function SimulationProvider({ children }: ChildrenProps) {
   const { scenario, players, scenarioVersion } = useScenario();
@@ -48,16 +37,10 @@ export function SimulationProvider({ children }: ChildrenProps) {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [playoffDilutionApplied, setPlayoffDilutionApplied] = useState(false);
   const tickIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const [espnNews, setEspnNews] = useState<EspnArticle[]>([]);
-  const [espnLoading, setEspnLoading] = useState(false);
-  const [espnError, setEspnError] = useState<string | null>(null);
-  const [espnPriceHistory, setEspnPriceHistory] = useState<Record<string, PriceHistoryEntry[]>>({});
-  const [processedArticleIds, setProcessedArticleIds] = useState<Set<string>>(new Set());
-  const espnRefreshRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const isFetchingRef = useRef(false);
   const lastResetVersionRef = useRef(0);
   const tickRef = useRef(0);
+  const priceOverridesRef = useRef(priceOverrides);
+  priceOverridesRef.current = priceOverrides;
 
   const isEspnLiveMode = scenario === 'espn-live';
 
@@ -80,27 +63,21 @@ export function SimulationProvider({ children }: ChildrenProps) {
     setPlayoffDilutionApplied(false);
     setIsPlaying(scenario === 'live' || scenario === 'superbowl');
 
-    setEspnNews([]);
-    setEspnError(null);
-    setEspnPriceHistory({});
-    setProcessedArticleIds(new Set());
-
     const initialPrices: Record<string, number> = {};
     players.forEach((player) => {
-      if (scenario === 'espn-live') {
+      if (isEspnLiveMode) {
         initialPrices[player.id] = player.basePrice;
       } else {
         initialPrices[player.id] = getCurrentPriceFromHistory(player);
       }
     });
 
-    const actionMessage =
-      scenario === 'espn-live'
-        ? 'ESPN Live mode activated - fetching real news...'
-        : 'Scenario loaded';
+    const actionMessage = isEspnLiveMode
+      ? 'ESPN Live mode activated - fetching real news...'
+      : 'Scenario loaded';
 
     setHistory([{ tick: 0, prices: initialPrices, action: actionMessage }]);
-  }, [scenarioVersion, players, scenario]);
+  }, [scenarioVersion, players, scenario, isEspnLiveMode]);
 
   // Initial history on first mount (when scenarioVersion === 0)
   useEffect(() => {
@@ -109,154 +86,19 @@ export function SimulationProvider({ children }: ChildrenProps) {
 
     const initialPrices: Record<string, number> = {};
     players.forEach((player) => {
-      if (scenario === 'espn-live') {
+      if (isEspnLiveMode) {
         initialPrices[player.id] = player.basePrice;
       } else {
         initialPrices[player.id] = getCurrentPriceFromHistory(player);
       }
     });
 
-    const actionMessage =
-      scenario === 'espn-live'
-        ? 'ESPN Live mode activated - fetching real news...'
-        : 'Scenario loaded';
+    const actionMessage = isEspnLiveMode
+      ? 'ESPN Live mode activated - fetching real news...'
+      : 'Scenario loaded';
 
     setHistory([{ tick: 0, prices: initialPrices, action: actionMessage }]);
-  }, [players, scenario, history.length]);
-
-  const espnPriceHistoryRef = useRef(espnPriceHistory);
-  espnPriceHistoryRef.current = espnPriceHistory;
-  const processedArticleIdsRef = useRef(processedArticleIds);
-  processedArticleIdsRef.current = processedArticleIds;
-  const priceOverridesRef = useRef(priceOverrides);
-  priceOverridesRef.current = priceOverrides;
-
-  // ESPN Live: Fetch and process news (mutex-guarded)
-  const fetchAndProcessEspnNews = useCallback(async (signal?: AbortSignal) => {
-    if (!isEspnLiveMode) return;
-    if (isFetchingRef.current) return;
-
-    isFetchingRef.current = true;
-    setEspnLoading(true);
-    setEspnError(null);
-
-    try {
-      const news = await fetchNFLNews(ESPN_NEWS_LIMIT, { signal });
-      setEspnNews(news);
-
-      const newPriceHistory = { ...espnPriceHistoryRef.current };
-      const newProcessedIds = new Set(processedArticleIdsRef.current);
-
-      for (const article of news) {
-        if (newProcessedIds.has(article.id)) continue;
-
-        for (const player of players) {
-          const searchTerms = player.searchTerms || [player.name];
-          const articleText =
-            `${article.headline} ${article.description}`.toLowerCase();
-
-          const isRelevant = searchTerms.some((term) =>
-            articleText.includes(term.toLowerCase()),
-          );
-
-          if (isRelevant) {
-            const sentimentResult = analyzeSentiment(
-              `${article.headline} ${article.description}`,
-              player.name,
-              player.position,
-            );
-
-            const currentPrice =
-              priceOverridesRef.current[player.id] ?? player.basePrice;
-
-            const { newPrice, changePercent } = calculateNewPrice(
-              currentPrice,
-              sentimentResult,
-            );
-
-            const historyEntry = createPriceHistoryEntry(
-              article,
-              sentimentResult,
-              newPrice,
-            );
-            historyEntry.sentimentDescription =
-              getSentimentDescription(sentimentResult);
-
-            if (!newPriceHistory[player.id]) {
-              newPriceHistory[player.id] = [];
-            }
-            newPriceHistory[player.id].push(historyEntry);
-
-            setPriceOverrides((prev) => ({
-              ...prev,
-              [player.id]: newPrice,
-            }));
-
-            setHistory((h) => capHistory([
-              ...h,
-              {
-                tick: Date.now(),
-                prices: { [player.id]: newPrice },
-                action: `ESPN: ${article.headline.substring(0, 50)}...`,
-                playerId: player.id,
-                playerName: player.name,
-                sentiment: sentimentResult.sentiment,
-                changePercent,
-              },
-            ]));
-          }
-        }
-
-        newProcessedIds.add(article.id);
-      }
-
-      if (newProcessedIds.size > MAX_PROCESSED_ARTICLES) {
-        const arr = Array.from(newProcessedIds);
-        const kept = arr.slice(arr.length - Math.floor(MAX_PROCESSED_ARTICLES / 2));
-        setProcessedArticleIds(new Set(kept));
-      } else {
-        setProcessedArticleIds(newProcessedIds);
-      }
-
-      setEspnPriceHistory(newPriceHistory);
-    } catch (error: unknown) {
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        return;
-      }
-      console.error('ESPN fetch error:', error);
-      setEspnError(error instanceof Error ? error.message : 'Failed to fetch ESPN news');
-    } finally {
-      isFetchingRef.current = false;
-      setEspnLoading(false);
-    }
-  }, [isEspnLiveMode, players]);
-
-  // ESPN Live: Auto-refresh effect
-  useEffect(() => {
-    if (isEspnLiveMode) {
-      const controller = new AbortController();
-
-      fetchAndProcessEspnNews(controller.signal);
-
-      espnRefreshRef.current = setInterval(
-        () => fetchAndProcessEspnNews(controller.signal),
-        ESPN_REFRESH_MS,
-      );
-
-      return () => {
-        controller.abort();
-        if (espnRefreshRef.current) {
-          clearInterval(espnRefreshRef.current);
-        }
-      };
-    }
-  }, [isEspnLiveMode, fetchAndProcessEspnNews]);
-
-  const refreshEspnNews = useCallback(() => {
-    if (isEspnLiveMode) {
-      fetchAndProcessEspnNews();
-    }
-  }, [isEspnLiveMode, fetchAndProcessEspnNews]);
+  }, [players, isEspnLiveMode, history.length]);
 
   // Live scenario tick updates (no nested state setters)
   useEffect(() => {
@@ -355,6 +197,14 @@ export function SimulationProvider({ children }: ChildrenProps) {
     return unifiedTimeline;
   }, [unifiedTimeline]);
 
+  const updatePriceOverride = useCallback((playerId: string, price: number) => {
+    setPriceOverrides((prev) => ({ ...prev, [playerId]: price }));
+  }, []);
+
+  const addHistoryEntry = useCallback((entry: HistoryEntry) => {
+    setHistory((h) => capHistory([...h, entry]));
+  }, []);
+
   const value = useMemo<SimulationContextValue>(() => ({
     tick,
     isPlaying,
@@ -363,16 +213,12 @@ export function SimulationProvider({ children }: ChildrenProps) {
     history,
     unifiedTimeline,
     playoffDilutionApplied,
-    isEspnLiveMode,
-    espnNews,
-    espnLoading,
-    espnError,
-    espnPriceHistory,
     goToHistoryPoint,
     applyPlayoffDilution,
-    refreshEspnNews,
     getUnifiedTimeline,
-  }), [tick, isPlaying, setIsPlaying, priceOverrides, history, unifiedTimeline, playoffDilutionApplied, isEspnLiveMode, espnNews, espnLoading, espnError, espnPriceHistory, goToHistoryPoint, applyPlayoffDilution, refreshEspnNews, getUnifiedTimeline]);
+    updatePriceOverride,
+    addHistoryEntry,
+  }), [tick, isPlaying, priceOverrides, history, unifiedTimeline, playoffDilutionApplied, goToHistoryPoint, applyPlayoffDilution, getUnifiedTimeline, updatePriceOverride, addHistoryEntry]);
 
   return (
     <SimulationContext.Provider value={value}>

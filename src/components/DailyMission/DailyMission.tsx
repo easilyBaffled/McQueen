@@ -182,7 +182,7 @@ export default function DailyMission({ collapsible = false }) {
                           </motion.div>
                         );
                       })}
-                      {[...Array(3 - missionPicks.risers.length)].map(
+                      {[...Array<undefined>(3 - missionPicks.risers.length)].map(
                         (_, i) => (
                           <div
                             key={`empty-riser-${i}`}
@@ -221,7 +221,7 @@ export default function DailyMission({ collapsible = false }) {
                           </motion.div>
                         );
                       })}
-                      {[...Array(3 - missionPicks.fallers.length)].map(
+                      {[...Array<undefined>(3 - missionPicks.fallers.length)].map(
                         (_, i) => (
                           <div
                             key={`empty-faller-${i}`}

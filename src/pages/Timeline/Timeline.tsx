@@ -535,7 +535,7 @@ export default function Timeline() {
                                   href={c.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className={`${styles['content-badge']} ${styles['type-']} ${c.type}`}
+                                  className={`${styles['content-badge']} ${styles[`type-${c.type}` as keyof typeof styles] || ''}`}
                                   onClick={(e) => e.stopPropagation()}
                                 >
                                   {c.type}: {c.title}

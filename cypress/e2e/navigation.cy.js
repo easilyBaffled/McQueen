@@ -38,6 +38,9 @@ describe('Layout and Navigation', () => {
   it('shows scenario toggle in header', () => {
     cy.visit('/');
     cy.get('[data-testid="header-center"]').should('exist');
+    cy.get('[role="tablist"][aria-label="Demo scenarios"]').should('exist');
+    cy.get('[role="tab"]').should('have.length.greaterThan', 0);
+    cy.contains('DEMO').should('exist');
   });
 
   // TC-NAV-005
@@ -46,6 +49,7 @@ describe('Layout and Navigation', () => {
     cy.get('[data-testid="help-button"]').click();
     cy.contains('Trading Terms').should('be.visible');
     cy.get('body').type('{esc}');
+    cy.contains('Trading Terms').should('not.exist');
   });
 
   // TC-NAV-006

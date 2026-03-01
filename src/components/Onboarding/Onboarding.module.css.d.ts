@@ -1,0 +1,32 @@
+declare const styles: {
+  readonly "active": string;
+  readonly "back-button": string;
+  readonly "completed": string;
+  readonly "demo-cash": string;
+  readonly "demo-label": string;
+  readonly "demo-note": string;
+  readonly "demo-price": string;
+  readonly "demo-value": string;
+  readonly "down": string;
+  readonly "final": string;
+  readonly "next-button": string;
+  readonly "onboarding-balance-demo": string;
+  readonly "onboarding-content": string;
+  readonly "onboarding-demo": string;
+  readonly "onboarding-footer": string;
+  readonly "onboarding-header": string;
+  readonly "onboarding-icon": string;
+  readonly "onboarding-modal": string;
+  readonly "onboarding-overlay": string;
+  readonly "onboarding-subtitle": string;
+  readonly "onboarding-text": string;
+  readonly "onboarding-title": string;
+  readonly "skip-button": string;
+  readonly "step-dot": string;
+  readonly "step-indicators": string;
+  readonly "tooltip-content": string;
+  readonly "tooltip-wrapper": string;
+  readonly "up": string;
+};
+export = styles;
+

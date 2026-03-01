@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { ScenarioProvider, useScenario } from '../ScenarioContext';
 import { SimulationProvider, useSimulation } from '../SimulationContext';
+import { EspnProvider } from '../EspnContext';
 import { TradingProvider, useTrading } from '../TradingContext';
 import { SocialProvider, useSocial } from '../SocialContext';
 
@@ -10,9 +11,11 @@ function FullProviders({ children }: { children: React.ReactNode }) {
   return (
     <ScenarioProvider>
       <SimulationProvider>
-        <TradingProvider>
-          <SocialProvider>{children}</SocialProvider>
-        </TradingProvider>
+        <EspnProvider>
+          <TradingProvider>
+            <SocialProvider>{children}</SocialProvider>
+          </TradingProvider>
+        </EspnProvider>
       </SimulationProvider>
     </ScenarioProvider>
   );

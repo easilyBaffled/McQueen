@@ -40,16 +40,23 @@ vi.mock('framer-motion', () => ({
 }));
 
 const mockRefreshEspnNews = vi.fn();
-vi.mock('../../../context/SimulationContext', () => ({
-  useSimulation: vi.fn(() => ({
-    espnLoading: false,
-    espnError: null,
-    refreshEspnNews: mockRefreshEspnNews,
-  })),
-}));
+vi.mock('../../../context/EspnContext', async (importOriginal) => {
+  const original = (await importOriginal()) as Record<string, unknown>;
+  return {
+    ...original,
+    useEspn: vi.fn(() => ({
+      espnLoading: false,
+      espnError: null,
+      refreshEspnNews: mockRefreshEspnNews,
+      isEspnLiveMode: false,
+      espnNews: [],
+      espnPriceHistory: {},
+    })),
+  };
+});
 
-import { useSimulation } from '../../../context/SimulationContext';
-const mockUseSimulation = vi.mocked(useSimulation);
+import { useEspn } from '../../../context/EspnContext';
+const mockUseEspn = vi.mocked(useEspn);
 
 vi.mock('../../../utils/devMode', () => ({
   isDevMode: vi.fn(() => false),
@@ -73,11 +80,14 @@ describe('ScenarioToggle', () => {
   beforeEach(() => {
     mockRefreshEspnNews.mockClear();
     mockIsDevMode.mockReturnValue(false);
-    mockUseSimulation.mockReturnValue({
+    mockUseEspn.mockReturnValue({
       espnLoading: false,
       espnError: null,
       refreshEspnNews: mockRefreshEspnNews,
-    } as unknown as ReturnType<typeof useSimulation>);
+      isEspnLiveMode: false,
+      espnNews: [],
+      espnPriceHistory: {},
+    });
   });
 
   it('renders DEMO badge', () => {
@@ -135,21 +145,27 @@ describe('ScenarioToggle', () => {
   });
 
   it('shows ESPN error banner when there is an error', () => {
-    mockUseSimulation.mockReturnValue({
+    mockUseEspn.mockReturnValue({
       espnLoading: false,
       espnError: 'Failed to fetch',
       refreshEspnNews: mockRefreshEspnNews,
-    } as unknown as ReturnType<typeof useSimulation>);
+      isEspnLiveMode: true,
+      espnNews: [],
+      espnPriceHistory: {},
+    });
     renderToggle('espn-live');
     expect(screen.getByText(/ESPN Error: Failed to fetch/)).toBeInTheDocument();
   });
 
   it('shows ESPN loading state', () => {
-    mockUseSimulation.mockReturnValue({
+    mockUseEspn.mockReturnValue({
       espnLoading: true,
       espnError: null,
       refreshEspnNews: mockRefreshEspnNews,
-    } as unknown as ReturnType<typeof useSimulation>);
+      isEspnLiveMode: true,
+      espnNews: [],
+      espnPriceHistory: {},
+    });
     renderToggle('espn-live');
     const refreshBtn = screen.getByRole('button', { name: /refresh espn/i });
     expect(refreshBtn).toBeDisabled();

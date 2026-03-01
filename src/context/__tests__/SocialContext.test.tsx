@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { ScenarioProvider, useScenario } from '../ScenarioContext';
 import { SimulationProvider } from '../SimulationContext';
+import { EspnProvider } from '../EspnContext';
 import { TradingProvider, useTrading } from '../TradingContext';
 import { SocialProvider, useSocial } from '../SocialContext';
 import { AI_BASE_CASH, MISSION_PICKS_PER_CATEGORY, STORAGE_KEYS } from '../../constants';
@@ -20,9 +21,11 @@ function FullWrapper({ children }: { children: React.ReactNode }) {
   return (
     <ScenarioProvider>
       <SimulationProvider>
-        <TradingProvider>
-          <SocialProvider>{children}</SocialProvider>
-        </TradingProvider>
+        <EspnProvider>
+          <TradingProvider>
+            <SocialProvider>{children}</SocialProvider>
+          </TradingProvider>
+        </EspnProvider>
       </SimulationProvider>
     </ScenarioProvider>
   );

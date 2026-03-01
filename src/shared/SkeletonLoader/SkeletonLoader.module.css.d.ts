@@ -1,0 +1,33 @@
+declare const styles: {
+  readonly "skeleton-avatar": string;
+  readonly "skeleton-button": string;
+  readonly "skeleton-card": string;
+  readonly "skeleton-card-body": string;
+  readonly "skeleton-card-footer": string;
+  readonly "skeleton-card-header": string;
+  readonly "skeleton-change": string;
+  readonly "skeleton-chart": string;
+  readonly "skeleton-headline": string;
+  readonly "skeleton-leaderboard": string;
+  readonly "skeleton-leaderboard-header": string;
+  readonly "skeleton-leaderboard-row": string;
+  readonly "skeleton-market-grid": string;
+  readonly "skeleton-mission": string;
+  readonly "skeleton-mission-grid": string;
+  readonly "skeleton-mission-header": string;
+  readonly "skeleton-mission-player": string;
+  readonly "skeleton-name": string;
+  readonly "skeleton-name-small": string;
+  readonly "skeleton-owners": string;
+  readonly "skeleton-player-buttons": string;
+  readonly "skeleton-player-mini": string;
+  readonly "skeleton-position": string;
+  readonly "skeleton-price": string;
+  readonly "skeleton-price-row": string;
+  readonly "skeleton-rank": string;
+  readonly "skeleton-team-badge": string;
+  readonly "skeleton-text": string;
+  readonly "skeleton-value": string;
+};
+export = styles;
+

@@ -14,7 +14,7 @@ export default function Toast({ toasts, removeToast }: ToastProps) {
         {toasts.map((toast) => (
           <motion.div
             key={toast.id}
-            className={`${styles['toast']} ${styles['toast-']} ${toast.type}`}
+            className={`${styles['toast']} ${styles[`toast-${toast.type}` as keyof typeof styles] || ''}`}
             data-testid="toast"
             data-type={toast.type}
             initial={{ opacity: 0, y: 50, scale: 0.9 }}

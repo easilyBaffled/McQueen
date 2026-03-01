@@ -188,7 +188,7 @@ export class EspnSimulationEngine implements SimulationEngine {
   start(): void {
     if (this.intervalId !== null) return;
     this.tick();
-    this.intervalId = setInterval(() => this.tick(), this.refreshIntervalMs);
+    this.intervalId = setInterval(() => { void this.tick(); }, this.refreshIntervalMs);
   }
 
   stop(): void {

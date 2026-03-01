@@ -70,15 +70,17 @@ describe('Market Page', () => {
       win.localStorage.setItem('mcqueen-onboarding-just-completed', 'true');
     });
     cy.visit('/market');
-    // Guide may or may not be visible depending on trade state
     cy.get('[data-testid="market-page"]').should('exist');
+    cy.get('[data-testid="players-grid"]', { timeout: 10000 }).should('exist');
+    cy.getPlayerCards().should('have.length.greaterThan', 0);
   });
 
   // TC-MKT-007
   it('shows loading skeleton briefly', () => {
     cy.visit('/market');
-    // Skeleton is shown for 300ms, just verify the page eventually renders cards
     cy.get('[data-testid="players-grid"]', { timeout: 10000 }).should('exist');
+    cy.getPlayerCards().should('have.length.greaterThan', 0);
+    cy.getPlayerCards().first().should('contain.text', '$');
   });
 
   // TC-MKT-008

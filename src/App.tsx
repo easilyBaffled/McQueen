@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ScenarioProvider } from './context/ScenarioContext';
 import { SimulationProvider } from './context/SimulationContext';
+import { EspnProvider } from './context/EspnContext';
 import { TradingProvider } from './context/TradingContext';
 import { SocialProvider } from './context/SocialContext';
 import { ToastProvider } from './components/Toast/ToastProvider';
@@ -40,6 +41,7 @@ function App() {
   return (
     <ScenarioProvider>
       <SimulationProvider>
+        <EspnProvider>
         <TradingProvider>
           <SocialProvider>
             <ToastProvider>
@@ -120,6 +122,7 @@ function App() {
             </ToastProvider>
           </SocialProvider>
         </TradingProvider>
+        </EspnProvider>
       </SimulationProvider>
     </ScenarioProvider>
   );

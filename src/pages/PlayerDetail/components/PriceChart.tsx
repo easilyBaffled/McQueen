@@ -217,7 +217,7 @@ export default function PriceChart({ priceHistory, basePrice, isUp }: PriceChart
         </ResponsiveContainer>
         {selectedEvent && (
           <EventMarkerPopup
-            event={selectedEvent as EventData}
+            event={selectedEvent}
             position={popupPosition}
             onClose={closeEventPopup}
           />

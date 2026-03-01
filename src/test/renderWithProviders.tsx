@@ -3,10 +3,11 @@ import { render, type RenderOptions, type RenderResult } from '@testing-library/
 import { vi } from 'vitest';
 import { ScenarioContext } from '../context/ScenarioContext';
 import { SimulationProvider } from '../context/SimulationContext';
+import { EspnProvider, EspnContext } from '../context/EspnContext';
 import { TradingContext, TradingProvider } from '../context/TradingContext';
 import { SocialContext, SocialProvider } from '../context/SocialContext';
 import { ToastContext, type ToastContextValue, ToastProvider } from '../components/Toast/ToastProvider';
-import type { ScenarioContextValue, TradingContextValue, SocialContextValue, ScenarioData } from '../types';
+import type { ScenarioContextValue, TradingContextValue, SocialContextValue, EspnContextValue, ScenarioData } from '../types';
 
 function createDefaultScenarioValue(): ScenarioContextValue {
   return {
@@ -51,6 +52,17 @@ function createDefaultSocialValue(): SocialContextValue {
     getLeagueHoldings: vi.fn((_playerId: string) => []),
     getLeagueMembers: vi.fn(() => []),
   } as SocialContextValue;
+}
+
+function createDefaultEspnValue(): EspnContextValue {
+  return {
+    isEspnLiveMode: false,
+    espnNews: [],
+    espnLoading: false,
+    espnError: null,
+    espnPriceHistory: {},
+    refreshEspnNews: vi.fn(),
+  };
 }
 
 function createDefaultToastValue(): ToastContextValue {
@@ -114,6 +126,7 @@ export const TEST_SCENARIO_DATA: ScenarioData = {
 
 export interface RenderWithProvidersOptions extends Omit<RenderOptions, 'wrapper'> {
   scenarioOverrides?: Partial<ScenarioContextValue>;
+  espnOverrides?: Partial<EspnContextValue>;
   tradingOverrides?: Partial<TradingContextValue>;
   socialOverrides?: Partial<SocialContextValue>;
   toastOverrides?: Partial<ToastContextValue>;
@@ -158,6 +171,7 @@ export function renderWithProviders(
 ): RenderResult {
   const {
     scenarioOverrides,
+    espnOverrides,
     tradingOverrides,
     socialOverrides,
     toastOverrides,
@@ -172,6 +186,10 @@ export function renderWithProviders(
   const scenarioValue: ScenarioContextValue = {
     ...createDefaultScenarioValue(),
     ...scenarioOverrides,
+  };
+  const espnValue: EspnContextValue = {
+    ...createDefaultEspnValue(),
+    ...espnOverrides,
   };
   const tradingValue: TradingContextValue = {
     ...createDefaultTradingValue(),
@@ -189,13 +207,15 @@ export function renderWithProviders(
   function Wrapper({ children }: { children: ReactNode }) {
     return (
       <ScenarioContext.Provider value={scenarioValue}>
-        <TradingContext.Provider value={tradingValue}>
-          <SocialContext.Provider value={socialValue}>
-            <ToastContext.Provider value={toastValue}>
-              {children}
-            </ToastContext.Provider>
-          </SocialContext.Provider>
-        </TradingContext.Provider>
+        <EspnContext.Provider value={espnValue}>
+          <TradingContext.Provider value={tradingValue}>
+            <SocialContext.Provider value={socialValue}>
+              <ToastContext.Provider value={toastValue}>
+                {children}
+              </ToastContext.Provider>
+            </SocialContext.Provider>
+          </TradingContext.Provider>
+        </EspnContext.Provider>
       </ScenarioContext.Provider>
     );
   }
@@ -229,13 +249,15 @@ function renderWithRealProviders(
     return (
       <ScenarioContext.Provider value={scenarioValue}>
         <SimulationProvider>
-          <TradingProvider>
-            <SocialProvider>
-              <ToastProvider>
-                {children}
-              </ToastProvider>
-            </SocialProvider>
-          </TradingProvider>
+          <EspnProvider>
+            <TradingProvider>
+              <SocialProvider>
+                <ToastProvider>
+                  {children}
+                </ToastProvider>
+              </SocialProvider>
+            </TradingProvider>
+          </EspnProvider>
         </SimulationProvider>
       </ScenarioContext.Provider>
     );

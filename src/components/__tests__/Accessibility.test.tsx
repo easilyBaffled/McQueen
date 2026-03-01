@@ -21,15 +21,29 @@ vi.mock('../../context/ScenarioContext', () => ({
 
 vi.mock('../../context/SimulationContext', () => ({
   useSimulation: () => ({
-    espnLoading: false,
-    espnError: null,
-    refreshEspnNews: vi.fn(),
     history: [],
     tick: 0,
     unifiedTimeline: [],
     isPlaying: false,
     setIsPlaying: vi.fn(),
     goToHistoryPoint: vi.fn(),
+    priceOverrides: {},
+    playoffDilutionApplied: false,
+    applyPlayoffDilution: vi.fn(),
+    getUnifiedTimeline: vi.fn(() => []),
+    updatePriceOverride: vi.fn(),
+    addHistoryEntry: vi.fn(),
+  }),
+}));
+
+vi.mock('../../context/EspnContext', () => ({
+  useEspn: () => ({
+    espnLoading: false,
+    espnError: null,
+    refreshEspnNews: vi.fn(),
+    isEspnLiveMode: false,
+    espnNews: [],
+    espnPriceHistory: {},
   }),
 }));
 

@@ -164,6 +164,10 @@
   position: relative;
 }
 
+.event-markers {
+  pointer-events: all;
+}
+
 /* Reason Card */
 .reason-card {
   background: var(--color-bg-surface);

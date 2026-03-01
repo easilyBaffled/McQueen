@@ -114,6 +114,11 @@
   color: var(--color-text-primary);
 }
 
+.buyback-list,
+.dilution-list {
+  margin-top: 8px;
+}
+
 /* Player List Styles */
 .player-list {
   background: var(--color-bg-dark);

@@ -72,6 +72,21 @@
   overflow: hidden;
 }
 
+.picks-column,
+.results-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.risers {
+  border-color: var(--color-up);
+}
+
+.fallers {
+  border-color: var(--color-down);
+}
+
 /* Picks Grid */
 .picks-grid {
   display: grid;

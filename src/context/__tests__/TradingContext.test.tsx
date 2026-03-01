@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act, waitFor, render, screen } from '@testing-library/react';
 import { ScenarioProvider, useScenario } from '../ScenarioContext';
 import { SimulationProvider, useSimulation } from '../SimulationContext';
+import { EspnProvider, useEspn } from '../EspnContext';
 import { TradingProvider, useTrading } from '../TradingContext';
 import { INITIAL_CASH, USER_IMPACT_FACTOR, STORAGE_KEYS } from '../../constants';
 import { write, read } from '../../services/storageService';
@@ -23,14 +24,16 @@ function Wrapper({ children }: { children: React.ReactNode }) {
   return (
     <ScenarioProvider>
       <SimulationProvider>
-        <TradingProvider>{children}</TradingProvider>
+        <EspnProvider>
+          <TradingProvider>{children}</TradingProvider>
+        </EspnProvider>
       </SimulationProvider>
     </ScenarioProvider>
   );
 }
 
 function useTradingAndScenario() {
-  return { trading: useTrading(), scenario: useScenario(), simulation: useSimulation() };
+  return { trading: useTrading(), scenario: useScenario(), simulation: useSimulation(), espn: useEspn() };
 }
 
 function renderTrading() {
@@ -55,9 +58,11 @@ describe('TradingContext', () => {
     render(
       <ScenarioProvider>
         <SimulationProvider>
-          <TradingProvider>
-            <div data-testid="child" />
-          </TradingProvider>
+          <EspnProvider>
+            <TradingProvider>
+              <div data-testid="child" />
+            </TradingProvider>
+          </EspnProvider>
         </SimulationProvider>
       </ScenarioProvider>,
     );
@@ -649,11 +654,11 @@ describe('TradingContext', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.simulation.espnLoading).toBe(false);
+        expect(result.current.espn.espnLoading).toBe(false);
       });
 
       await waitFor(() => {
-        expect(Object.keys(result.current.simulation.espnPriceHistory).length).toBeGreaterThan(0);
+        expect(Object.keys(result.current.espn.espnPriceHistory).length).toBeGreaterThan(0);
       });
 
       const player = result.current.trading.getPlayer('mahomes');
@@ -682,11 +687,11 @@ describe('TradingContext', () => {
       });
 
       await waitFor(() => {
-        expect(result.current.simulation.espnLoading).toBe(false);
+        expect(result.current.espn.espnLoading).toBe(false);
       });
 
       await waitFor(() => {
-        expect(Object.keys(result.current.simulation.espnPriceHistory).length).toBeGreaterThan(0);
+        expect(Object.keys(result.current.espn.espnPriceHistory).length).toBeGreaterThan(0);
       });
 
       const players = result.current.trading.getPlayers();

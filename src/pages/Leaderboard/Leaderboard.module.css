@@ -128,8 +128,30 @@
   font-weight: 600;
 }
 
+.col-trader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trader-avatar {
+  font-size: 20px;
+}
+
 .medal {
   font-size: 24px;
+}
+
+.gold {
+  color: #ffd700;
+}
+
+.silver {
+  color: #c0c0c0;
+}
+
+.bronze {
+  color: #cd7f32;
 }
 
 .rank-number {

@@ -107,7 +107,7 @@ export const NFL_TEAM_IDS: Record<string, number> = {
   WAS: 28,
 };
 
-function getFromCache(key: string): unknown | null {
+function getFromCache(key: string): unknown {
   const cached = cache.get(key);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
     return cached.data;
@@ -163,7 +163,7 @@ async function fetchWithFallback<T = unknown>(endpoint: string, options?: FetchO
       throw new Error(`ESPN API error: ${response.status}`);
     }
 
-    const data: T = await response.json();
+    const data = (await response.json()) as T;
     setCache(cacheKey, data);
     return data;
   } catch (error) {
