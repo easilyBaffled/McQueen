@@ -1,0 +1,36 @@
+declare const styles: {
+  readonly "bronze": string;
+  readonly "col-gain": string;
+  readonly "col-rank": string;
+  readonly "col-trader": string;
+  readonly "col-value": string;
+  readonly "gold": string;
+  readonly "leaderboard-page": string;
+  readonly "leaderboard-table": string;
+  readonly "leaderboard-tip": string;
+  readonly "medal": string;
+  readonly "negative": string;
+  readonly "page-subtitle": string;
+  readonly "page-title": string;
+  readonly "positive": string;
+  readonly "rank-badge": string;
+  readonly "rank-change": string;
+  readonly "rank-details": string;
+  readonly "rank-label": string;
+  readonly "rank-number": string;
+  readonly "rank-value": string;
+  readonly "silver": string;
+  readonly "table-divider": string;
+  readonly "table-header": string;
+  readonly "table-row": string;
+  readonly "tip-content": string;
+  readonly "tip-cta": string;
+  readonly "tip-icon": string;
+  readonly "top-three": string;
+  readonly "trader-avatar": string;
+  readonly "trader-name": string;
+  readonly "user-rank-card": string;
+  readonly "user-row": string;
+};
+export = styles;
+

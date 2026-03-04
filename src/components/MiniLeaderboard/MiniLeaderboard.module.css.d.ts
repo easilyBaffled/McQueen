@@ -1,0 +1,33 @@
+declare const styles: {
+  readonly "divider-dots": string;
+  readonly "gap-amount": string;
+  readonly "gap-indicator": string;
+  readonly "gap-text": string;
+  readonly "header-left": string;
+  readonly "is-leader": string;
+  readonly "is-user": string;
+  readonly "mini-leaderboard": string;
+  readonly "mini-leaderboard-header": string;
+  readonly "mini-leaderboard-list": string;
+  readonly "mini-rank-row": string;
+  readonly "rank-changed-down": string;
+  readonly "rank-changed-up": string;
+  readonly "rank-divider": string;
+  readonly "rank-indicator": string;
+  readonly "rank-number": string;
+  readonly "rankDown": string;
+  readonly "rankUp": string;
+  readonly "standings-icon": string;
+  readonly "standings-title": string;
+  readonly "status-close": string;
+  readonly "status-leader": string;
+  readonly "top-status": string;
+  readonly "trader-avatar": string;
+  readonly "trader-info": string;
+  readonly "trader-name": string;
+  readonly "trader-value": string;
+  readonly "user-section": string;
+  readonly "view-all-link": string;
+};
+export = styles;
+

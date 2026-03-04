@@ -43,12 +43,12 @@ src/data/
 └── leagueMembers.json  # AI league members and their holdings
 ```
 
-| File | Purpose | Player Count |
-|------|---------|--------------|
-| `midweek.json` | Wednesday afternoon - prices move on news, injuries, trade rumors | 20 players |
-| `live.json` | Monday Night Football - real-time game event simulation | 21 players |
-| `playoffs.json` | Conference Championships - includes buyback mechanics for eliminated teams | 19 players |
-| `leagueMembers.json` | Defines AI traders and their pre-populated portfolios | 10 members |
+| File                 | Purpose                                                                    | Player Count |
+| -------------------- | -------------------------------------------------------------------------- | ------------ |
+| `midweek.json`       | Wednesday afternoon - prices move on news, injuries, trade rumors          | 20 players   |
+| `live.json`          | Monday Night Football - real-time game event simulation                    | 21 players   |
+| `playoffs.json`      | Conference Championships - includes buyback mechanics for eliminated teams | 19 players   |
+| `leagueMembers.json` | Defines AI traders and their pre-populated portfolios                      | 10 members   |
 
 ---
 
@@ -67,12 +67,12 @@ Each scenario file follows this root structure:
 
 ### Field Reference
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `scenario` | string | ✅ | Identifier: `"midweek"`, `"live"`, or `"playoffs"` |
-| `timestamp` | string | ✅ | ISO-8601 datetime representing "now" in the scenario |
-| `headline` | string | ✅ | Display headline shown in the UI header |
-| `players` | array | ✅ | Array of player objects (see next section) |
+| Field       | Type   | Required | Description                                          |
+| ----------- | ------ | -------- | ---------------------------------------------------- |
+| `scenario`  | string | ✅       | Identifier: `"midweek"`, `"live"`, or `"playoffs"`   |
+| `timestamp` | string | ✅       | ISO-8601 datetime representing "now" in the scenario |
+| `headline`  | string | ✅       | Display headline shown in the UI header              |
+| `players`   | array  | ✅       | Array of player objects (see next section)           |
 
 ---
 
@@ -96,17 +96,17 @@ Each player in the `players` array represents a tradeable stock:
 
 ### Field Reference
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | string | ✅ | Unique identifier used for lookups (lowercase, hyphenated) |
-| `name` | string | ✅ | Display name |
-| `team` | string | ✅ | Team abbreviation (e.g., `"KC"`, `"BUF"`, `"SF"`) |
-| `position` | string | ✅ | Position: `"QB"`, `"RB"`, `"WR"`, or `"TE"` |
-| `basePrice` | number | ✅ | Starting price at scenario start (used for % change calculation) |
-| `totalSharesAvailable` | number | ✅ | Total shares in circulation (typically 1000) |
-| `isActive` | boolean | ✅ | `true` if player is currently in a live game |
-| `isBuyback` | boolean | ❌ | `true` if player's team is eliminated (playoffs only) |
-| `priceHistory` | array | ✅ | Timeline of price-changing events |
+| Field                  | Type    | Required | Description                                                      |
+| ---------------------- | ------- | -------- | ---------------------------------------------------------------- |
+| `id`                   | string  | ✅       | Unique identifier used for lookups (lowercase, hyphenated)       |
+| `name`                 | string  | ✅       | Display name                                                     |
+| `team`                 | string  | ✅       | Team abbreviation (e.g., `"KC"`, `"BUF"`, `"SF"`)                |
+| `position`             | string  | ✅       | Position: `"QB"`, `"RB"`, `"WR"`, or `"TE"`                      |
+| `basePrice`            | number  | ✅       | Starting price at scenario start (used for % change calculation) |
+| `totalSharesAvailable` | number  | ✅       | Total shares in circulation (typically 1000)                     |
+| `isActive`             | boolean | ✅       | `true` if player is currently in a live game                     |
+| `isBuyback`            | boolean | ❌       | `true` if player's team is eliminated (playoffs only)            |
+| `priceHistory`         | array   | ✅       | Timeline of price-changing events                                |
 
 ### Notes on Fields
 
@@ -134,20 +134,30 @@ The `priceHistory` array is the heart of the simulation. Each entry represents a
     "url": "https://www.espn.com/nfl/game/_/gameId/401547417"
   },
   "content": [
-    { "type": "video", "title": "LIVE: Mahomes TD to Kelce", "source": "ESPN Gamecast", "url": "#" },
-    { "type": "analysis", "title": "Mahomes Carving Up Bills D", "source": "NFL Live", "url": "#" }
+    {
+      "type": "video",
+      "title": "LIVE: Mahomes TD to Kelce",
+      "source": "ESPN Gamecast",
+      "url": "#"
+    },
+    {
+      "type": "analysis",
+      "title": "Mahomes Carving Up Bills D",
+      "source": "NFL Live",
+      "url": "#"
+    }
   ]
 }
 ```
 
 ### Field Reference
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `timestamp` | string | ✅ | ISO-8601 datetime when this event occurred |
-| `price` | number | ✅ | New stock price after this event |
-| `reason` | object | ✅ | Object describing what caused the price move |
-| `content` | array | ❌ | Optional media tiles to display (videos, articles) |
+| Field       | Type   | Required | Description                                        |
+| ----------- | ------ | -------- | -------------------------------------------------- |
+| `timestamp` | string | ✅       | ISO-8601 datetime when this event occurred         |
+| `price`     | number | ✅       | New stock price after this event                   |
+| `reason`    | object | ✅       | Object describing what caused the price move       |
+| `content`   | array  | ❌       | Optional media tiles to display (videos, articles) |
 
 ### Reason Object Schema
 
@@ -166,12 +176,12 @@ General news, injury reports, analysis pieces.
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `type` | string | ✅ | `"news"` |
-| `headline` | string | ✅ | Short description displayed in UI |
-| `source` | string | ✅ | Attribution (e.g., "ESPN NFL", "Fantasy Focus") |
-| `url` | string | ❌ | Link to full article |
+| Field      | Type   | Required | Description                                     |
+| ---------- | ------ | -------- | ----------------------------------------------- |
+| `type`     | string | ✅       | `"news"`                                        |
+| `headline` | string | ✅       | Short description displayed in UI               |
+| `source`   | string | ✅       | Attribution (e.g., "ESPN NFL", "Fantasy Focus") |
+| `url`      | string | ❌       | Link to full article                            |
 
 #### Type: `"game_event"`
 
@@ -187,15 +197,16 @@ In-game events during live simulations.
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `type` | string | ✅ | `"game_event"` |
-| `eventType` | string | ✅ | Event category: `"TD"`, `"INT"`, `"stats"` |
-| `headline` | string | ✅ | Play-by-play description |
-| `source` | string | ✅ | Typically "ESPN Gamecast" |
-| `url` | string | ❌ | Link to game page |
+| Field       | Type   | Required | Description                                |
+| ----------- | ------ | -------- | ------------------------------------------ |
+| `type`      | string | ✅       | `"game_event"`                             |
+| `eventType` | string | ✅       | Event category: `"TD"`, `"INT"`, `"stats"` |
+| `headline`  | string | ✅       | Play-by-play description                   |
+| `source`    | string | ✅       | Typically "ESPN Gamecast"                  |
+| `url`       | string | ❌       | Link to game page                          |
 
 **Event Types:**
+
 - `"TD"` - Touchdown (causes significant price increase)
 - `"INT"` - Interception (causes price decrease)
 - `"stats"` - General stat accumulation (moderate price change)
@@ -215,14 +226,14 @@ When AI league members buy or sell shares.
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `type` | string | ✅ | `"league_trade"` |
-| `headline` | string | ✅ | Human-readable description |
-| `source` | string | ✅ | Always `"McQueen Market"` |
-| `memberId` | string | ✅ | ID of the trading member (from `leagueMembers.json`) |
-| `action` | string | ✅ | `"buy"` or `"sell"` |
-| `shares` | number | ✅ | Number of shares traded |
+| Field      | Type   | Required | Description                                          |
+| ---------- | ------ | -------- | ---------------------------------------------------- |
+| `type`     | string | ✅       | `"league_trade"`                                     |
+| `headline` | string | ✅       | Human-readable description                           |
+| `source`   | string | ✅       | Always `"McQueen Market"`                            |
+| `memberId` | string | ✅       | ID of the trading member (from `leagueMembers.json`) |
+| `action`   | string | ✅       | `"buy"` or `"sell"`                                  |
+| `shares`   | number | ✅       | Number of shares traded                              |
 
 ---
 
@@ -241,21 +252,21 @@ The optional `content` array attaches media to price events. These appear as cli
 
 ### Field Reference
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `type` | string | ✅ | `"video"`, `"article"`, `"news"`, or `"analysis"` |
-| `title` | string | ✅ | Tile headline |
-| `source` | string | ✅ | Attribution |
-| `url` | string | ✅ | Link destination (use `"#"` for placeholder) |
+| Field    | Type   | Required | Description                                       |
+| -------- | ------ | -------- | ------------------------------------------------- |
+| `type`   | string | ✅       | `"video"`, `"article"`, `"news"`, or `"analysis"` |
+| `title`  | string | ✅       | Tile headline                                     |
+| `source` | string | ✅       | Attribution                                       |
+| `url`    | string | ✅       | Link destination (use `"#"` for placeholder)      |
 
 ### Content Types
 
-| Type | Icon | Use Case |
-|------|------|----------|
-| `video` | 🎬 | Game highlights, press conferences |
-| `article` | 📰 | Long-form analysis pieces |
-| `news` | 📢 | Breaking news, injury updates |
-| `analysis` | 📊 | Fantasy analysis, stat breakdowns |
+| Type       | Icon | Use Case                           |
+| ---------- | ---- | ---------------------------------- |
+| `video`    | 🎬   | Game highlights, press conferences |
+| `article`  | 📰   | Long-form analysis pieces          |
+| `news`     | 📢   | Breaking news, injury updates      |
+| `analysis` | 📊   | Fantasy analysis, stat breakdowns  |
 
 ---
 
@@ -272,7 +283,7 @@ The `leagueMembers.json` file defines AI traders and their portfolios.
   ],
   "holdings": {
     "mahomes": [
-      { "memberId": "gridiron", "shares": 15, "avgCost": 135.00 },
+      { "memberId": "gridiron", "shares": 15, "avgCost": 135.0 },
       { "memberId": "tdking", "shares": 8, "avgCost": 140.25 }
     ]
   }
@@ -281,22 +292,22 @@ The `leagueMembers.json` file defines AI traders and their portfolios.
 
 ### Members Array
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | string | ✅ | Unique identifier (matches `memberId` in trades) |
-| `name` | string | ✅ | Display name |
-| `avatar` | string | ❌ | Emoji avatar |
-| `isUser` | boolean | ❌ | `true` for the human player |
+| Field    | Type    | Required | Description                                      |
+| -------- | ------- | -------- | ------------------------------------------------ |
+| `id`     | string  | ✅       | Unique identifier (matches `memberId` in trades) |
+| `name`   | string  | ✅       | Display name                                     |
+| `avatar` | string  | ❌       | Emoji avatar                                     |
+| `isUser` | boolean | ❌       | `true` for the human player                      |
 
 ### Holdings Object
 
 Maps player IDs to arrays of member holdings:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `memberId` | string | Member's ID |
-| `shares` | number | Number of shares owned |
-| `avgCost` | number | Average cost basis per share |
+| Field      | Type   | Description                  |
+| ---------- | ------ | ---------------------------- |
+| `memberId` | string | Member's ID                  |
+| `shares`   | number | Number of shares owned       |
+| `avgCost`  | number | Average cost basis per share |
 
 ---
 
@@ -309,17 +320,27 @@ From `live.json` - Mahomes throws a TD to Kelce:
 ```json
 {
   "timestamp": "2025-12-09T21:20:00",
-  "price": 153.97,                          // Price jumped from 150.22
+  "price": 153.97, // Price jumped from 150.22
   "reason": {
     "type": "game_event",
-    "eventType": "TD",                      // Touchdown = big price move
+    "eventType": "TD", // Touchdown = big price move
     "headline": "TOUCHDOWN! Mahomes finds Kelce for 22-yard score",
     "source": "ESPN Gamecast",
     "url": "https://www.espn.com/nfl/game/_/gameId/401547417"
   },
   "content": [
-    { "type": "video", "title": "LIVE: Mahomes TD to Kelce", "source": "ESPN Gamecast", "url": "#" },
-    { "type": "analysis", "title": "Mahomes Carving Up Bills D", "source": "NFL Live", "url": "#" }
+    {
+      "type": "video",
+      "title": "LIVE: Mahomes TD to Kelce",
+      "source": "ESPN Gamecast",
+      "url": "#"
+    },
+    {
+      "type": "analysis",
+      "title": "Mahomes Carving Up Bills D",
+      "source": "NFL Live",
+      "url": "#"
+    }
   ]
 }
 ```
@@ -335,7 +356,7 @@ From `midweek.json` - Tyreek Hill's hamstring issue:
 ```json
 {
   "timestamp": "2025-12-04T10:30:00",
-  "price": 120.50,                          // Down from 122.00 base
+  "price": 120.5, // Down from 122.00 base
   "reason": {
     "type": "news",
     "headline": "Hill limited in practice with hamstring tightness",
@@ -343,7 +364,12 @@ From `midweek.json` - Tyreek Hill's hamstring issue:
     "url": "https://www.espn.com/nfl/story/_/id/12346/tyreek-hill-hamstring-practice"
   },
   "content": [
-    { "type": "news", "title": "Hill Limited in Wednesday Practice", "source": "ESPN NFL", "url": "#" }
+    {
+      "type": "news",
+      "title": "Hill Limited in Wednesday Practice",
+      "source": "ESPN NFL",
+      "url": "#"
+    }
   ]
 }
 ```
@@ -359,12 +385,12 @@ From `live.json` - GridironGuru buys Mahomes:
 ```json
 {
   "timestamp": "2025-12-09T20:22:00",
-  "price": 144.36,                          // Up from 143.64
+  "price": 144.36, // Up from 143.64
   "reason": {
     "type": "league_trade",
     "headline": "GridironGuru bought 5 shares",
     "source": "McQueen Market",
-    "memberId": "gridiron",                 // Links to leagueMembers.json
+    "memberId": "gridiron", // Links to leagueMembers.json
     "action": "buy",
     "shares": 5
   }
@@ -385,12 +411,12 @@ From `playoffs.json` - Stefon Diggs after Texans elimination:
   "name": "Stefon Diggs",
   "team": "HOU",
   "position": "WR",
-  "basePrice": 85.00,
-  "isBuyback": true,                        // Elimination flag
+  "basePrice": 85.0,
+  "isBuyback": true, // Elimination flag
   "priceHistory": [
     {
       "timestamp": "2026-01-13T18:00:00",
-      "price": 72.50,                       // Immediate 15% drop
+      "price": 72.5, // Immediate 15% drop
       "reason": {
         "type": "news",
         "headline": "TEXANS ELIMINATED - Chiefs end Houston's season",
@@ -399,7 +425,7 @@ From `playoffs.json` - Stefon Diggs after Texans elimination:
     },
     {
       "timestamp": "2026-01-16T09:00:00",
-      "price": 45.00,                       // Crashed to buyback price
+      "price": 45.0, // Crashed to buyback price
       "reason": {
         "type": "news",
         "headline": "BUYBACK ACTIVE - Diggs shares being bought back at $45",
@@ -506,8 +532,8 @@ Merges all players' price histories into a single chronological timeline for liv
 ```javascript
 function buildUnifiedTimeline(players) {
   const timeline = [];
-  
-  players.forEach(player => {
+
+  players.forEach((player) => {
     if (player.priceHistory) {
       player.priceHistory.forEach((entry, index) => {
         timeline.push({
@@ -521,10 +547,10 @@ function buildUnifiedTimeline(players) {
       });
     }
   });
-  
+
   // Sort chronologically
   timeline.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-  
+
   return timeline;
 }
 ```
@@ -534,16 +560,20 @@ function buildUnifiedTimeline(players) {
 Calculates the current price including user trade impact:
 
 ```javascript
-const getEffectivePrice = useCallback((playerId) => {
-  const player = players.find(p => p.id === playerId);
-  
-  // Start with price from history or override
-  let basePrice = priceOverrides[playerId] ?? getCurrentPriceFromHistory(player);
-  
-  // Apply user impact (each share moves price by 0.1%)
-  const impact = userImpact[playerId] || 0;
-  return +(basePrice * (1 + impact)).toFixed(2);
-}, [players, priceOverrides, userImpact]);
+const getEffectivePrice = useCallback(
+  (playerId) => {
+    const player = players.find((p) => p.id === playerId);
+
+    // Start with price from history or override
+    let basePrice =
+      priceOverrides[playerId] ?? getCurrentPriceFromHistory(player);
+
+    // Apply user impact (each share moves price by 0.1%)
+    const impact = userImpact[playerId] || 0;
+    return +(basePrice * (1 + impact)).toFixed(2);
+  },
+  [players, priceOverrides, userImpact],
+);
 ```
 
 #### Live Simulation Loop
@@ -560,14 +590,14 @@ useEffect(() => {
           setIsPlaying(false);
           return prevTick;
         }
-        
+
         // Apply the timeline entry's price
         const entry = unifiedTimeline[nextTick];
-        setPriceOverrides(prev => ({
+        setPriceOverrides((prev) => ({
           ...prev,
-          [entry.playerId]: entry.price
+          [entry.playerId]: entry.price,
         }));
-        
+
         return nextTick;
       });
     }, 3000);
@@ -578,8 +608,8 @@ useEffect(() => {
 ### Constants
 
 ```javascript
-const INITIAL_CASH = 10000;           // Starting cash for user
-const USER_IMPACT_FACTOR = 0.001;     // Each share moves price by 0.1%
+const INITIAL_CASH = 10000; // Starting cash for user
+const USER_IMPACT_FACTOR = 0.001; // Each share moves price by 0.1%
 ```
 
 ---
@@ -591,6 +621,7 @@ To create a new scenario:
 1. **Create the JSON file** in `src/data/` (e.g., `superbowl.json`)
 
 2. **Follow the schema** with required fields:
+
    ```json
    {
      "scenario": "superbowl",
@@ -603,14 +634,15 @@ To create a new scenario:
 3. **Add price history entries** in chronological order for each player
 
 4. **Import in GameContext.jsx**:
+
    ```javascript
    import superbowlData from '../data/superbowl.json';
-   
+
    const scenarioData = {
      midweek: midweekData,
      live: liveData,
      playoffs: playoffsData,
-     superbowl: superbowlData,  // Add here
+     superbowl: superbowlData, // Add here
    };
    ```
 
@@ -635,4 +667,3 @@ To create a new scenario:
 ## Questions?
 
 Check the main [README.md](../../README.md) for app features and getting started, or explore the [GameContext.jsx](../context/GameContext.jsx) source code for implementation details.
-

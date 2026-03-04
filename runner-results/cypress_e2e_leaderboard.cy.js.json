@@ -1,0 +1,10 @@
+{
+  "suites": 1,
+  "tests": 5,
+  "passes": 5,
+  "pending": 0,
+  "failures": 0,
+  "start": "2026-02-19T16:07:52.422Z",
+  "duration": 582,
+  "file": "cypress/e2e/leaderboard.cy.js"
+}

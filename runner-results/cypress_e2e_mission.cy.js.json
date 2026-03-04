@@ -1,0 +1,10 @@
+{
+  "suites": 1,
+  "tests": 8,
+  "passes": 8,
+  "pending": 0,
+  "failures": 0,
+  "start": "2026-02-19T16:07:42.236Z",
+  "duration": 3302,
+  "file": "cypress/e2e/mission.cy.js"
+}

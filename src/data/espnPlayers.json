@@ -7,7 +7,7 @@
       "searchTerms": ["Patrick Mahomes", "Mahomes"],
       "team": "KC",
       "position": "QB",
-      "basePrice": 142.50
+      "basePrice": 142.5
     },
     {
       "id": "allen",
@@ -16,7 +16,7 @@
       "searchTerms": ["Josh Allen", "Allen"],
       "team": "BUF",
       "position": "QB",
-      "basePrice": 165.00
+      "basePrice": 165.0
     },
     {
       "id": "kelce",
@@ -25,7 +25,7 @@
       "searchTerms": ["Travis Kelce", "Kelce"],
       "team": "KC",
       "position": "TE",
-      "basePrice": 98.50
+      "basePrice": 98.5
     },
     {
       "id": "diggs-s",
@@ -34,7 +34,7 @@
       "searchTerms": ["Stefon Diggs", "Diggs"],
       "team": "HOU",
       "position": "WR",
-      "basePrice": 85.00
+      "basePrice": 85.0
     },
     {
       "id": "rice",
@@ -43,7 +43,7 @@
       "searchTerms": ["Rashee Rice", "Rice"],
       "team": "KC",
       "position": "WR",
-      "basePrice": 72.50
+      "basePrice": 72.5
     },
     {
       "id": "cook",
@@ -61,7 +61,7 @@
       "searchTerms": ["Isiah Pacheco", "Pacheco"],
       "team": "KC",
       "position": "RB",
-      "basePrice": 88.00
+      "basePrice": 88.0
     },
     {
       "id": "kincaid",
@@ -70,7 +70,7 @@
       "searchTerms": ["Dalton Kincaid", "Kincaid"],
       "team": "BUF",
       "position": "TE",
-      "basePrice": 68.50
+      "basePrice": 68.5
     },
     {
       "id": "worthy",
@@ -97,7 +97,7 @@
       "searchTerms": ["Justin Jefferson", "Jefferson"],
       "team": "MIN",
       "position": "WR",
-      "basePrice": 134.00
+      "basePrice": 134.0
     },
     {
       "id": "chase",
@@ -142,7 +142,7 @@
       "searchTerms": ["Saquon Barkley", "Barkley", "Saquon"],
       "team": "PHI",
       "position": "RB",
-      "basePrice": 152.00
+      "basePrice": 152.0
     },
     {
       "id": "lamar",
@@ -169,7 +169,7 @@
       "searchTerms": ["CeeDee Lamb", "Lamb", "CD Lamb"],
       "team": "DAL",
       "position": "WR",
-      "basePrice": 112.50
+      "basePrice": 112.5
     },
     {
       "id": "brown",
@@ -178,7 +178,7 @@
       "searchTerms": ["A.J. Brown", "AJ Brown", "Brown"],
       "team": "PHI",
       "position": "WR",
-      "basePrice": 125.50
+      "basePrice": 125.5
     },
     {
       "id": "stroud",
@@ -187,7 +187,7 @@
       "searchTerms": ["C.J. Stroud", "CJ Stroud", "Stroud"],
       "team": "HOU",
       "position": "QB",
-      "basePrice": 135.00
+      "basePrice": 135.0
     },
     {
       "id": "nabers",
@@ -196,7 +196,7 @@
       "searchTerms": ["Malik Nabers", "Nabers"],
       "team": "NYG",
       "position": "WR",
-      "basePrice": 95.00
+      "basePrice": 95.0
     },
     {
       "id": "gibbs",
@@ -205,7 +205,7 @@
       "searchTerms": ["Jahmyr Gibbs", "Gibbs"],
       "team": "DET",
       "position": "RB",
-      "basePrice": 118.00
+      "basePrice": 118.0
     },
     {
       "id": "amon-ra",
@@ -214,7 +214,7 @@
       "searchTerms": ["Amon-Ra St. Brown", "St. Brown", "Sun God"],
       "team": "DET",
       "position": "WR",
-      "basePrice": 128.50
+      "basePrice": 128.5
     },
     {
       "id": "williams-j",
@@ -223,7 +223,7 @@
       "searchTerms": ["Jameson Williams", "Williams"],
       "team": "DET",
       "position": "WR",
-      "basePrice": 78.00
+      "basePrice": 78.0
     },
     {
       "id": "montgomery",
@@ -232,7 +232,7 @@
       "searchTerms": ["David Montgomery", "Montgomery"],
       "team": "DET",
       "position": "RB",
-      "basePrice": 92.00
+      "basePrice": 92.0
     },
     {
       "id": "mixon",
@@ -241,7 +241,7 @@
       "searchTerms": ["Joe Mixon", "Mixon"],
       "team": "HOU",
       "position": "RB",
-      "basePrice": 105.00
+      "basePrice": 105.0
     },
     {
       "id": "waddle",
@@ -250,7 +250,7 @@
       "searchTerms": ["Jaylen Waddle", "Waddle"],
       "team": "MIA",
       "position": "WR",
-      "basePrice": 98.00
+      "basePrice": 98.0
     },
     {
       "id": "purdy",
@@ -259,7 +259,7 @@
       "searchTerms": ["Brock Purdy", "Purdy"],
       "team": "SF",
       "position": "QB",
-      "basePrice": 125.00
+      "basePrice": 125.0
     },
     {
       "id": "goff",
@@ -268,7 +268,7 @@
       "searchTerms": ["Jared Goff", "Goff"],
       "team": "DET",
       "position": "QB",
-      "basePrice": 118.00
+      "basePrice": 118.0
     },
     {
       "id": "samuel",
@@ -277,7 +277,7 @@
       "searchTerms": ["Deebo Samuel", "Deebo"],
       "team": "SF",
       "position": "WR",
-      "basePrice": 105.00
+      "basePrice": 105.0
     },
     {
       "id": "aiyuk",
@@ -286,7 +286,7 @@
       "searchTerms": ["Brandon Aiyuk", "Aiyuk"],
       "team": "SF",
       "position": "WR",
-      "basePrice": 95.00
+      "basePrice": 95.0
     },
     {
       "id": "kittle",
@@ -295,7 +295,7 @@
       "searchTerms": ["George Kittle", "Kittle"],
       "team": "SF",
       "position": "TE",
-      "basePrice": 88.00
+      "basePrice": 88.0
     },
     {
       "id": "st-brown",
@@ -304,7 +304,7 @@
       "searchTerms": ["Amon-Ra St. Brown", "St. Brown", "Sun God"],
       "team": "DET",
       "position": "WR",
-      "basePrice": 128.50
+      "basePrice": 128.5
     }
   ],
   "metadata": {
@@ -313,4 +313,3 @@
     "source": "ESPN NFL Player Pages"
   }
 }
-

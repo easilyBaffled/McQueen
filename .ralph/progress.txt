@@ -1,0 +1,70 @@
+# Ralph Progress Log (append-only)
+# Format: YYYY-MM-DD HH:MM | BEAD_ID | STATUS | Summary
+# -----------------------------------------------------------
+2026-02-19 06:28:43 | mcq-b6u | DONE | Build Tooling Foundation
+2026-02-19 06:29:19 | mcq-b6u.1 | DONE | Add tsconfig.json with strict mode
+2026-02-19 06:35:07 | mcq-qbm | DONE | Testing Infrastructure
+2026-02-19 06:54:00 | mcq-o0b | DONE | Accessibility
+2026-02-19 06:55:11 | mcq-b6u.2 | DONE | Configure Vite vendor chunking
+2026-02-19 07:03:14 | mcq-o0b.1 | DONE | Add eslint-plugin-jsx-a11y and resolve warnings
+2026-02-19 07:08:50 | mcq-o0b.2 | DONE | Add ARIA attributes and focus indicators
+2026-02-19 07:21:36 | mcq-o0b.3 | DONE | Add keyboard navigation support
+2026-02-19 07:30:02 | mcq-o0b.4 | DONE | Add secondary indicators for color-coded values
+2026-02-19 09:26:28 | mcq-tj0 | DONE | Data Layer: Types, Storage, and Dynamic Loading
+2026-02-19 09:32:22 | mcq-tj0.1 | DONE | Create TypeScript type definitions
+2026-02-19 10:01:26 | mcq-qzq | DONE | Service Layer Refactor
+2026-02-19 10:10:00 | mcq-tj0.2 | DONE | Convert constants and utils to TypeScript
+2026-02-19 10:09:29 | mcq-tj0.2 | DONE | Convert constants and utils to TypeScript
+2026-02-19 10:16:00 | mcq-tj0.3 | DONE | Create storageService with schema versioning
+2026-02-19 10:16:31 | mcq-tj0.3 | DONE | Create storageService with schema versioning
+2026-02-19 10:21:22 | mcq-qzq.1 | DONE | Convert sentimentEngine to TypeScript
+2026-02-19 10:26:53 | mcq-qzq.3 | DONE | Convert espnService to TypeScript
+2026-02-19 10:33:16 | mcq-qzq.4 | DONE | Extract priceResolver as pure module
+2026-02-19 10:43:03 | mcq-tj0.4 | DONE | Convert scenario data loading to dynamic import()
+2026-02-19 11:26:38 | mcq-vlu | DONE | State Management: Split GameContext
+2026-02-19 11:36:29 | mcq-qzq.2 | DONE | Convert priceCalculator to TypeScript
+2026-02-19 11:41:58 | mcq-qzq.5 | DONE | Create SimulationEngine interface and TimelineSimulationEngine
+2026-02-19 11:46:23 | mcq-vlu.1 | DONE | Create ScenarioContext
+2026-02-19 11:57:26 | mcq-qbm.1 | DONE | Add unit tests for service modules
+2026-02-19 12:32:38 | mcq-qzq.6 | DONE | Create EspnSimulationEngine
+2026-02-19 12:40:48 | mcq-35g.1 | DONE | Create ErrorBoundary component
+2026-02-19 13:45:53 | mcq-35g | DONE | UI Components: Restructure, Error Boundaries, and Code Splitting
+2026-02-19 13:50:27 | mcq-35g.2 | DONE | Move shared components to src/shared/
+2026-02-19 13:58:53 | mcq-35g.3 | DONE | Restructure feature components into co-located directories
+2026-02-19 14:02:29 | mcq-35g.4 | DONE | Restructure pages into co-located directories
+2026-02-19 14:11:27 | mcq-35g.6 | DONE | Fix Leaderboard to use real league data
+2026-02-19 16:53:53 | mcq-8hr.1 | DONE | Create shared test helpers (renderWithProviders + mockData)
+2026-02-19 16:59:30 | mcq-8hr.2 | DONE | Add Vitest tests for Market page (0% coverage)
+2026-02-19 17:04:34 | mcq-8hr.3 | DONE | Add Vitest tests for Watchlist page (0% coverage)
+2026-02-19 17:09:41 | mcq-8hr.4 | DONE | Add Vitest tests for Mission page (0% coverage)
+2026-02-19 17:17:04 | mcq-8hr.5 | DONE | Add Vitest tests for Onboarding component (0% coverage)
+2026-02-19 17:22:57 | mcq-8hr.6 | DONE | Add Vitest tests for DailyMission component (0% coverage)
+2026-02-19 17:45:00 | mcq-8hr.9 | DONE | Add data-testid attributes to 12 source components for 59 Cypress selectors
+2026-02-19 17:43:45 | mcq-8hr.9 | DONE | Add data-testid attributes to source components for Cypress selectors
+2026-02-19 17:56:49 | mcq-8hr.10 | DONE | Fix all Cypress E2E tests -- migrate selectors from CSS classes to data-testid
+2026-02-20 08:29:16 | mcq-vlu.2 | DONE | Create SimulationContext
+2026-02-20 09:17:07 | mcq-qbm.4 | DONE | Verify Cypress E2E suite passes end-to-end
+2026-02-20 09:40:46 | mcq-8hr.11 | DONE | Verify coverage targets met
+2026-02-20 09:47:00 | mcq-qbm.2 | DONE | Add unit tests for simulation engines
+2026-02-20 09:48:27 | mcq-qbm.2 | DONE | Add unit tests for simulation engines
+2026-02-20 09:58:58 | mcq-8hr.7 | DONE | Add Vitest tests for remaining 0% components (PlayoffModal, MiniLeaderboard, LiveTicker)
+2026-02-20 10:18:07 | mcq-8hr.8 | DONE | Expand Vitest tests for partially-covered files (Portfolio, PlayerDetail, shared components)
+2026-02-23 18:22:29 | mcq-vlu.3 | DONE | Create TradingContext
+2026-02-23 19:48:34 | mcq-vlu.4 | DONE | Create SocialContext
+2026-02-23 20:03:46 | mcq-vlu.5 | DONE | Wire provider composition and remove GameContext
+2026-02-24 01:31:47 | mcq-qbm.3 | DONE | Add unit tests for context providers
+2026-02-28 16:05:36 | mcq-1zw.1 | DONE | Set up TypeScript ESLint linting
+2026-02-28 16:13:31 | mcq-1zw.2 | DONE | Memoize all context provider values
+2026-02-28 16:20:00 | mcq-1zw.5 | DONE | Complete CSS Modules migration
+2026-02-28 16:23:33 | mcq-1zw.5 | DONE | Complete CSS Modules migration
+2026-02-28 16:33:05 | mcq-1zw.4 | DONE | Add storage version migration support
+2026-02-28 16:40:17 | mcq-1zw.7 | DONE | Move module-level mutable state into React lifecycle
+2026-02-28 18:07:02 | mcq-1zw.3 | DONE | Fix stale closure bugs from exhaustive-deps suppressions
+2026-02-28 18:23:24 | mcq-1zw.8 | DONE | Decompose PlayerDetail into sub-components
+2026-02-28 18:47:29 | mcq-1zw.9 | DONE | Improve test confidence: reduce over-mocking, add integration tests
+2026-02-28 19:42:50 | mcq-1zw.6 | DONE | Fix race conditions and unbounded memory growth
+2026-02-28 20:11:04 | mcq-dvn.3 | DONE | Add loading state to ScenarioToggle during scenario switches
+2026-02-28 21:10:09 | mcq-0gw.1 | DONE | Remove committed binary files and generated artifacts from git
+2026-02-28 21:12:45 | mcq-0gw.2 | DONE | Fix vercel.json installCommand mismatch (yarn vs npm)
+2026-02-28 21:17:54 | mcq-0gw.3 | DONE | Fix existing 4 TypeScript errors and 3 ESLint errors to establish clean baseline
+2026-02-28 21:54:23 | mcq-0gw | DONE | PR Review Round 2: Price engine, simulation architecture, test integrity, repo hygiene

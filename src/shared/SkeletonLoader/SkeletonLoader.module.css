@@ -1,0 +1,223 @@
+/* Skeleton Base Styles */
+.skeleton-text,
+.skeleton-card,
+.skeleton-leaderboard,
+.skeleton-mission {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-md);
+}
+
+/* Player Card Skeleton */
+.skeleton-card {
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.skeleton-team-badge {
+  width: 36px;
+  height: 20px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-position {
+  width: 24px;
+  height: 20px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-avatar {
+  width: 56px;
+  height: 56px;
+  background: var(--color-bg-elevated);
+  border-radius: 50%;
+  margin-left: auto;
+}
+
+.skeleton-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-name {
+  width: 70%;
+  height: 24px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-price-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.skeleton-price {
+  width: 80px;
+  height: 32px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-change {
+  width: 60px;
+  height: 24px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-chart {
+  width: 100%;
+  height: 50px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-headline {
+  width: 90%;
+  height: 16px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-card-footer {
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+.skeleton-owners {
+  width: 60%;
+  height: 16px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+}
+
+/* Market Grid Skeleton */
+.skeleton-market-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  padding: 20px 0;
+}
+
+/* Leaderboard Skeleton */
+.skeleton-leaderboard {
+  padding: 16px;
+  border: 1px solid var(--color-border);
+}
+
+.skeleton-leaderboard-header {
+  width: 50%;
+  height: 20px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+}
+
+.skeleton-leaderboard-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.skeleton-leaderboard-row:last-child {
+  border-bottom: none;
+}
+
+.skeleton-rank {
+  width: 24px;
+  height: 24px;
+  background: var(--color-bg-elevated);
+  border-radius: 50%;
+}
+
+.skeleton-name-small {
+  flex: 1;
+  height: 16px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-value {
+  width: 70px;
+  height: 16px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+}
+
+/* Mission Skeleton */
+.skeleton-mission {
+  padding: 20px;
+}
+
+.skeleton-mission-header {
+  width: 40%;
+  height: 28px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+}
+
+.skeleton-mission-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.skeleton-mission-player {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
+}
+
+.skeleton-player-mini {
+  width: 100%;
+  height: 60px;
+  background: var(--color-bg-dark);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-player-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.skeleton-button {
+  flex: 1;
+  height: 32px;
+  background: var(--color-bg-dark);
+  border-radius: var(--radius-sm);
+}
+
+/* Generic Text Skeleton */
+.skeleton-text {
+  background: var(--color-bg-elevated);
+}
+
+@media (max-width: 768px) {
+  .skeleton-market-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skeleton-mission-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

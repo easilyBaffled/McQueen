@@ -1,0 +1,264 @@
+.market-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.market-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.market-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.market-title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.market-subtitle {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  margin: 0;
+}
+
+.live-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.play-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.play-button:hover {
+  background: var(--color-primary-hover);
+}
+
+.play-button.playing {
+  background: var(--color-up);
+}
+
+.market-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  min-width: 250px;
+}
+
+.search-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-muted);
+}
+
+.search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.sort-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-md);
+  padding: 4px;
+}
+
+.sort-tab {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.sort-tab:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-elevated);
+}
+
+.sort-tab.active {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}
+
+/* Market Layout with Sidebar */
+.market-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.market-sidebar {
+  position: sticky;
+  top: 16px;
+}
+
+.market-main {
+  min-width: 0;
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.players-grid a {
+  text-decoration: none;
+}
+
+/* Welcome Banner */
+.welcome-banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(212, 48, 32, 0.1) 0%,
+    rgba(0, 200, 83, 0.05) 100%
+  );
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  margin-bottom: 8px;
+}
+
+.welcome-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.welcome-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.welcome-text h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  margin: 0 0 8px 0;
+  color: var(--color-text-primary);
+}
+
+.welcome-text p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.welcome-text strong {
+  color: var(--color-up);
+}
+
+.welcome-dismiss {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.welcome-dismiss:hover {
+  background: var(--color-down);
+  border-color: var(--color-down);
+  color: white;
+}
+
+.welcome-dismiss svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 1200px) {
+  .market-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .market-sidebar {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .market-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    min-width: auto;
+  }
+
+  .sort-tabs {
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+
+  .players-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-banner {
+    padding: 16px;
+  }
+
+  .welcome-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .welcome-icon {
+    font-size: 24px;
+  }
+}
